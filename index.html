@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar">
 <head>
@@ -13,9 +14,7 @@
       direction: rtl;
       text-align: center;
     }
-    h1 {
-      font-size: 2.5em;
-    }
+    h1 { font-size: 2.5em; }
     .buttons button {
       padding: 0.7em 1.5em;
       font-size: 1em;
@@ -27,13 +26,14 @@
     .player { background-color: #007bff; color: white; }
     .banker { background-color: #dc3545; color: white; }
     .tie { background-color: #28a745; color: white; }
+    .reset { background-color: #555; color: gold; margin-top: 1em; }
     .language, .amount {
       margin-top: 1em;
       padding: 0.5em;
       font-size: 1em;
       width: 220px;
     }
-    .result, .stats, .history, .balance {
+    .result, .stats, .history, .balance, .ai-stats {
       margin-top: 1.5em;
       font-size: 1.2em;
     }
@@ -61,8 +61,10 @@
 
   <div class="result" id="predictionResult"></div>
   <div class="stats" id="statsResult"></div>
+  <div class="ai-stats" id="aiStats"></div>
   <div class="history" id="historyDisplay"></div>
   <div class="balance" id="balanceDisplay">💵 الرصيد: 0 درهم</div>
+  <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
 
   <canvas id="chart" width="400" height="150"></canvas>
 
@@ -117,6 +119,13 @@
         if (r === 'T') return '🟢';
       }).join(' ');
       document.getElementById('historyDisplay').innerText = "جميع الجولات: " + displayText;
+
+      const totalRounds = history.length;
+      const count = { P: 0, B: 0, T: 0 };
+      history.forEach(r => { if (count[r] !== undefined) count[r]++; });
+
+      const statsText = `📊 عدد الجولات: ${totalRounds} | 🔵 لاعب: ${count.P} | 🔴 مصرفي: ${count.B} | 🟢 تعادل: ${count.T}`;
+      document.getElementById('aiStats').innerText = statsText;
     }
 
     function predict(actualResult) {
@@ -163,6 +172,18 @@
         updateChart();
         document.getElementById('balanceDisplay').innerText = `💵 الرصيد: ${balance} درهم`;
       }
+    }
+
+    function resetData() {
+      history = [];
+      balance = 0;
+      balanceHistory = [];
+      updateChart();
+      document.getElementById('predictionResult').innerText = '';
+      document.getElementById('statsResult').innerText = '';
+      document.getElementById('aiStats').innerText = '';
+      document.getElementById('historyDisplay').innerText = '';
+      document.getElementById('balanceDisplay').innerText = '💵 الرصيد: 0 درهم';
     }
   </script>
 </body>
