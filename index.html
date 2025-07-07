@@ -38,9 +38,20 @@
       font-size: 1em;
       width: 220px;
     }
-    .result, .stats, .history, .balance, .ai-stats {
+    .result, .stats, .history, .balance, .ai-stats, .ai-advice {
       margin-top: 1.5em;
       font-size: 1.2em;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: rgba(0,0,0,0.2);
+    }
+    body.light-mode .result, 
+    body.light-mode .stats, 
+    body.light-mode .history, 
+    body.light-mode .balance, 
+    body.light-mode .ai-stats, 
+    body.light-mode .ai-advice {
+      background-color: rgba(0,0,0,0.05);
     }
     canvas {
       margin-top: 2em;
@@ -54,6 +65,17 @@
       border: none;
       font-size: 1.5em;
       cursor: pointer;
+    }
+    .ai-advice {
+      border-left: 4px solid gold;
+    }
+    .streak {
+      font-weight: bold;
+      margin: 5px 0;
+    }
+    .probability {
+      color: #4CAF50;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -77,6 +99,7 @@
   <div class="result" id="predictionResult"></div>
   <div class="stats" id="statsResult"></div>
   <div class="ai-stats" id="aiStats"></div>
+  <div class="ai-advice" id="aiAdvice"></div>
   <div class="history" id="historyDisplay"></div>
   <div class="balance" id="balanceDisplay">💵 الرصيد: 0 درهم</div>
   <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
@@ -88,6 +111,8 @@
     let history = [];
     let balance = 0;
     let balanceHistory = [];
+    let streaks = { P: 0, B: 0, T: 0 };
+    let currentStreak = { type: null, count: 0 };
 
     // تحميل الوضع من localStorage إذا كان موجوداً
     if (localStorage.getItem('theme') === 'light') {
@@ -134,9 +159,21 @@
     }
 
     function addResult(result) {
+      // تحديث السلسلة الحالية
+      if (currentStreak.type === result) {
+        currentStreak.count++;
+      } else {
+        if (currentStreak.count > 1) {
+          streaks[currentStreak.type] = Math.max(streaks[currentStreak.type], currentStreak.count);
+        }
+        currentStreak.type = result;
+        currentStreak.count = 1;
+      }
+      
       history.push(result);
       updateDisplay();
       predict(result);
+      analyzePatterns();
     }
 
     function updateDisplay() {
@@ -151,8 +188,87 @@
       const count = { P: 0, B: 0, T: 0 };
       history.forEach(r => { if (count[r] !== undefined) count[r]++; });
 
-      const statsText = `📊 عدد الجولات: ${totalRounds} | 🔵 لاعب: ${count.P} | 🔴 مصرفي: ${count.B} | 🟢 تعادل: ${count.T}`;
+      const statsText = `📊 عدد الجولات: ${totalRounds} | 🔵 لاعب: ${count.P} (${((count.P/totalRounds)*100).toFixed(1)}%) | 🔴 مصرفي: ${count.B} (${((count.B/totalRounds)*100).toFixed(1)}%) | 🟢 تعادل: ${count.T} (${((count.T/totalRounds)*100).toFixed(1)}%)`;
       document.getElementById('aiStats').innerText = statsText;
+    }
+
+    function analyzePatterns() {
+      const lang = document.getElementById('langSelect').value;
+      const isArabic = lang === 'ar-MA';
+      
+      if (history.length < 3) {
+        document.getElementById('aiAdvice').innerHTML = isArabic ? 
+          "⏳ انتظر المزيد من الجولات لتحليل الأنماط..." : 
+          "⏳ Wait for more rounds to analyze patterns...";
+        return;
+      }
+
+      // تحليل السلسلة الحالية
+      let streakAnalysis = "";
+      if (currentStreak.count > 2) {
+        const typeName = isArabic ? 
+          (currentStreak.type === 'P' ? 'اللاعب' : currentStreak.type === 'B' ? 'المصرفي' : 'تعادل') :
+          (currentStreak.type === 'P' ? 'Player' : currentStreak.type === 'B' ? 'Banker' : 'Tie');
+        
+        streakAnalysis = isArabic ?
+          `📈 سلسلة ${typeName} مستمرة: ${currentStreak.count} جولات` :
+          `📈 ${typeName} streak: ${currentStreak.count} rounds`;
+      }
+
+      // تحليل التكرارات
+      const lastTen = history.slice(-10);
+      const counts = { P: 0, B: 0, T: 0 };
+      lastTen.forEach(r => counts[r]++);
+      
+      const mostFrequent = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+      const freqPercent = (counts[mostFrequent] / lastTen.length * 100).toFixed(1);
+      
+      const freqType = isArabic ?
+        (mostFrequent === 'P' ? 'اللاعب' : mostFrequent === 'B' ? 'المصرفي' : 'تعادل') :
+        (mostFrequent === 'P' ? 'Player' : mostFrequent === 'B' ? 'Banker' : 'Tie');
+      
+      const frequencyAnalysis = isArabic ?
+        `🔍 الأكثر تكرارًا (آخر 10 جولات): ${freqType} (${freqPercent}%)` :
+        `🔍 Most frequent (last 10 rounds): ${freqType} (${freqPercent}%)`;
+
+      // تحليل التناوب
+      let alternationRate = 0;
+      for (let i = 1; i < lastTen.length; i++) {
+        if (lastTen[i] !== lastTen[i-1]) alternationRate++;
+      }
+      alternationRate = (alternationRate / (lastTen.length - 1) * 100).toFixed(1);
+      
+      const alternationAnalysis = isArabic ?
+        `🔄 معدل التناوب: ${alternationRate}%` :
+        `🔄 Alternation rate: ${alternationRate}%`;
+
+      // تقديم توصية
+      let recommendation = "";
+      if (currentStreak.count >= 3) {
+        recommendation = isArabic ?
+          `💡 التوصية: استمر في الرهان على ${currentStreak.type === 'P' ? 'اللاعب' : currentStreak.type === 'B' ? 'المصرفي' : 'تعادل'} حتى تنتهي السلسلة` :
+          `💡 Recommendation: Keep betting on ${currentStreak.type === 'P' ? 'Player' : currentStreak.type === 'B' ? 'Banker' : 'Tie'} until streak ends`;
+      } else if (parseFloat(alternationRate) > 70) {
+        recommendation = isArabic ?
+          "💡 التوصية: الرهان على عكس نتيجة الجولة السابقة (نمط التناوب قوي)" :
+          "💡 Recommendation: Bet opposite of last result (strong alternation pattern)";
+      } else if (parseFloat(freqPercent) > 50) {
+        recommendation = isArabic ?
+          `💡 التوصية: الرهان على ${freqType} (النمط السائد)` :
+          `💡 Recommendation: Bet on ${freqType} (dominant pattern)`;
+      } else {
+        recommendation = isArabic ?
+          "💡 التوصية: لا يوجد نمط واضح، استخدم استراتيجية متحفظة" :
+          "💡 Recommendation: No clear pattern, use conservative strategy";
+      }
+
+      // عرض كل التحليلات
+      document.getElementById('aiAdvice').innerHTML = `
+        <div class="streak">${streakAnalysis}</div>
+        <div class="frequency">${frequencyAnalysis}</div>
+        <div class="alternation">${alternationAnalysis}</div>
+        <div class="recommendation">${recommendation}</div>
+      `;
     }
 
     function predict(actualResult) {
@@ -161,7 +277,7 @@
       const count = { P: 0, B: 0, T: 0 };
       lastFive.forEach(r => { if (count[r] !== undefined) count[r]++; });
 
-      const total = lastFive.length;
+      const total = lastFive.length || 1;
       const percent = {
         P: ((count.P / total) * 100).toFixed(1),
         B: ((count.B / total) * 100).toFixed(1),
@@ -183,8 +299,8 @@
         : `Next round prediction: ${label} with ${percent[winner]} percent`;
 
       document.getElementById('predictionResult').innerText = speechText;
-      document.getElementById('statsResult').innerText =
-        `Player: ${percent.P}% | Banker: ${percent.B}% | Tie: ${percent.T}%`;
+      document.getElementById('statsResult").innerHTML =
+        `🔵 لاعب: <span class="probability">${percent.P}%</span> | 🔴 مصرفي: <span class="probability">${percent.B}%</span> | 🟢 تعادل: <span class="probability">${percent.T}%</span>`;
 
       speak(speechText, lang);
 
@@ -205,13 +321,16 @@
       history = [];
       balance = 0;
       balanceHistory = [];
+      streaks = { P: 0, B: 0, T: 0 };
+      currentStreak = { type: null, count: 0 };
       updateChart();
       document.getElementById('predictionResult').innerText = '';
       document.getElementById('statsResult').innerText = '';
       document.getElementById('aiStats').innerText = '';
+      document.getElementById('aiAdvice').innerText = '';
       document.getElementById('historyDisplay').innerText = '';
       document.getElementById('balanceDisplay').innerText = '💵 الرصيد: 0 درهم';
     }
   </script>
 </body>
-</html>
+  </html>
