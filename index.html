@@ -81,73 +81,6 @@
       color: #2196F3;
       font-weight: bold;
     }
-    /* أنماط جديدة */
-    .strategy-controls {
-      background-color: rgba(0,0,0,0.2);
-      padding: 15px;
-      border-radius: 8px;
-      margin: 15px 0;
-    }
-    .strategy-controls select, 
-    .strategy-controls input {
-      width: 100%;
-      padding: 8px;
-      margin: 5px 0;
-      border-radius: 5px;
-      border: none;
-    }
-    .performance-stats {
-      background-color: rgba(0,0,0,0.2);
-      padding: 15px;
-      border-radius: 8px;
-      margin: 15px 0;
-    }
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      margin: 5px 0;
-    }
-    .stat-type {
-      font-weight: bold;
-      color: gold;
-    }
-    .stat-value {
-      color: white;
-    }
-    .big-road-container {
-      margin-top: 2em;
-      padding: 1em;
-      background-color: rgba(0, 0, 0, 0.5);
-      border-radius: 8px;
-      border: 1px solid gold;
-      direction: ltr;
-    }
-    .big-road {
-      display: grid;
-      grid-auto-flow: column;
-      grid-template-rows: repeat(6, 30px);
-      gap: 2px;
-      padding: 10px;
-      overflow-x: auto;
-    }
-    .big-road-cell {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 14px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    }
-    .big-road-P { background-color: #007bff; color: white; }
-    .big-road-B { background-color: #dc3545; color: white; }
-    .big-road-T { background-color: #28a745; color: white; }
-    .big-road-cell:hover {
-      transform: scale(1.1);
-      transition: transform 0.2s;
-    }
   </style>
 </head>
 <body>
@@ -167,64 +100,28 @@
     <option value="en-US">🇺🇸 English</option>
   </select>
 
-  <div class="strategy-controls">
-    <h3>استراتيجية الرهان</h3>
-    <select id="strategySelect" onchange="setStrategy(this.value)">
-      <option value="NONE">بدون استراتيجية</option>
-      <option value="MARTINGALE">مارتينجال</option>
-      <option value="FIBONACCI">فيبوناتشي</option>
-    </select>
-    <input type="number" id="baseBet" value="10" min="1" 
-           onchange="baseBet=parseInt(this.value)">
-  </div>
-
   <div class="result" id="predictionResult"></div>
   <div class="stats" id="statsResult"></div>
   <div class="ai-stats" id="aiStats"></div>
   <div class="ai-advice" id="aiAdvice"></div>
   <div class="history" id="historyDisplay"></div>
   <div class="balance" id="balanceDisplay">💵 الرصيد: 0 درهم</div>
-  <div class="performance-stats" id="performanceStats"></div>
-
-  <div class="big-road-container">
-    <h3>Big Road</h3>
-    <div class="big-road" id="bigRoad"></div>
-  </div>
-
   <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
 
   <canvas id="chart" width="400" height="150"></canvas>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // المتغيرات العامة
     let history = [];
     let balance = 0;
     let balanceHistory = [];
     let currentStreak = { type: null, count: 0 };
-    const markovChain = {
-        P: { P: 0, B: 0, T: 0 },
-        B: { P: 0, B: 0, T: 0 },
-        T: { P: 0, B: 0, T: 0 }
-    };
-    const strategies = {
-        NONE: { name: "None", func: (w) => baseBet },
-        MARTINGALE: { name: "Martingale", func: (w) => w ? baseBet : currentBet * 2 },
-        FIBONACCI: {
-            name: "Fibonacci",
-            func: (w) => {
-                const seq = [1, 1, 2, 3, 5, 8, 13, 21];
-                let idx = seq.indexOf(currentBet);
-                if (w) return idx <= 1 ? baseBet : seq[idx-2];
-                return idx < 0 ? baseBet : (seq[idx+1] || seq[seq.length-1]);
-            }
-        }
-    };
-    let currentStrategy = strategies.NONE;
-    let baseBet = 10;
-    let currentBet = baseBet;
 
-    // تهيئة المخطط
+    // تحميل الوضع من localStorage إذا كان موجوداً
+    if (localStorage.getItem('theme') === 'light') {
+      document.body.classList.add('light-mode');
+    }
+
     const ctx = document.getElementById('chart').getContext('2d');
     const chart = new Chart(ctx, {
       type: 'line',
@@ -245,7 +142,6 @@
       }
     });
 
-    // الدوال الأساسية
     function toggleTheme() {
       document.body.classList.toggle('light-mode');
       const isLight = document.body.classList.contains('light-mode');
@@ -264,139 +160,8 @@
       chart.update();
     }
 
-    // دالة تحديث الميجورك
-    function updateBigRoad() {
-      const bigRoadElement = document.getElementById('bigRoad');
-      bigRoadElement.innerHTML = '';
-      
-      let row = 0;
-      let col = 0;
-      const maxRows = 6;
-
-      const filteredHistory = history.filter(result => result !== 'T');
-
-      for (let i = 0; i < filteredHistory.length; i++) {
-        const result = filteredHistory[i];
-        
-        if (i > 0 && result === filteredHistory[i - 1]) {
-          row++;
-          if (row >= maxRows) {
-            row = 0;
-            col++;
-          }
-        } else {
-          row = 0;
-          if (i > 0) col++;
-        }
-
-        const cell = document.createElement('div');
-        cell.className = `big-road-cell big-road-${result}`;
-        cell.textContent = result === 'P' ? 'P' : 'B';
-        cell.style.gridColumn = col + 1;
-        cell.style.gridRow = row + 1;
-        bigRoadElement.appendChild(cell);
-      }
-    }
-
-    // دوال الذكاء الاصطناعي والاستراتيجيات
-    function updateMarkovChain(result) {
-      if (history.length > 0) {
-        const prev = history[history.length-1];
-        markovChain[prev][result]++;
-      }
-    }
-
-    function getMarkovPrediction() {
-      if (history.length < 2) return null;
-      
-      const last = history[history.length-1];
-      const total = markovChain[last].P + markovChain[last].B + markovChain[last].T;
-      
-      return {
-        P: total ? (markovChain[last].P / total * 100).toFixed(1) : "0",
-        B: total ? (markovChain[last].B / total * 100).toFixed(1) : "0", 
-        T: total ? (markovChain[last].T / total * 100).toFixed(1) : "0"
-      };
-    }
-
-    function setStrategy(strategyKey) {
-      currentStrategy = strategies[strategyKey] || strategies.NONE;
-      currentBet = baseBet;
-      const lang = document.getElementById('langSelect').value;
-      const strategyName = lang === 'ar-MA' ? 
-        (strategyKey === 'MARTINGALE' ? 'مارتينجال' : 
-         strategyKey === 'FIBONACCI' ? 'فيبوناتشي' : 'بدون استراتيجية') :
-        currentStrategy.name;
-      
-      document.getElementById('aiAdvice').innerHTML += (lang === 'ar-MA' ? 
-        `<div>✅ تم تفعيل استراتيجية: ${strategyName}</div>` :
-        `<div>✅ Strategy activated: ${strategyName}</div>`);
-    }
-
-    function calculateNextBet(win) {
-      currentBet = currentStrategy.func(win);
-      return currentBet;
-    }
-
-    // دوال الأداء المالي
-    function calculatePerformance() {
-      const stats = {
-        P: { bets: 0, wins: 0, profit: 0 },
-        B: { bets: 0, wins: 0, profit: 0 },
-        T: { bets: 0, wins: 0, profit: 0 },
-        overall: { bets: 0, wins: 0, profit: 0 }
-      };
-
-      balanceHistory.forEach((bal, i) => {
-        if (i === 0) return;
-        
-        const type = history[i-1];
-        const change = bal - balanceHistory[i-1];
-        const isWin = change > 0;
-        
-        stats[type].bets++;
-        stats[type].wins += isWin ? 1 : 0;
-        stats[type].profit += change;
-        
-        stats.overall.bets++;
-        stats.overall.wins += isWin ? 1 : 0;
-        stats.overall.profit += change;
-      });
-
-      return stats;
-    }
-
-    function updatePerformanceDisplay() {
-      const stats = calculatePerformance();
-      const lang = document.getElementById('langSelect').value;
-      
-      let html = lang === 'ar-MA' ? 
-        '<h3>إحصائيات الأداء</h3>' : 
-        '<h3>Performance Statistics</h3>';
-      
-      ['P', 'B', 'T'].forEach(type => {
-        const typeName = lang === 'ar-MA' ? 
-          (type === 'P' ? 'لاعب' : type === 'B' ? 'مصرفي' : 'تعادل') :
-          (type === 'P' ? 'Player' : type === 'B' ? 'Banker' : 'Tie');
-        
-        const winRate = stats[type].bets ? 
-          (stats[type].wins / stats[type].bets * 100).toFixed(1) : 0;
-        
-        html += `
-          <div class="stat-row">
-            <span class="stat-type">${type === 'P' ? '🔵' : type === 'B' ? '🔴' : '🟢'} ${typeName}:</span>
-            <span class="stat-value">${stats[type].bets} ${lang === 'ar-MA' ? 'رهان' : 'bets'}</span>
-            <span class="stat-value">${winRate}% ${lang === 'ar-MA' ? 'فوز' : 'win'}</span>
-            <span class="stat-value">${stats[type].profit} ${lang === 'ar-MA' ? 'درهم' : 'MAD'}</span>
-          </div>
-        `;
-      });
-      
-      document.getElementById('performanceStats').innerHTML = html;
-    }
-
-    // الدوال الرئيسية
     function addResult(result) {
+      // تحديث السلسلة الحالية
       if (currentStreak.type === result) {
         currentStreak.count++;
       } else {
@@ -405,12 +170,9 @@
       }
       
       history.push(result);
-      updateMarkovChain(result);
       updateDisplay();
-      updateBigRoad();
       predict(result);
       generateAdvice();
-      updatePerformanceDisplay();
     }
 
     function updateDisplay() {
@@ -440,13 +202,16 @@
         return;
       }
 
+      // تحليل آخر 10 جولات
       const lastTen = history.slice(-10);
       const counts = { P: 0, B: 0, T: 0 };
       lastTen.forEach(r => counts[r]++);
       
+      // تحديد النتيجة الأكثر تكرارًا
       const mostFrequent = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
       const freqPercent = (counts[mostFrequent] / lastTen.length * 100).toFixed(1);
       
+      // تحليل السلسلة الحالية
       let streakText = "";
       if (currentStreak.count > 2) {
         const typeName = isArabic ? 
@@ -458,6 +223,7 @@
           `📈 ${typeName} streak: ${currentStreak.count} rounds`;
       }
 
+      // تحليل النتائج الساخنة/الباردة (جميع الجولات من البداية)
       let hotColdText = "";
       if (history.length >= 3) {
         const hotCold = { P: 0, B: 0, T: 0 };
@@ -469,11 +235,13 @@
             (key === 'P' ? 'لاعب' : key === 'B' ? 'مصرفي' : 'تعادل') :
             (key === 'P' ? 'Player' : key === 'B' ? 'Banker' : 'Tie');
           
+          // تحديد إذا كانت النتيجة ساخنة (أكثر من 35% من المجموع)
           const percentage = (hotCold[key] / history.length * 100);
           hotColdText += `<span class="${percentage > 35 ? 'hot' : 'cold'}">${typeName} ${hotCold[key]} (${percentage.toFixed(1)}%)</span> `;
         });
       }
 
+      // تقديم توصية مبسطة
       let recommendation = "";
       if (currentStreak.count >= 3) {
         recommendation = isArabic ?
@@ -493,6 +261,7 @@
           "💡 No clear pattern, use conservative strategy";
       }
 
+      // عرض كل التحليلات
       document.getElementById('aiAdvice').innerHTML = `
         ${streakText ? `<div>${streakText}</div>` : ''}
         ${hotColdText ? `<div>${hotColdText}</div>` : ''}
@@ -501,7 +270,6 @@
     }
 
     function predict(actualResult) {
-      const markovPrediction = getMarkovPrediction();
       const lang = document.getElementById('langSelect').value;
       const lastFive = history.slice(-5);
       const count = { P: 0, B: 0, T: 0 };
@@ -524,15 +292,9 @@
       };
 
       const label = lang === 'ar-MA' ? labels.ar[winner] : labels.en[winner];
-      let speechText = lang === 'ar-MA'
+      const speechText = lang === 'ar-MA'
         ? `توقع الجولة القادمة: ${label} بنسبة ${percent[winner]} بالمئة`
         : `Next round prediction: ${label} with ${percent[winner]} percent`;
-
-      if (markovPrediction) {
-        speechText += lang === 'ar-MA' ?
-          ` | تنبؤ ماركوف: ${markovPrediction[winner]}%` :
-          ` | Markov prediction: ${markovPrediction[winner]}%`;
-      }
 
       document.getElementById('predictionResult').innerText = speechText;
       document.getElementById('statsResult').innerHTML =
@@ -540,9 +302,7 @@
 
       speak(speechText, lang);
 
-      const bet = calculateNextBet(actualResult === winner);
-      document.getElementById('betAmount').value = bet;
-      
+      const bet = parseFloat(document.getElementById('betAmount').value) || 0;
       if (actualResult && winner && bet > 0) {
         if (actualResult === winner) {
           balance += bet;
@@ -560,32 +320,14 @@
       balance = 0;
       balanceHistory = [];
       currentStreak = { type: null, count: 0 };
-      
-      // Reset Markov Chain
-      for (const key in markovChain) {
-        markovChain[key] = { P: 0, B: 0, T: 0 };
-      }
-      
-      // Reset betting strategy
-      currentStrategy = strategies.NONE;
-      currentBet = baseBet;
-      
       updateChart();
-      updateBigRoad();
-      updatePerformanceDisplay();
       document.getElementById('predictionResult').innerText = '';
       document.getElementById('statsResult').innerText = '';
       document.getElementById('aiStats').innerText = '';
       document.getElementById('aiAdvice').innerText = '';
       document.getElementById('historyDisplay').innerText = '';
       document.getElementById('balanceDisplay').innerText = '💵 الرصيد: 0 درهم';
-      document.getElementById('performanceStats').innerHTML = '';
-    }
-
-    // تحميل الوضع من localStorage إذا كان موجوداً
-    if (localStorage.getItem('theme') === 'light') {
-      document.body.classList.add('light-mode');
     }
   </script>
 </body>
-                                                </html>
+</html>
