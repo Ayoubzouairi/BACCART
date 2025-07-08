@@ -54,7 +54,7 @@
       background-color: rgba(0,0,0,0.05);
     }
     canvas {
-      margin-top: 2em;
+      margin-top: 1em;
       max-width: 100%;
     }
     .theme-toggle {
@@ -65,6 +65,18 @@
       border: none;
       font-size: 1.5em;
       cursor: pointer;
+    }
+    .language-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 1em;
+      cursor: pointer;
+      padding: 0.5em;
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 0.1);
     }
     .ai-advice {
       border-left: 4px solid gold;
@@ -110,10 +122,15 @@
     .big-road-P { background-color: #007bff; color: white; } /* لاعب */
     .big-road-B { background-color: #dc3545; color: white; } /* مصرفي */
     .big-road-T { background-color: #28a745; color: white; } /* تعادل */
+    .bet-container {
+      margin-top: 1em;
+    }
   </style>
 </head>
 <body>
   <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+  <button class="language-toggle" onclick="toggleLanguage()">🌐 العربية/English</button>
+  
   <h1>BACCARAT</h1>
   <p>📲 اختر نتيجة كل جولة:</p>
   <div class="buttons">
@@ -122,12 +139,10 @@
     <button class="tie" onclick="addResult('T')">🟢 تعادل</button>
   </div>
 
-  <input type="number" id="betAmount" class="amount" placeholder="💰 مبلغ الرهان بالدرهم" />
-  <br />
-  <select id="langSelect" class="language">
-    <option value="ar-MA">🇲🇦 العربية</option>
-    <option value="en-US">🇺🇸 English</option>
-  </select>
+  <div class="bet-container">
+    <input type="number" id="betAmount" class="amount" placeholder="💰 مبلغ الرهان بالدرهم" />
+    <canvas id="chart" width="400" height="150"></canvas>
+  </div>
 
   <div class="result" id="predictionResult"></div>
   <div class="stats" id="statsResult"></div>
@@ -136,8 +151,6 @@
   <div class="history" id="historyDisplay"></div>
   <div class="balance" id="balanceDisplay">💵 الرصيد: 0 درهم</div>
   <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
-
-  <canvas id="chart" width="400" height="150"></canvas>
 
   <!-- قسم الميجورك المضاف -->
   <div class="big-road-container">
@@ -151,10 +164,15 @@
     let balance = 0;
     let balanceHistory = [];
     let currentStreak = { type: null, count: 0 };
+    let currentLanguage = 'ar-MA';
 
     // تحميل الوضع من localStorage إذا كان موجوداً
     if (localStorage.getItem('theme') === 'light') {
       document.body.classList.add('light-mode');
+    }
+    if (localStorage.getItem('language')) {
+      currentLanguage = localStorage.getItem('language');
+      document.getElementById('langSelect').value = currentLanguage;
     }
 
     const ctx = document.getElementById('chart').getContext('2d');
@@ -181,6 +199,12 @@
       document.body.classList.toggle('light-mode');
       const isLight = document.body.classList.contains('light-mode');
       localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    }
+
+    function toggleLanguage() {
+      currentLanguage = currentLanguage === 'ar-MA' ? 'en-US' : 'ar-MA';
+      localStorage.setItem('language', currentLanguage);
+      location.reload();
     }
 
     function speak(text, lang) {
@@ -245,19 +269,21 @@
         if (r === 'B') return '🔴';
         if (r === 'T') return '🟢';
       }).join(' ');
-      document.getElementById('historyDisplay').innerText = "جميع الجولات: " + displayText;
+      document.getElementById('historyDisplay').innerText = currentLanguage === 'ar-MA' ? 
+        "جميع الجولات: " + displayText : "All rounds: " + displayText;
 
       const totalRounds = history.length;
       const count = { P: 0, B: 0, T: 0 };
       history.forEach(r => { if (count[r] !== undefined) count[r]++; });
 
-      const statsText = `📊 عدد الجولات: ${totalRounds} | 🔵 لاعب: ${count.P} (${((count.P/totalRounds)*100).toFixed(1)}%) | 🔴 مصرفي: ${count.B} (${((count.B/totalRounds)*100).toFixed(1)}%) | 🟢 تعادل: ${count.T} (${((count.T/totalRounds)*100).toFixed(1)}%)`;
+      const statsText = currentLanguage === 'ar-MA' ?
+        `📊 عدد الجولات: ${totalRounds} | 🔵 لاعب: ${count.P} (${((count.P/totalRounds)*100).toFixed(1)}%) | 🔴 مصرفي: ${count.B} (${((count.B/totalRounds)*100).toFixed(1)}%) | 🟢 تعادل: ${count.T} (${((count.T/totalRounds)*100).toFixed(1)}%)` :
+        `📊 Rounds: ${totalRounds} | 🔵 Player: ${count.P} (${((count.P/totalRounds)*100).toFixed(1)}%) | 🔴 Banker: ${count.B} (${((count.B/totalRounds)*100).toFixed(1)}%) | 🟢 Tie: ${count.T} (${((count.T/totalRounds)*100).toFixed(1)}%)`;
       document.getElementById('aiStats').innerText = statsText;
     }
 
     function generateAdvice() {
-      const lang = document.getElementById('langSelect').value;
-      const isArabic = lang === 'ar-MA';
+      const isArabic = currentLanguage === 'ar-MA';
       
       if (history.length < 3) {
         document.getElementById('aiAdvice').innerHTML = isArabic ? 
@@ -327,7 +353,7 @@
     }
 
     function predict(actualResult) {
-      const lang = document.getElementById('langSelect').value;
+      const isArabic = currentLanguage === 'ar-MA';
       const lastFive = history.slice(-5);
       const count = { P: 0, B: 0, T: 0 };
       lastFive.forEach(r => { if (count[r] !== undefined) count[r]++; });
@@ -348,16 +374,18 @@
         en: { P: 'Player', B: 'Banker', T: 'Tie' }
       };
 
-      const label = lang === 'ar-MA' ? labels.ar[winner] : labels.en[winner];
-      const speechText = lang === 'ar-MA'
+      const label = isArabic ? labels.ar[winner] : labels.en[winner];
+      const speechText = isArabic
         ? `توقع الجولة القادمة: ${label} بنسبة ${percent[winner]} بالمئة`
         : `Next round prediction: ${label} with ${percent[winner]} percent`;
 
       document.getElementById('predictionResult').innerText = speechText;
       document.getElementById('statsResult').innerHTML =
-        `🔵 لاعب: <span class="probability">${percent.P}%</span> | 🔴 مصرفي: <span class="probability">${percent.B}%</span> | 🟢 تعادل: <span class="probability">${percent.T}%</span>`;
+        isArabic ? 
+        `🔵 لاعب: <span class="probability">${percent.P}%</span> | 🔴 مصرفي: <span class="probability">${percent.B}%</span> | 🟢 تعادل: <span class="probability">${percent.T}%</span>` :
+        `🔵 Player: <span class="probability">${percent.P}%</span> | 🔴 Banker: <span class="probability">${percent.B}%</span> | 🟢 Tie: <span class="probability">${percent.T}%</span>`;
 
-      speak(speechText, lang);
+      speak(speechText, currentLanguage);
 
       const bet = parseFloat(document.getElementById('betAmount').value) || 0;
       if (actualResult && winner && bet > 0) {
@@ -368,7 +396,8 @@
         }
         balanceHistory.push(balance);
         updateChart();
-        document.getElementById('balanceDisplay').innerText = `💵 الرصيد: ${balance} درهم`;
+        document.getElementById('balanceDisplay').innerText = isArabic ? 
+          `💵 الرصيد: ${balance} درهم` : `💵 Balance: ${balance} DH`;
       }
     }
 
@@ -384,13 +413,27 @@
       document.getElementById('aiStats').innerText = '';
       document.getElementById('aiAdvice').innerText = '';
       document.getElementById('historyDisplay').innerText = '';
-      document.getElementById('balanceDisplay').innerText = '💵 الرصيد: 0 درهم';
+      document.getElementById('balanceDisplay').innerText = isArabic ? '💵 الرصيد: 0 درهم' : '💵 Balance: 0 DH';
     }
 
     // تحديث الميجورك عند تحميل الصفحة إذا كانت هناك بيانات قديمة
     if (history.length > 0) {
       updateBigRoad();
     }
+
+    // تحميل اللغة عند بدء التشغيل
+    document.addEventListener('DOMContentLoaded', function() {
+      if (currentLanguage === 'en-US') {
+        document.querySelector('h1').textContent = 'BACCARAT';
+        document.querySelector('p').textContent = '📲 Choose each round result:';
+        document.querySelector('.player').textContent = '🔵 Player';
+        document.querySelector('.banker').textContent = '🔴 Banker';
+        document.querySelector('.tie').textContent = '🟢 Tie';
+        document.querySelector('.reset').textContent = '🔄 Reset';
+        document.querySelector('.amount').placeholder = '💰 Bet amount in DH';
+        document.querySelector('.big-road-container h2').textContent = 'Big Road';
+      }
+    });
   </script>
 </body>
   </html>
