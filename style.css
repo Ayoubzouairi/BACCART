@@ -9,18 +9,15 @@
 }
 
 body {
+  body {
   background: 
-    linear-gradient(rgba(0, 0, 0, var(--bg-opacity)), 
-    rgba(0, 0, 0, var(--bg-opacity))),
-    url('../images/baccarat_bg.jpg') center/cover no-repeat fixed;
-  color: var(--text-color);
-  font-family: 'Segoe UI', Tahoma, sans-serif;
-  min-height: 100vh;
-  margin: 0;
-  padding: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    linear-gradient(rgba(0, 0, 0, 0.7), 
+    url('./images/baccarat_bg.jpg') center/cover no-repeat fixed;
+  /* جرب هذه البدائل إذا لم تعمل: */
+  /* url('images/baccarat_bg.jpg') */
+  /* url('../images/baccarat_bg.jpg') */
+  /* url('baccarat_bg.jpg') */
+  }
 }
 
 .app {
