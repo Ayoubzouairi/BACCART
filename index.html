@@ -81,21 +81,22 @@
       color: #2196F3;
       font-weight: bold;
     }
-    /* أنماط جديدة للميجورك */
+    /* أنماط الميجورك الجديدة */
     .big-road-container {
       margin-top: 2em;
       padding: 1em;
-      background-color: rgba(0, 0, 0, 0.2);
+      background-color: rgba(0, 0, 0, 0.5);
       border-radius: 8px;
-      direction: ltr; /* اتجاه الرسم من اليسار لليمين */
-      overflow-x: auto;
+      border: 1px solid gold;
+      direction: ltr;
     }
     .big-road {
-      display: inline-grid;
+      display: grid;
       grid-auto-flow: column;
       grid-template-rows: repeat(6, 30px);
       gap: 2px;
       padding: 10px;
+      overflow-x: auto;
     }
     .big-road-cell {
       width: 30px;
@@ -106,10 +107,24 @@
       justify-content: center;
       font-weight: bold;
       font-size: 14px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
-    .big-road-P { background-color: #007bff; color: white; } /* لاعب */
-    .big-road-B { background-color: #dc3545; color: white; } /* مصرفي */
-    .big-road-T { background-color: #28a745; color: white; } /* تعادل */
+    .big-road-P { 
+      background-color: #007bff; 
+      color: white; 
+    }
+    .big-road-B { 
+      background-color: #dc3545; 
+      color: white; 
+    }
+    .big-road-T { 
+      background-color: #28a745; 
+      color: white; 
+    }
+    .big-road-cell:hover {
+      transform: scale(1.1);
+      transition: transform 0.2s;
+    }
   </style>
 </head>
 <body>
@@ -135,15 +150,16 @@
   <div class="ai-advice" id="aiAdvice"></div>
   <div class="history" id="historyDisplay"></div>
   <div class="balance" id="balanceDisplay">💵 الرصيد: 0 درهم</div>
-  <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
-
-  <canvas id="chart" width="400" height="150"></canvas>
 
   <!-- قسم الميجورك المضاف -->
   <div class="big-road-container">
-    <h2>Big Road (الميجورك)</h2>
-    <div id="bigRoad" class="big-road"></div>
+    <h3>Big Road</h3>
+    <div class="big-road" id="bigRoad"></div>
   </div>
+
+  <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
+
+  <canvas id="chart" width="400" height="150"></canvas>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
@@ -202,7 +218,7 @@
       
       let row = 0;
       let col = 0;
-      const maxRows = 6; // الحد الأقصى للصفوف
+      const maxRows = 6;
 
       // تصفية النتائج لاستبعاد التعادل (اختياري)
       const filteredHistory = history.filter(result => result !== 'T');
@@ -210,7 +226,6 @@
       for (let i = 0; i < filteredHistory.length; i++) {
         const result = filteredHistory[i];
         
-        // إذا كانت النتيجة مماثلة للسابقة، انتقل إلى الصف التالي
         if (i > 0 && result === filteredHistory[i - 1]) {
           row++;
           if (row >= maxRows) {
@@ -232,6 +247,13 @@
     }
 
     function addResult(result) {
+      if (currentStreak.type === result) {
+        currentStreak.count++;
+      } else {
+        currentStreak.type = result;
+        currentStreak.count = 1;
+      }
+      
       history.push(result);
       updateDisplay();
       updateBigRoad(); // تحديث الميجورك
