@@ -81,6 +81,35 @@
       color: #2196F3;
       font-weight: bold;
     }
+    /* أنماط جديدة للميجورك */
+    .big-road-container {
+      margin-top: 2em;
+      padding: 1em;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      direction: ltr; /* اتجاه الرسم من اليسار لليمين */
+      overflow-x: auto;
+    }
+    .big-road {
+      display: inline-grid;
+      grid-auto-flow: column;
+      grid-template-rows: repeat(6, 30px);
+      gap: 2px;
+      padding: 10px;
+    }
+    .big-road-cell {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .big-road-P { background-color: #007bff; color: white; } /* لاعب */
+    .big-road-B { background-color: #dc3545; color: white; } /* مصرفي */
+    .big-road-T { background-color: #28a745; color: white; } /* تعادل */
   </style>
 </head>
 <body>
@@ -109,6 +138,12 @@
   <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
 
   <canvas id="chart" width="400" height="150"></canvas>
+
+  <!-- قسم الميجورك المضاف -->
+  <div class="big-road-container">
+    <h2>Big Road (الميجورك)</h2>
+    <div id="bigRoad" class="big-road"></div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
@@ -160,17 +195,46 @@
       chart.update();
     }
 
-    function addResult(result) {
-      // تحديث السلسلة الحالية
-      if (currentStreak.type === result) {
-        currentStreak.count++;
-      } else {
-        currentStreak.type = result;
-        currentStreak.count = 1;
-      }
+    // دالة تحديث الميجورك
+    function updateBigRoad() {
+      const bigRoadElement = document.getElementById('bigRoad');
+      bigRoadElement.innerHTML = '';
       
+      let row = 0;
+      let col = 0;
+      const maxRows = 6; // الحد الأقصى للصفوف
+
+      // تصفية النتائج لاستبعاد التعادل (اختياري)
+      const filteredHistory = history.filter(result => result !== 'T');
+
+      for (let i = 0; i < filteredHistory.length; i++) {
+        const result = filteredHistory[i];
+        
+        // إذا كانت النتيجة مماثلة للسابقة، انتقل إلى الصف التالي
+        if (i > 0 && result === filteredHistory[i - 1]) {
+          row++;
+          if (row >= maxRows) {
+            row = 0;
+            col++;
+          }
+        } else {
+          row = 0;
+          if (i > 0) col++;
+        }
+
+        const cell = document.createElement('div');
+        cell.className = `big-road-cell big-road-${result}`;
+        cell.textContent = result === 'P' ? 'P' : 'B';
+        cell.style.gridColumn = col + 1;
+        cell.style.gridRow = row + 1;
+        bigRoadElement.appendChild(cell);
+      }
+    }
+
+    function addResult(result) {
       history.push(result);
       updateDisplay();
+      updateBigRoad(); // تحديث الميجورك
       predict(result);
       generateAdvice();
     }
@@ -202,16 +266,13 @@
         return;
       }
 
-      // تحليل آخر 10 جولات
       const lastTen = history.slice(-10);
       const counts = { P: 0, B: 0, T: 0 };
       lastTen.forEach(r => counts[r]++);
       
-      // تحديد النتيجة الأكثر تكرارًا
       const mostFrequent = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
       const freqPercent = (counts[mostFrequent] / lastTen.length * 100).toFixed(1);
       
-      // تحليل السلسلة الحالية
       let streakText = "";
       if (currentStreak.count > 2) {
         const typeName = isArabic ? 
@@ -223,7 +284,6 @@
           `📈 ${typeName} streak: ${currentStreak.count} rounds`;
       }
 
-      // تحليل النتائج الساخنة/الباردة (جميع الجولات من البداية)
       let hotColdText = "";
       if (history.length >= 3) {
         const hotCold = { P: 0, B: 0, T: 0 };
@@ -235,13 +295,11 @@
             (key === 'P' ? 'لاعب' : key === 'B' ? 'مصرفي' : 'تعادل') :
             (key === 'P' ? 'Player' : key === 'B' ? 'Banker' : 'Tie');
           
-          // تحديد إذا كانت النتيجة ساخنة (أكثر من 35% من المجموع)
           const percentage = (hotCold[key] / history.length * 100);
           hotColdText += `<span class="${percentage > 35 ? 'hot' : 'cold'}">${typeName} ${hotCold[key]} (${percentage.toFixed(1)}%)</span> `;
         });
       }
 
-      // تقديم توصية مبسطة
       let recommendation = "";
       if (currentStreak.count >= 3) {
         recommendation = isArabic ?
@@ -261,7 +319,6 @@
           "💡 No clear pattern, use conservative strategy";
       }
 
-      // عرض كل التحليلات
       document.getElementById('aiAdvice').innerHTML = `
         ${streakText ? `<div>${streakText}</div>` : ''}
         ${hotColdText ? `<div>${hotColdText}</div>` : ''}
@@ -321,6 +378,7 @@
       balanceHistory = [];
       currentStreak = { type: null, count: 0 };
       updateChart();
+      updateBigRoad(); // مسح الميجورك عند الإعادة
       document.getElementById('predictionResult').innerText = '';
       document.getElementById('statsResult').innerText = '';
       document.getElementById('aiStats').innerText = '';
@@ -328,6 +386,11 @@
       document.getElementById('historyDisplay').innerText = '';
       document.getElementById('balanceDisplay').innerText = '💵 الرصيد: 0 درهم';
     }
+
+    // تحديث الميجورك عند تحميل الصفحة إذا كانت هناك بيانات قديمة
+    if (history.length > 0) {
+      updateBigRoad();
+    }
   </script>
 </body>
-</html>
+  </html>
