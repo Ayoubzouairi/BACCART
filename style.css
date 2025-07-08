@@ -1,87 +1,48 @@
-/* ===== الإصدار المصحح ===== */
-:root {
-  --primary-color: #007BFF;
-  --secondary-color: #DC3545;
-  --accent-color: #28A745;
-  --gold-color: #FFD700;
-  --text-color: #FFF8DC;
-  --bg-opacity: 0.85;
-}
-
 body {
-  body {
-  background: 
-    linear-gradient(rgba(0, 0, 0, 0.7), 
-    url('./images/baccarat_bg.jpg') center/cover no-repeat fixed;
-  /* جرب هذه البدائل إذا لم تعمل: */
-  /* url('images/baccarat_bg.jpg') */
-  /* url('../images/baccarat_bg.jpg') */
-  /* url('baccarat_bg.jpg') */
-  }
+  background-image: url('baccarat_bg.jpg');
+  background-size: cover;
+  background-position: center;
+  color: #fff8dc;
+  font-family: Tahoma, sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
 }
-
 .app {
-  background-color: rgba(0, 0, 0, 0.8);
-  padding: 25px;
-  border-radius: 16px;
-  max-width: 500px;
-  width: 100%;
+  background-color: rgba(0, 0, 0, 0.75);
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 100%;
 }
-
-/* ===== الأخطاء الشائعة التي تم تصحيحها ===== */
-
-/* 1. خطأ في مسار الصورة */
-/* تأكد من:
-   - وجود المجلد images
-   - اسم الملف مطابق تماماً (بما في ذلك الحروف الكبيرة/الصغيرة)
-   - الامتداد صحيح (.jpg وليس .jpeg) */
-
-/* 2. إزالة backdrop-filter إذا لم يكن مدعوماً */
-.app {
-  /* backdrop-filter: blur(8px); */ /* يمكن إلغاء التعليق إذا كان متصفحك يدعمه */
-}
-
-/* 3. تبسيط خط font-family */
-/* كان هناك خطأ في سرد الخطوط الطويل */
-
-/* 4. إصلاح الهوامش */
-body {
-  margin: 0; /* إزالة الهوامش الافتراضية */
-}
-
-/* 5. التأكد من صحة بناء gradient */
-/* تم تصحيح بناء linear-gradient */
-
-/* ===== العناصر الأساسية ===== */
 textarea, input, button {
-  width: calc(100% - 24px); /* حساب padding */
-  padding: 12px;
-  margin: 12px 0;
-  border-radius: 8px;
-  border: none;
-  font-size: 1em;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: none;
+  font-size: 1em;
 }
-
 button {
-  background-color: var(--gold-color);
-  color: #000;
-  font-weight: bold;
+  background-color: gold;
+  color: black;
+  font-weight: bold;
 }
-
-.bar {
-  height: 28px;
-  margin: 10px 0;
-  border-radius: 8px;
-  padding-right: 12px;
-  color: white;
-}
-
-.bar.player { background-color: var(--primary-color); }
-.bar.banker { background-color: var(--secondary-color); }
-.bar.tie { background-color: var(--accent-color); }
-
 .language-switch {
-  position: fixed;
-  top: 15px;
-  right: 15px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
+.bar {
+  height: 24px;
+  margin: 8px 0;
+  border-radius: 5px;
+  text-align: right;
+  padding-right: 10px;
+  font-weight: bold;
+  line-height: 24px;
+  color: #fff;
+}
+.bar.player { background-color: #007BFF; }
+.bar.banker { background-color: #DC3545; }
+.bar.tie { background-color: #28A745; }
