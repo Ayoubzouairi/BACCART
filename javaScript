@@ -1,0 +1,5 @@
+function updateBigRoad() {
+  const bigRoad = document.getElementById('bigRoad');
+  bigRoad.innerHTML = '';
+  // ... (الكود الخاص بملء البيانات)
+}
