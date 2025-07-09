@@ -3,83 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <title>BACCARAT</title>
-  <link rel="stylesheet" href="style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- ✅ تم تصحيح خطأ CSS بإضافة وسم style -->
+  <link rel="stylesheet" href="style.css">
   <style>
     body {
-      background-color: var(--dark-bg);
-      color: var(--primary-color);
+      background-color: #121212;
+      color: gold;
       font-family: 'Segoe UI', Tahoma, sans-serif;
-      font-size: var(--font-size-base);
+      padding: 2em;
       direction: rtl;
-      min-height: 100vh;
-      margin: 0;
+      text-align: center;
       transition: all 0.3s ease;
     }
-
     body.light-mode {
-      background-color: var(--light-bg);
+      background-color: #f5f5f5;
       color: #333;
     }
-
-    .container {
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 1rem;
-    }
-
-    .game-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-      margin-top: 1.5rem;
-    }
-
-    @media (min-width: 768px) {
-      .game-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .chart-container {
-        grid-column: span 2;
-      }
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 0.5rem;
-    }
-
-    .buttons {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.8rem;
-      margin-bottom: 1.5rem;
-    }
-
+    h1 { font-size: 2.5em; }
     .buttons button {
-      padding: 0.7rem 1.5rem;
-      font-size: 1rem;
+      padding: 0.7em 1.5em;
+      font-size: 1em;
+      margin: 0.5em;
       border: none;
       border-radius: 10px;
       cursor: pointer;
       transition: all 0.3s ease;
-      flex: 1 1 120px;
     }
-
     .player { background-color: #007bff; color: white; }
     .banker { background-color: #dc3545; color: white; }
     .tie { background-color: #28a745; color: white; }
     .reset { background-color: #555; color: gold; margin-top: 1em; }
-
     .language-container {
       position: absolute;
       top: 20px;
@@ -88,79 +41,64 @@
       align-items: center;
       gap: 10px;
     }
-
     .language, .amount {
       padding: 0.5em;
       font-size: 1em;
       width: 150px;
     }
-
     .result, .stats, .history, .balance, .ai-stats, .ai-advice {
-      margin-top: 1rem;
-      padding: 1rem;
+      margin-top: 1.5em;
+      font-size: 1.2em;
+      padding: 10px;
       border-radius: 8px;
-      background-color: var(--card-bg-dark);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      background-color: rgba(0,0,0,0.2);
     }
-
     body.light-mode .result, 
     body.light-mode .stats, 
     body.light-mode .history, 
     body.light-mode .balance, 
     body.light-mode .ai-stats, 
     body.light-mode .ai-advice {
-      background-color: var(--card-bg-light);
+      background-color: rgba(0,0,0,0.05);
     }
-
-    .chart-container {
-      margin-top: 2em;
-    }
-
     canvas {
+      margin-top: 2em;
       max-width: 100%;
-      height: auto;
     }
-
     .theme-toggle {
       background: none;
       border: none;
       font-size: 1.5em;
       cursor: pointer;
-      color: var(--primary-color);
+      color: gold;
     }
-
     body.light-mode .theme-toggle {
       color: #333;
     }
-
     .ai-advice {
-      border-left: 4px solid var(--primary-color);
+      border-left: 4px solid gold;
     }
-
     .probability {
       color: #4CAF50;
       font-weight: bold;
     }
-
     .hot {
       color: #FF5722;
       font-weight: bold;
     }
-
     .cold {
       color: #2196F3;
       font-weight: bold;
     }
-
+    /* أنماط جديدة للميجورك */
     .big-road-container {
-      margin-top: 1rem;
-      padding: 1rem;
-      background-color: var(--card-bg-dark);
+      margin-top: 2em;
+      padding: 1em;
+      background-color: rgba(0, 0, 0, 0.2);
       border-radius: 8px;
-      direction: ltr;
+      direction: ltr; /* اتجاه الرسم من اليسار لليمين */
       overflow-x: auto;
     }
-
     .big-road {
       display: inline-grid;
       grid-auto-flow: column;
@@ -168,7 +106,6 @@
       gap: 2px;
       padding: 10px;
     }
-
     .big-road-cell {
       width: 30px;
       height: 30px;
@@ -179,28 +116,293 @@
       font-weight: bold;
       font-size: 14px;
     }
-
-    .big-road-P { background-color: #007bff; color: white; }
-    .big-road-B { background-color: #dc3545; color: white; }
-    .big-road-T { background-color: #28a745; color: white; }
-
-    @media (max-width: 480px) {
-      .buttons {
-        flex-direction: column;
-      }
-      .buttons button {
-        width: 100%;
-      }
-      .amount {
-        width: 100% !important;
-      }
-    }
+    .big-road-P { background-color: #007bff; color: white; } /* لاعب */
+    .big-road-B { background-color: #dc3545; color: white; } /* مصرفي */
+    .big-road-T { background-color: #28a745; color: white; } /* تعادل */
   </style>
 </head>
 <body>
-  <!-- باقي الكود كما هو بدون تغيير -->
-  <!-- ✅ هنا يتم الحفاظ على كود HTML و JavaScript الخاص بك بدون تغيير -->
+  <div class="language-container">
+    <select id="langSelect" class="language">
+      <option value="ar-MA">🇲🇦 العربية</option>
+      <option value="en-US">🇺🇸 English</option>
+    </select>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+  </div>
 
-  <!-- إذا أردت مني أن أرسل لك الكود كاملاً في ملف ZIP أو نسخه بـ .html جاهز للتحميل، أخبرني فقط -->
+  <h1>BACCARAT</h1>
+  <p>📲 اختر نتيجة كل جولة:</p>
+  <div class="buttons">
+    <button class="player" onclick="addResult('P')">🔵 اللاعب</button>
+    <button class="banker" onclick="addResult('B')">🔴 المصرفي</button>
+    <button class="tie" onclick="addResult('T')">🟢 تعادل</button>
+  </div>
+
+  <input type="number" id="betAmount" class="amount" placeholder="💰 مبلغ الرهان بالدرهم" />
+  <br />
+
+  <div class="result" id="predictionResult"></div>
+  <div class="stats" id="statsResult"></div>
+  <div class="ai-stats" id="aiStats"></div>
+  <div class="ai-advice" id="aiAdvice"></div>
+  <div class="history" id="historyDisplay"></div>
+  <div class="balance" id="balanceDisplay">💵 الرصيد: 0 درهم</div>
+  <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
+
+  <canvas id="chart" width="400" height="150"></canvas>
+
+  <!-- قسم الميجورك المضاف -->
+  <div class="big-road-container">
+    <h2>Big Road (الميجورك)</h2>
+    <div id="bigRoad" class="big-road"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    let history = [];
+    let balance = 0;
+    let balanceHistory = [];
+    let currentStreak = { type: null, count: 0 };
+
+    // تحميل الوضع من localStorage إذا كان موجوداً
+    if (localStorage.getItem('theme') === 'light') {
+      document.body.classList.add('light-mode');
+    }
+
+    const ctx = document.getElementById('chart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'الرصيد',
+          data: [],
+          backgroundColor: 'gold',
+          borderColor: 'gold',
+          fill: false,
+        }]
+      },
+      options: {
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+    function toggleTheme() {
+      document.body.classList.toggle('light-mode');
+      const isLight = document.body.classList.contains('light-mode');
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    }
+
+    function speak(text, lang) {
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = lang;
+      speechSynthesis.speak(utter);
+    }
+
+    function updateChart() {
+      chart.data.labels = balanceHistory.map((_, i) => i + 1);
+      chart.data.datasets[0].data = balanceHistory;
+      chart.update();
+    }
+
+    // دالة تحديث الميجورك
+    function updateBigRoad() {
+      const bigRoadElement = document.getElementById('bigRoad');
+      bigRoadElement.innerHTML = '';
+      
+      let row = 0;
+      let col = 0;
+      const maxRows = 6; // الحد الأقصى للصفوف
+
+      // تصفية النتائج لاستبعاد التعادل (اختياري)
+      const filteredHistory = history.filter(result => result !== 'T');
+
+      for (let i = 0; i < filteredHistory.length; i++) {
+        const result = filteredHistory[i];
+        
+        // إذا كانت النتيجة مماثلة للسابقة، انتقل إلى الصف التالي
+        if (i > 0 && result === filteredHistory[i - 1]) {
+          row++;
+          if (row >= maxRows) {
+            row = 0;
+            col++;
+          }
+        } else {
+          row = 0;
+          if (i > 0) col++;
+        }
+
+        const cell = document.createElement('div');
+        cell.className = `big-road-cell big-road-${result}`;
+        cell.textContent = result === 'P' ? 'P' : 'B';
+        cell.style.gridColumn = col + 1;
+        cell.style.gridRow = row + 1;
+        bigRoadElement.appendChild(cell);
+      }
+    }
+
+    function addResult(result) {
+      history.push(result);
+      updateDisplay();
+      updateBigRoad(); // تحديث الميجورك
+      predict(result);
+      generateAdvice();
+    }
+
+    function updateDisplay() {
+      const displayText = history.map(r => {
+        if (r === 'P') return '🔵';
+        if (r === 'B') return '🔴';
+        if (r === 'T') return '🟢';
+      }).join(' ');
+      document.getElementById('historyDisplay').innerText = "جميع الجولات: " + displayText;
+
+      const totalRounds = history.length;
+      const count = { P: 0, B: 0, T: 0 };
+      history.forEach(r => { if (count[r] !== undefined) count[r]++; });
+
+      const statsText = `📊 عدد الجولات: ${totalRounds} | 🔵 لاعب: ${count.P} (${((count.P/totalRounds)*100).toFixed(1)}%) | 🔴 مصرفي: ${count.B} (${((count.B/totalRounds)*100).toFixed(1)}%) | 🟢 تعادل: ${count.T} (${((count.T/totalRounds)*100).toFixed(1)}%)`;
+      document.getElementById('aiStats').innerText = statsText;
+    }
+
+    function generateAdvice() {
+      const lang = document.getElementById('langSelect').value;
+      const isArabic = lang === 'ar-MA';
+      
+      if (history.length < 3) {
+        document.getElementById('aiAdvice').innerHTML = isArabic ? 
+          "⏳ انتظر المزيد من الجولات لتحليل الأنماط..." : 
+          "⏳ Wait for more rounds to analyze patterns...";
+        return;
+      }
+
+      const lastTen = history.slice(-10);
+      const counts = { P: 0, B: 0, T: 0 };
+      lastTen.forEach(r => counts[r]++);
+      
+      const mostFrequent = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+      const freqPercent = (counts[mostFrequent] / lastTen.length * 100).toFixed(1);
+      
+      let streakText = "";
+      if (currentStreak.count > 2) {
+        const typeName = isArabic ? 
+          (currentStreak.type === 'P' ? 'اللاعب' : currentStreak.type === 'B' ? 'المصرفي' : 'تعادل') :
+          (currentStreak.type === 'P' ? 'Player' : currentStreak.type === 'B' ? 'Banker' : 'Tie');
+        
+        streakText = isArabic ?
+          `📈 سلسلة ${typeName} مستمرة: ${currentStreak.count} جولات` :
+          `📈 ${typeName} streak: ${currentStreak.count} rounds`;
+      }
+
+      let hotColdText = "";
+      if (history.length >= 3) {
+        const hotCold = { P: 0, B: 0, T: 0 };
+        history.forEach(r => hotCold[r]++);
+        
+        hotColdText = isArabic ? "🔥 النتائج الساخنة (جميع الجولات): " : "🔥 Hot (all rounds): ";
+        Object.keys(hotCold).forEach(key => {
+          const typeName = isArabic ? 
+            (key === 'P' ? 'لاعب' : key === 'B' ? 'مصرفي' : 'تعادل') :
+            (key === 'P' ? 'Player' : key === 'B' ? 'Banker' : 'Tie');
+          
+          const percentage = (hotCold[key] / history.length * 100);
+          hotColdText += `<span class="${percentage > 35 ? 'hot' : 'cold'}">${typeName} ${hotCold[key]} (${percentage.toFixed(1)}%)</span> `;
+        });
+      }
+
+      let recommendation = "";
+      if (currentStreak.count >= 3) {
+        recommendation = isArabic ?
+          `💡 استمر في الرهان على ${currentStreak.type === 'P' ? 'اللاعب' : currentStreak.type === 'B' ? 'المصرفي' : 'تعادل'}` :
+          `💡 Keep betting on ${currentStreak.type === 'P' ? 'Player' : currentStreak.type === 'B' ? 'Banker' : 'Tie'}`;
+      } else if (parseFloat(freqPercent) > 50) {
+        const typeName = isArabic ?
+          (mostFrequent === 'P' ? 'اللاعب' : mostFrequent === 'B' ? 'المصرفي' : 'تعادل') :
+          (mostFrequent === 'P' ? 'Player' : mostFrequent === 'B' ? 'Banker' : 'Tie');
+        
+        recommendation = isArabic ?
+          `💡 رهان آمن على ${typeName} (${freqPercent}%)` :
+          `💡 Safe bet on ${typeName} (${freqPercent}%)`;
+      } else {
+        recommendation = isArabic ?
+          "💡 لا يوجد نمط واضح، استخدم استراتيجية متحفظة" :
+          "💡 No clear pattern, use conservative strategy";
+      }
+
+      document.getElementById('aiAdvice').innerHTML = `
+        ${streakText ? `<div>${streakText}</div>` : ''}
+        ${hotColdText ? `<div>${hotColdText}</div>` : ''}
+        <div class="probability">${recommendation}</div>
+      `;
+    }
+
+    function predict(actualResult) {
+      const lang = document.getElementById('langSelect').value;
+      const lastFive = history.slice(-5);
+      const count = { P: 0, B: 0, T: 0 };
+      lastFive.forEach(r => { if (count[r] !== undefined) count[r]++; });
+
+      const total = lastFive.length || 1;
+      const percent = {
+        P: ((count.P / total) * 100).toFixed(1),
+        B: ((count.B / total) * 100).toFixed(1),
+        T: ((count.T / total) * 100).toFixed(1)
+      };
+
+      let winner = 'P';
+      if (count.B >= count.P && count.B >= count.T) winner = 'B';
+      else if (count.T > count.P && count.T > count.B) winner = 'T';
+
+      const labels = {
+        ar: { P: 'اللاعب', B: 'المصرفي', T: 'تعادل' },
+        en: { P: 'Player', B: 'Banker', T: 'Tie' }
+      };
+
+      const label = lang === 'ar-MA' ? labels.ar[winner] : labels.en[winner];
+      const speechText = lang === 'ar-MA'
+        ? `توقع الجولة القادمة: ${label} بنسبة ${percent[winner]} بالمئة`
+        : `Next round prediction: ${label} with ${percent[winner]} percent`;
+
+      document.getElementById('predictionResult').innerText = speechText;
+      document.getElementById('statsResult').innerHTML =
+        `🔵 لاعب: <span class="probability">${percent.P}%</span> | 🔴 مصرفي: <span class="probability">${percent.B}%</span> | 🟢 تعادل: <span class="probability">${percent.T}%</span>`;
+
+      speak(speechText, lang);
+
+      const bet = parseFloat(document.getElementById('betAmount').value) || 0;
+      if (actualResult && winner && bet > 0) {
+        if (actualResult === winner) {
+          balance += bet;
+        } else {
+          balance -= bet;
+        }
+        balanceHistory.push(balance);
+        updateChart();
+        document.getElementById('balanceDisplay').innerText = `💵 الرصيد: ${balance} درهم`;
+      }
+    }
+
+    function resetData() {
+      history = [];
+      balance = 0;
+      balanceHistory = [];
+      currentStreak = { type: null, count: 0 };
+      updateChart();
+      updateBigRoad(); // مسح الميجورك عند الإعادة
+      document.getElementById('predictionResult').innerText = '';
+      document.getElementById('statsResult').innerText = '';
+      document.getElementById('aiStats').innerText = '';
+      document.getElementById('aiAdvice').innerText = '';
+      document.getElementById('historyDisplay').innerText = '';
+      document.getElementById('balanceDisplay').innerText = '💵 الرصيد: 0 درهم';
+    }
+
+    // تحديث الميجورك عند تحميل الصفحة إذا كانت هناك بيانات قديمة
+    if (history.length > 0) {
+      updateBigRoad();
+    }
+  </script>
 </body>
-</html>
+  </html>
