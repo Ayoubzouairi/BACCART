@@ -312,6 +312,15 @@
       // تحديث السلسلة الحالية
       if (result === currentStreak.type) {
         currentStreak.count++;
+        // تنبيه عند الوصول إلى 3 جولات متتالية
+        if (currentStreak.count === 3) {
+          const lang = document.getElementById('langSelect').value;
+          const message = lang === 'ar-MA' 
+            ? `📣 انتباه! سلسلة ${result === 'P' ? 'لاعب' : 'مصرفي'} مستمرة!` 
+            : `📣 Alert! ${result === 'P' ? 'Player' : 'Banker'} streak!`;
+          alert(message);
+          speak(message, lang);
+        }
       } else {
         currentStreak.type = result;
         currentStreak.count = 1;
