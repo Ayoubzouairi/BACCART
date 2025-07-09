@@ -77,20 +77,11 @@
     .ai-advice {
       border-left: 4px solid gold;
     }
-    .probability {
-      color: #4CAF50;
-      font-weight: bold;
-    }
-    .hot {
-      color: #FF5722;
-      font-weight: bold;
-    }
-    .cold {
-      color: #2196F3;
-      font-weight: bold;
-    }
+    .player-text { color: #007bff; }
+    .banker-text { color: #dc3545; }
+    .tie-text { color: #28a745; }
     
-    /* أنماط الجداول الجديدة */
+    /* أنماط الجداول */
     .results-table {
       width: 100%;
       border-collapse: collapse;
@@ -105,11 +96,8 @@
     body.light-mode .results-table td {
       border-color: rgba(0, 0, 0, 0.1);
     }
-    .player-text { color: #007bff; }
-    .banker-text { color: #dc3545; }
-    .tie-text { color: #28a745; }
     
-    /* تحسين الميجورك */
+    /* أنماط الميجورك */
     .big-road-container {
       margin-top: 2em;
       padding: 1em;
@@ -139,6 +127,63 @@
     .big-road-P { background-color: #007bff; color: white; }
     .big-road-B { background-color: #dc3545; color: white; }
     .big-road-T { background-color: #28a745; color: white; }
+    
+    /* أنماط جديدة للتوقعات */
+    .prediction-title {
+      color: gold;
+      font-size: 1.3em;
+      font-weight: bold;
+      margin-bottom: 5px;
+      text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+    }
+    
+    .prediction-value {
+      font-size: 1.2em;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 5px;
+      display: inline-block;
+    }
+    
+    .prediction-banker {
+      background-color: rgba(220, 53, 69, 0.2);
+      color: #dc3545;
+    }
+    
+    .prediction-player {
+      background-color: rgba(0, 123, 255, 0.2);
+      color: #007bff;
+    }
+    
+    .prediction-tie {
+      background-color: rgba(40, 167, 69, 0.2);
+      color: #28a745;
+    }
+    
+    /* أنماط الجدول الجديد للنتائج الساخنة */
+    .hot-results-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .hot-results-table th {
+      background-color: rgba(255, 215, 0, 0.1);
+      padding: 8px;
+      text-align: center;
+    }
+    
+    .hot-results-table td {
+      padding: 8px;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .hot { color: #FF5722; font-weight: bold; }
+    .cold { color: #2196F3; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -171,7 +216,7 @@
 
   <canvas id="chart" width="400" height="150"></canvas>
 
-  <!-- قسم الميجورك المضاف -->
+  <!-- قسم الميجورك -->
   <div class="big-road-container">
     <h2>Big Road (الميجورك)</h2>
     <div id="bigRoad" class="big-road"></div>
@@ -263,6 +308,15 @@
 
     function addResult(result) {
       history.push(result);
+      
+      // تحديث السلسلة الحالية
+      if (result === currentStreak.type) {
+        currentStreak.count++;
+      } else {
+        currentStreak.type = result;
+        currentStreak.count = 1;
+      }
+      
       updateDisplay();
       updateBigRoad();
       predict(result);
@@ -329,35 +383,45 @@
           `📈 ${typeName} streak: ${currentStreak.count} rounds`;
       }
 
-      let hotColdText = "";
-      if (history.length >= 3) {
-        const hotCold = { P: 0, B: 0, T: 0 };
-        history.forEach(r => hotCold[r]++);
-        
-        hotColdText = isArabic ? "🔥 النتائج الساخنة (جميع الجولات): " : "🔥 Hot (all rounds): ";
-        Object.keys(hotCold).forEach(key => {
-          const typeName = isArabic ? 
-            (key === 'P' ? 'لاعب' : key === 'B' ? 'مصرفي' : 'تعادل') :
-            (key === 'P' ? 'Player' : key === 'B' ? 'Banker' : 'Tie');
-          
-          const percentage = (hotCold[key] / history.length * 100);
-          hotColdText += `<span class="${percentage > 35 ? 'hot' : 'cold'}">${typeName} ${hotCold[key]} (${percentage.toFixed(1)}%)</span> `;
-        });
-      }
+      // جدول النتائج الساخنة
+      const hotResultsHTML = `
+        <table class="hot-results-table">
+          <tr>
+            <th>${isArabic ? 'النتيجة' : 'Result'}</th>
+            <th>${isArabic ? 'عدد المرات' : 'Count'}</th>
+            <th>${isArabic ? 'النسبة' : 'Percentage'}</th>
+          </tr>
+          <tr>
+            <td class="player-text">${isArabic ? 'لاعب' : 'Player'}</td>
+            <td>${counts.P}</td>
+            <td class="player-text">${((counts.P / lastTen.length) * 100).toFixed(1)}%</td>
+          </tr>
+          <tr>
+            <td class="banker-text">${isArabic ? 'مصرفي' : 'Banker'}</td>
+            <td>${counts.B}</td>
+            <td class="banker-text">${((counts.B / lastTen.length) * 100).toFixed(1)}%</td>
+          </tr>
+          <tr>
+            <td class="tie-text">${isArabic ? 'تعادل' : 'Tie'}</td>
+            <td>${counts.T}</td>
+            <td class="tie-text">${((counts.T / lastTen.length) * 100).toFixed(1)}%</td>
+          </tr>
+        </table>
+      `;
 
       let recommendation = "";
       if (currentStreak.count >= 3) {
         recommendation = isArabic ?
-          `💡 استمر في الرهان على ${currentStreak.type === 'P' ? 'اللاعب' : currentStreak.type === 'B' ? 'المصرفي' : 'تعادل'}` :
-          `💡 Keep betting on ${currentStreak.type === 'P' ? 'Player' : currentStreak.type === 'B' ? 'Banker' : 'Tie'}`;
+          `💡 استمر في الرهان على <span class="${currentStreak.type === 'P' ? 'player-text' : currentStreak.type === 'B' ? 'banker-text' : 'tie-text'}">${currentStreak.type === 'P' ? 'اللاعب' : currentStreak.type === 'B' ? 'المصرفي' : 'تعادل'}</span>` :
+          `💡 Keep betting on <span class="${currentStreak.type === 'P' ? 'player-text' : currentStreak.type === 'B' ? 'banker-text' : 'tie-text'}">${currentStreak.type === 'P' ? 'Player' : currentStreak.type === 'B' ? 'Banker' : 'Tie'}</span>`;
       } else if (parseFloat(freqPercent) > 50) {
         const typeName = isArabic ?
           (mostFrequent === 'P' ? 'اللاعب' : mostFrequent === 'B' ? 'المصرفي' : 'تعادل') :
           (mostFrequent === 'P' ? 'Player' : mostFrequent === 'B' ? 'Banker' : 'Tie');
         
         recommendation = isArabic ?
-          `💡 رهان آمن على ${typeName} (${freqPercent}%)` :
-          `💡 Safe bet on ${typeName} (${freqPercent}%)`;
+          `💡 رهان آمن على <span class="${mostFrequent === 'P' ? 'player-text' : mostFrequent === 'B' ? 'banker-text' : 'tie-text'}">${typeName}</span> (${freqPercent}%)` :
+          `💡 Safe bet on <span class="${mostFrequent === 'P' ? 'player-text' : mostFrequent === 'B' ? 'banker-text' : 'tie-text'}">${typeName}</span> (${freqPercent}%)`;
       } else {
         recommendation = isArabic ?
           "💡 لا يوجد نمط واضح، استخدم استراتيجية متحفظة" :
@@ -366,8 +430,8 @@
 
       document.getElementById('aiAdvice').innerHTML = `
         ${streakText ? `<div>${streakText}</div>` : ''}
-        ${hotColdText ? `<div>${hotColdText}</div>` : ''}
-        <div class="probability">${recommendation}</div>
+        ${hotResultsHTML}
+        <div style="margin-top: 10px;">${recommendation}</div>
       `;
     }
 
@@ -394,13 +458,28 @@
       };
 
       const label = lang === 'ar-MA' ? labels.ar[winner] : labels.en[winner];
+      const predictionClass = winner === 'P' ? 'prediction-player' : winner === 'B' ? 'prediction-banker' : 'prediction-tie';
+      
+      const predictionHTML = `
+        <div class="prediction-title">${lang === 'ar-MA' ? 'توقع الجولة القادمة:' : 'Next round prediction:'}</div>
+        <div class="prediction-value ${predictionClass}">
+          ${label} ${percent[winner]}%
+        </div>
+      `;
+
+      document.getElementById('predictionResult').innerHTML = predictionHTML;
+      
+      const statsHTML = `
+        <span class="player-text">🔵 لاعب: ${percent.P}%</span> | 
+        <span class="banker-text">🔴 مصرفي: ${percent.B}%</span> | 
+        <span class="tie-text">🟢 تعادل: ${percent.T}%</span>
+      `;
+      
+      document.getElementById('statsResult').innerHTML = statsHTML;
+
       const speechText = lang === 'ar-MA'
         ? `توقع الجولة القادمة: ${label} بنسبة ${percent[winner]} بالمئة`
         : `Next round prediction: ${label} with ${percent[winner]} percent`;
-
-      document.getElementById('predictionResult').innerText = speechText;
-      document.getElementById('statsResult').innerHTML =
-        `🔵 <span class="player-text">لاعب: ${percent.P}%</span> | 🔴 <span class="banker-text">مصرفي: ${percent.B}%</span> | 🟢 <span class="tie-text">تعادل: ${percent.T}%</span>`;
 
       speak(speechText, lang);
 
@@ -437,4 +516,4 @@
     }
   </script>
 </body>
-  </html>
+    </html>
