@@ -7,7 +7,6 @@
   --font-size-base: clamp(14px, 2vw, 18px);
 }
 
-/* التنسيق العام */
 body {
   background-color: var(--dark-bg);
   color: var(--primary-color);
@@ -24,167 +23,32 @@ body.light-mode {
   color: #333;
 }
 
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0.5rem;
-}
+/* ... أضف هنا باقي أنماطك الأخرى ... */
 
-/* نظام Grid للواجهة */
-.game-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  margin-top: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .game-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .chart-container {
-    grid-column: span 2;
-  }
-}
-
-/* العناصر التفاعلية */
-.buttons {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.8rem;
-  margin-bottom: 1.5rem;
-}
-
-.buttons button {
-  padding: 0.7rem 1.5rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  flex: 1 1 120px;
-}
-
-.player { background-color: #007bff; color: white; }
-.banker { background-color: #dc3545; color: white; }
-.tie { background-color: #28a745; color: white; }
-.reset { background-color: #555; color: gold; margin-top: 1em; }
-
-.language-container {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.language, .amount {
-  padding: 0.5em;
-  font-size: 1em;
-  width: 150px;
-}
-
-.result, .stats, .history, .balance, .ai-stats, .ai-advice {
-  margin-top: 1rem;
-  padding: 1rem;
-  border-radius: 8px;
-  background-color: var(--card-bg-dark);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
+/* إصلاحات CSS المطلوبة */
 body.light-mode .result, 
 body.light-mode .stats, 
 body.light-mode .history, 
 body.light-mode .balance, 
 body.light-mode .ai-stats, 
-body.light-mode .ai-advice {
-  background-color: var(--card-bg-light);
+body.light-mode .ai-advice { 
+  background-color: var(--card-bg-light); 
 }
 
-.chart-container {
-  margin-top: 2em;
+.theme-toggle { 
+  color: var(--primary-color); 
 }
 
-canvas {
-  max-width: 100%;
-  height: auto;
+.ai-advice { 
+  border-left: 4px solid var(--primary-color); 
 }
 
-.theme-toggle {
-  background: none;
-  border: none;
-  font-size: 1.5em;
-  cursor: pointer;
-  color: var(--primary-color);
+.big-road-container { 
+  background-color: var(--card-bg-dark); 
 }
-
-body.light-mode .theme-toggle {
-  color: #333;
-}
-
-.ai-advice {
-  border-left: 4px solid var(--primary-color);
-}
-
-.probability {
-  color: #4CAF50;
-  font-weight: bold;
-}
-
-.hot {
-  color: #FF5722;
-  font-weight: bold;
-}
-
-.cold {
-  color: #2196F3;
-  font-weight: bold;
-}
-
-/* أنماط الميجورك */
-.big-road-container {
-  margin-top: 1rem;
-  padding: 1rem;
-  background-color: var(--card-bg-dark);
-  border-radius: 8px;
-  direction: ltr;
-  overflow-x: auto;
-}
-
-.big-road {
-  display: inline-grid;
-  grid-auto-flow: column;
-  grid-template-rows: repeat(6, 30px);
-  gap: 2px;
-  padding: 10px;
-}
-
-.big-road-cell {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.big-road-P { background-color: #007bff; color: white; }
-.big-road-B { background-color: #dc3545; color: white; }
-.big-road-T { background-color: #28a745; color: white; }
 
 @media (max-width: 480px) {
-  .buttons {
-    flex-direction: column;
-  }
-  .buttons button {
-    width: 100%;
-  }
-  .amount {
-    width: 100% !important;
+  .amount { 
+    width: 100% !important; 
   }
 }
