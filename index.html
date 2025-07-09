@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>BACCARAT</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css">
   <style>
     body {
       background-color: #121212;
@@ -90,20 +89,40 @@
       color: #2196F3;
       font-weight: bold;
     }
-    /* أنماط جديدة للميجورك */
+    
+    /* أنماط الجداول الجديدة */
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1em 0;
+      text-align: center;
+    }
+    .results-table th, .results-table td {
+      padding: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    body.light-mode .results-table th, 
+    body.light-mode .results-table td {
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+    .player-text { color: #007bff; }
+    .banker-text { color: #dc3545; }
+    .tie-text { color: #28a745; }
+    
+    /* تحسين الميجورك */
     .big-road-container {
       margin-top: 2em;
       padding: 1em;
-      background-color: rgba(0, 0, 0, 0.2);
+      background-color: rgba(0, 0, 0, 0.3);
       border-radius: 8px;
-      direction: ltr; /* اتجاه الرسم من اليسار لليمين */
+      direction: ltr;
       overflow-x: auto;
     }
     .big-road {
       display: inline-grid;
       grid-auto-flow: column;
       grid-template-rows: repeat(6, 30px);
-      gap: 2px;
+      gap: 4px;
       padding: 10px;
     }
     .big-road-cell {
@@ -115,10 +134,11 @@
       justify-content: center;
       font-weight: bold;
       font-size: 14px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
-    .big-road-P { background-color: #007bff; color: white; } /* لاعب */
-    .big-road-B { background-color: #dc3545; color: white; } /* مصرفي */
-    .big-road-T { background-color: #28a745; color: white; } /* تعادل */
+    .big-road-P { background-color: #007bff; color: white; }
+    .big-road-B { background-color: #dc3545; color: white; }
+    .big-road-T { background-color: #28a745; color: white; }
   </style>
 </head>
 <body>
@@ -214,15 +234,13 @@
       
       let row = 0;
       let col = 0;
-      const maxRows = 6; // الحد الأقصى للصفوف
+      const maxRows = 6;
 
-      // تصفية النتائج لاستبعاد التعادل (اختياري)
       const filteredHistory = history.filter(result => result !== 'T');
 
       for (let i = 0; i < filteredHistory.length; i++) {
         const result = filteredHistory[i];
         
-        // إذا كانت النتيجة مماثلة للسابقة، انتقل إلى الصف التالي
         if (i > 0 && result === filteredHistory[i - 1]) {
           row++;
           if (row >= maxRows) {
@@ -246,7 +264,7 @@
     function addResult(result) {
       history.push(result);
       updateDisplay();
-      updateBigRoad(); // تحديث الميجورك
+      updateBigRoad();
       predict(result);
       generateAdvice();
     }
@@ -263,8 +281,23 @@
       const count = { P: 0, B: 0, T: 0 };
       history.forEach(r => { if (count[r] !== undefined) count[r]++; });
 
-      const statsText = `📊 عدد الجولات: ${totalRounds} | 🔵 لاعب: ${count.P} (${((count.P/totalRounds)*100).toFixed(1)}%) | 🔴 مصرفي: ${count.B} (${((count.B/totalRounds)*100).toFixed(1)}%) | 🟢 تعادل: ${count.T} (${((count.T/totalRounds)*100).toFixed(1)}%)`;
-      document.getElementById('aiStats').innerText = statsText;
+      const statsHTML = `
+        <table class="results-table">
+          <tr>
+            <th>عدد الجولات</th>
+            <th class="player-text">لاعب</th>
+            <th class="banker-text">مصرفي</th>
+            <th class="tie-text">تعادل</th>
+          </tr>
+          <tr>
+            <td>${totalRounds}</td>
+            <td class="player-text">${count.P} (${((count.P/totalRounds)*100).toFixed(1)}%)</td>
+            <td class="banker-text">${count.B} (${((count.B/totalRounds)*100).toFixed(1)}%)</td>
+            <td class="tie-text">${count.T} (${((count.T/totalRounds)*100).toFixed(1)}%)</td>
+          </tr>
+        </table>
+      `;
+      document.getElementById('aiStats').innerHTML = statsHTML;
     }
 
     function generateAdvice() {
@@ -367,7 +400,7 @@
 
       document.getElementById('predictionResult').innerText = speechText;
       document.getElementById('statsResult').innerHTML =
-        `🔵 لاعب: <span class="probability">${percent.P}%</span> | 🔴 مصرفي: <span class="probability">${percent.B}%</span> | 🟢 تعادل: <span class="probability">${percent.T}%</span>`;
+        `🔵 <span class="player-text">لاعب: ${percent.P}%</span> | 🔴 <span class="banker-text">مصرفي: ${percent.B}%</span> | 🟢 <span class="tie-text">تعادل: ${percent.T}%</span>`;
 
       speak(speechText, lang);
 
@@ -390,7 +423,7 @@
       balanceHistory = [];
       currentStreak = { type: null, count: 0 };
       updateChart();
-      updateBigRoad(); // مسح الميجورك عند الإعادة
+      updateBigRoad();
       document.getElementById('predictionResult').innerText = '';
       document.getElementById('statsResult').innerText = '';
       document.getElementById('aiStats').innerText = '';
@@ -399,7 +432,6 @@
       document.getElementById('balanceDisplay').innerText = '💵 الرصيد: 0 درهم';
     }
 
-    // تحديث الميجورك عند تحميل الصفحة إذا كانت هناك بيانات قديمة
     if (history.length > 0) {
       updateBigRoad();
     }
