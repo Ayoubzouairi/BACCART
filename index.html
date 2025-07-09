@@ -32,11 +32,18 @@
     .banker { background-color: #dc3545; color: white; }
     .tie { background-color: #28a745; color: white; }
     .reset { background-color: #555; color: gold; margin-top: 1em; }
+    .language-container {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
     .language, .amount {
-      margin-top: 1em;
       padding: 0.5em;
       font-size: 1em;
-      width: 220px;
+      width: 150px;
     }
     .result, .stats, .history, .balance, .ai-stats, .ai-advice {
       margin-top: 1.5em;
@@ -58,13 +65,14 @@
       max-width: 100%;
     }
     .theme-toggle {
-      position: absolute;
-      top: 20px;
-      left: 20px;
       background: none;
       border: none;
       font-size: 1.5em;
       cursor: pointer;
+      color: gold;
+    }
+    body.light-mode .theme-toggle {
+      color: #333;
     }
     .ai-advice {
       border-left: 4px solid gold;
@@ -113,7 +121,14 @@
   </style>
 </head>
 <body>
-  <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+  <div class="language-container">
+    <select id="langSelect" class="language">
+      <option value="ar-MA">🇲🇦 العربية</option>
+      <option value="en-US">🇺🇸 English</option>
+    </select>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+  </div>
+
   <h1>BACCARAT</h1>
   <p>📲 اختر نتيجة كل جولة:</p>
   <div class="buttons">
@@ -124,10 +139,6 @@
 
   <input type="number" id="betAmount" class="amount" placeholder="💰 مبلغ الرهان بالدرهم" />
   <br />
-  <select id="langSelect" class="language">
-    <option value="ar-MA">🇲🇦 العربية</option>
-    <option value="en-US">🇺🇸 English</option>
-  </select>
 
   <div class="result" id="predictionResult"></div>
   <div class="stats" id="statsResult"></div>
@@ -393,4 +404,4 @@
     }
   </script>
 </body>
-  </html>
+</html>
