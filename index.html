@@ -81,7 +81,6 @@
     .banker-text { color: #dc3545; }
     .tie-text { color: #28a745; }
     
-    /* أنماط الجداول */
     .results-table {
       width: 100%;
       border-collapse: collapse;
@@ -97,7 +96,6 @@
       border-color: rgba(0, 0, 0, 0.1);
     }
     
-    /* أنماط الميجورك */
     .big-road-container {
       margin-top: 2em;
       padding: 1em;
@@ -128,7 +126,6 @@
     .big-road-B { background-color: #dc3545; color: white; }
     .big-road-T { background-color: #28a745; color: white; }
     
-    /* أنماط جديدة للتوقعات */
     .prediction-title {
       color: gold;
       font-size: 1.3em;
@@ -160,7 +157,6 @@
       color: #28a745;
     }
     
-    /* أنماط الجدول الجديد للنتائج الساخنة */
     .hot-results-table {
       width: 100%;
       border-collapse: collapse;
@@ -185,7 +181,6 @@
     .hot { color: #FF5722; font-weight: bold; }
     .cold { color: #2196F3; font-weight: bold; }
     
-    /* أنماط جديدة لسجل الرهانات */
     .bets-history-table {
       width: 100%;
       margin: 10px 0;
@@ -207,7 +202,6 @@
     .win { color: #28a745; font-weight: bold; }
     .loss { color: #dc3545; font-weight: bold; }
     
-    /* أنماط تحليل الأداء */
     .performance-summary {
       margin-top: 20px;
       padding: 15px;
@@ -230,17 +224,15 @@
       border-collapse: collapse;
     }
     
-    .bet-selection {
+    .bet-amount-container {
       margin: 15px 0;
     }
     
-    .bet-selection label {
-      margin: 0 10px;
-      cursor: pointer;
-    }
-    
-    .bet-selection input[type="radio"] {
-      margin-left: 5px;
+    .bet-amount-container input {
+      padding: 10px;
+      font-size: 1em;
+      width: 200px;
+      text-align: center;
     }
   </style>
 </head>
@@ -254,27 +246,17 @@
   </div>
 
   <h1>BACCARAT</h1>
-  <p>📲 اختر نتيجة كل جولة:</p>
+  
+  <div class="bet-amount-container">
+    <input type="number" id="betAmount" class="amount" placeholder="💰 مبلغ الرهان بالدرهم" min="1" />
+  </div>
+  
+  <p>📲 اختر نتيجة الجولة:</p>
   <div class="buttons">
-    <button class="player" onclick="addResult('P')">🔵 اللاعب</button>
-    <button class="banker" onclick="addResult('B')">🔴 المصرفي</button>
-    <button class="tie" onclick="addResult('T')">🟢 تعادل</button>
+    <button class="player" onclick="addResult('P')">🔵 اللاعب (1:1)</button>
+    <button class="banker" onclick="addResult('B')">🔴 المصرفي (0.95:1)</button>
+    <button class="tie" onclick="addResult('T')">🟢 تعادل (8:1)</button>
   </div>
-
-  <div class="bet-selection">
-    <label>
-      <input type="radio" name="betOn" value="P" checked> 🔵 اللاعب
-    </label>
-    <label>
-      <input type="radio" name="betOn" value="B"> 🔴 المصرفي
-    </label>
-    <label>
-      <input type="radio" name="betOn" value="T"> 🟢 تعادل
-    </label>
-  </div>
-
-  <input type="number" id="betAmount" class="amount" placeholder="💰 مبلغ الرهان بالدرهم" />
-  <br />
 
   <div class="result" id="predictionResult"></div>
   <div class="stats" id="statsResult"></div>
@@ -322,7 +304,6 @@
 
   <canvas id="chart" width="400" height="150"></canvas>
 
-  <!-- قسم الميجورك -->
   <div class="big-road-container">
     <h2>Big Road (الميجورك)</h2>
     <div id="bigRoad" class="big-road"></div>
@@ -337,7 +318,6 @@
     let betsHistory = [];
     let showBetsHistory = false;
 
-    // تحميل الوضع من localStorage إذا كان موجوداً
     if (localStorage.getItem('theme') === 'light') {
       document.body.classList.add('light-mode');
     }
@@ -413,17 +393,13 @@
       }
     }
 
-    function getCurrentBetSelection() {
-      const selected = document.querySelector('input[name="betOn"]:checked');
-      return selected ? selected.value : null;
-    }
-
     function calculateProfit(betOn, outcome, amount) {
       if (betOn === outcome) {
-        if (betOn === 'T') return amount * 8;
-        return amount * 1.95;
+        if (betOn === 'T') return amount * 8; // تعادل 8:1
+        if (betOn === 'B') return amount * 0.95; // مصرفي مع خصم 5%
+        return amount * 1; // لاعب 1:1
       }
-      return -amount;
+      return -amount; // خسارة
     }
 
     function updateBalance(profit) {
@@ -472,7 +448,6 @@
       const lang = document.getElementById('langSelect').value;
       const isArabic = lang === 'ar-MA';
       
-      // حساب الإحصائيات العامة
       const totalBets = betsHistory.length;
       const totalWins = betsHistory.filter(b => b.profit >= 0).length;
       const totalLosses = totalBets - totalWins;
@@ -498,7 +473,6 @@
         </div>
       `;
       
-      // حساب الأداء حسب نوع الرهان
       const types = ['P', 'B', 'T'];
       performanceByType.innerHTML = '';
       
@@ -540,7 +514,11 @@
 
     function addResult(result) {
       const betAmount = parseFloat(document.getElementById('betAmount').value) || 0;
-      const betOn = getCurrentBetSelection();
+      
+      if (betAmount <= 0) {
+        alert("الرجاء إدخال مبلغ رهان صحيح");
+        return;
+      }
       
       history.push(result);
       
@@ -552,25 +530,24 @@
         currentStreak.count = 1;
       }
       
-      if (betAmount > 0 && betOn) {
-        const round = history.length;
-        const profit = calculateProfit(betOn, result, betAmount);
-        
-        betsHistory.push({
-          round,
-          betOn,
-          amount: betAmount,
-          outcome: result,
-          profit,
-          timestamp: new Date()
-        });
-        
-        updateBalance(profit);
-        
-        if (showBetsHistory) {
-          updateBetsHistory();
-          updatePerformanceSummary();
-        }
+      const round = history.length;
+      const betOn = result; // الرهان على نفس النتيجة التي تم اختيارها
+      const profit = calculateProfit(betOn, result, betAmount);
+      
+      betsHistory.push({
+        round,
+        betOn,
+        amount: betAmount,
+        outcome: result,
+        profit,
+        timestamp: new Date()
+      });
+      
+      updateBalance(profit);
+      
+      if (showBetsHistory) {
+        updateBetsHistory();
+        updatePerformanceSummary();
       }
       
       updateDisplay();
@@ -639,7 +616,6 @@
           `📈 ${typeName} streak: ${currentStreak.count} rounds`;
       }
 
-      // جدول النتائج الساخنة
       const hotResultsHTML = `
         <table class="hot-results-table">
           <tr>
@@ -765,4 +741,4 @@
     }
   </script>
 </body>
-        </html>
+  </html>
