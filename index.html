@@ -7,7 +7,8 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
+      background-color: #121212;
+      color: gold;
       margin: 0;
       padding: 20px;
       text-align: center;
@@ -17,20 +18,21 @@
     .container {
       max-width: 800px;
       margin: 0 auto;
-      background-color: #fff;
+      background-color: rgba(0, 0, 0, 0.3);
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
     }
     
     h1 {
-      color: #2c3e50;
+      color: gold;
+      margin-bottom: 20px;
     }
     
     .setup-panel {
       margin: 20px 0;
       padding: 15px;
-      background-color: #f8f9fa;
+      background-color: rgba(255, 215, 0, 0.1);
       border-radius: 8px;
     }
     
@@ -39,14 +41,16 @@
       width: 150px;
       font-size: 16px;
       text-align: center;
-      border: 2px solid #3498db;
+      border: 2px solid gold;
       border-radius: 5px;
       margin: 0 10px;
+      background-color: rgba(0, 0, 0, 0.3);
+      color: white;
     }
     
     .setup-panel button {
       padding: 10px 20px;
-      background-color: #2ecc71;
+      background-color: #28a745;
       color: white;
       border: none;
       border-radius: 5px;
@@ -68,8 +72,10 @@
       width: 150px;
       font-size: 16px;
       text-align: center;
-      border: 2px solid #3498db;
+      border: 2px solid gold;
       border-radius: 5px;
+      background-color: rgba(0, 0, 0, 0.3);
+      color: white;
     }
     
     .buttons {
@@ -90,17 +96,17 @@
     }
     
     .player-btn {
-      background-color: #3498db;
+      background-color: #007bff;
       color: white;
     }
     
     .banker-btn {
-      background-color: #e74c3c;
+      background-color: #dc3545;
       color: white;
     }
     
     .tie-btn {
-      background-color: #2ecc71;
+      background-color: #28a745;
       color: white;
     }
     
@@ -108,13 +114,13 @@
       font-size: 24px;
       font-weight: bold;
       margin: 20px 0;
-      color: #2c3e50;
+      color: gold;
     }
     
     .history {
       margin-top: 20px;
       padding: 15px;
-      background-color: #f8f9fa;
+      background-color: rgba(255, 215, 0, 0.1);
       border-radius: 8px;
       min-height: 50px;
     }
@@ -132,19 +138,19 @@
     }
     
     .player-stat {
-      background-color: #3498db36;
+      background-color: rgba(0, 123, 255, 0.2);
     }
     
     .banker-stat {
-      background-color: #e74c3c36;
+      background-color: rgba(220, 53, 69, 0.2);
     }
     
     .tie-stat {
-      background-color: #2ecc7136;
+      background-color: rgba(40, 167, 69, 0.2);
     }
     
     .reset-btn {
-      background-color: #95a5a6;
+      background-color: #6c757d;
       color: white;
       margin-top: 20px;
     }
@@ -158,14 +164,47 @@
     }
     
     .win {
-      background-color: #d4edda;
-      color: #155724;
+      background-color: rgba(40, 167, 69, 0.3);
+      color: #d4edda;
     }
     
     .loss {
-      background-color: #f8d7da;
-      color: #721c24;
+      background-color: rgba(220, 53, 69, 0.3);
+      color: #f8d7da;
     }
+    
+    .big-road-container {
+      margin-top: 2em;
+      padding: 1em;
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      direction: ltr;
+      overflow-x: auto;
+    }
+    
+    .big-road {
+      display: inline-grid;
+      grid-auto-flow: column;
+      grid-template-rows: repeat(6, 30px);
+      gap: 4px;
+      padding: 10px;
+    }
+    
+    .big-road-cell {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .big-road-P { background-color: #007bff; color: white; }
+    .big-road-B { background-color: #dc3545; color: white; }
+    .big-road-T { background-color: #28a745; color: white; }
   </style>
 </head>
 <body>
@@ -222,6 +261,11 @@
         </div>
       </div>
       
+      <div class="big-road-container">
+        <h3>Big Road (الميجورك)</h3>
+        <div id="bigRoad" class="big-road"></div>
+      </div>
+      
       <button class="reset-btn" onclick="resetGame()">إعادة تعيين اللعبة</button>
     </div>
   </div>
@@ -240,7 +284,7 @@
     function startGame() {
       const initialBalance = parseInt(document.getElementById('initialBalance').value);
       
-      if (isNaN(initialBalance) {
+      if (isNaN(initialBalance)) {
         alert("الرجاء إدخال مبلغ صحيح للرصيد الأولي");
         return;
       }
@@ -271,6 +315,43 @@
         document.getElementById('playerPercent').textContent = Math.round((stats.player / totalGames) * 100) + '%';
         document.getElementById('bankerPercent').textContent = Math.round((stats.banker / totalGames) * 100) + '%';
         document.getElementById('tiePercent').textContent = Math.round((stats.tie / totalGames) * 100) + '%';
+      }
+      
+      // تحديث الميجورك
+      updateBigRoad();
+    }
+    
+    // تحديث الميجورك
+    function updateBigRoad() {
+      const bigRoadElement = document.getElementById('bigRoad');
+      bigRoadElement.innerHTML = '';
+      
+      let row = 0;
+      let col = 0;
+      const maxRows = 6;
+
+      const filteredHistory = gameHistory.filter(result => result !== 'T');
+
+      for (let i = 0; i < filteredHistory.length; i++) {
+        const result = filteredHistory[i];
+        
+        if (i > 0 && result === filteredHistory[i - 1]) {
+          row++;
+          if (row >= maxRows) {
+            row = 0;
+            col++;
+          }
+        } else {
+          row = 0;
+          if (i > 0) col++;
+        }
+
+        const cell = document.createElement('div');
+        cell.className = `big-road-cell big-road-${result === 'player' ? 'P' : 'B'}`;
+        cell.textContent = result === 'player' ? 'P' : 'B';
+        cell.style.gridColumn = col + 1;
+        cell.style.gridRow = row + 1;
+        bigRoadElement.appendChild(cell);
       }
     }
     
@@ -316,8 +397,11 @@
         winAmount = -betAmount;
       }
       
+      // تحديث الرصيد
+      balance += winAmount;
+      
       // تحديث السجلات
-      gameHistory.push(result === 'player' ? '🔵' : result === 'banker' ? '🔴' : '🟢');
+      gameHistory.push(result);
       stats[result]++;
       
       // عرض نتيجة الجولة
