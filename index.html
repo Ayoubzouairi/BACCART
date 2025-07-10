@@ -403,7 +403,7 @@
   <!-- تصميم جديد لمبلغ الرهان -->
   <div class="bet-amount-container">
     <label for="betAmount">💰 مبلغ الرهان بالدرهم</label>
-    <input type="number" id="betAmount" class="amount" placeholder="أدخل المبلغ" min="1" step="1" />
+    <input type="number" id="betAmount" class="amount" placeholder="أدخل المبلغ (اختياري)" min="1" step="1" />
   </div>
   
   <p>📲 اختر نتيجة الجولة:</p>
@@ -482,7 +482,7 @@
   <script>
     let history = [];
     let balance = 0;
-    let balanceHistory = [];
+    let balanceHistory = [0]; // بدء الرصيد من الصفر
     let currentStreak = { type: null, count: 0 };
     let betsHistory = [];
     let showBetsHistory = false;
@@ -547,7 +547,7 @@
     }
 
     function updateChart() {
-      chart.data.labels = balanceHistory.map((_, i) => i + 1);
+      chart.data.labels = balanceHistory.map((_, i) => i);
       chart.data.datasets[0].data = balanceHistory;
       chart.update();
     }
@@ -586,6 +586,8 @@
     }
 
     function calculateProfit(betOn, outcome, amount) {
+      if (!amount || amount <= 0) return 0; // لا ربح ولا خسارة إذا لم يتم الرهان
+      
       if (betOn === outcome) {
         if (betOn === 'T') return amount * 8; // تعادل 8:1
         if (betOn === 'B') return amount * 0.95; // مصرفي مع خصم 5%
@@ -628,15 +630,15 @@
           (bet.betOn === 'P' ? 'لاعب' : bet.betOn === 'B' ? 'مصرفي' : 'تعادل') :
           (bet.betOn === 'P' ? 'Player' : bet.betOn === 'B' ? 'Banker' : 'Tie');
         
-        const profitClass = bet.profit >= 0 ? 'win' : 'loss';
-        const profitSign = bet.profit >= 0 ? '+' : '';
+        const profitClass = bet.profit > 0 ? 'win' : bet.profit < 0 ? 'loss' : '';
+        const profitSign = bet.profit > 0 ? '+' : '';
         
         row.innerHTML = `
           <td>${bet.round}</td>
           <td>${betOnText}</td>
-          <td>${bet.amount.toFixed(2)} درهم</td>
+          <td>${bet.amount > 0 ? bet.amount.toFixed(2) + ' درهم' : '-'}</td>
           <td>${outcomeText}</td>
-          <td class="${profitClass}">${profitSign}${bet.profit.toFixed(2)} درهم</td>
+          <td class="${profitClass}">${bet.amount > 0 ? (profitSign + bet.profit.toFixed(2) + ' درهم') : '-'}</td>
         `;
         tbody.appendChild(row);
       });
@@ -649,11 +651,13 @@
       const lang = document.getElementById('langSelect').value;
       const isArabic = lang === 'ar-MA';
       
-      const totalBets = betsHistory.length;
-      const totalWins = betsHistory.filter(b => b.profit >= 0).length;
-      const totalLosses = totalBets - totalWins;
+      // حساب فقط الرهانات التي لها مبلغ (تجاهل الرهانات الصفرية)
+      const activeBets = betsHistory.filter(bet => bet.amount > 0);
+      const totalBets = activeBets.length;
+      const totalWins = activeBets.filter(b => b.profit > 0).length;
+      const totalLosses = activeBets.filter(b => b.profit < 0).length;
       const winRate = totalBets > 0 ? (totalWins / totalBets * 100).toFixed(1) : 0;
-      const totalProfit = betsHistory.reduce((sum, bet) => sum + bet.profit, 0);
+      const totalProfit = activeBets.reduce((sum, bet) => sum + bet.profit, 0);
       
       overallStats.innerHTML = `
         <div>
@@ -678,10 +682,10 @@
       performanceByType.innerHTML = '';
       
       types.forEach(type => {
-        const typeBets = betsHistory.filter(b => b.betOn === type);
+        const typeBets = activeBets.filter(b => b.betOn === type);
         const typeTotal = typeBets.length;
-        const typeWins = typeBets.filter(b => b.profit >= 0).length;
-        const typeLosses = typeTotal - typeWins;
+        const typeWins = typeBets.filter(b => b.profit > 0).length;
+        const typeLosses = typeBets.filter(b => b.profit < 0).length;
         const typeWinRate = typeTotal > 0 ? (typeWins / typeTotal * 100).toFixed(1) : 0;
         const typeProfit = typeBets.reduce((sum, bet) => sum + bet.profit, 0);
         
@@ -714,12 +718,11 @@
     }
 
     function addResult(result) {
-      const betAmount = parseFloat(document.getElementById('betAmount').value) || 0;
+      const betAmountInput = document.getElementById('betAmount');
+      const betAmount = parseFloat(betAmountInput.value) || 0;
       
-      if (betAmount <= 0) {
-        alert("الرجاء إدخال مبلغ رهان صحيح");
-        return;
-      }
+      // مسح حقل الرهان بعد كل جولة
+      betAmountInput.value = '';
       
       history.push(result);
       
@@ -920,28 +923,29 @@
     }
 
     function resetData() {
-      history = [];
-      balance = 0;
-      balanceHistory = [];
-      betsHistory = [];
-      currentStreak = { type: null, count: 0 };
-      updateChart();
-      updateBigRoad();
-      document.getElementById('predictionResult').innerText = '';
-      document.getElementById('statsResult').innerText = '';
-      document.getElementById('aiStats').innerText = '';
-      document.getElementById('aiAdvice').innerText = '';
-      document.getElementById('historyDisplay').innerText = '';
-      document.getElementById('balanceValue').textContent = '0';
-      document.getElementById('betsHistoryBody').innerHTML = '';
-      document.getElementById('performanceByType').innerHTML = '';
-      document.getElementById('overallStats').innerHTML = '';
-      document.getElementById('betAmount').value = '';
+      if (confirm("هل أنت متأكد من أنك تريد إعادة تعيين جميع البيانات؟")) {
+        history = [];
+        balance = 0;
+        balanceHistory = [0];
+        betsHistory = [];
+        currentStreak = { type: null, count: 0 };
+        updateChart();
+        updateBigRoad();
+        document.getElementById('predictionResult').innerText = '';
+        document.getElementById('statsResult').innerText = '';
+        document.getElementById('aiStats').innerText = '';
+        document.getElementById('aiAdvice').innerText = '';
+        document.getElementById('historyDisplay').innerText = '';
+        document.getElementById('balanceValue').textContent = '0';
+        document.getElementById('betsHistoryBody').innerHTML = '';
+        document.getElementById('performanceByType').innerHTML = '';
+        document.getElementById('overallStats').innerHTML = '';
+        document.getElementById('betAmount').value = '';
+      }
     }
 
-    if (history.length > 0) {
-      updateBigRoad();
-    }
+    // تحديث الرسم البياني عند التحميل
+    updateChart();
   </script>
 </body>
 </html>
