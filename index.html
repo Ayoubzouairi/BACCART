@@ -18,20 +18,105 @@
       background-color: #f5f5f5;
       color: #333;
     }
-    h1 { font-size: 2.5em; }
-    .buttons button {
-      padding: 0.7em 1.5em;
-      font-size: 1em;
-      margin: 0.5em;
-      border: none;
+    h1 { font-size: 2.5em; margin-bottom: 20px; }
+    
+    /* تصميم جديد لمبلغ الرهان */
+    .bet-amount-container {
+      margin: 20px auto;
+      padding: 15px;
+      background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
+      border-radius: 15px;
+      max-width: 300px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,215,0,0.3);
+    }
+    
+    .bet-amount-container label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.1em;
+      color: gold;
+      font-weight: bold;
+    }
+    
+    .bet-amount-container input {
+      padding: 12px 15px;
+      font-size: 1.2em;
+      width: 80%;
+      text-align: center;
       border-radius: 10px;
-      cursor: pointer;
+      border: 2px solid gold;
+      background-color: rgba(0,0,0,0.3);
+      color: white;
       transition: all 0.3s ease;
     }
-    .player { background-color: #007bff; color: white; }
-    .banker { background-color: #dc3545; color: white; }
-    .tie { background-color: #28a745; color: white; }
-    .reset { background-color: #555; color: gold; margin-top: 1em; }
+    
+    .bet-amount-container input:focus {
+      outline: none;
+      border-color: #ffd700;
+      box-shadow: 0 0 10px rgba(255,215,0,0.5);
+    }
+    
+    .buttons {
+      margin-top: 20px;
+    }
+    
+    .buttons button {
+      padding: 1em 1.8em;
+      font-size: 1.1em;
+      margin: 0.5em;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      min-width: 120px;
+    }
+    
+    .player { 
+      background-color: #007bff; 
+      color: white; 
+      border-bottom: 4px solid #0056b3;
+    }
+    .player:hover {
+      background-color: #0069d9;
+      transform: translateY(-2px);
+    }
+    
+    .banker { 
+      background-color: #dc3545; 
+      color: white;
+      border-bottom: 4px solid #a71d2a;
+    }
+    .banker:hover {
+      background-color: #c82333;
+      transform: translateY(-2px);
+    }
+    
+    .tie { 
+      background-color: #28a745; 
+      color: white;
+      border-bottom: 4px solid #1e7e34;
+    }
+    .tie:hover {
+      background-color: #218838;
+      transform: translateY(-2px);
+    }
+    
+    .reset { 
+      background-color: #555; 
+      color: gold; 
+      margin-top: 1.5em;
+      padding: 0.8em 2em;
+      border-bottom: 4px solid #333;
+    }
+    .reset:hover {
+      background-color: #444;
+      transform: translateY(-2px);
+    }
+    
+    /* بقية الأنماط... */
     .language-container {
       position: absolute;
       top: 20px;
@@ -44,13 +129,18 @@
       padding: 0.5em;
       font-size: 1em;
       width: 150px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,215,0,0.3);
+      background-color: rgba(0,0,0,0.3);
+      color: white;
     }
     .result, .stats, .history, .balance, .ai-stats, .ai-advice {
       margin-top: 1.5em;
       font-size: 1.2em;
-      padding: 10px;
-      border-radius: 8px;
+      padding: 15px;
+      border-radius: 12px;
       background-color: rgba(0,0,0,0.2);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     body.light-mode .result, 
     body.light-mode .stats, 
@@ -63,6 +153,9 @@
     canvas {
       margin-top: 2em;
       max-width: 100%;
+      background-color: rgba(0,0,0,0.2);
+      border-radius: 12px;
+      padding: 10px;
     }
     .theme-toggle {
       background: none;
@@ -70,6 +163,10 @@
       font-size: 1.5em;
       cursor: pointer;
       color: gold;
+      transition: transform 0.3s ease;
+    }
+    .theme-toggle:hover {
+      transform: rotate(30deg);
     }
     body.light-mode .theme-toggle {
       color: #333;
@@ -88,7 +185,7 @@
       text-align: center;
     }
     .results-table th, .results-table td {
-      padding: 8px;
+      padding: 10px;
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
     body.light-mode .results-table th, 
@@ -100,9 +197,10 @@
       margin-top: 2em;
       padding: 1em;
       background-color: rgba(0, 0, 0, 0.3);
-      border-radius: 8px;
+      border-radius: 12px;
       direction: ltr;
       overflow-x: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
     .big-road {
       display: inline-grid;
@@ -137,43 +235,50 @@
     .prediction-value {
       font-size: 1.2em;
       font-weight: bold;
-      padding: 5px 10px;
-      border-radius: 5px;
+      padding: 8px 15px;
+      border-radius: 8px;
       display: inline-block;
+      margin: 5px 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     
     .prediction-banker {
       background-color: rgba(220, 53, 69, 0.2);
       color: #dc3545;
+      border: 1px solid #dc3545;
     }
     
     .prediction-player {
       background-color: rgba(0, 123, 255, 0.2);
       color: #007bff;
+      border: 1px solid #007bff;
     }
     
     .prediction-tie {
       background-color: rgba(40, 167, 69, 0.2);
       color: #28a745;
+      border: 1px solid #28a745;
     }
     
     .hot-results-table {
       width: 100%;
       border-collapse: collapse;
-      margin: 10px 0;
+      margin: 15px 0;
       background-color: rgba(0, 0, 0, 0.2);
-      border-radius: 8px;
+      border-radius: 10px;
       overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     
     .hot-results-table th {
       background-color: rgba(255, 215, 0, 0.1);
-      padding: 8px;
+      padding: 10px;
       text-align: center;
+      font-weight: bold;
     }
     
     .hot-results-table td {
-      padding: 8px;
+      padding: 10px;
       text-align: center;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
@@ -183,20 +288,24 @@
     
     .bets-history-table {
       width: 100%;
-      margin: 10px 0;
+      margin: 15px 0;
       border-collapse: collapse;
       background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     
     .bets-history-table th, 
     .bets-history-table td {
-      padding: 8px 12px;
+      padding: 10px 12px;
       text-align: center;
       border: 1px solid rgba(255, 215, 0, 0.2);
     }
     
     .bets-history-table th {
       background-color: rgba(255, 215, 0, 0.1);
+      font-weight: bold;
     }
     
     .win { color: #28a745; font-weight: bold; }
@@ -204,35 +313,79 @@
     
     .performance-summary {
       margin-top: 20px;
-      padding: 15px;
+      padding: 20px;
       background-color: rgba(0, 0, 0, 0.2);
-      border-radius: 8px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     
     .overall-stats {
       display: flex;
       justify-content: space-around;
+      flex-wrap: wrap;
       margin-bottom: 15px;
-      padding: 10px;
+      padding: 15px;
       background-color: rgba(255, 215, 0, 0.05);
-      border-radius: 5px;
+      border-radius: 10px;
+      gap: 10px;
+    }
+    
+    .overall-stats div {
+      padding: 8px 12px;
+      border-radius: 8px;
+      background-color: rgba(0,0,0,0.2);
+      min-width: 120px;
     }
     
     .performance-by-type {
       width: 100%;
-      margin-top: 10px;
+      margin-top: 15px;
       border-collapse: collapse;
+      background-color: rgba(0,0,0,0.1);
+      border-radius: 10px;
     }
     
-    .bet-amount-container {
-      margin: 15px 0;
+    .performance-by-type th {
+      padding: 12px;
+      background-color: rgba(255,215,0,0.1);
     }
     
-    .bet-amount-container input {
+    .performance-by-type td {
       padding: 10px;
-      font-size: 1em;
-      width: 200px;
-      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .bet-odds {
+      font-size: 0.9em;
+      opacity: 0.8;
+      margin-top: 5px;
+    }
+    
+    .balance-display {
+      font-size: 1.3em;
+      font-weight: bold;
+      padding: 12px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
+      display: inline-block;
+      min-width: 200px;
+      margin: 10px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 1em;
+      }
+      .buttons button {
+        padding: 0.8em;
+        min-width: 100px;
+        font-size: 1em;
+      }
+      .overall-stats {
+        flex-direction: column;
+        align-items: center;
+      }
     }
   </style>
 </head>
@@ -247,15 +400,26 @@
 
   <h1>BACCARAT</h1>
   
+  <!-- تصميم جديد لمبلغ الرهان -->
   <div class="bet-amount-container">
-    <input type="number" id="betAmount" class="amount" placeholder="💰 مبلغ الرهان بالدرهم" min="1" />
+    <label for="betAmount">💰 مبلغ الرهان بالدرهم</label>
+    <input type="number" id="betAmount" class="amount" placeholder="أدخل المبلغ" min="1" step="1" />
   </div>
   
   <p>📲 اختر نتيجة الجولة:</p>
   <div class="buttons">
-    <button class="player" onclick="addResult('P')">🔵 اللاعب (1:1)</button>
-    <button class="banker" onclick="addResult('B')">🔴 المصرفي (0.95:1)</button>
-    <button class="tie" onclick="addResult('T')">🟢 تعادل (8:1)</button>
+    <button class="player" onclick="addResult('P')">
+      🔵 اللاعب
+      <div class="bet-odds">1:1</div>
+    </button>
+    <button class="banker" onclick="addResult('B')">
+      🔴 المصرفي
+      <div class="bet-odds">0.95:1</div>
+    </button>
+    <button class="tie" onclick="addResult('T')">
+      🟢 تعادل
+      <div class="bet-odds">8:1</div>
+    </button>
   </div>
 
   <div class="result" id="predictionResult"></div>
@@ -263,10 +427,13 @@
   <div class="ai-stats" id="aiStats"></div>
   <div class="ai-advice" id="aiAdvice"></div>
   <div class="history" id="historyDisplay"></div>
-  <div class="balance" id="balanceDisplay">💵 الرصيد: 0 درهم</div>
+  
+  <div class="balance-display" id="balanceDisplay">
+    💵 الرصيد: <span id="balanceValue">0</span> درهم
+  </div>
   
   <div id="betsHistoryContainer" style="display: none;">
-    <h3>سجل الرهانات</h3>
+    <h3>📋 سجل الرهانات</h3>
     <table class="bets-history-table">
       <thead>
         <tr>
@@ -282,7 +449,7 @@
   </div>
   
   <div id="performanceSummary" class="performance-summary" style="display: none;">
-    <h3>تحليل الأداء</h3>
+    <h3>📊 تحليل الأداء</h3>
     <div class="overall-stats" id="overallStats"></div>
     <table class="performance-by-type">
       <thead>
@@ -299,8 +466,10 @@
     </table>
   </div>
 
-  <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
-  <button class="reset" onclick="toggleBetsHistory()">📊 عرض سجل الرهانات</button>
+  <div style="margin-top: 20px;">
+    <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
+    <button class="reset" onclick="toggleBetsHistory()">📊 عرض سجل الرهانات</button>
+  </div>
 
   <canvas id="chart" width="400" height="150"></canvas>
 
@@ -330,14 +499,37 @@
         datasets: [{
           label: 'الرصيد',
           data: [],
-          backgroundColor: 'gold',
+          backgroundColor: 'rgba(255, 215, 0, 0.2)',
           borderColor: 'gold',
-          fill: false,
+          borderWidth: 2,
+          pointBackgroundColor: 'gold',
+          pointRadius: 4,
+          fill: true,
         }]
       },
       options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return 'الرصيد: ' + context.raw.toFixed(2) + ' درهم';
+              }
+            }
+          }
+        },
         scales: {
-          y: { beginAtZero: true }
+          y: { 
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return value + ' درهم';
+              }
+            }
+          }
         }
       }
     });
@@ -405,8 +597,17 @@
     function updateBalance(profit) {
       balance += profit;
       balanceHistory.push(balance);
-      document.getElementById('balanceDisplay').innerText = `💵 الرصيد: ${balance.toFixed(2)} درهم`;
+      document.getElementById('balanceValue').textContent = balance.toFixed(2);
       updateChart();
+      
+      // إضافة تأثير عند تغيير الرصيد
+      const balanceDisplay = document.getElementById('balanceDisplay');
+      balanceDisplay.style.transform = 'scale(1.05)';
+      balanceDisplay.style.transition = 'all 0.3s ease';
+      
+      setTimeout(() => {
+        balanceDisplay.style.transform = 'scale(1)';
+      }, 300);
     }
 
     function updateBetsHistory() {
@@ -433,9 +634,9 @@
         row.innerHTML = `
           <td>${bet.round}</td>
           <td>${betOnText}</td>
-          <td>${bet.amount.toFixed(2)}</td>
+          <td>${bet.amount.toFixed(2)} درهم</td>
           <td>${outcomeText}</td>
-          <td class="${profitClass}">${profitSign}${bet.profit.toFixed(2)}</td>
+          <td class="${profitClass}">${profitSign}${bet.profit.toFixed(2)} درهم</td>
         `;
         tbody.appendChild(row);
       });
@@ -469,7 +670,7 @@
         </div>
         <div>
           <strong>${isArabic ? 'صافي الربح:' : 'Net Profit:'}</strong> 
-          <span class="${totalProfit >= 0 ? 'win' : 'loss'}">${totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(2)}</span>
+          <span class="${totalProfit >= 0 ? 'win' : 'loss'}">${totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(2)} درهم</span>
         </div>
       `;
       
@@ -495,7 +696,7 @@
           <td>${typeWins}</td>
           <td>${typeLosses}</td>
           <td>${typeWinRate}%</td>
-          <td class="${typeProfit >= 0 ? 'win' : 'loss'}">${typeProfit >= 0 ? '+' : ''}${typeProfit.toFixed(2)}</td>
+          <td class="${typeProfit >= 0 ? 'win' : 'loss'}">${typeProfit >= 0 ? '+' : ''}${typeProfit.toFixed(2)} درهم</td>
         `;
         performanceByType.appendChild(row);
       });
@@ -531,7 +732,9 @@
       }
       
       const round = history.length;
-      const betOn = result; // الرهان على نفس النتيجة التي تم اختيارها
+      // تحديد نوع الرهان بناءً على الزر الذي تم الضغط عليه
+      const betOn = event.target.classList.contains('player') ? 'P' : 
+                   event.target.classList.contains('banker') ? 'B' : 'T';
       const profit = calculateProfit(betOn, result, betAmount);
       
       betsHistory.push({
@@ -729,7 +932,7 @@
       document.getElementById('aiStats').innerText = '';
       document.getElementById('aiAdvice').innerText = '';
       document.getElementById('historyDisplay').innerText = '';
-      document.getElementById('balanceDisplay').innerText = '💵 الرصيد: 0 درهم';
+      document.getElementById('balanceValue').textContent = '0';
       document.getElementById('betsHistoryBody').innerHTML = '';
       document.getElementById('performanceByType').innerHTML = '';
       document.getElementById('overallStats').innerHTML = '';
@@ -741,4 +944,4 @@
     }
   </script>
 </body>
-  </html>
+</html>
