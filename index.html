@@ -6,38 +6,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      background-color: #121212;
       color: gold;
       font-family: 'Segoe UI', Tahoma, sans-serif;
       padding: 2em;
       direction: rtl;
       text-align: center;
       transition: all 0.3s ease;
-      min-height: 100vh;
     }
     body.light-mode {
-      background: linear-gradient(135deg, #f5f7fa, #e4e8f0);
+      background-color: #f5f5f5;
       color: #333;
     }
-    h1 { 
-      font-size: 2.5em; 
-      margin-bottom: 20px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      background: linear-gradient(90deg, gold, #ffd700);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+    h1 { font-size: 2.5em; margin-bottom: 20px; }
     
     /* تصميم جديد لمبلغ الرهان */
     .bet-amount-container {
       margin: 20px auto;
       padding: 15px;
-      background: rgba(255, 215, 0, 0.1);
+      background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
       border-radius: 15px;
       max-width: 300px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
       border: 1px solid rgba(255,215,0,0.3);
-      backdrop-filter: blur(5px);
     }
     
     .bet-amount-container label {
@@ -81,110 +72,48 @@
       font-weight: bold;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       min-width: 120px;
-      position: relative;
-      overflow: hidden;
     }
     
     .player { 
-      background: linear-gradient(135deg, #007bff, #0056b3);
+      background-color: #007bff; 
       color: white; 
       border-bottom: 4px solid #0056b3;
     }
     .player:hover {
-      background: linear-gradient(135deg, #0069d9, #004a9f);
+      background-color: #0069d9;
       transform: translateY(-2px);
     }
     
     .banker { 
-      background: linear-gradient(135deg, #dc3545, #a71d2a);
+      background-color: #dc3545; 
       color: white;
       border-bottom: 4px solid #a71d2a;
     }
     .banker:hover {
-      background: linear-gradient(135deg, #c82333, #8a1620);
+      background-color: #c82333;
       transform: translateY(-2px);
     }
     
     .tie { 
-      background: linear-gradient(135deg, #28a745, #1e7e34);
+      background-color: #28a745; 
       color: white;
       border-bottom: 4px solid #1e7e34;
     }
     .tie:hover {
-      background: linear-gradient(135deg, #218838, #186529);
+      background-color: #218838;
       transform: translateY(-2px);
     }
     
     .reset { 
-      background: linear-gradient(135deg, #555, #333);
+      background-color: #555; 
       color: gold; 
       margin-top: 1.5em;
       padding: 0.8em 2em;
       border-bottom: 4px solid #333;
     }
     .reset:hover {
-      background: linear-gradient(135deg, #444, #222);
+      background-color: #444;
       transform: translateY(-2px);
-    }
-    
-    /* أنماط الربح والخسارة الجديدة */
-    .profit-display {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 100;
-    }
-    
-    .profit-item {
-      padding: 12px 20px;
-      border-radius: 10px;
-      font-weight: bold;
-      font-size: 1.1em;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255,255,255,0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      animation: fadeIn 0.5s ease;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .profit-win {
-      background: rgba(40, 167, 69, 0.2);
-      color: #28a745;
-      border: 1px solid rgba(40, 167, 69, 0.5);
-    }
-    
-    .profit-loss {
-      background: rgba(220, 53, 69, 0.2);
-      color: #dc3545;
-      border: 1px solid rgba(220, 53, 69, 0.5);
-    }
-    
-    .profit-win::before {
-      content: "↑";
-      margin-left: 5px;
-      font-size: 1.2em;
-    }
-    
-    .profit-loss::before {
-      content: "↓";
-      margin-left: 5px;
-      font-size: 1.2em;
-    }
-    
-    .profit-amount {
-      font-size: 1.2em;
-      margin-left: 5px;
     }
     
     /* بقية الأنماط... */
@@ -195,7 +124,6 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      z-index: 100;
     }
     .language, .amount {
       padding: 0.5em;
@@ -205,7 +133,6 @@
       border: 1px solid rgba(255,215,0,0.3);
       background-color: rgba(0,0,0,0.3);
       color: white;
-      backdrop-filter: blur(5px);
     }
     .result, .stats, .history, .balance, .ai-stats, .ai-advice, .trends-container {
       margin-top: 1.5em;
@@ -214,8 +141,6 @@
       border-radius: 12px;
       background-color: rgba(0,0,0,0.2);
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255,255,255,0.1);
     }
     body.light-mode .result, 
     body.light-mode .stats, 
@@ -225,16 +150,13 @@
     body.light-mode .ai-advice,
     body.light-mode .trends-container {
       background-color: rgba(0,0,0,0.05);
-      border: 1px solid rgba(0,0,0,0.1);
     }
-    canvas {
+    .big-road {
       margin-top: 2em;
       max-width: 100%;
       background-color: rgba(0,0,0,0.2);
       border-radius: 12px;
       padding: 10px;
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255,255,255,0.1);
     }
     .theme-toggle {
       background: none;
@@ -243,22 +165,12 @@
       cursor: pointer;
       color: gold;
       transition: transform 0.3s ease;
-      background: rgba(0,0,0,0.3);
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(5px);
     }
     .theme-toggle:hover {
       transform: rotate(30deg);
-      background: rgba(0,0,0,0.4);
     }
     body.light-mode .theme-toggle {
       color: #333;
-      background: rgba(255,255,255,0.3);
     }
     .ai-advice {
       border-left: 4px solid gold;
@@ -290,8 +202,6 @@
       direction: ltr;
       overflow-x: auto;
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255,255,255,0.1);
     }
     .big-road {
       display: inline-grid;
@@ -462,8 +372,6 @@
       min-width: 200px;
       margin: 10px 0;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255,255,255,0.1);
     }
     
     /* أنماط جديدة للمؤشرات والسلاسل */
@@ -528,8 +436,6 @@
       padding: 15px;
       background: rgba(0, 0, 0, 0.3);
       border-radius: 10px;
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255,255,255,0.1);
     }
     
     .prediction-bars {
@@ -570,6 +476,33 @@
       font-weight: bold;
       font-size: 1.1em;
     }
+
+    /* جدول الأرباح والخسائر الجديد */
+    .profit-loss-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .profit-loss-table th {
+      background-color: rgba(255, 215, 0, 0.1);
+      padding: 12px;
+      text-align: center;
+      font-weight: bold;
+    }
+    
+    .profit-loss-table td {
+      padding: 10px;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .profit { color: #28a745; font-weight: bold; }
+    .loss { color: #dc3545; font-weight: bold; }
     
     @media (max-width: 768px) {
       body {
@@ -584,23 +517,10 @@
         flex-direction: column;
         align-items: center;
       }
-      .profit-display {
-        position: static;
-        margin-top: 20px;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-      .profit-item {
-        width: 45%;
-        margin: 5px;
-      }
     }
   </style>
 </head>
 <body>
-  <div class="profit-display" id="profitDisplay"></div>
-  
   <div class="language-container">
     <select id="langSelect" class="language">
       <option value="ar-MA">🇲🇦 العربية</option>
@@ -672,6 +592,52 @@
   <div class="balance-display" id="balanceDisplay">
     💵 الرصيد: <span id="balanceValue">0</span> درهم
   </div>
+
+  <!-- جدول الأرباح والخسائر الجديد -->
+  <div class="performance-summary">
+    <h3>📊 ملخص الأرباح والخسائر</h3>
+    <table class="profit-loss-table">
+      <thead>
+        <tr>
+          <th>نوع الرهان</th>
+          <th>عدد الرهانات</th>
+          <th>الفوز</th>
+          <th>الخسارة</th>
+          <th>صافي الربح</th>
+        </tr>
+      </thead>
+      <tbody id="profitLossBody">
+        <tr>
+          <td class="player-text">لاعب</td>
+          <td>0</td>
+          <td>0</td>
+          <td>0</td>
+          <td class="profit">+0.00</td>
+        </tr>
+        <tr>
+          <td class="banker-text">مصرفي</td>
+          <td>0</td>
+          <td>0</td>
+          <td>0</td>
+          <td class="profit">+0.00</td>
+        </tr>
+        <tr>
+          <td class="tie-text">تعادل</td>
+          <td>0</td>
+          <td>0</td>
+          <td>0</td>
+          <td class="profit">+0.00</td>
+        </tr>
+        <tr>
+          <td><strong>الإجمالي</strong></td>
+          <td>0</td>
+          <td>0</td>
+          <td>0</td>
+          <td class="profit"><strong>+0.00</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   
   <div id="betsHistoryContainer" style="display: none;">
     <h3>📋 سجل الرهانات</h3>
@@ -712,14 +678,11 @@
     <button class="reset" onclick="toggleBetsHistory()">📊 عرض سجل الرهانات</button>
   </div>
 
-  <canvas id="chart" width="400" height="150"></canvas>
-
   <div class="big-road-container">
     <h2>Big Road (الميجورك)</h2>
     <div id="bigRoad" class="big-road"></div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     let history = [];
     let balance = 0;
@@ -728,65 +691,17 @@
     let betsHistory = [];
     let showBetsHistory = false;
     let lang = 'ar-MA';
-    let activeProfitDisplays = [];
 
     // تهيئة التطبيق عند التحميل
     document.addEventListener('DOMContentLoaded', function() {
       loadTheme();
       loadLanguage();
-      initChart();
+      updateProfitLossTable();
       document.getElementById('langSelect').addEventListener('change', changeLanguage);
     });
 
     if (localStorage.getItem('theme') === 'light') {
       document.body.classList.add('light-mode');
-    }
-
-    const ctx = document.getElementById('chart').getContext('2d');
-    let chart;
-
-    function initChart() {
-      chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: [],
-          datasets: [{
-            label: 'الرصيد',
-            data: [],
-            backgroundColor: 'rgba(255, 215, 0, 0.2)',
-            borderColor: 'gold',
-            borderWidth: 2,
-            pointBackgroundColor: 'gold',
-            pointRadius: 4,
-            fill: true,
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              display: false
-            },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return 'الرصيد: ' + context.raw.toFixed(2) + ' درهم';
-                }
-              }
-            }
-          },
-          scales: {
-            y: { 
-              beginAtZero: true,
-              ticks: {
-                callback: function(value) {
-                  return value + ' درهم';
-                }
-              }
-            }
-          }
-        }
-      });
     }
 
     function toggleTheme() {
@@ -817,12 +732,6 @@
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = lang;
       speechSynthesis.speak(utter);
-    }
-
-    function updateChart() {
-      chart.data.labels = balanceHistory.map((_, i) => i);
-      chart.data.datasets[0].data = balanceHistory;
-      chart.update();
     }
 
     function updateBigRoad() {
@@ -862,63 +771,17 @@
       if (!amount || amount <= 0) return 0; // لا ربح ولا خسارة إذا لم يتم الرهان
       
       if (betOn === outcome) {
-        // حساب الربح بناءً على نوع الرهان
-        if (betOn === 'P') { // رهان لاعب
-          return amount * 1; // 1:1
-        } else if (betOn === 'B') { // رهان مصرفي
-          return amount * 0.95; // 0.95:1 (خصم 5% للبيت)
-        } else if (betOn === 'T') { // رهان تعادل
-          return amount * 8; // 8:1
-        }
+        if (betOn === 'T') return amount * 8; // تعادل 8:1
+        if (betOn === 'B') return amount * 0.95; // مصرفي مع خصم 5%
+        return amount * 1; // لاعب 1:1
       }
-      return -amount; // خسارة (إذا لم تكن النتيجة متطابقة مع الرهان)
-    }
-
-    function showProfitNotification(profit) {
-      const profitDisplay = document.getElementById('profitDisplay');
-      const isArabic = lang === 'ar-MA';
-      
-      const profitItem = document.createElement('div');
-      profitItem.className = `profit-item ${profit > 0 ? 'profit-win' : 'profit-loss'}`;
-      
-      const profitText = isArabic ? 
-        (profit > 0 ? 'ربح' : 'خسارة') : 
-        (profit > 0 ? 'Win' : 'Loss');
-      
-      profitItem.innerHTML = `
-        <span>${profitText}</span>
-        <span class="profit-amount">${Math.abs(profit).toFixed(2)} درهم</span>
-      `;
-      
-      profitDisplay.appendChild(profitItem);
-      
-      // إضافة إلى المصفوفة النشطة
-      activeProfitDisplays.push(profitItem);
-      
-      // إزالة الإشعار بعد 3 ثواني
-      setTimeout(() => {
-        profitItem.style.opacity = '0';
-        profitItem.style.transform = 'translateY(-20px)';
-        profitItem.style.transition = 'all 0.5s ease';
-        
-        setTimeout(() => {
-          profitItem.remove();
-          // إزالة من المصفوفة النشطة
-          activeProfitDisplays = activeProfitDisplays.filter(item => item !== profitItem);
-        }, 500);
-      }, 3000);
+      return -amount; // خسارة
     }
 
     function updateBalance(profit) {
       balance += profit;
       balanceHistory.push(balance);
       document.getElementById('balanceValue').textContent = balance.toFixed(2);
-      updateChart();
-      
-      // إظهار إشعار الربح/الخسارة إذا كان هناك رهان
-      if (profit !== 0) {
-        showProfitNotification(profit);
-      }
       
       // إضافة تأثير عند تغيير الرصيد
       const balanceDisplay = document.getElementById('balanceDisplay');
@@ -959,6 +822,74 @@
         `;
         tbody.appendChild(row);
       });
+    }
+
+    // دالة جديدة لتحديث جدول الأرباح والخسائر
+    function updateProfitLossTable() {
+      const tbody = document.getElementById('profitLossBody');
+      const isArabic = lang === 'ar-MA';
+      
+      // حساب فقط الرهانات التي لها مبلغ (تجاهل الرهانات الصفرية)
+      const activeBets = betsHistory.filter(bet => bet.amount > 0);
+      
+      // حساب لكل نوع رهان
+      const types = ['P', 'B', 'T'];
+      const stats = {};
+      
+      types.forEach(type => {
+        const typeBets = activeBets.filter(b => b.betOn === type);
+        const typeTotal = typeBets.length;
+        const typeWins = typeBets.filter(b => b.profit > 0).length;
+        const typeLosses = typeBets.filter(b => b.profit < 0).length;
+        const typeProfit = typeBets.reduce((sum, bet) => sum + bet.profit, 0);
+        
+        stats[type] = {
+          total: typeTotal,
+          wins: typeWins,
+          losses: typeLosses,
+          profit: typeProfit
+        };
+      });
+      
+      // حساب الإجمالي
+      const totalStats = {
+        total: activeBets.length,
+        wins: activeBets.filter(b => b.profit > 0).length,
+        losses: activeBets.filter(b => b.profit < 0).length,
+        profit: activeBets.reduce((sum, bet) => sum + bet.profit, 0)
+      };
+      
+      // تحديث الجدول
+      tbody.innerHTML = `
+        <tr>
+          <td class="player-text">${isArabic ? 'لاعب' : 'Player'}</td>
+          <td>${stats.P.total}</td>
+          <td>${stats.P.wins}</td>
+          <td>${stats.P.losses}</td>
+          <td class="${stats.P.profit >= 0 ? 'profit' : 'loss'}">${stats.P.profit >= 0 ? '+' : ''}${stats.P.profit.toFixed(2)}</td>
+        </tr>
+        <tr>
+          <td class="banker-text">${isArabic ? 'مصرفي' : 'Banker'}</td>
+          <td>${stats.B.total}</td>
+          <td>${stats.B.wins}</td>
+          <td>${stats.B.losses}</td>
+          <td class="${stats.B.profit >= 0 ? 'profit' : 'loss'}">${stats.B.profit >= 0 ? '+' : ''}${stats.B.profit.toFixed(2)}</td>
+        </tr>
+        <tr>
+          <td class="tie-text">${isArabic ? 'تعادل' : 'Tie'}</td>
+          <td>${stats.T.total}</td>
+          <td>${stats.T.wins}</td>
+          <td>${stats.T.losses}</td>
+          <td class="${stats.T.profit >= 0 ? 'profit' : 'loss'}">${stats.T.profit >= 0 ? '+' : ''}${stats.T.profit.toFixed(2)}</td>
+        </tr>
+        <tr>
+          <td><strong>${isArabic ? 'الإجمالي' : 'Total'}</strong></td>
+          <td>${totalStats.total}</td>
+          <td>${totalStats.wins}</td>
+          <td>${totalStats.losses}</td>
+          <td class="${totalStats.profit >= 0 ? 'profit' : 'loss'}"><strong>${totalStats.profit >= 0 ? '+' : ''}${totalStats.profit.toFixed(2)}</strong></td>
+        </tr>
+      `;
     }
 
     function updatePerformanceSummary() {
@@ -1066,6 +997,7 @@
       });
       
       updateBalance(profit);
+      updateProfitLossTable(); // تحديث جدول الأرباح والخسائر
       
       if (showBetsHistory) {
         updateBetsHistory();
@@ -1499,6 +1431,7 @@
         updatePredictions();
         generateAdvice();
         updateTrendsAndStreaks();
+        updateProfitLossTable();
       }
       
       if (showBetsHistory) {
@@ -1519,7 +1452,6 @@
         balanceHistory = [0];
         betsHistory = [];
         currentStreak = { type: null, count: 0 };
-        updateChart();
         updateBigRoad();
         document.getElementById('predictionResult').innerHTML = `
           <div class="prediction-title">${isArabic ? '📊 تنبؤات متقدمة' : '📊 Advanced Predictions'}</div>
@@ -1553,10 +1485,7 @@
         document.getElementById('performanceByType').innerHTML = '';
         document.getElementById('overallStats').innerHTML = '';
         document.getElementById('betAmount').value = '';
-        
-        // إزالة جميع إشعارات الربح/الخسارة
-        activeProfitDisplays.forEach(item => item.remove());
-        activeProfitDisplays = [];
+        updateProfitLossTable();
       }
     }
   </script>
