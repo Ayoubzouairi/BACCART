@@ -20,7 +20,6 @@
     }
     h1 { font-size: 2.5em; margin-bottom: 20px; }
     
-    /* تصميم جديد لمبلغ الرهان */
     .bet-amount-container {
       margin: 20px auto;
       padding: 15px;
@@ -49,12 +48,6 @@
       background-color: rgba(0,0,0,0.3);
       color: white;
       transition: all 0.3s ease;
-    }
-    
-    .bet-amount-container input:focus {
-      outline: none;
-      border-color: #ffd700;
-      box-shadow: 0 0 10px rgba(255,215,0,0.5);
     }
     
     .buttons {
@@ -116,7 +109,6 @@
       transform: translateY(-2px);
     }
     
-    /* بقية الأنماط... */
     .language-container {
       position: absolute;
       top: 20px;
@@ -287,44 +279,6 @@
     .hot { color: #FF5722; font-weight: bold; }
     .cold { color: #2196F3; font-weight: bold; }
     
-    .bets-history-table {
-      width: 100%;
-      margin: 15px 0;
-      border-collapse: collapse;
-      background-color: rgba(0, 0, 0, 0.2);
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .bets-history-table th, 
-    .bets-history-table td {
-      padding: 10px 12px;
-      text-align: center;
-      border: 1px solid rgba(255, 215, 0, 0.2);
-    }
-    
-    .bets-history-table th {
-      background-color: rgba(255, 215, 0, 0.1);
-      font-weight: bold;
-    }
-    
-    .win { color: #28a745; font-weight: bold; }
-    .loss { color: #dc3545; font-weight: bold; }
-    
-    .balance-display {
-      font-size: 1.3em;
-      font-weight: bold;
-      padding: 12px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
-      display: inline-block;
-      min-width: 200px;
-      margin: 10px 0;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    /* أنماط جديدة للمؤشرات والسلاسل */
     .trend-indicator {
       font-size: 1.2em;
       margin-left: 5px;
@@ -380,7 +334,6 @@
       font-weight: bold;
     }
     
-    /* أنماط جديدة للتنبؤات المتقدمة */
     .prediction-section {
       margin: 20px 0;
       padding: 15px;
@@ -427,6 +380,48 @@
       font-size: 1.1em;
     }
     
+    .balance-display {
+      font-size: 1.3em;
+      font-weight: bold;
+      padding: 12px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
+      display: inline-block;
+      min-width: 200px;
+      margin: 10px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .profit-loss-statement {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .profit-loss-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+    }
+    
+    .profit-loss-table th {
+      background-color: rgba(255, 215, 0, 0.1);
+      padding: 12px;
+      text-align: center;
+      font-weight: bold;
+    }
+    
+    .profit-loss-table td {
+      padding: 10px;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .win { color: #28a745; font-weight: bold; }
+    .loss { color: #dc3545; font-weight: bold; }
+    
     @media (max-width: 768px) {
       body {
         padding: 1em;
@@ -450,7 +445,6 @@
 
   <h1>BACCARAT PREDICTOR PRO</h1>
   
-  <!-- تصميم جديد لمبلغ الرهان -->
   <div class="bet-amount-container">
     <label for="betAmount">💰 مبلغ الرهان بالدرهم</label>
     <input type="number" id="betAmount" class="amount" placeholder="أدخل المبلغ (اختياري)" min="1" step="1" />
@@ -499,7 +493,7 @@
   <div class="stats" id="statsResult"></div>
   <div class="ai-stats" id="aiStats"></div>
   
-  <!-- قسم المؤشرات الجديد -->
+  <!-- قسم المؤشرات -->
   <div class="trends-container" id="trendsContainer">
     <h3>📈 تحليل الاتجاهات والأنماط</h3>
     <div id="trendsContent"></div>
@@ -512,25 +506,43 @@
     💵 الرصيد: <span id="balanceValue">0</span> درهم
   </div>
   
-  <div id="betsHistoryContainer" style="display: none;">
-    <h3>📋 سجل الرهانات</h3>
-    <table class="bets-history-table">
+  <!-- بيان الأرباح والخسائر -->
+  <div class="profit-loss-statement">
+    <h3>📊 بيان الأرباح والخسائر</h3>
+    <table class="profit-loss-table">
       <thead>
         <tr>
-          <th>الجولة</th>
-          <th>الرهان على</th>
-          <th>المبلغ</th>
-          <th>النتيجة</th>
-          <th>الربح/الخسارة</th>
+          <th>البند</th>
+          <th>القيمة</th>
         </tr>
       </thead>
-      <tbody id="betsHistoryBody"></tbody>
+      <tbody id="profitLossBody">
+        <tr>
+          <td>عدد الجولات المربوحة</td>
+          <td id="winningRounds">0</td>
+        </tr>
+        <tr>
+          <td>عدد الجولات الخاسرة</td>
+          <td id="losingRounds">0</td>
+        </tr>
+        <tr>
+          <td>الأرباح الصافية</td>
+          <td id="netProfit">0 درهم</td>
+        </tr>
+        <tr>
+          <td>إجمالي الرهانات</td>
+          <td id="totalBets">0 درهم</td>
+        </tr>
+        <tr>
+          <td>متوسط الربح/الخسارة لكل جولة</td>
+          <td id="avgProfitPerRound">0 درهم</td>
+        </tr>
+      </tbody>
     </table>
   </div>
 
   <div style="margin-top: 20px;">
     <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
-    <button class="reset" onclick="toggleBetsHistory()">📊 عرض سجل الرهانات</button>
   </div>
 
   <canvas id="chart" width="400" height="150"></canvas>
@@ -544,13 +556,11 @@
   <script>
     let history = [];
     let balance = 0;
-    let balanceHistory = [0]; // بدء الرصيد من الصفر
+    let balanceHistory = [0];
     let currentStreak = { type: null, count: 0 };
     let betsHistory = [];
-    let showBetsHistory = false;
     let lang = 'ar-MA';
 
-    // تهيئة التطبيق عند التحميل
     document.addEventListener('DOMContentLoaded', function() {
       loadTheme();
       loadLanguage();
@@ -679,14 +689,14 @@
     }
 
     function calculateProfit(betOn, outcome, amount) {
-      if (!amount || amount <= 0) return 0; // لا ربح ولا خسارة إذا لم يتم الرهان
+      if (!amount || amount <= 0) return 0;
       
       if (betOn === outcome) {
-        if (betOn === 'T') return amount * 8; // تعادل 8:1
-        if (betOn === 'B') return amount * 0.95; // مصرفي مع خصم 5%
-        return amount * 1; // لاعب 1:1
+        if (betOn === 'T') return amount * 8;
+        if (betOn === 'B') return amount * 0.95;
+        return amount * 1;
       }
-      return -amount; // خسارة
+      return -amount;
     }
 
     function updateBalance(profit) {
@@ -695,7 +705,6 @@
       document.getElementById('balanceValue').textContent = balance.toFixed(2);
       updateChart();
       
-      // إضافة تأثير عند تغيير الرصيد
       const balanceDisplay = document.getElementById('balanceDisplay');
       balanceDisplay.style.transform = 'scale(1.05)';
       balanceDisplay.style.transition = 'all 0.3s ease';
@@ -705,47 +714,30 @@
       }, 300);
     }
 
-    function updateBetsHistory() {
-      const tbody = document.getElementById('betsHistoryBody');
-      tbody.innerHTML = '';
+    function updateProfitLossStatement() {
+      const winningRounds = betsHistory.filter(bet => bet.profit > 0).length;
+      const losingRounds = betsHistory.filter(bet => bet.profit < 0).length;
+      const netProfit = betsHistory.reduce((sum, bet) => sum + bet.profit, 0);
+      const totalBets = betsHistory.filter(bet => bet.amount > 0).reduce((sum, bet) => sum + bet.amount, 0);
+      const totalRounds = betsHistory.filter(bet => bet.amount > 0).length;
+      const avgProfitPerRound = totalRounds > 0 ? netProfit / totalRounds : 0;
       
-      const isArabic = lang === 'ar-MA';
-      
-      betsHistory.forEach(bet => {
-        const row = document.createElement('tr');
-        
-        const outcomeText = isArabic ? 
-          (bet.outcome === 'P' ? 'لاعب' : bet.outcome === 'B' ? 'مصرفي' : 'تعادل') :
-          (bet.outcome === 'P' ? 'Player' : bet.outcome === 'B' ? 'Banker' : 'Tie');
-        
-        const betOnText = isArabic ? 
-          (bet.betOn === 'P' ? 'لاعب' : bet.betOn === 'B' ? 'مصرفي' : 'تعادل') :
-          (bet.betOn === 'P' ? 'Player' : bet.betOn === 'B' ? 'Banker' : 'Tie');
-        
-        const profitClass = bet.profit > 0 ? 'win' : bet.profit < 0 ? 'loss' : '';
-        const profitSign = bet.profit > 0 ? '+' : '';
-        
-        row.innerHTML = `
-          <td>${bet.round}</td>
-          <td>${betOnText}</td>
-          <td>${bet.amount > 0 ? bet.amount.toFixed(2) + ' درهم' : '-'}</td>
-          <td>${outcomeText}</td>
-          <td class="${profitClass}">${bet.amount > 0 ? (profitSign + bet.profit.toFixed(2) + ' درهم') : '-'}</td>
-        `;
-        tbody.appendChild(row);
-      });
+      document.getElementById('winningRounds').textContent = winningRounds;
+      document.getElementById('losingRounds').textContent = losingRounds;
+      document.getElementById('netProfit').textContent = netProfit.toFixed(2) + ' درهم';
+      document.getElementById('netProfit').className = netProfit >= 0 ? 'win' : 'loss';
+      document.getElementById('totalBets').textContent = totalBets.toFixed(2) + ' درهم';
+      document.getElementById('avgProfitPerRound').textContent = avgProfitPerRound.toFixed(2) + ' درهم';
+      document.getElementById('avgProfitPerRound').className = avgProfitPerRound >= 0 ? 'win' : 'loss';
     }
 
     function addResult(result) {
       const betAmountInput = document.getElementById('betAmount');
       const betAmount = parseFloat(betAmountInput.value) || 0;
-      
-      // مسح حقل الرهان بعد كل جولة
       betAmountInput.value = '';
       
       history.push(result);
       
-      // تحديث السلسلة الحالية
       if (result === currentStreak.type) {
         currentStreak.count++;
       } else {
@@ -754,7 +746,6 @@
       }
       
       const round = history.length;
-      // تحديد نوع الرهان بناءً على الزر الذي تم الضغط عليه
       const betOn = event.target.classList.contains('player') ? 'P' : 
                    event.target.classList.contains('banker') ? 'B' : 'T';
       const profit = calculateProfit(betOn, result, betAmount);
@@ -769,16 +760,12 @@
       });
       
       updateBalance(profit);
-      
-      if (showBetsHistory) {
-        updateBetsHistory();
-      }
-      
       updateDisplay();
       updateBigRoad();
-      updateTrendsAndStreaks(); // تحديث مؤشرات الاتجاه
-      updatePredictions(); // تحديث التنبؤات
+      updateTrendsAndStreaks();
+      updatePredictions();
       generateAdvice();
+      updateProfitLossStatement();
     }
 
     function updateDisplay() {
@@ -812,7 +799,6 @@
       document.getElementById('aiStats').innerHTML = statsHTML;
     }
 
-    // دالة جديدة لتحليل الاتجاهات والسلاسل
     function updateTrendsAndStreaks() {
       const isArabic = lang === 'ar-MA';
       
@@ -832,7 +818,6 @@
       lastSeven.forEach(r => counts[r]++);
       lastFourteen.forEach(r => prevCounts[r]++);
       
-      // حساب التغيرات النسبية
       const getTrend = (current, prev, total) => {
         const change = total > 0 ? ((current - prev) / total * 100) : 0;
         if (change > 15) return { icon: '▲▲', class: 'trend-up', text: isArabic ? 'ارتفاع كبير' : 'Sharp rise' };
@@ -846,17 +831,14 @@
       const bTrend = getTrend(counts.B, prevCounts.B, lastSeven.length);
       const tTrend = getTrend(counts.T, prevCounts.T, lastSeven.length);
       
-      // تحليل السلاسل
-      const hotThreshold = 0.7; // 70% أو أكثر
-      const coldThreshold = 0.2; // 20% أو أقل
+      const hotThreshold = 0.7;
+      const coldThreshold = 0.2;
       
       const isHot = (type) => counts[type] / lastSeven.length >= hotThreshold;
       const isCold = (type) => counts[type] / lastSeven.length <= coldThreshold;
       
-      // تحليل الأنماط المتقدمة
       const patterns = detectAdvancedPatterns(history.slice(-15));
       
-      // إنشاء واجهة المستخدم
       const trendsHTML = `
         <div style="margin-bottom: 15px;">
           <h4 style="margin-bottom: 10px;color:gold;">${isArabic ? 'اتجاهات آخر 7 جولات' : 'Last 7 Rounds Trends'}</h4>
@@ -914,7 +896,6 @@
       document.getElementById('trendsContent').innerHTML = trendsHTML;
     }
 
-    // دالة متقدمة لاكتشاف الأنماط
     function detectAdvancedPatterns(recentHistory) {
       if (recentHistory.length < 5) return [];
       
@@ -922,7 +903,6 @@
       const lastFive = recentHistory.slice(-5).join('');
       const lastTen = recentHistory.slice(-10).join('');
       
-      // تعريف الأنماط الشائعة
       const commonPatterns = [
         {
           pattern: 'P-B-P-B-P',
@@ -962,7 +942,6 @@
         }
       ];
       
-      // التحقق من الأنماط
       commonPatterns.forEach(p => {
         if (typeof p.match === 'string' && lastFive === p.match) {
           patterns.push(p);
@@ -971,7 +950,6 @@
         }
       });
       
-      // اكتشاف سلاسل قصيرة
       const lastThree = recentHistory.slice(-3).join('');
       if (lastThree === 'PPP') {
         patterns.push({
@@ -997,7 +975,6 @@
       return patterns.sort((a, b) => b.strength - a.strength);
     }
 
-    // دالة جديدة للتنبؤات المتقدمة
     function updatePredictions() {
       const prediction = advancedPredict(history);
       displayPrediction(prediction);
@@ -1012,18 +989,15 @@
         };
       }
 
-      // تحليل آخر 5 و 10 جولات
       const lastFive = history.slice(-5);
       const lastTen = history.length >= 10 ? history.slice(-10) : lastFive;
       
-      // حساب الترددات
       const freq5 = { P: 0, B: 0, T: 0 };
       const freq10 = { P: 0, B: 0, T: 0 };
       
       lastFive.forEach(r => freq5[r]++);
       lastTen.forEach(r => freq10[r]++);
       
-      // حساب النسب المئوية
       const percent5 = {
         P: (freq5.P / 5) * 100,
         B: (freq5.B / 5) * 100,
@@ -1036,14 +1010,12 @@
         T: (freq10.T / lastTen.length) * 100
       };
       
-      // حساب المتوسط المرجح (وزن أكبر للجولات الأخيرة)
       const weightedAvg = {
         P: (percent5.P * 0.6 + percent10.P * 0.4),
         B: (percent5.B * 0.6 + percent10.B * 0.4),
         T: (percent5.T * 0.6 + percent10.T * 0.4)
       };
       
-      // ضبط القيم لتكون مجموعها 100%
       const total = weightedAvg.P + weightedAvg.B + weightedAvg.T;
       return {
         P: (weightedAvg.P / total * 100),
@@ -1055,17 +1027,14 @@
     function displayPrediction(prediction) {
       const isArabic = lang === 'ar-MA';
       
-      // تحديث أشرطة التنبؤ
       document.querySelector('.player-bar').style.width = `${prediction.P}%`;
       document.querySelector('.banker-bar').style.width = `${prediction.B}%`;
       document.querySelector('.tie-bar').style.width = `${prediction.T}%`;
       
-      // تحديث النسب المئوية
       document.getElementById('playerProb').textContent = `${prediction.P.toFixed(1)}%`;
       document.getElementById('bankerProb').textContent = `${prediction.B.toFixed(1)}%`;
       document.getElementById('tieProb').textContent = `${prediction.T.toFixed(1)}%`;
       
-      // تحديث النص التنبؤي
       let winner = 'P';
       if (prediction.B >= prediction.P && prediction.B >= prediction.T) winner = 'B';
       else if (prediction.T > prediction.P && prediction.T > prediction.B) winner = 'T';
@@ -1086,7 +1055,6 @@
       
       document.getElementById('statsResult').innerHTML = statsHTML;
       
-      // قراءة التنبؤ صوتياً إذا كانت النسبة أعلى من 60%
       if (prediction[winner] > 60) {
         const speechText = isArabic
           ? `التنبؤ: ${label} بنسبة ${prediction[winner].toFixed(1)} بالمئة`
@@ -1175,7 +1143,6 @@
     }
 
     function updateUI() {
-      // تحديث النصوص حسب اللغة المختارة
       const isArabic = lang === 'ar-MA';
       
       document.title = isArabic ? 'BACCARAT PREDICTOR PRO' : 'BACCARAT PREDICTOR PRO';
@@ -1191,29 +1158,16 @@
       document.querySelectorAll('.probability-item span')[2].textContent = isArabic ? 'مصرفي' : 'Banker';
       document.querySelectorAll('.probability-item span')[4].textContent = isArabic ? 'تعادل' : 'Tie';
       document.querySelector('#balanceDisplay').innerHTML = isArabic ? '💵 الرصيد: <span id="balanceValue">0</span> درهم' : '💵 Balance: <span id="balanceValue">0</span> MAD';
-      document.querySelectorAll('.reset')[0].textContent = isArabic ? '🔄 إعادة تعيين' : '🔄 Reset';
-      document.querySelectorAll('.reset')[1].textContent = isArabic ? '📊 عرض سجل الرهانات' : '📊 Show Bets History';
+      document.querySelector('.reset').textContent = isArabic ? '🔄 إعادة تعيين' : '🔄 Reset';
       document.querySelector('.big-road-container h2').textContent = isArabic ? 'Big Road (الميجورك)' : 'Big Road';
+      document.querySelector('.profit-loss-statement h3').textContent = isArabic ? '📊 بيان الأرباح والخسائر' : '📊 Profit & Loss Statement';
       
-      // تحديث المحتوى الديناميكي
       if (history.length > 0) {
         updateDisplay();
         updatePredictions();
         generateAdvice();
         updateTrendsAndStreaks();
-      }
-      
-      if (showBetsHistory) {
-        updateBetsHistory();
-      }
-    }
-
-    function toggleBetsHistory() {
-      showBetsHistory = !showBetsHistory;
-      document.getElementById('betsHistoryContainer').style.display = showBetsHistory ? 'block' : 'none';
-      
-      if (showBetsHistory) {
-        updateBetsHistory();
+        updateProfitLossStatement();
       }
     }
 
@@ -1259,10 +1213,16 @@
         document.getElementById('historyDisplay').innerText = '';
         document.getElementById('trendsContent').innerHTML = '';
         document.getElementById('balanceValue').textContent = '0';
-        document.getElementById('betsHistoryBody').innerHTML = '';
         document.getElementById('betAmount').value = '';
+        
+        // إعادة تعيين بيان الأرباح والخسائر
+        document.getElementById('winningRounds').textContent = '0';
+        document.getElementById('losingRounds').textContent = '0';
+        document.getElementById('netProfit').textContent = '0 درهم';
+        document.getElementById('totalBets').textContent = '0 درهم';
+        document.getElementById('avgProfitPerRound').textContent = '0 درهم';
       }
     }
   </script>
 </body>
-</html>
+  </html>
