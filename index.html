@@ -603,11 +603,19 @@
       if (!amount || amount <= 0) return 0; // لا ربح ولا خسارة إذا لم يتم الرهان
       
       if (betOn === outcome) {
-        if (betOn === 'T') return amount * 8; // تعادل 8:1
-        if (betOn === 'B') return amount * 0.95; // مصرفي مع خصم 5%
-        return amount * 1; // لاعب 1:1
+        // الفوز
+        if (betOn === 'T') {
+          return amount * 8; // تعادل 8:1
+        } else if (betOn === 'B') {
+          return amount * 0.95; // مصرفي مع خصم 5%
+        } else {
+          return amount * 1; // لاعب 1:1
+        }
+      } else if (outcome === 'T') {
+        return 0; // التعادل لا يؤثر على الرهانات غير المراهنة عليه
+      } else {
+        return -amount; // خسارة المبلغ المراهن به
       }
-      return -amount; // خسارة
     }
 
     function updateBalance(profit) {
