@@ -8,6 +8,81 @@ body {
   justify-content: center;
   padding: 20px;
 }
+.last-results-container {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.last-results-grid {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.result-cell {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.result-P {
+  background-color: #007bff;
+  color: white;
+}
+
+.result-B {
+  background-color: #dc3545;
+  color: white;
+}
+
+.result-T {
+  background-color: #28a745;
+  color: white;
+}
+
+.edit-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.edit-btn, .undo-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.edit-btn {
+  background-color: rgba(255, 215, 0, 0.3);
+  color: gold;
+}
+
+.undo-btn {
+  background-color: rgba(220, 53, 69, 0.3);
+  color: #dc3545;
+}
+
+.edit-btn:hover {
+  background-color: rgba(255, 215, 0, 0.5);
+}
+
+.undo-btn:hover {
+  background-color: rgba(220, 53, 69, 0.5);
+}
 .app {
   background-color: rgba(0, 0, 0, 0.75);
   padding: 20px;
