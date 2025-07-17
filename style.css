@@ -1,100 +1,235 @@
+/* style.css - النسخة المحسنة */
+:root {
+  --primary-color: gold;
+  --player-color: #007BFF;
+  --banker-color: #DC3545;
+  --tie-color: #28A745;
+  --bg-dark: #121212;
+  --bg-light: #f5f5f5;
+  --text-dark: #fff8dc;
+  --text-light: #333;
+  --card-bg: rgba(0, 0, 0, 0.75);
+  --transition: all 0.3s ease;
+}
+
 body {
   background-image: url('baccarat_bg.jpg');
   background-size: cover;
   background-position: center;
-  color: #fff8dc;
-  font-family: Tahoma, sans-serif;
+  background-attachment: fixed;
+  color: var(--text-dark);
+  font-family: 'Segoe UI', Tahoma, sans-serif;
   display: flex;
   justify-content: center;
+  align-items: center;
+  min-height: 100vh;
   padding: 20px;
+  margin: 0;
+  transition: var(--transition);
 }
+
+body.light-mode {
+  background-color: var(--bg-light);
+  color: var(--text-light);
+}
+
 .app {
-  background-color: rgba(0, 0, 0, 0.75);
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 500px;
+  background-color: var(--card-bg);
+  padding: 25px;
+  border-radius: 16px;
+  max-width: 600px;
   width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  transition: var(--transition);
 }
-textarea, input, button {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border: none;
-  font-size: 1em;
-}
-button {
-  background-color: gold;
-  color: black;
-  font-weight: bold;
-}
-.language-switch {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-.bar {
-  height: 24px;
-  margin: 8px 0;
-  border-radius: 5px;
-  text-align: right;
-  padding-right: 10px;
-  font-weight: bold;
-  line-height: 24px;
-  color: #fff;
-}
-.bar.player { background-color: #007BFF; }
-.bar.banker { background-color: #DC3545; }
-.bar.tie { background-color: #28A745; }
 
-/* ألوان النصوص الجديدة */
-.player-text { color: #007BFF; }
-.banker-text { color: #DC3545; }
-.tie-text { color: #28A745; }
-
-/* أنماط الجداول الجديدة */
-.results-table {
-  width: 100%;
-  margin: 15px 0;
-  border-collapse: collapse;
+/* تحسينات الصفحة الرئيسية */
+h1 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  color: var(--primary-color);
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
   text-align: center;
 }
-.results-table th, 
-.results-table td {
-  padding: 8px 12px;
-  border: 1px solid rgba(255, 215, 0, 0.3);
-}
-.results-table th {
-  background-color: rgba(255, 215, 0, 0.1);
-  font-weight: bold;
+
+/* تحسينات أزرار الرهان */
+.buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 25px;
 }
 
-/* أنماط الميجورك الجديدة */
-.big-road-container {
-  background-color: rgba(0, 0, 0, 0.3);
+.buttons button {
+  flex: 1;
+  min-width: 120px;
+  max-width: 180px;
   padding: 15px;
-  border-radius: 10px;
-  margin-top: 20px;
-  overflow-x: auto;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+
+.player {
+  background-color: var(--player-color);
+  color: white;
+  border-bottom: 4px solid darken(var(--player-color), 15%);
+}
+
+.banker {
+  background-color: var(--banker-color);
+  color: white;
+  border-bottom: 4px solid darken(var(--banker-color), 15%);
+}
+
+.tie {
+  background-color: var(--tie-color);
+  color: white;
+  border-bottom: 4px solid darken(var(--tie-color), 15%);
+}
+
+/* تحسينات إدخال المبلغ */
+.bet-amount-container {
+  margin: 25px auto;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
+  border-radius: 15px;
+  max-width: 350px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,215,0,0.3);
+  transition: var(--transition);
+}
+
+.bet-amount-container label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 1.2em;
+  color: var(--primary-color);
+  font-weight: bold;
+  text-align: center;
+}
+
+.bet-amount-container input {
+  padding: 15px;
+  font-size: 1.3em;
+  width: 100%;
+  text-align: center;
+  border-radius: 12px;
+  border: 2px solid var(--primary-color);
+  background-color: rgba(0,0,0,0.3);
+  color: white;
+  transition: var(--transition);
+}
+
+/* تحسينات أشرطة التنبؤ */
+.prediction-bars {
+  display: flex;
+  height: 50px;
+  margin: 20px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.prediction-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  transition: width 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+  font-size: 1.1em;
+}
+
+.player-bar { background-color: var(--player-color); }
+.banker-bar { background-color: var(--banker-color); }
+.tie-bar { background-color: var(--tie-color); }
+
+/* تحسينات الجداول */
+.results-table, .hot-results-table, .bets-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+}
+
+/* تحسينات للهواتف */
+@media (max-width: 768px) {
+  .app {
+    padding: 15px;
+    margin: 15px;
+    width: auto;
+  }
+  
+  .buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .buttons button {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .bet-amount-container {
+    width: 90%;
+  }
+}
+
+/* تأثيرات الحركة */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.win-animation {
+  animation: pulse 0.5s ease-in-out;
+}
+
+/* تحسينات Big Road */
+.big-road-container {
+  margin-top: 2em;
+  padding: 1.5em;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
 .big-road {
   display: inline-grid;
   grid-auto-flow: column;
-  grid-template-rows: repeat(6, 30px);
-  gap: 4px;
+  grid-template-rows: repeat(6, 35px);
+  gap: 5px;
   padding: 10px;
 }
+
 .big-road-cell {
-  width: 30px;
-  height: 30px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 14px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease;
 }
-.big-road-P { background-color: #007BFF; color: white; }
-.big-road-B { background-color: #DC3545; color: white; }
-.big-road-T { background-color: #28A745; color: white; }
+
+.big-road-cell:hover {
+  transform: scale(1.1);
+}
