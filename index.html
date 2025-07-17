@@ -151,6 +151,30 @@
     body.light-mode .trends-container {
       background-color: rgba(0,0,0,0.05);
     }
+    <!-- قسم تحليل الاتجاهات -->
+<div class="trends-container" id="trendsContainer">
+  <h3>📈 تحليل الاتجاهات والأنماط</h3>
+  <div id="trendsContent"></div>
+</div>
+
+<!-- قسم السابقة - أضفه هنا -->
+<div class="last-results-container">
+  <h3>🔄 السابقة (آخر 5 نتائج)</h3>
+  <div class="last-results-grid">
+    <div class="result-cell" id="result1"></div>
+    <div class="result-cell" id="result2"></div>
+    <div class="result-cell" id="result3"></div>
+    <div class="result-cell" id="result4"></div>
+    <div class="result-cell" id="result5"></div>
+  </div>
+  <div class="edit-buttons">
+    <button class="edit-btn" onclick="editLastResult()">✏️ تعديل</button>
+    <button class="undo-btn" onclick="undoLastResult()">↩️ تراجع</button>
+  </div>
+</div>
+
+<!-- قسم نصيحة الذكاء الاصطناعي -->
+<div class="ai-advice" id="aiAdvice"></div>
     canvas {
       margin-top: 2em;
       max-width: 100%;
