@@ -74,3 +74,61 @@ function speakPrediction(result) {
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(speech);
                                                                  }
+function updateLastResultsDisplay() {
+  const lastFive = history.slice(-5);
+  const cells = [
+    document.getElementById('result1'),
+    document.getElementById('result2'),
+    document.getElementById('result3'),
+    document.getElementById('result4'),
+    document.getElementById('result5')
+  ];
+
+  // مسح جميع الخلايا أولاً
+  cells.forEach(cell => {
+    cell.className = 'result-cell';
+    cell.textContent = '';
+  });
+
+  // تعبئة الخلايا بالنتائج
+  lastFive.forEach((result, index) => {
+    if (result) {
+      cells[index].classList.add(`result-${result}`);
+      cells[index].textContent = result;
+    }
+  });
+}
+
+function editLastResult() {
+  const lastIndex = history.length - 1;
+  if (lastIndex < 0) return;
+
+  const newResult = prompt("أدخل النتيجة الجديدة (P, B, T):", history[lastIndex]);
+  if (newResult && ['P', 'B', 'T'].includes(newResult.toUpperCase())) {
+    history[lastIndex] = newResult.toUpperCase();
+    updateLastResultsDisplay();
+    updateDisplay();
+    updateBigRoad();
+    updateTrendsAndStreaks();
+    updatePredictions();
+    generateAdvice();
+  }
+}
+
+function undoLastResult() {
+  if (history.length > 0) {
+    history.pop();
+    updateLastResultsDisplay();
+    updateDisplay();
+    updateBigRoad();
+    updateTrendsAndStreaks();
+    updatePredictions();
+    generateAdvice();
+  }
+}
+
+function addResult(result) {
+  // ... الكود الحالي ...
+  
+  updateLastResultsDisplay(); // أضف هذا السطر في النهاية
+}
