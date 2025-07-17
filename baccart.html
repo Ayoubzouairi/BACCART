@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>BACCARAT PREDICTOR PRO</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: gold;
+      font-family: 'Segoe UI', Tahoma;
+      padding: 20px;
+      text-align: center;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>BACCARAT TEST</h1>
+
+<button onclick="addResult('P')">لاعب (P)</button>
+<button onclick="addResult('B')">مصرفي (B)</button>
+<button onclick="addResult('T')">تعادل (T)</button>
+
+<div id="output"></div>
+
+<script>
+// متغيرات التطبيق
+let history = [];
+
+// دالة أساسية للاختبار
+function addResult(result) {
+  history.push(result);
+  document.getElementById('output').innerHTML = 
+    `تم إضافة: ${result} | السجل: ${history.join(', ')}`;
+  console.log("تم الضغط على:", result);
+}
+
+// تأكيد تحميل السكريبت
+console.log("تم تحميل البرنامج بنجاح");
+</script>
+
+</body>
+</html> 
