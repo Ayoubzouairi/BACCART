@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BACCARAT PREDICTOR PRO</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="language-container">
+    <select id="langSelect" class="language">
+      <option value="ar">🇲🇦 العربية</option>
+      <option value="en">🇺🇸 English</option>
+    </select>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+  </div>
+
+  <h1>BACCARAT PREDICTOR PRO</h1>
+  
+  <div class="bet-amount-container">
+    <label for="betAmount" id="betAmountLabel">💰 مبلغ الرهان بالدرهم</label>
+    <input type="number" id="betAmount" class="amount" placeholder="أدخل المبلغ (اختياري)" min="1" step="1">
+  </div>
+  
+  <p id="roundResultText">📲 اختر نتيجة الجولة:</p>
+  <div class="buttons">
+    <button class="player" onclick="addResult('P')">
+      <span class="player-icon">🔵</span>
+      <span id="playerText">اللاعب</span>
+      <div class="bet-odds">1:1</div>
+    </button>
+    <button class="banker" onclick="addResult('B')">
+      <span class="banker-icon">🔴</span>
+      <span id="bankerText">المصرفي</span>
+      <div class="bet-odds">0.95:1</div>
+    </button>
+    <button class="tie" onclick="addResult('T')">
+      <span class="tie-icon">🟢</span>
+      <span id="tieText">تعادل</span>
+      <div class="bet-odds">8:1</div>
+    </button>
+  </div>
+
+  <div class="prediction-section" id="predictionResult">
+    <div class="prediction-title" id="predictionTitle">📊 تنبؤات متقدمة</div>
+    <div id="predictionBars" class="prediction-bars">
+      <div class="prediction-bar player-bar" style="width:33%">P</div>
+      <div class="prediction-bar banker-bar" style="width:34%">B</div>
+      <div class="prediction-bar tie-bar" style="width:33%">T</div>
+    </div>
+    <div class="probability-display">
+      <div class="probability-item">
+        <span class="player-text" id="playerLabel">لاعب</span>
+        <span id="playerProb" class="probability-value player-text">33%</span>
+      </div>
+      <div class="probability-item">
+        <span class="banker-text" id="bankerLabel">مصرفي</span>
+        <span id="bankerProb" class="probability-value banker-text">34%</span>
+      </div>
+      <div class="probability-item">
+        <span class="tie-text" id="tieLabel">تعادل</span>
+        <span id="tieProb" class="probability-value tie-text">33%</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="stats" id="statsResult"></div>
+  <div class="ai-stats" id="aiStats"></div>
+  
+  <div class="trends-container" id="trendsContainer">
+    <h3 id="trendsTitle">📈 تحليل الاتجاهات والأنماط</h3>
+    <div id="trendsContent"></div>
+  </div>
+  
+  <div class="ai-advice" id="aiAdvice"></div>
+  <div class="history" id="historyDisplay"></div>
+  
+  <div class="balance-display" id="balanceDisplay">
+    <span id="balanceText">💵 الرصيد:</span> <span id="balanceValue">0</span> <span id="currency">درهم</span>
+  </div>
+  
+  <div id="betsHistoryContainer" style="display: none;">
+    <h3 id="betsHistoryTitle">📋 سجل الرهانات</h3>
+    <table class="bets-history-table">
+      <thead>
+        <tr>
+          <th id="roundHeader">الجولة</th>
+          <th id="betOnHeader">الرهان على</th>
+          <th id="amountHeader">المبلغ</th>
+          <th id="outcomeHeader">النتيجة</th>
+          <th id="profitHeader">الربح/الخسارة</th>
+        </tr>
+      </thead>
+      <tbody id="betsHistoryBody"></tbody>
+    </table>
+  </div>
+  
+  <div id="performanceSummary" class="performance-summary" style="display: none;">
+    <h3 id="performanceTitle">📊 تحليل الأداء</h3>
+    <div class="overall-stats" id="overallStats"></div>
+    <table class="performance-by-type">
+      <thead>
+        <tr>
+          <th id="betTypeHeader">نوع الرهان</th>
+          <th id="betsCountHeader">عدد الرهانات</th>
+          <th id="winsHeader">الفوز</th>
+          <th id="lossesHeader">الخسارة</th>
+          <th id="winRateHeader">معدل الفوز</th>
+          <th id="netProfitHeader">صافي الربح</th>
+        </tr>
+      </thead>
+      <tbody id="performanceByType"></tbody>
+    </table>
+  </div>
+
+  <div class="action-buttons">
+    <button class="reset" onclick="resetData()" id="resetBtn">🔄 إعادة تعيين</button>
+    <button class="reset" onclick="toggleBetsHistory()" id="historyBtn">📊 عرض سجل الرهانات</button>
+  </div>
+
+  <canvas id="chart" width="400" height="150"></canvas>
+
+  <div class="big-road-container">
+    <h2 id="bigRoadTitle">Big Road (الميجورك)</h2>
+    <div id="bigRoad" class="big-road"></div>
+  </div>
+
+  <audio id="soundEffect" src="click.wav"></audio>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="logic.js"></script>
+</body>
+</html> 
