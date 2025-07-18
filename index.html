@@ -5,7 +5,6 @@
   <title>BACCARAT PREDICTOR PRO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* أنماط CSS المدمجة */
     body {
       background-color: #121212;
       color: gold;
@@ -36,7 +35,6 @@
       border: 1px solid rgba(255,215,0,0.3);
     }
     
-    /* بقية الأنماط... */
     .language-container {
       position: absolute;
       top: 20px;
@@ -61,7 +59,6 @@
     .bar.banker { background-color: #DC3545; }
     .bar.tie { background-color: #28A745; }
     
-    /* أنماط الأزرار */
     .buttons button {
       padding: 1em 1.8em;
       font-size: 1.1em;
@@ -101,7 +98,6 @@
       border-bottom: 4px solid #333;
     }
     
-    /* أنماط الجداول والرسوم البيانية */
     .results-table {
       width: 100%;
       border-collapse: collapse;
@@ -109,15 +105,22 @@
       text-align: center;
     }
     
-    .big-road {
-      display: inline-grid;
-      grid-auto-flow: column;
-      grid-template-rows: repeat(6, 30px);
-      gap: 4px;
-      padding: 10px;
+    .player-text { color: #007bff; }
+    .banker-text { color: #dc3545; }
+    .tie-text { color: #28a745; }
+    
+    .balance-display {
+      font-size: 1.3em;
+      font-weight: bold;
+      padding: 12px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
+      display: inline-block;
+      min-width: 200px;
+      margin: 10px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     
-    /* أنماط متجاوبة */
     @media (max-width: 768px) {
       body {
         padding: 1em;
@@ -131,7 +134,6 @@
   </style>
 </head>
 <body>
-  <!-- واجهة المستخدم -->
   <div class="language-container">
     <select id="langSelect" class="language">
       <option value="ar-MA">🇲🇦 العربية</option>
@@ -143,7 +145,7 @@
   <h1>BACCARAT PREDICTOR PRO</h1>
   
   <div class="bet-amount-container">
-    <label for="betAmount">💰 مبلغ الرهان بالدرهم</label>
+    <label for="betAmount" مبلغ الرهان بدرهم </label>
     <input type="number" id="betAmount" class="amount" placeholder="أدخل المبلغ (اختياري)" min="1" step="1">
   </div>
   
@@ -163,7 +165,6 @@
     </button>
   </div>
 
-  <!-- أقسام النتائج والتنبؤات -->
   <div class="stats" id="statsResult"></div>
   <div class="history" id="historyDisplay"></div>
   <div class="balance-display" id="balanceDisplay">
@@ -180,8 +181,8 @@
   <script>
     // المتغيرات العامة
     let history = [];
-    let balance = 0;
-    let balanceHistory = [0];
+    let balance = ; // رصيد ابتدائي اختياري درهم
+    let balanceHistory = [];
     let currentStreak = { type: null, count: 0 };
     let betsHistory = [];
     let lang = 'ar-MA';
@@ -193,6 +194,7 @@
       loadLanguage();
       initChart();
       document.getElementById('langSelect').addEventListener('change', changeLanguage);
+      document.getElementById('balanceValue').textContent = balance.toFixed(2);
     });
 
     // وظائف التطبيق الأساسية
@@ -201,10 +203,10 @@
       chart = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: [],
+          labels: balanceHistory.map((_, i) => i),
           datasets: [{
             label: 'الرصيد',
-            data: [],
+            data: balanceHistory,
             backgroundColor: 'rgba(255, 215, 0, 0.2)',
             borderColor: 'gold',
             borderWidth: 2,
@@ -249,6 +251,11 @@
       const betAmount = parseFloat(document.getElementById('betAmount').value) || 0;
       document.getElementById('betAmount').value = '';
       
+      if (betAmount > balance && betAmount > 0) {
+        alert(lang === 'ar-MA' ? 'الرصيد غير كافي!' : 'Insufficient balance!');
+        return;
+      }
+      
       history.push(result);
       
       // تحديث السلسلة الحالية
@@ -262,6 +269,7 @@
       const round = history.length;
       const betOn = event.target.classList.contains('player') ? 'P' : 
                    event.target.classList.contains('banker') ? 'B' : 'T';
+      
       const profit = calculateProfit(betOn, result, betAmount);
       
       betsHistory.push({
@@ -278,28 +286,34 @@
       updatePredictions();
     }
 
+    // الدالة المصححة لحساب الربح
     function calculateProfit(betOn, outcome, amount) {
       if (!amount || amount <= 0) return 0;
       
       if (betOn === outcome) {
-        if (betOn === 'T') return amount * 8;
-        if (betOn === 'B') return amount * 0.95;
-        return amount * 1;
+        if (betOn === 'T') return amount * 0;  // ربح 0 أضعاف المبلغ عند التعادل
+        if (betOn === 'B') return amount * 0.95; // ربح 95% من المبلغ عند المصرفي
+        return amount * 1; // ربح مساوي للمبلغ عند اللاعب
       }
-      return -amount;
+      return -amount; // خسارة كامل المبلغ المراهن
     }
 
     function updateBalance(profit) {
       balance += profit;
       balanceHistory.push(balance);
       document.getElementById('balanceValue').textContent = balance.toFixed(2);
-      updateChart();
-    }
-
-    function updateChart() {
+      
+      // تحديث الرسم البياني
       chart.data.labels = balanceHistory.map((_, i) => i);
       chart.data.datasets[0].data = balanceHistory;
       chart.update();
+      
+      // تأثير بسيط عند تغيير الرصيد
+      const balanceDisplay = document.getElementById('balanceDisplay');
+      balanceDisplay.style.transform = 'scale(1.05)';
+      setTimeout(() => {
+        balanceDisplay.style.transform = 'scale(1)';
+      }, 300);
     }
 
     function updateDisplay() {
@@ -308,7 +322,7 @@
         if (r === 'B') return '🔴';
         if (r === 'T') return '🟢';
       }).join(' ');
-      document.getElementById('historyDisplay').innerText = "جميع الجولات: " + displayText;
+      document.getElementById('historyDisplay').innerText = (lang === 'ar-MA' ? "جميع الجولات: " : "All rounds: ") + displayText;
 
       const totalRounds = history.length;
       const count = { P: 0, B: 0, T: 0 };
@@ -317,10 +331,10 @@
       const statsHTML = `
         <table class="results-table">
           <tr>
-            <th>عدد الجولات</th>
-            <th class="player-text">لاعب</th>
-            <th class="banker-text">مصرفي</th>
-            <th class="tie-text">تعادل</th>
+            <th>${lang === 'ar-MA' ? 'عدد الجولات' : 'Rounds'}</th>
+            <th class="player-text">${lang === 'ar-MA' ? 'لاعب' : 'Player'}</th>
+            <th class="banker-text">${lang === 'ar-MA' ? 'مصرفي' : 'Banker'}</th>
+            <th class="tie-text">${lang === 'ar-MA' ? 'تعادل' : 'Tie'}</th>
           </tr>
           <tr>
             <td>${totalRounds}</td>
@@ -385,7 +399,7 @@
         <span class="banker-text">🔴 ${isArabic ? 'مصرفي' : 'Banker'}: ${prediction.B.toFixed(1)}%</span> | 
         <span class="tie-text">🟢 ${isArabic ? 'تعادل' : 'Tie'}: ${prediction.T.toFixed(1)}%</span>
       `;
-      document.getElementById('statsResult').innerHTML = statsHTML;
+      document.getElementById('statsResult').innerHTML += `<div style="margin-top:10px;">${statsHTML}</div>`;
     }
 
     function resetData() {
@@ -394,14 +408,14 @@
           "هل أنت متأكد من أنك تريد إعادة تعيين جميع البيانات؟" : 
           "Are you sure you want to reset all data?")) {
         history = [];
-        balance = 0;
-        balanceHistory = [0];
+        balance = 1000;
+        balanceHistory = [1000];
         betsHistory = [];
         currentStreak = { type: null, count: 0 };
-        updateChart();
+        initChart();
         document.getElementById('statsResult').innerText = '';
         document.getElementById('historyDisplay').innerText = '';
-        document.getElementById('balanceValue').textContent = '0';
+        document.getElementById('balanceValue').textContent = '1000.00';
         document.getElementById('betAmount').value = '';
       }
     }
@@ -415,9 +429,9 @@
       document.querySelector('.player').innerHTML = isArabic ? '🔵 اللاعب <div class="bet-odds">1:1</div>' : '🔵 Player <div class="bet-odds">1:1</div>';
       document.querySelector('.banker').innerHTML = isArabic ? '🔴 المصرفي <div class="bet-odds">0.95:1</div>' : '🔴 Banker <div class="bet-odds">0.95:1</div>';
       document.querySelector('.tie').innerHTML = isArabic ? '🟢 تعادل <div class="bet-odds">8:1</div>' : '🟢 Tie <div class="bet-odds">8:1</div>';
-      document.querySelector('#balanceDisplay').innerHTML = isArabic ? '💵 الرصيد: <span id="balanceValue">0</span> درهم' : '💵 Balance: <span id="balanceValue">0</span> MAD';
-      document.querySelectorAll('.reset')[0].textContent = isArabic ? '🔄 إعادة تعيين' : '🔄 Reset';
+      document.querySelector('#balanceDisplay').innerHTML = isArabic ? '💵 الرصيد: <span id="balanceValue">1000.00</span> درهم' : '💵 Balance: <span id="balanceValue">1000.00</span> MAD';
+      document.querySelector('.reset').textContent = isArabic ? '🔄 إعادة تعيين' : '🔄 Reset';
     }
   </script>
 </body>
-  </html>
+</html>
