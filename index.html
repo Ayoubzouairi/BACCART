@@ -2,9 +2,9 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8" />
-  <title>BACCARAT SPEED</title>
+  <title>Baccarat Speed</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="language-container">
@@ -15,7 +15,7 @@
     <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
   </div>
 
-  <h1 class="gold-title">BACCARAT SPEED</h1>
+  <h1><span class="logo-b">B</span><span class="logo-s">S</span><span class="logo-rest">ACCARAT</span> <span class="logo-rest">SPEED</span></h1>
   
   <div class="bet-amount-container">
     <label for="betAmount">💰 مبلغ الرهان بالدرهم</label>
@@ -38,7 +38,7 @@
     </button>
   </div>
 
-  <div class="prediction-section">
+  <div class="prediction-section" id="predictionResult">
     <div class="prediction-title">📊 تنبؤات متقدمة</div>
     <div id="predictionBars" class="prediction-bars">
       <div class="prediction-bar player-bar" style="width:33%">P</div>
@@ -62,21 +62,69 @@
   </div>
   
   <div class="stats" id="statsResult"></div>
+  <div class="ai-stats" id="aiStats"></div>
+  
+  <div class="trends-container" id="trendsContainer">
+    <h3>📈 تحليل الاتجاهات والأنماط</h3>
+    <div id="trendsContent"></div>
+  </div>
+  
+  <div class="ai-advice" id="aiAdvice"></div>
   <div class="history" id="historyDisplay"></div>
   
   <div class="balance-display" id="balanceDisplay">
     💵 الرصيد: <span id="balanceValue">0</span> درهم
   </div>
   
-  <div id="notification" class="notification"></div>
-
-  <canvas id="chart" width="400" height="150"></canvas>
+  <div id="betsHistoryContainer" style="display: none;">
+    <h3>📋 سجل الرهانات</h3>
+    <table class="bets-history-table">
+      <thead>
+        <tr>
+          <th>الجولة</th>
+          <th>الرهان على</th>
+          <th>المبلغ</th>
+          <th>النتيجة</th>
+          <th>الربح/الخسارة</th>
+        </tr>
+      </thead>
+      <tbody id="betsHistoryBody"></tbody>
+    </table>
+  </div>
+  
+  <div id="performanceSummary" class="performance-summary" style="display: none;">
+    <h3>📊 تحليل الأداء</h3>
+    <div class="overall-stats" id="overallStats"></div>
+    <table class="performance-by-type">
+      <thead>
+        <tr>
+          <th>نوع الرهان</th>
+          <th>عدد الرهانات</th>
+          <th>الفوز</th>
+          <th>الخسارة</th>
+          <th>معدل الفوز</th>
+          <th>صافي الربح</th>
+        </tr>
+      </thead>
+      <tbody id="performanceByType"></tbody>
+    </table>
+  </div>
 
   <div style="margin-top: 20px;">
     <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
+    <button class="reset" onclick="toggleBetsHistory()">📊 عرض سجل الرهانات</button>
   </div>
+
+  <canvas id="chart" width="400" height="150"></canvas>
+
+  <div class="big-road-container">
+    <h2>Big Road (الميجورك)</h2>
+    <div id="bigRoad" class="big-road"></div>
+  </div>
+
+  <div id="notification-container"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="logic.js"></script>
 </body>
-</html>
+  </html>
