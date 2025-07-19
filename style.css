@@ -4,11 +4,6 @@
   font-size: 1.2em;
 }
 
-.logo-s {
-  color: #dc3545;
-  font-size: 1.2em;
-}
-
 .logo-rest {
   color: gold;
 }
@@ -96,7 +91,7 @@ body.light-mode {
   align-items: center;
   gap: 10px;
 }
-.language, .amount {
+.language {
   padding: 0.5em;
   font-size: 1em;
   width: 150px;
@@ -106,7 +101,7 @@ body.light-mode {
   color: white;
 }
 
-.result, .stats, .history, .balance, .ai-stats, .ai-advice, .trends-container {
+.result, .stats, .history, .ai-stats, .ai-advice, .trends-container {
   margin-top: 1.5em;
   font-size: 1.2em;
   padding: 15px;
@@ -118,7 +113,6 @@ body.light-mode {
 body.light-mode .result, 
 body.light-mode .stats, 
 body.light-mode .history, 
-body.light-mode .balance, 
 body.light-mode .ai-stats, 
 body.light-mode .ai-advice,
 body.light-mode .trends-container {
@@ -255,9 +249,6 @@ body.light-mode .results-table td {
 .hot { color: #FF5722; font-weight: bold; }
 .cold { color: #2196F3; font-weight: bold; }
 
-.win { color: #28a745; font-weight: bold; }
-.loss { color: #dc3545; font-weight: bold; }
-
 /* أنماط جديدة للمؤشرات والسلاسل */
 .trend-indicator {
   font-size: 1.2em;
@@ -293,11 +284,38 @@ body.light-mode .results-table td {
 
 .pattern-badge {
   display: inline-block;
-  padding: 3px 8px;
+  padding: 8px 12px;
   background-color: rgba(255, 215, 0, 0.2);
   border-radius: 10px;
-  margin: 2px;
-  font-size: 0.85em;
+  margin: 5px;
+  font-size: 0.9em;
+  position: relative;
+}
+
+.pattern-tooltip {
+  display: none;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  width: 200px;
+  z-index: 100;
+  font-size: 0.8em;
+}
+
+.pattern-badge:hover .pattern-tooltip {
+  display: block;
+}
+
+.pattern-confidence {
+  display: inline-block;
+  margin-left: 5px;
+  font-weight: bold;
+  color: gold;
 }
 
 .trend-item {
@@ -361,51 +379,6 @@ body.light-mode .results-table td {
   font-size: 1.1em;
 }
 
-/* إشعارات */
-#notification-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-}
-
-.notification {
-  padding: 15px 20px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  color: white;
-  font-weight: bold;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  animation: slideIn 0.5s ease, fadeOut 0.5s ease 2.5s forwards;
-  display: flex;
-  align-items: center;
-}
-
-.notification-win {
-  background-color: #28a745;
-  border-left: 5px solid #1e7e34;
-}
-
-.notification-loss {
-  background-color: #dc3545;
-  border-left: 5px solid #a71d2a;
-}
-
-.notification-tie {
-  background-color: #6c757d;
-  border-left: 5px solid #495057;
-}
-
-@keyframes slideIn {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
-
 @media (max-width: 768px) {
   body {
     padding: 1em;
@@ -415,4 +388,4 @@ body.light-mode .results-table td {
     min-width: 100px;
     font-size: 1em;
   }
-  }
+}
