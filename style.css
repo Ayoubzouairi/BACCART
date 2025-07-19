@@ -98,3 +98,28 @@ button {
 .big-road-P { background-color: #007BFF; color: white; }
 .big-road-B { background-color: #DC3545; color: white; }
 .big-road-T { background-color: #28A745; color: white; }
+
+.notif {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #222;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 1.1em;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 9999;
+  opacity: 0.95;
+  animation: fadeInOut 3s ease forwards;
+}
+.notif.win { background-color: #28a745; }
+.notif.loss { background-color: #dc3545; }
+.notif.tie  { background-color: #ffc107; color: #000; }
+
+@keyframes fadeInOut {
+  0% { transform: translateY(-20px); opacity: 0; }
+  10% { transform: translateY(0); opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-20px); }
+  }
