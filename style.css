@@ -1,4 +1,4 @@
-/* إضافة هذه الأنماط الجديدة في الأعلى */
+/* أنماط العنوان الجديدة */
 .logo-b {
   color: #007bff;
   font-size: 1.2em;
@@ -13,7 +13,7 @@
   color: gold;
 }
 
-/* باقي الأنماط كما هي دون تغيير */
+/* أنماط عامة */
 body {
   background-color: #121212;
   color: gold;
@@ -27,40 +27,6 @@ body {
 body.light-mode {
   background-color: #f5f5f5;
   color: #333;
-}
-
-/* ... (باقي ملف CSS كما هو دون تغيير) ... */
-body {
-  background-color: #121212;
-  color: gold;
-  font-family: 'Segoe UI', Tahoma, sans-serif;
-  padding: 2em;
-  direction: rtl;
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-body.light-mode {
-  background-color: #f5f5f5;
-  color: #333;
-}
-
-h1 {
-  font-size: 2.5em;
-  margin-bottom: 20px;
-  letter-spacing: 2px;
-}
-
-.logo-b {
-  color: #007bff;
-}
-
-.logo-s {
-  color: #dc3545;
-}
-
-.logo-rest {
-  color: gold;
 }
 
 /* تصميم جديد لمبلغ الرهان */
