@@ -1,4 +1,20 @@
 function predict() {
+  function calculateProfit(betOn, outcome, amount) {
+  if (!amount || amount <= 0) return 0;
+  if (betOn === outcome) {
+    if (betOn === 'T') return 0; // تعادل = لا ربح ولا خسارة
+    if (betOn === 'B') return amount * 0.95; // المصرفي: خصم 5%
+    return amount * 1; // اللاعب
+  }
+  return -amount; // خسارة
+}
+function showNotification(type, message) {
+  const notif = document.createElement('div');
+  notif.className = `notif ${type}`;
+  notif.innerHTML = message;
+  document.body.appendChild(notif);
+  setTimeout(() => notif.remove(), 3000);
+}
   const input = document.getElementById("historyInput").value.trim().toLowerCase();
   const count = parseInt(document.getElementById("roundCount").value);
   const entries = input.split(",").map(e => e.trim()).filter(e => e);
