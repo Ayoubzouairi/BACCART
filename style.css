@@ -1,3 +1,35 @@
+/* إضافة هذه الأنماط الجديدة في الأعلى */
+.logo-b {
+  color: #007bff;
+  font-size: 1.2em;
+}
+
+.logo-s {
+  color: #dc3545;
+  font-size: 1.2em;
+}
+
+.logo-rest {
+  color: gold;
+}
+
+/* باقي الأنماط كما هي دون تغيير */
+body {
+  background-color: #121212;
+  color: gold;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  padding: 2em;
+  direction: rtl;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+body.light-mode {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+/* ... (باقي ملف CSS كما هو دون تغيير) ... */
 body {
   background-color: #121212;
   color: gold;
