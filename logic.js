@@ -6,6 +6,76 @@ let betsHistory = [];
 let showBetsHistory = false;
 let lang = 'ar-MA';
 
+// دالة حساب الربح المعدلة بدقة
+function calculateProfit(betOn, outcome, amount) {
+  if (!amount || amount <= 0) return 0;
+  
+  if (betOn === outcome) {
+    // الفوز
+    if (betOn === 'P') return amount * 1; // اللاعب 1:1
+    if (betOn === 'B') return amount * 0.95; // المصرفي 0.95:1
+    if (betOn === 'T') return amount * 8; // التعادل 8:1
+  } else if (outcome === 'T') {
+    // التعادل لا يغير الرصيد
+    return 0;
+  } else {
+    // الخسارة
+    return -amount;
+  }
+}
+
+// دالة تحديث الرصيد المعدلة
+function updateBalance(profit, betOn, outcome) {
+  const balanceDisplay = document.getElementById('balanceDisplay');
+  const balanceValue = document.getElementById('balanceValue');
+  
+  balance += profit;
+  balanceHistory.push(balance);
+  balanceValue.textContent = balance.toFixed(2);
+  updateChart();
+  
+  // تأثيرات بصرية
+  if (profit > 0) {
+    balanceDisplay.classList.add('balance-up');
+    showNotification(
+      lang === 'ar-MA' ? `ربح! +${profit.toFixed(2)} درهم` : `Win! +${profit.toFixed(2)} MAD`,
+      'win'
+    );
+  } else if (profit < 0) {
+    balanceDisplay.classList.add('balance-down');
+    showNotification(
+      lang === 'ar-MA' ? `خسارة! ${profit.toFixed(2)} درهم` : `Loss! ${profit.toFixed(2)} MAD`,
+      'loss'
+    );
+  } else {
+    showNotification(
+      lang === 'ar-MA' ? 'تعادل - لا تغيير في الرصيد' : 'Tie - No change in balance',
+      'tie'
+    );
+  }
+  
+  // إزالة التأثيرات بعد الإنتهاء
+  setTimeout(() => {
+    balanceDisplay.classList.remove('balance-up', 'balance-down');
+  }, 1000);
+}
+
+// دالة إظهار الإشعارات
+function showNotification(message, type) {
+  const notification = document.createElement('div');
+  notification.className = `notification notification-${type}`;
+  notification.innerHTML = `
+    ${type === 'win' ? '🎉' : type === 'loss' ? '💔' : '🤝'} 
+    ${message}
+  `;
+  
+  document.getElementById('notification-container').appendChild(notification);
+  
+  setTimeout(() => {
+    notification.remove();
+  }, 3000);
+}
+
 // تهيئة التطبيق عند التحميل
 document.addEventListener('DOMContentLoaded', function() {
   loadTheme();
@@ -134,77 +204,6 @@ function updateBigRoad() {
   }
 }
 
-function calculateProfit(betOn, outcome, amount, prediction) {
-  if (!amount || amount <= 0) return 0;
-  
-  if (betOn === outcome) {
-    let multiplier = 1;
-    if (betOn === 'T') multiplier = 8;
-    else if (betOn === 'B') multiplier = 0.95;
-    
-    // زيادة المبلغ حسب نسبة التنبؤ
-    const predictionPercent = prediction[betOn] / 100;
-    const adjustedMultiplier = multiplier * (1 + predictionPercent);
-    return amount * adjustedMultiplier;
-  } else if (outcome === 'T') {
-    return 0; // التعادل لا يغير الرصيد
-  } else {
-    // خسارة حسب نسبة التنبؤ
-    const predictionPercent = prediction[betOn] / 100;
-    return -amount * (1 - predictionPercent);
-  }
-}
-
-function showNotification(message, type) {
-  const notification = document.createElement('div');
-  notification.className = `notification notification-${type}`;
-  notification.innerHTML = `
-    ${type === 'win' ? '🎉' : type === 'loss' ? '💔' : '🤝'} 
-    ${message}
-  `;
-  
-  document.getElementById('notification-container').appendChild(notification);
-  
-  setTimeout(() => {
-    notification.remove();
-  }, 3000);
-}
-
-function updateBalance(profit, betOn, outcome) {
-  const balanceDisplay = document.getElementById('balanceDisplay');
-  const balanceValue = document.getElementById('balanceValue');
-  
-  // إضافة تأثيرات حسب النتيجة
-  if (profit > 0) {
-    balanceDisplay.classList.add('balance-up');
-    showNotification(
-      lang === 'ar-MA' ? `ربح! +${profit.toFixed(2)} درهم` : `Win! +${profit.toFixed(2)} MAD`,
-      'win'
-    );
-  } else if (profit < 0) {
-    balanceDisplay.classList.add('balance-down');
-    showNotification(
-      lang === 'ar-MA' ? `خسارة! ${profit.toFixed(2)} درهم` : `Loss! ${profit.toFixed(2)} MAD`,
-      'loss'
-    );
-  } else {
-    showNotification(
-      lang === 'ar-MA' ? 'تعادل - لا تغيير في الرصيد' : 'Tie - No change in balance',
-      'tie'
-    );
-  }
-  
-  // إزالة تأثيرات بعد انتهاء الرسوم المتحركة
-  setTimeout(() => {
-    balanceDisplay.classList.remove('balance-up', 'balance-down');
-  }, 1000);
-  
-  balance += profit;
-  balanceHistory.push(balance);
-  balanceValue.textContent = balance.toFixed(2);
-  updateChart();
-}
-
 function updateBetsHistory() {
   const tbody = document.getElementById('betsHistoryBody');
   tbody.innerHTML = '';
@@ -329,11 +328,7 @@ function addResult(result) {
   // تحديد نوع الرهان بناءً على الزر الذي تم الضغط عليه
   const betOn = event.target.classList.contains('player') ? 'P' : 
                event.target.classList.contains('banker') ? 'B' : 'T';
-  
-  // الحصول على التنبؤ الحالي
-  const prediction = advancedPredict(history);
-  
-  const profit = calculateProfit(betOn, result, betAmount, prediction);
+  const profit = calculateProfit(betOn, result, betAmount);
   
   betsHistory.push({
     round,
@@ -754,8 +749,8 @@ function updateUI() {
   
   document.title = isArabic ? 'Baccarat Speed' : 'Baccarat Speed';
   document.querySelector('h1').innerHTML = isArabic ? 
-    '<span class="logo-b">B</span><span class="logo-s">S</span><span class="logo-rest">ACCARAT</span> <span class="logo-rest">SPEED</span>' : 
-    '<span class="logo-b">B</span><span class="logo-s">S</span><span class="logo-rest">ACCARAT</span> <span class="logo-rest">SPEED</span>';
+    '<span class="logo-b">B</span><span class="logo-rest">ACCARAT</span> <span class="logo-s">S</span><span class="logo-rest">PEED</span>' : 
+    '<span class="logo-b">B</span><span class="logo-rest">ACCARAT</span> <span class="logo-s">S</span><span class="logo-rest">PEED</span>';
   document.querySelector('.bet-amount-container label').textContent = isArabic ? '💰 مبلغ الرهان بالدرهم' : '💰 Bet Amount (MAD)';
   document.querySelector('#betAmount').placeholder = isArabic ? 'أدخل المبلغ (اختياري)' : 'Enter amount (optional)';
   document.querySelector('p').textContent = isArabic ? '📲 اختر نتيجة الجولة:' : '📲 Select round result:';
@@ -832,4 +827,4 @@ function resetData() {
     document.getElementById('overallStats').innerHTML = '';
     document.getElementById('betAmount').value = '';
   }
-   }
+      } 
