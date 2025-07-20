@@ -1,80 +1,574 @@
-// المتغيرات العامة
-let history = [];
-let balance = 0;
-let balanceHistory = [0];
-let currentStreak = { type: null, count: 0 };
-let betsHistory = [];
-let showBetsHistory = false;
-let lang = 'ar-MA';
+/* أنماط العنوان الجديدة */
+.logo-b {
+  color: #007bff;
+  font-size: 1.2em;
+}
 
-// دالة حساب الربح
-function calculateProfit(betOn, outcome, amount) {
-  if (!amount || amount <= 0) return 0;
-  
-  if (betOn === outcome) {
-    if (betOn === 'P') return amount * 1;
-    if (betOn === 'B') return amount * 0.95;
-    if (betOn === 'T') return amount * 8;
-  } else if (outcome === 'T') {
-    return 0;
-  } else {
-    return -amount;
+.logo-s {
+  color: #dc3545;
+  font-size: 1.2em;
+}
+
+.logo-rest {
+  color: gold;
+}
+
+/* أنماط عامة */
+body {
+  background-color: #121212;
+  color: gold;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  padding: 2em;
+  direction: rtl;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+body.light-mode {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+/* تصميم جديد لمبلغ الرهان */
+.bet-amount-container {
+  margin: 20px auto;
+  padding: 15px;
+  background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
+  border-radius: 15px;
+  max-width: 300px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,215,0,0.3);
+}
+
+.bet-amount-container label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.1em;
+  color: gold;
+  font-weight: bold;
+}
+
+.bet-amount-container input {
+  padding: 12px 15px;
+  font-size: 1.2em;
+  width: 80%;
+  text-align: center;
+  border-radius: 10px;
+  border: 2px solid gold;
+  background-color: rgba(0,0,0,0.3);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.bet-amount-container input:focus {
+  outline: none;
+  border-color: #ffd700;
+  box-shadow: 0 0 10px rgba(255,215,0,0.5);
+}
+
+.buttons {
+  margin-top: 20px;
+}
+
+.buttons button {
+  padding: 1em 1.8em;
+  font-size: 1.1em;
+  margin: 0.5em;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  min-width: 120px;
+}
+
+.player { 
+  background-color: #007bff; 
+  color: white; 
+  border-bottom: 4px solid #0056b3;
+}
+.player:hover {
+  background-color: #0069d9;
+  transform: translateY(-2px);
+}
+
+.banker { 
+  background-color: #dc3545; 
+  color: white;
+  border-bottom: 4px solid #a71d2a;
+}
+.banker:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+}
+
+.tie { 
+  background-color: #28a745; 
+  color: white;
+  border-bottom: 4px solid #1e7e34;
+}
+.tie:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+.reset { 
+  background-color: #555; 
+  color: gold; 
+  margin-top: 1.5em;
+  padding: 0.8em 2em;
+  border-bottom: 4px solid #333;
+}
+.reset:hover {
+  background-color: #444;
+  transform: translateY(-2px);
+}
+
+.language-container {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.language, .amount {
+  padding: 0.5em;
+  font-size: 1em;
+  width: 150px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,215,0,0.3);
+  background-color: rgba(0,0,0,0.3);
+  color: white;
+}
+
+.result, .stats, .history, .balance, .ai-stats, .ai-advice, .trends-container {
+  margin-top: 1.5em;
+  font-size: 1.2em;
+  padding: 15px;
+  border-radius: 12px;
+  background-color: rgba(0,0,0,0.2);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+body.light-mode .result, 
+body.light-mode .stats, 
+body.light-mode .history, 
+body.light-mode .balance, 
+body.light-mode .ai-stats, 
+body.light-mode .ai-advice,
+body.light-mode .trends-container {
+  background-color: rgba(0,0,0,0.05);
+}
+
+canvas {
+  margin-top: 2em;
+  max-width: 100%;
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.theme-toggle {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+  color: gold;
+  transition: transform 0.3s ease;
+}
+.theme-toggle:hover {
+  transform: rotate(30deg);
+}
+body.light-mode .theme-toggle {
+  color: #333;
+}
+
+.ai-advice {
+  border-left: 4px solid gold;
+}
+.player-text { color: #007bff; }
+.banker-text { color: #dc3545; }
+.tie-text { color: #28a745; }
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+  text-align: center;
+}
+.results-table th, .results-table td {
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+body.light-mode .results-table th, 
+body.light-mode .results-table td {
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.big-road-container {
+  margin-top: 2em;
+  padding: 1em;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  direction: ltr;
+  overflow-x: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.big-road {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(6, 30px);
+  gap: 4px;
+  padding: 10px;
+}
+.big-road-cell {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.big-road-P { background-color: #007bff; color: white; }
+.big-road-B { background-color: #dc3545; color: white; }
+.big-road-T { background-color: #28a745; color: white; }
+
+.prediction-title {
+  color: gold;
+  font-size: 1.3em;
+  font-weight: bold;
+  margin-bottom: 5px;
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.prediction-value {
+  font-size: 1.2em;
+  font-weight: bold;
+  padding: 8px 15px;
+  border-radius: 8px;
+  display: inline-block;
+  margin: 5px 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.prediction-banker {
+  background-color: rgba(220, 53, 69, 0.2);
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}
+
+.prediction-player {
+  background-color: rgba(0, 123, 255, 0.2);
+  color: #007bff;
+  border: 1px solid #007bff;
+}
+
+.prediction-tie {
+  background-color: rgba(40, 167, 69, 0.2);
+  color: #28a745;
+  border: 1px solid #28a745;
+}
+
+.hot-results-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.hot-results-table th {
+  background-color: rgba(255, 215, 0, 0.1);
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.hot-results-table td {
+  padding: 10px;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hot { color: #FF5722; font-weight: bold; }
+.cold { color: #2196F3; font-weight: bold; }
+
+.bets-history-table {
+  width: 100%;
+  margin: 15px 0;
+  border-collapse: collapse;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.bets-history-table th, 
+.bets-history-table td {
+  padding: 10px 12px;
+  text-align: center;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.bets-history-table th {
+  background-color: rgba(255, 215, 0, 0.1);
+  font-weight: bold;
+}
+
+.win { color: #28a745; font-weight: bold; }
+.loss { color: #dc3545; font-weight: bold; }
+
+.performance-summary {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.overall-stats {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+  padding: 15px;
+  background-color: rgba(255, 215, 0, 0.05);
+  border-radius: 10px;
+  gap: 10px;
+}
+
+.overall-stats div {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background-color: rgba(0,0,0,0.2);
+  min-width: 120px;
+}
+
+.performance-by-type {
+  width: 100%;
+  margin-top: 15px;
+  border-collapse: collapse;
+  background-color: rgba(0,0,0,0.1);
+  border-radius: 10px;
+}
+
+.performance-by-type th {
+  padding: 12px;
+  background-color: rgba(255,215,0,0.1);
+}
+
+.performance-by-type td {
+  padding: 10px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.bet-odds {
+  font-size: 0.9em;
+  opacity: 0.8;
+  margin-top: 5px;
+}
+
+.balance-display {
+  font-size: 1.3em;
+  font-weight: bold;
+  padding: 12px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
+  display: inline-block;
+  min-width: 200px;
+  margin: 10px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.balance-up {
+  animation: balanceUp 1s ease;
+  background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(40, 167, 69, 0.1));
+}
+
+.balance-down {
+  animation: balanceDown 1s ease;
+  background: linear-gradient(135deg, rgba(220, 53, 69, 0.2), rgba(220, 53, 69, 0.1));
+}
+
+@keyframes balanceUp {
+  0% { transform: scale(1); background-color: rgba(40, 167, 69, 0); }
+  50% { transform: scale(1.05); background-color: rgba(40, 167, 69, 0.3); }
+  100% { transform: scale(1); background-color: rgba(40, 167, 69, 0); }
+}
+
+@keyframes balanceDown {
+  0% { transform: scale(1); background-color: rgba(220, 53, 69, 0); }
+  50% { transform: scale(1.05); background-color: rgba(220, 53, 69, 0.3); }
+  100% { transform: scale(1); background-color: rgba(220, 53, 69, 0); }
+}
+
+/* أنماط جديدة للمؤشرات والسلاسل */
+.trend-indicator {
+  font-size: 1.2em;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+.trend-up {
+  color: #28a745;
+}
+.trend-down {
+  color: #dc3545;
+}
+.trend-neutral {
+  color: #6c757d;
+}
+
+.streak-indicator {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: bold;
+  margin-left: 5px;
+  font-size: 0.8em;
+}
+.hot-streak {
+  background-color: #FF5722;
+  color: white;
+}
+.cold-streak {
+  background-color: #2196F3;
+  color: white;
+}
+
+.pattern-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  background-color: rgba(255, 215, 0, 0.2);
+  border-radius: 10px;
+  margin: 2px;
+  font-size: 0.85em;
+}
+
+.trend-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  margin: 5px 0;
+  border-radius: 8px;
+  background-color: rgba(255,255,255,0.05);
+}
+
+.trend-value {
+  font-weight: bold;
+}
+
+/* أنماط جديدة للتنبؤات المتقدمة */
+.prediction-section {
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.prediction-bars {
+  display: flex;
+  height: 40px;
+  margin: 10px 0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.prediction-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  transition: width 0.5s ease;
+}
+
+.player-bar { background-color: #007BFF; }
+.banker-bar { background-color: #DC3545; }
+.tie-bar { background-color: #28A745; }
+
+.probability-display {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+}
+
+.probability-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 30%;
+}
+
+.probability-value {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+/* إشعارات */
+#notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.notification {
+  padding: 15px 20px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  animation: slideIn 0.5s ease, fadeOut 0.5s ease 2.5s forwards;
+  display: flex;
+  align-items: center;
+}
+
+.notification-win {
+  background-color: #28a745;
+  border-left: 5px solid #1e7e34;
+}
+
+.notification-loss {
+  background-color: #dc3545;
+  border-left: 5px solid #a71d2a;
+}
+
+.notification-tie {
+  background-color: #6c757d;
+  border-left: 5px solid #495057;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 1em;
+  }
+  .buttons button {
+    padding: 0.8em;
+    min-width: 100px;
+    font-size: 1em;
+  }
+  .overall-stats {
+    flex-direction: column;
+    align-items: center;
   }
 }
-
-// دالة تحديث الرصيد
-function updateBalance(profit, betOn, outcome) {
-  const balanceDisplay = document.getElementById('balanceDisplay');
-  const balanceValue = document.getElementById('balanceValue');
-  
-  balance += profit;
-  balanceHistory.push(balance);
-  balanceValue.textContent = balance.toFixed(2);
-  updateChart();
-  
-  if (profit > 0) {
-    balanceDisplay.classList.add('balance-up');
-    showNotification(
-      lang === 'ar-MA' ? `ربح! +${profit.toFixed(2)} درهم` : `Win! +${profit.toFixed(2)} MAD`,
-      'win'
-    );
-  } else if (profit < 0) {
-    balanceDisplay.classList.add('balance-down');
-    showNotification(
-      lang === 'ar-MA' ? `خسارة! ${profit.toFixed(2)} درهم` : `Loss! ${profit.toFixed(2)} MAD`,
-      'loss'
-    );
-  } else {
-    showNotification(
-      lang === 'ar-MA' ? 'تعادل - لا تغيير في الرصيد' : 'Tie - No change in balance',
-      'tie'
-    );
-  }
-  
-  setTimeout(() => {
-    balanceDisplay.classList.remove('balance-up', 'balance-down');
-  }, 1000);
-}
-
-// دالة الإشعارات
-function showNotification(message, type) {
-  const notification = document.createElement('div');
-  notification.className = `notification notification-${type}`;
-  notification.innerHTML = `${type === 'win' ? '🎉' : type === 'loss' ? '💔' : '🤝'} ${message}`;
-  document.getElementById('notification-container').appendChild(notification);
-  
-  setTimeout(() => {
-    notification.remove();
-  }, 3000);
-}
-
-// باقي الدوال والوظائف ...
-// [يجب أن تضع هنا كل محتوى ملف الـ logic.js السابق الذي أعطيته لك]
-
-// تهيئة التطبيق
-document.addEventListener('DOMContentLoaded', function() {
-  loadTheme();
-  loadLanguage();
-  initChart();
-  document.getElementById('langSelect').addEventListener('change', changeLanguage);
-});
