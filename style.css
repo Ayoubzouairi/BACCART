@@ -1,48 +1,80 @@
-body {
-  background-image: url('baccarat_bg.jpg');
-  background-size: cover;
-  background-position: center;
-  color: #fff8dc;
-  font-family: Tahoma, sans-serif;
-  display: flex;
-  justify-content: center;
-  padding: 20px;
+// المتغيرات العامة
+let history = [];
+let balance = 0;
+let balanceHistory = [0];
+let currentStreak = { type: null, count: 0 };
+let betsHistory = [];
+let showBetsHistory = false;
+let lang = 'ar-MA';
+
+// دالة حساب الربح
+function calculateProfit(betOn, outcome, amount) {
+  if (!amount || amount <= 0) return 0;
+  
+  if (betOn === outcome) {
+    if (betOn === 'P') return amount * 1;
+    if (betOn === 'B') return amount * 0.95;
+    if (betOn === 'T') return amount * 8;
+  } else if (outcome === 'T') {
+    return 0;
+  } else {
+    return -amount;
+  }
 }
-.app {
-  background-color: rgba(0, 0, 0, 0.75);
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 500px;
-  width: 100%;
+
+// دالة تحديث الرصيد
+function updateBalance(profit, betOn, outcome) {
+  const balanceDisplay = document.getElementById('balanceDisplay');
+  const balanceValue = document.getElementById('balanceValue');
+  
+  balance += profit;
+  balanceHistory.push(balance);
+  balanceValue.textContent = balance.toFixed(2);
+  updateChart();
+  
+  if (profit > 0) {
+    balanceDisplay.classList.add('balance-up');
+    showNotification(
+      lang === 'ar-MA' ? `ربح! +${profit.toFixed(2)} درهم` : `Win! +${profit.toFixed(2)} MAD`,
+      'win'
+    );
+  } else if (profit < 0) {
+    balanceDisplay.classList.add('balance-down');
+    showNotification(
+      lang === 'ar-MA' ? `خسارة! ${profit.toFixed(2)} درهم` : `Loss! ${profit.toFixed(2)} MAD`,
+      'loss'
+    );
+  } else {
+    showNotification(
+      lang === 'ar-MA' ? 'تعادل - لا تغيير في الرصيد' : 'Tie - No change in balance',
+      'tie'
+    );
+  }
+  
+  setTimeout(() => {
+    balanceDisplay.classList.remove('balance-up', 'balance-down');
+  }, 1000);
 }
-textarea, input, button {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border: none;
-  font-size: 1em;
+
+// دالة الإشعارات
+function showNotification(message, type) {
+  const notification = document.createElement('div');
+  notification.className = `notification notification-${type}`;
+  notification.innerHTML = `${type === 'win' ? '🎉' : type === 'loss' ? '💔' : '🤝'} ${message}`;
+  document.getElementById('notification-container').appendChild(notification);
+  
+  setTimeout(() => {
+    notification.remove();
+  }, 3000);
 }
-button {
-  background-color: gold;
-  color: black;
-  font-weight: bold;
-}
-.language-switch {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-.bar {
-  height: 24px;
-  margin: 8px 0;
-  border-radius: 5px;
-  text-align: right;
-  padding-right: 10px;
-  font-weight: bold;
-  line-height: 24px;
-  color: #fff;
-}
-.bar.player { background-color: #007BFF; }
-.bar.banker { background-color: #DC3545; }
-.bar.tie { background-color: #28A745; }
+
+// باقي الدوال والوظائف ...
+// [يجب أن تضع هنا كل محتوى ملف الـ logic.js السابق الذي أعطيته لك]
+
+// تهيئة التطبيق
+document.addEventListener('DOMContentLoaded', function() {
+  loadTheme();
+  loadLanguage();
+  initChart();
+  document.getElementById('langSelect').addEventListener('change', changeLanguage);
+});
