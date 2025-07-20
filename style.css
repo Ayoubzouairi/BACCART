@@ -1,13 +1,3 @@
-/* أنماط العنوان الجديدة */
-.logo-b {
-  color: #007bff;
-  font-size: 1.2em;
-}
-
-.logo-rest {
-  color: gold;
-}
-
 /* أنماط عامة */
 body {
   background-color: #121212;
@@ -24,6 +14,17 @@ body.light-mode {
   color: #333;
 }
 
+/* أنماط العنوان */
+.logo-b {
+  color: #007bff;
+  font-size: 1.2em;
+}
+
+.logo-rest {
+  color: gold;
+}
+
+/* أنماط الأزرار */
 .buttons {
   margin-top: 20px;
 }
@@ -83,6 +84,7 @@ body.light-mode {
   transform: translateY(-2px);
 }
 
+/* أنماط اللغة والثيم */
 .language-container {
   position: absolute;
   top: 20px;
@@ -101,6 +103,22 @@ body.light-mode {
   color: white;
 }
 
+.theme-toggle {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+  color: gold;
+  transition: transform 0.3s ease;
+}
+.theme-toggle:hover {
+  transform: rotate(30deg);
+}
+body.light-mode .theme-toggle {
+  color: #333;
+}
+
+/* أنماط الصناديق */
 .result, .stats, .history, .ai-stats, .ai-advice, .trends-container {
   margin-top: 1.5em;
   font-size: 1.2em;
@@ -119,21 +137,6 @@ body.light-mode .trends-container {
   background-color: rgba(0,0,0,0.05);
 }
 
-.theme-toggle {
-  background: none;
-  border: none;
-  font-size: 1.5em;
-  cursor: pointer;
-  color: gold;
-  transition: transform 0.3s ease;
-}
-.theme-toggle:hover {
-  transform: rotate(30deg);
-}
-body.light-mode .theme-toggle {
-  color: #333;
-}
-
 .ai-advice {
   border-left: 4px solid gold;
 }
@@ -141,6 +144,7 @@ body.light-mode .theme-toggle {
 .banker-text { color: #dc3545; }
 .tie-text { color: #28a745; }
 
+/* أنماط الجداول */
 .results-table {
   width: 100%;
   border-collapse: collapse;
@@ -156,6 +160,7 @@ body.light-mode .results-table td {
   border-color: rgba(0, 0, 0, 0.1);
 }
 
+/* أنماط Big Road */
 .big-road-container {
   margin-top: 2em;
   padding: 1em;
@@ -187,6 +192,7 @@ body.light-mode .results-table td {
 .big-road-B { background-color: #dc3545; color: white; }
 .big-road-T { background-color: #28a745; color: white; }
 
+/* أنماط التنبؤات */
 .prediction-title {
   color: gold;
   font-size: 1.3em;
@@ -223,116 +229,6 @@ body.light-mode .results-table td {
   border: 1px solid #28a745;
 }
 
-.hot-results-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 15px 0;
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.hot-results-table th {
-  background-color: rgba(255, 215, 0, 0.1);
-  padding: 10px;
-  text-align: center;
-  font-weight: bold;
-}
-
-.hot-results-table td {
-  padding: 10px;
-  text-align: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.hot { color: #FF5722; font-weight: bold; }
-.cold { color: #2196F3; font-weight: bold; }
-
-/* أنماط جديدة للمؤشرات والسلاسل */
-.trend-indicator {
-  font-size: 1.2em;
-  margin-left: 5px;
-  vertical-align: middle;
-}
-.trend-up {
-  color: #28a745;
-}
-.trend-down {
-  color: #dc3545;
-}
-.trend-neutral {
-  color: #6c757d;
-}
-
-.streak-indicator {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-weight: bold;
-  margin-left: 5px;
-  font-size: 0.8em;
-}
-.hot-streak {
-  background-color: #FF5722;
-  color: white;
-}
-.cold-streak {
-  background-color: #2196F3;
-  color: white;
-}
-
-.pattern-badge {
-  display: inline-block;
-  padding: 8px 12px;
-  background-color: rgba(255, 215, 0, 0.2);
-  border-radius: 10px;
-  margin: 5px;
-  font-size: 0.9em;
-  position: relative;
-}
-
-.pattern-tooltip {
-  display: none;
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  width: 200px;
-  z-index: 100;
-  font-size: 0.8em;
-}
-
-.pattern-badge:hover .pattern-tooltip {
-  display: block;
-}
-
-.pattern-confidence {
-  display: inline-block;
-  margin-left: 5px;
-  font-weight: bold;
-  color: gold;
-}
-
-.trend-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 12px;
-  margin: 5px 0;
-  border-radius: 8px;
-  background-color: rgba(255,255,255,0.05);
-}
-
-.trend-value {
-  font-weight: bold;
-}
-
-/* أنماط جديدة للتنبؤات المتقدمة */
 .prediction-section {
   margin: 20px 0;
   padding: 15px;
@@ -379,6 +275,72 @@ body.light-mode .results-table td {
   font-size: 1.1em;
 }
 
+/* أنماط التوصيات */
+.recommendation-container {
+  margin: 20px auto;
+  max-width: 500px;
+}
+
+.recommendation-box {
+  padding: 15px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 5px solid gold;
+}
+
+.recommendation-box.P {
+  border-left-color: #007bff;
+}
+
+.recommendation-box.B {
+  border-left-color: #dc3545;
+}
+
+.recommendation-box.T {
+  border-left-color: #28a745;
+}
+
+.confidence-meter {
+  height: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  margin-top: 10px;
+  position: relative;
+}
+
+.confidence-bar {
+  height: 100%;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #ffd700, #ff9900);
+  transition: width 0.5s ease;
+}
+
+.confidence-meter span {
+  position: absolute;
+  right: 50%;
+  transform: translateX(50%);
+  color: black;
+  font-weight: bold;
+  line-height: 20px;
+  text-shadow: 0 0 2px white;
+}
+
+/* أنماط الاتجاهات */
+.trend-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  margin: 5px 0;
+  border-radius: 8px;
+  background-color: rgba(255,255,255,0.05);
+}
+
+.trend-value {
+  font-weight: bold;
+}
+
+/* التكيف مع الشاشات الصغيرة */
 @media (max-width: 768px) {
   body {
     padding: 1em;
@@ -387,5 +349,8 @@ body.light-mode .results-table td {
     padding: 0.8em;
     min-width: 100px;
     font-size: 1em;
+  }
+  .recommendation-container {
+    margin: 10px;
   }
 }
