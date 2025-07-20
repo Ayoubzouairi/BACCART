@@ -1,156 +1,130 @@
-<!DOCTYPE html><html lang="ar">
+<!DOCTYPE html>
+<html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Baccarat Predictor</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(to right, #1e1e2f, #2b2b45);
-      color: #f5f5f5;
-      margin: 0;
-      padding: 20px;
-      text-align: center;
-    }
-    h1 {
-      color: gold;
-      margin-bottom: 20px;
-    }
-    .balance, .input-section, .results, .pattern, .notifications, .stats {
-      background: #333956;
-      margin: 10px auto;
-      padding: 15px;
-      border-radius: 15px;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    }
-    input, button {
-      padding: 10px;
-      margin: 5px;
-      border: none;
-      border-radius: 10px;
-    }
-    input {
-      width: 80%;
-    }
-    button {
-      background: gold;
-      color: #222;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    button:hover {
-      background: #ffd700;
-    }
-    .notif-win {
-      background: #4caf50;
-    }
-    .notif-loss {
-      background: #f44336;
-    }
-    .notif-tie {
-      background: #2196f3;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <title>Baccarat Speed</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>BACCARAT SPEED</h1>  <div class="balance">
-    <p>💰 رصيدك: <span id="balance">1000</span> درهم</p>
-  </div>  <div class="input-section">
-    <input type="number" id="betAmount" placeholder="ادخل المبلغ...">
-    <button onclick="placeBet('P')">لاعب</button>
-    <button onclick="placeBet('B')">مصرفي</button>
-    <button onclick="placeBet('T')">تعادل</button>
-  </div>  <div class="pattern">
-    <p>🔍 تحليل آخر 5 جولات:</p>
-    <div id="lastRounds">P, B, B, T, P</div>
-  </div>  <div class="results">
-    <p>🎯 النتيجة المتوقعة: <span id="prediction">مصرفي</span></p>
-    <p>📊 نسبة الدقة: <span id="accuracy">92%</span></p>
-  </div>  <div class="stats">
-    <p>✅ عدد التخمينات الصحيحة: <span id="correctGuesses">0</span></p>
-    <p>❌ عدد التخمينات الخاطئة: <span id="wrongGuesses">0</span></p>
-  </div>  <div class="notifications" id="notifBox"></div><audio id="winSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_25313c3c37.mp3"></audio> <audio id="lossSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_8859ee3e88.mp3"></audio> <audio id="tieSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_746e24d2f2.mp3"></audio>
+  <div class="language-container">
+    <select id="langSelect" class="language">
+      <option value="ar-MA">🇲🇦 العربية</option>
+      <option value="en-US">🇺🇸 English</option>
+    </select>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+  </div>
 
-  <script>
-    let balance = 1000;
-    let correctGuesses = 0;
-    let wrongGuesses = 0;
-    const lastRounds = ['P', 'B', 'B', 'T', 'P'];
+  <h1><span class="logo-b">B</span><span class="logo-rest">ACCARAT</span> <span class="logo-s">S</span><span class="logo-rest">PEED</span></h1>
+  
+  <div class="bet-amount-container">
+    <label for="betAmount">💰 مبلغ الرهان بالدرهم</label>
+    <input type="number" id="betAmount" class="amount" placeholder="أدخل المبلغ (اختياري)" min="1" step="1" />
+  </div>
+  
+  <p>📲 اختر نتيجة الجولة:</p>
+  <div class="buttons">
+    <button class="player" onclick="addResult('P')">
+      🔵 اللاعب
+      <div class="bet-odds">1:1</div>
+    </button>
+    <button class="banker" onclick="addResult('B')">
+      🔴 المصرفي
+      <div class="bet-odds">0.95:1</div>
+    </button>
+    <button class="tie" onclick="addResult('T')">
+      🟢 تعادل
+      <div class="bet-odds">8:1</div>
+    </button>
+  </div>
 
-    function updateDisplay() {
-      document.getElementById('balance').innerText = balance;
-      document.getElementById('lastRounds').innerText = lastRounds.join(', ');
-      document.getElementById('prediction').innerText = predictResult();
-      document.getElementById('accuracy').innerText = getAccuracy();
-      document.getElementById('correctGuesses').innerText = correctGuesses;
-      document.getElementById('wrongGuesses').innerText = wrongGuesses;
-    }
+  <div class="prediction-section" id="predictionResult">
+    <div class="prediction-title">📊 تنبؤات متقدمة</div>
+    <div id="predictionBars" class="prediction-bars">
+      <div class="prediction-bar player-bar" style="width:33%">P</div>
+      <div class="prediction-bar banker-bar" style="width:34%">B</div>
+      <div class="prediction-bar tie-bar" style="width:33%">T</div>
+    </div>
+    <div class="probability-display">
+      <div class="probability-item">
+        <span class="player-text">لاعب</span>
+        <span id="playerProb" class="probability-value player-text">33%</span>
+      </div>
+      <div class="probability-item">
+        <span class="banker-text">مصرفي</span>
+        <span id="bankerProb" class="probability-value banker-text">34%</span>
+      </div>
+      <div class="probability-item">
+        <span class="tie-text">تعادل</span>
+        <span id="tieProb" class="probability-value tie-text">33%</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="stats" id="statsResult"></div>
+  <div class="ai-stats" id="aiStats"></div>
+  
+  <div class="trends-container" id="trendsContainer">
+    <h3>📈 تحليل الاتجاهات والأنماط</h3>
+    <div id="trendsContent"></div>
+  </div>
+  
+  <div class="ai-advice" id="aiAdvice"></div>
+  <div class="history" id="historyDisplay"></div>
+  
+  <div class="balance-display" id="balanceDisplay">
+    💵 الرصيد: <span id="balanceValue">0</span> درهم
+  </div>
+  
+  <div id="betsHistoryContainer" style="display: none;">
+    <h3>📋 سجل الرهانات</h3>
+    <table class="bets-history-table">
+      <thead>
+        <tr>
+          <th>الجولة</th>
+          <th>الرهان على</th>
+          <th>المبلغ</th>
+          <th>النتيجة</th>
+          <th>الربح/الخسارة</th>
+        </tr>
+      </thead>
+      <tbody id="betsHistoryBody"></tbody>
+    </table>
+  </div>
+  
+  <div id="performanceSummary" class="performance-summary" style="display: none;">
+    <h3>📊 تحليل الأداء</h3>
+    <div class="overall-stats" id="overallStats"></div>
+    <table class="performance-by-type">
+      <thead>
+        <tr>
+          <th>نوع الرهان</th>
+          <th>عدد الرهانات</th>
+          <th>الفوز</th>
+          <th>الخسارة</th>
+          <th>معدل الفوز</th>
+          <th>صافي الربح</th>
+        </tr>
+      </thead>
+      <tbody id="performanceByType"></tbody>
+    </table>
+  </div>
 
-    function predictResult() {
-      const counts = { P: 0, B: 0, T: 0 };
-      lastRounds.forEach(r => counts[r]++);
-      return Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b) === 'P' ? 'لاعب' : (counts.B > counts.T ? 'مصرفي' : 'تعادل');
-    }
+  <div style="margin-top: 20px;">
+    <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
+    <button class="reset" onclick="toggleBetsHistory()">📊 عرض سجل الرهانات</button>
+  </div>
 
-    function getAccuracy() {
-      const total = correctGuesses + wrongGuesses;
-      if (total === 0) return '0%';
-      return Math.round((correctGuesses / total) * 100) + '%';
-    }
+  <canvas id="chart" width="400" height="150"></canvas>
 
-    function placeBet(choice) {
-      const amount = parseFloat(document.getElementById('betAmount').value);
-      if (isNaN(amount) || amount <= 0 || amount > balance) {
-        alert("تحقق من المبلغ!");
-        return;
-      }
+  <div class="big-road-container">
+    <h2>Big Road (الميجورك)</h2>
+    <div id="bigRoad" class="big-road"></div>
+  </div>
 
-      const result = ['P', 'B', 'T'][Math.floor(Math.random() * 3)];
-      lastRounds.push(result);
-      if (lastRounds.length > 5) lastRounds.shift();
+  <div id="notification-container"></div>
 
-      let profit = 0;
-      let correct = false;
-      if (result === choice) {
-        correct = true;
-        if (result === 'B') {
-          profit = amount * 0.95;
-        } else if (result === 'P') {
-          profit = amount;
-        } else {
-          profit = 0;
-        }
-      } else {
-        profit = result === 'T' && choice === 'T' ? 0 : -amount;
-      }
-
-      balance += profit;
-
-      if (correct) correctGuesses++;
-      else wrongGuesses++;
-
-      const notifType = profit > 0 ? 'notif-win' : profit < 0 ? 'notif-loss' : 'notif-tie';
-      const notifMsg = result === 'P' ? '✅ فوز اللاعب!' :
-                       result === 'B' ? '✅ فوز المصرفي!' :
-                                         '🔄 تعادل!';
-      const notifBox = document.getElementById('notifBox');
-      notifBox.innerHTML = `<div class="${notifType}">${notifMsg}</div>`;
-
-      playSound(result);
-      updateDisplay();
-    }
-
-    function playSound(result) {
-      if (result === 'P' || result === 'B') {
-        document.getElementById('winSound').play();
-      } else {
-        document.getElementById('tieSound').play();
-      }
-    }
-
-    updateDisplay();
-  </script></body>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="logic.js"></script>
+</body>
 </html>
