@@ -5,6 +5,7 @@
   <title>Baccarat Analyzer Pro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="language-container">
@@ -75,6 +76,21 @@
     <div id="bigRoad" class="big-road"></div>
   </div>
 
+  <div class="derivative-roads">
+    <div class="road-container">
+      <h3>Big Eye Road</h3>
+      <div id="bigEyeRoad" class="road"></div>
+    </div>
+    <div class="road-container">
+      <h3>Small Road</h3>
+      <div id="smallRoad" class="road"></div>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="statsChart"></canvas>
+  </div>
+
   <script src="logic.js"></script>
 </body>
-          </html>
+  </html>
