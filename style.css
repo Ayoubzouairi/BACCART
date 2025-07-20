@@ -4,11 +4,6 @@
   font-size: 1.2em;
 }
 
-.logo-s {
-  color: #dc3545;
-  font-size: 1.2em;
-}
-
 .logo-rest {
   color: gold;
 }
@@ -27,43 +22,6 @@ body {
 body.light-mode {
   background-color: #f5f5f5;
   color: #333;
-}
-
-/* تصميم جديد لمبلغ الرهان */
-.bet-amount-container {
-  margin: 20px auto;
-  padding: 15px;
-  background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
-  border-radius: 15px;
-  max-width: 300px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  border: 1px solid rgba(255,215,0,0.3);
-}
-
-.bet-amount-container label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 1.1em;
-  color: gold;
-  font-weight: bold;
-}
-
-.bet-amount-container input {
-  padding: 12px 15px;
-  font-size: 1.2em;
-  width: 80%;
-  text-align: center;
-  border-radius: 10px;
-  border: 2px solid gold;
-  background-color: rgba(0,0,0,0.3);
-  color: white;
-  transition: all 0.3s ease;
-}
-
-.bet-amount-container input:focus {
-  outline: none;
-  border-color: #ffd700;
-  box-shadow: 0 0 10px rgba(255,215,0,0.5);
 }
 
 .buttons {
@@ -133,7 +91,7 @@ body.light-mode {
   align-items: center;
   gap: 10px;
 }
-.language, .amount {
+.language {
   padding: 0.5em;
   font-size: 1em;
   width: 150px;
@@ -143,7 +101,7 @@ body.light-mode {
   color: white;
 }
 
-.result, .stats, .history, .balance, .ai-stats, .ai-advice, .trends-container {
+.result, .stats, .history, .ai-stats, .ai-advice, .trends-container {
   margin-top: 1.5em;
   font-size: 1.2em;
   padding: 15px;
@@ -155,19 +113,10 @@ body.light-mode {
 body.light-mode .result, 
 body.light-mode .stats, 
 body.light-mode .history, 
-body.light-mode .balance, 
 body.light-mode .ai-stats, 
 body.light-mode .ai-advice,
 body.light-mode .trends-container {
   background-color: rgba(0,0,0,0.05);
-}
-
-canvas {
-  margin-top: 2em;
-  max-width: 100%;
-  background-color: rgba(0,0,0,0.2);
-  border-radius: 12px;
-  padding: 10px;
 }
 
 .theme-toggle {
@@ -300,116 +249,6 @@ body.light-mode .results-table td {
 .hot { color: #FF5722; font-weight: bold; }
 .cold { color: #2196F3; font-weight: bold; }
 
-.bets-history-table {
-  width: 100%;
-  margin: 15px 0;
-  border-collapse: collapse;
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.bets-history-table th, 
-.bets-history-table td {
-  padding: 10px 12px;
-  text-align: center;
-  border: 1px solid rgba(255, 215, 0, 0.2);
-}
-
-.bets-history-table th {
-  background-color: rgba(255, 215, 0, 0.1);
-  font-weight: bold;
-}
-
-.win { color: #28a745; font-weight: bold; }
-.loss { color: #dc3545; font-weight: bold; }
-
-.performance-summary {
-  margin-top: 20px;
-  padding: 20px;
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.overall-stats {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  margin-bottom: 15px;
-  padding: 15px;
-  background-color: rgba(255, 215, 0, 0.05);
-  border-radius: 10px;
-  gap: 10px;
-}
-
-.overall-stats div {
-  padding: 8px 12px;
-  border-radius: 8px;
-  background-color: rgba(0,0,0,0.2);
-  min-width: 120px;
-}
-
-.performance-by-type {
-  width: 100%;
-  margin-top: 15px;
-  border-collapse: collapse;
-  background-color: rgba(0,0,0,0.1);
-  border-radius: 10px;
-}
-
-.performance-by-type th {
-  padding: 12px;
-  background-color: rgba(255,215,0,0.1);
-}
-
-.performance-by-type td {
-  padding: 10px;
-  border-top: 1px solid rgba(255,255,255,0.1);
-}
-
-.bet-odds {
-  font-size: 0.9em;
-  opacity: 0.8;
-  margin-top: 5px;
-}
-
-.balance-display {
-  font-size: 1.3em;
-  font-weight: bold;
-  padding: 12px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
-  display: inline-block;
-  min-width: 200px;
-  margin: 10px 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
-}
-
-.balance-up {
-  animation: balanceUp 1s ease;
-  background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(40, 167, 69, 0.1));
-}
-
-.balance-down {
-  animation: balanceDown 1s ease;
-  background: linear-gradient(135deg, rgba(220, 53, 69, 0.2), rgba(220, 53, 69, 0.1));
-}
-
-@keyframes balanceUp {
-  0% { transform: scale(1); background-color: rgba(40, 167, 69, 0); }
-  50% { transform: scale(1.05); background-color: rgba(40, 167, 69, 0.3); }
-  100% { transform: scale(1); background-color: rgba(40, 167, 69, 0); }
-}
-
-@keyframes balanceDown {
-  0% { transform: scale(1); background-color: rgba(220, 53, 69, 0); }
-  50% { transform: scale(1.05); background-color: rgba(220, 53, 69, 0.3); }
-  100% { transform: scale(1); background-color: rgba(220, 53, 69, 0); }
-}
-
 /* أنماط جديدة للمؤشرات والسلاسل */
 .trend-indicator {
   font-size: 1.2em;
@@ -445,11 +284,38 @@ body.light-mode .results-table td {
 
 .pattern-badge {
   display: inline-block;
-  padding: 3px 8px;
+  padding: 8px 12px;
   background-color: rgba(255, 215, 0, 0.2);
   border-radius: 10px;
-  margin: 2px;
-  font-size: 0.85em;
+  margin: 5px;
+  font-size: 0.9em;
+  position: relative;
+}
+
+.pattern-tooltip {
+  display: none;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  width: 200px;
+  z-index: 100;
+  font-size: 0.8em;
+}
+
+.pattern-badge:hover .pattern-tooltip {
+  display: block;
+}
+
+.pattern-confidence {
+  display: inline-block;
+  margin-left: 5px;
+  font-weight: bold;
+  color: gold;
 }
 
 .trend-item {
@@ -513,51 +379,6 @@ body.light-mode .results-table td {
   font-size: 1.1em;
 }
 
-/* إشعارات */
-#notification-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-}
-
-.notification {
-  padding: 15px 20px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  color: white;
-  font-weight: bold;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  animation: slideIn 0.5s ease, fadeOut 0.5s ease 2.5s forwards;
-  display: flex;
-  align-items: center;
-}
-
-.notification-win {
-  background-color: #28a745;
-  border-left: 5px solid #1e7e34;
-}
-
-.notification-loss {
-  background-color: #dc3545;
-  border-left: 5px solid #a71d2a;
-}
-
-.notification-tie {
-  background-color: #6c757d;
-  border-left: 5px solid #495057;
-}
-
-@keyframes slideIn {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
-
 @media (max-width: 768px) {
   body {
     padding: 1em;
@@ -566,9 +387,5 @@ body.light-mode .results-table td {
     padding: 0.8em;
     min-width: 100px;
     font-size: 1em;
-  }
-  .overall-stats {
-    flex-direction: column;
-    align-items: center;
   }
 }
