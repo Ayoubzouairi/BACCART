@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8" />
-  <title>Baccarat Speed</title>
+  <title>Baccarat Analyzer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css">
 </head>
@@ -15,30 +15,21 @@
     <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
   </div>
 
-  <h1><span class="logo-b">B</span><span class="logo-rest">ACCARAT</span> <span class="logo-s">S</span><span class="logo-rest">PEED</span></h1>
-  
-  <div class="bet-amount-container">
-    <label for="betAmount">💰 مبلغ الرهان بالدرهم</label>
-    <input type="number" id="betAmount" class="amount" placeholder="أدخل المبلغ (اختياري)" min="1" step="1" />
-  </div>
+  <h1><span class="logo-b">B</span><span class="logo-rest">ACCARAT</span> <span class="logo-rest">ANALYZER</span></h1>
   
   <p>📲 اختر نتيجة الجولة:</p>
   <div class="buttons">
     <button class="player" onclick="addResult('P')">
       🔵 اللاعب
-      <div class="bet-odds">1:1</div>
     </button>
     <button class="banker" onclick="addResult('B')">
       🔴 المصرفي
-      <div class="bet-odds">0.95:1</div>
     </button>
     <button class="tie" onclick="addResult('T')">
       🟢 تعادل
-      <div class="bet-odds">8:1</div>
     </button>
   </div>
 
-  <!-- باقي المحتوى كما هو دون تغيير -->
   <div class="prediction-section" id="predictionResult">
     <div class="prediction-title">📊 تنبؤات متقدمة</div>
     <div id="predictionBars" class="prediction-bars">
@@ -73,59 +64,15 @@
   <div class="ai-advice" id="aiAdvice"></div>
   <div class="history" id="historyDisplay"></div>
   
-  <div class="balance-display" id="balanceDisplay">
-    💵 الرصيد: <span id="balanceValue">0</span> درهم
-  </div>
-  
-  <div id="betsHistoryContainer" style="display: none;">
-    <h3>📋 سجل الرهانات</h3>
-    <table class="bets-history-table">
-      <thead>
-        <tr>
-          <th>الجولة</th>
-          <th>الرهان على</th>
-          <th>المبلغ</th>
-          <th>النتيجة</th>
-          <th>الربح/الخسارة</th>
-        </tr>
-      </thead>
-      <tbody id="betsHistoryBody"></tbody>
-    </table>
-  </div>
-  
-  <div id="performanceSummary" class="performance-summary" style="display: none;">
-    <h3>📊 تحليل الأداء</h3>
-    <div class="overall-stats" id="overallStats"></div>
-    <table class="performance-by-type">
-      <thead>
-        <tr>
-          <th>نوع الرهان</th>
-          <th>عدد الرهانات</th>
-          <th>الفوز</th>
-          <th>الخسارة</th>
-          <th>معدل الفوز</th>
-          <th>صافي الربح</th>
-        </tr>
-      </thead>
-      <tbody id="performanceByType"></tbody>
-    </table>
-  </div>
-
   <div style="margin-top: 20px;">
     <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
-    <button class="reset" onclick="toggleBetsHistory()">📊 عرض سجل الرهانات</button>
   </div>
-
-  <canvas id="chart" width="400" height="150"></canvas>
 
   <div class="big-road-container">
     <h2>Big Road (الميجورك)</h2>
     <div id="bigRoad" class="big-road"></div>
   </div>
 
-  <div id="notification-container"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="logic.js"></script>
 </body>
-        </html>
+</html>
