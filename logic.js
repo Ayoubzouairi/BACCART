@@ -1,6 +1,7 @@
 let history = [];
 let currentStreak = { type: null, count: 0 };
 let lang = 'ar-MA';
+let markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
 
 document.addEventListener('DOMContentLoaded', function() {
   loadTheme();
@@ -71,6 +72,133 @@ function updateBigRoad() {
   }
 }
 
+function updateDerivativeRoads() {
+  const filteredHistory = history.filter(r => r !== 'T');
+  updateBigEyeRoad(filteredHistory);
+  updateSmallRoad(filteredHistory);
+}
+
+function updateBigEyeRoad(history) {
+  const bigEyeRoad = document.getElementById('bigEyeRoad');
+  bigEyeRoad.innerHTML = '';
+  let matrix = [[]];
+  let row = 0;
+
+  for (let i = 1; i < history.length; i++) {
+    if (i >= 2 && history[i] === history[i - 2]) {
+      matrix[row].push(history[i]);
+    } else {
+      row++;
+      matrix[row] = [history[i]];
+    }
+  }
+
+  renderRoad(matrix, bigEyeRoad);
+}
+
+function updateSmallRoad(history) {
+  const smallRoad = document.getElementById('smallRoad');
+  smallRoad.innerHTML = '';
+  let matrix = [[]];
+  let row = 0;
+
+  for (let i = 2; i < history.length; i++) {
+    if (i >= 3 && history[i] === history[i - 3]) {
+      matrix[row].push(history[i]);
+    } else {
+      row++;
+      matrix[row] = [history[i]];
+    }
+  }
+
+  renderRoad(matrix, smallRoad);
+}
+
+function renderRoad(matrix, container) {
+  matrix.forEach((row, rowIndex) => {
+    row.forEach((result, colIndex) => {
+      const cell = document.createElement('div');
+      cell.className = `road-cell road-${result}`;
+      cell.style.gridColumn = colIndex + 1;
+      cell.style.gridRow = rowIndex + 1;
+      container.appendChild(cell);
+    });
+  });
+}
+
+function updateMarkovModel() {
+  markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
+  
+  for (let i = 0; i < history.length - 1; i++) {
+    const from = history[i];
+    const to = history[i + 1];
+    markovModel[from][to]++;
+  }
+
+  // حساب الاحتمالات
+  for (const from in markovModel) {
+    const total = Object.values(markovModel[from]).reduce((a, b) => a + b, 0);
+    for (const to in markovModel[from]) {
+      markovModel[from][to] = total > 0 ? (markovModel[from][to] / total) * 100 : 33.3;
+    }
+  }
+}
+
+function detectDragon(history) {
+  const last15 = history.slice(-15);
+  const streaks = { P: 0, B: 0 };
+  let currentStreak = { type: last15[0], count: 1 };
+
+  for (let i = 1; i < last15.length; i++) {
+    if (last15[i] === currentStreak.type && last15[i] !== 'T') {
+      currentStreak.count++;
+    } else {
+      if (currentStreak.count > streaks[currentStreak.type]) {
+        streaks[currentStreak.type] = currentStreak.count;
+      }
+      currentStreak = { type: last15[i], count: 1 };
+    }
+  }
+
+  return {
+    dragon: streaks.P >= 6 ? 'P' : streaks.B >= 6 ? 'B' : null,
+    length: Math.max(streaks.P, streaks.B)
+  };
+}
+
+function updateChart() {
+  const ctx = document.getElementById('statsChart').getContext('2d');
+  const last20 = history.slice(-20);
+  const counts = { P: 0, B: 0, T: 0 };
+  last20.forEach(r => counts[r]++);
+
+  if (window.statsChart) {
+    window.statsChart.destroy();
+  }
+
+  window.statsChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: [lang === 'ar-MA' ? 'لاعب' : 'Player', 
+               lang === 'ar-MA' ? 'مصرفي' : 'Banker', 
+               lang === 'ar-MA' ? 'تعادل' : 'Tie'],
+      datasets: [{
+        label: lang === 'ar-MA' ? 'آخر 20 جولة' : 'Last 20 Rounds',
+        data: [counts.P, counts.B, counts.T],
+        backgroundColor: ['#007BFF', '#DC3545', '#28A745']
+      }]
+    },
+    options: { 
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
 function addResult(result) {
   history.push(result);
   
@@ -81,12 +209,15 @@ function addResult(result) {
     currentStreak.count = 1;
   }
   
+  updateMarkovModel();
   updateDisplay();
   updateBigRoad();
+  updateDerivativeRoads();
   updateTrendsAndStreaks();
   updatePredictions();
   generateAdvice();
   showRecommendation();
+  updateChart();
 }
 
 function updateDisplay() {
@@ -95,7 +226,7 @@ function updateDisplay() {
     if (r === 'B') return '🔴';
     if (r === 'T') return '🟢';
   }).join(' ');
-  document.getElementById('historyDisplay').innerText = "جميع الجولات: " + displayText;
+  document.getElementById('historyDisplay').innerText = (lang === 'ar-MA' ? "جميع الجولات: " : "All rounds: ") + displayText;
 
   const totalRounds = history.length;
   const count = { P: 0, B: 0, T: 0 };
@@ -104,10 +235,10 @@ function updateDisplay() {
   const statsHTML = `
     <table class="results-table">
       <tr>
-        <th>عدد الجولات</th>
-        <th class="player-text">لاعب</th>
-        <th class="banker-text">مصرفي</th>
-        <th class="tie-text">تعادل</th>
+        <th>${lang === 'ar-MA' ? 'عدد الجولات' : 'Rounds'}</th>
+        <th class="player-text">${lang === 'ar-MA' ? 'لاعب' : 'Player'}</th>
+        <th class="banker-text">${lang === 'ar-MA' ? 'مصرفي' : 'Banker'}</th>
+        <th class="tie-text">${lang === 'ar-MA' ? 'تعادل' : 'Tie'}</th>
       </tr>
       <tr>
         <td>${totalRounds}</td>
@@ -244,11 +375,20 @@ function advancedPredict(history) {
     T: (freq20.T / lastTwenty.length) * 100
   };
   
-  const weightedAvg = {
+  // حساب المتوسط المرجح
+  let weightedAvg = {
     P: (percent5.P * 0.6 + percent10.P * 0.3 + percent20.P * 0.1),
     B: (percent5.B * 0.6 + percent10.B * 0.3 + percent20.B * 0.1),
     T: (percent5.T * 0.6 + percent10.T * 0.3 + percent20.T * 0.1)
   };
+  
+  // تطبيق Markov Chain
+  const lastResult = history[history.length - 1];
+  if (lastResult) {
+    weightedAvg.P = (weightedAvg.P + markovModel[lastResult].P) / 2;
+    weightedAvg.B = (weightedAvg.B + markovModel[lastResult].B) / 2;
+    weightedAvg.T = (weightedAvg.T + markovModel[lastResult].T) / 2;
+  }
   
   // تطبيق تصحيح الأنماط
   const patterns = detectAdvancedPatterns(history);
@@ -267,6 +407,14 @@ function advancedPredict(history) {
       weightedAvg.B -= 8 * p.confidence;
     }
   });
+  
+  // اكتشاف Dragon وتعديل الاحتمالات
+  const dragon = detectDragon(history);
+  if (dragon.dragon) {
+    weightedAvg[dragon.dragon] += 15 * (dragon.length / 10);
+    weightedAvg[dragon.dragon === 'P' ? 'B' : 'P'] -= 10 * (dragon.length / 10);
+    weightedAvg.T -= 5 * (dragon.length / 10);
+  }
   
   // ضمان عدم وجود قيم سلبية
   weightedAvg.P = Math.max(5, weightedAvg.P);
@@ -472,6 +620,8 @@ function updateUI() {
   document.querySelectorAll('.probability-item span')[4].textContent = isArabic ? 'تعادل' : 'Tie';
   document.querySelectorAll('.reset')[0].textContent = isArabic ? '🔄 إعادة تعيين' : '🔄 Reset';
   document.querySelector('.big-road-container h2').textContent = isArabic ? 'Big Road (الميجورك)' : 'Big Road';
+  document.querySelectorAll('.road-container h3')[0].textContent = isArabic ? 'Big Eye Road' : 'Big Eye Road';
+  document.querySelectorAll('.road-container h3')[1].textContent = isArabic ? 'Small Road' : 'Small Road';
   
   if (history.length > 0) {
     updateDisplay();
@@ -479,6 +629,7 @@ function updateUI() {
     generateAdvice();
     updateTrendsAndStreaks();
     showRecommendation();
+    updateChart();
   }
 }
 
@@ -491,7 +642,13 @@ function resetData() {
   if (confirm(confirmMsg)) {
     history = [];
     currentStreak = { type: null, count: 0 };
+    markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
     updateBigRoad();
+    document.getElementById('bigEyeRoad').innerHTML = '';
+    document.getElementById('smallRoad').innerHTML = '';
+    if (window.statsChart) {
+      window.statsChart.destroy();
+    }
     document.getElementById('predictionResult').innerHTML = `
       <div class="prediction-title">${isArabic ? '📊 تنبؤات متقدمة' : '📊 Advanced Predictions'}</div>
       <div id="predictionBars" class="prediction-bars">
