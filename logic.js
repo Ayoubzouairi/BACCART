@@ -234,24 +234,31 @@ function showAdvancedToast(result, prediction) {
 }
 
 function addResult(result) {
+  // التأكد من أن المتغيرات الأساسية موجودة
+  if (!history) history = [];
+  if (!markovModel) markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
+  
   history.push(result);
   
-  // حساب التنبؤات الحالية
-  const prediction = advancedPredict(history);
-  
-  // عرض الإشعار الذكي
-  showAdvancedToast(result, prediction);
-  
-  // تحديث الواجهة
-  updateMarkovModel();
-  updateDisplay();
-  updateBigRoad();
-  updateDerivativeRoads();
-  updateTrendsAndStreaks();
-  updatePredictions();
-  generateAdvice();
-  showRecommendation();
-  updateChart();
+  try {
+    const prediction = advancedPredict(history);
+    showAdvancedToast(result, prediction);
+    
+    // تحديث كل الوظائف الأخرى
+    updateMarkovModel();
+    updateDisplay();
+    updateBigRoad();
+    updateDerivativeRoads();
+    updateTrendsAndStreaks();
+    updatePredictions();
+    generateAdvice();
+    showRecommendation();
+    updateChart();
+    
+  } catch (error) {
+    console.error("حدث خطأ:", error);
+  }
+}
 }
 
 }
