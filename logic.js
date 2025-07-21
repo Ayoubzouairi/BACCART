@@ -232,16 +232,18 @@ function showToast(result, isWin) {
     setTimeout(() => toast.remove(), 300);
   }, 3000);
       }
+
 function addResult(result) {
+ 
   history.push(result);
   
-  if (result === currentStreak.type) {
-    currentStreak.count++;
-  } else {
-    currentStreak.type = result;
-    currentStreak.count = 1;
-  }
+  // تحديد إذا كانت النتيجة فوزًا أو خسارة (مثال: يمكنك تغيير الشرط حسب قواعد اللعبة)
+  const isWin = true; // يمكنك تعديل هذا بناءً على منطق اللعبة
   
+  // عرض الإشعار
+  showToast(result, isWin);
+  
+  // تحديث الواجهة
   updateMarkovModel();
   updateDisplay();
   updateBigRoad();
@@ -251,6 +253,7 @@ function addResult(result) {
   generateAdvice();
   showRecommendation();
   updateChart();
+
 }
 
 function updateDisplay() {
