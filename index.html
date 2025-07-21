@@ -3,47 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>محلل الباكارات المتقدم</title>
+  <title>تحليل الباكارات الاحترافي</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1>محلل الباكارات PRO</h1>
+    <h1>🃏 محلل الباكارات PRO</h1>
     
     <div class="controls">
-      <button id="playerBtn" class="btn player">لاعب (P)</button>
-      <button id="bankerBtn" class="btn banker">مصرفي (B)</button>
-      <button id="tieBtn" class="btn tie">تعادل (T)</button>
-      <button id="resetBtn" class="btn reset">إعادة ضبط</button>
+      <button id="playerBtn" class="btn player">🔵 لاعب (P)</button>
+      <button id="bankerBtn" class="btn banker">🔴 مصرفي (B)</button>
+      <button id="tieBtn" class="btn tie">🟢 تعادل (T)</button>
+      <button id="resetBtn" class="btn reset">🔄 إعادة ضبط</button>
     </div>
 
-    <div class="results-container">
-      <div class="prediction-section">
-        <h2>التنبؤات</h2>
-        <div class="prediction-bars">
-          <div class="prediction-bar player-bar" style="width: 33%">
-            <span class="label">لاعب: <span id="playerProb">33%</span></span>
+    <div class="dashboard">
+      <div class="prediction-card">
+        <h2>📊 تنبؤات مباشرة</h2>
+        <div class="bars-container">
+          <div class="bar-label">لاعب:</div>
+          <div class="prediction-bar">
+            <div id="playerBar" class="fill player-fill" style="width: 33%"></div>
+            <span id="playerPercent" class="percent">33%</span>
           </div>
-          <div class="prediction-bar banker-bar" style="width: 34%">
-            <span class="label">مصرفي: <span id="bankerProb">34%</span></span>
+          
+          <div class="bar-label">مصرفي:</div>
+          <div class="prediction-bar">
+            <div id="bankerBar" class="fill banker-fill" style="width: 34%"></div>
+            <span id="bankerPercent" class="percent">34%</span>
           </div>
-          <div class="prediction-bar tie-bar" style="width: 33%">
-            <span class="label">تعادل: <span id="tieProb">33%</span></span>
+          
+          <div class="bar-label">تعادل:</div>
+          <div class="prediction-bar">
+            <div id="tieBar" class="fill tie-fill" style="width: 33%"></div>
+            <span id="tiePercent" class="percent">33%</span>
           </div>
         </div>
       </div>
 
-      <div class="recommendation-section">
-        <h2>توصية التحليل</h2>
-        <div id="recommendationBox" class="recommendation-box">
-          <p>أدخل النتائج لرؤية التوصيات</p>
+      <div class="recommendation-card">
+        <h2>💡 توصية الذكاء الاصطناعي</h2>
+        <div id="recommendation" class="recommendation-box">
+          <p>أدخل النتائج لرؤية التحليل</p>
+        </div>
+        <div id="confidenceMeter" class="confidence-meter">
+          <div id="confidenceBar" class="confidence-fill"></div>
+          <span id="confidencePercent">0%</span>
         </div>
       </div>
+    </div>
 
-      <div class="history-section">
-        <h2>سجل النتائج</h2>
-        <div id="historyDisplay" class="history-display"></div>
-      </div>
+    <div class="history-section">
+      <h2>📝 سجل النتائج</h2>
+      <div id="historyDisplay" class="history-display"></div>
     </div>
   </div>
 
