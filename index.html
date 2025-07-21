@@ -31,27 +31,6 @@
     </button>
   </div>
 
-  <div class="bankroll-container">
-    <h3>💰 إدارة الرصيد</h3>
-    <div class="bankroll-controls">
-      <div>
-        <label for="initialBankroll">الرصيد الأولي:</label>
-        <input type="number" id="initialBankroll" min="100" value="1000">
-      </div>
-      <div>
-        <label for="betAmount">مبلغ الرهان:</label>
-        <input type="number" id="betAmount" min="10" value="50">
-      </div>
-      <div>
-        <label for="targetProfit">هدف الربح:</label>
-        <input type="number" id="targetProfit" min="50" value="500">
-      </div>
-      <button onclick="startBankrollSystem()">بدء النظام</button>
-    </div>
-    <div id="bankrollStatus"></div>
-    <div id="profitAlert" class="alert-box"></div>
-  </div>
-
   <div class="prediction-section" id="predictionResult">
     <div class="prediction-title">📊 تنبؤات متقدمة</div>
     <div id="predictionBars" class="prediction-bars">
@@ -114,4 +93,4 @@
 
   <script src="logic.js"></script>
 </body>
-      </html>
+  </html>

@@ -2,15 +2,6 @@ let history = [];
 let currentStreak = { type: null, count: 0 };
 let lang = 'ar-MA';
 let markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
-let bankrollSystem = {
-  active: false,
-  currentBankroll: 0,
-  initialBankroll: 0,
-  betAmount: 0,
-  targetProfit: 0,
-  currentProfit: 0,
-  lastBetResult: null
-};
 
 document.addEventListener('DOMContentLoaded', function() {
   loadTheme();
@@ -227,7 +218,6 @@ function addResult(result) {
   generateAdvice();
   showRecommendation();
   updateChart();
-  updateBankrollSystem(result);
 }
 
 function updateDisplay() {
@@ -523,19 +513,8 @@ function showRecommendation() {
           <span>${Math.round(recommendation.confidence)}%</span>
         </div>
       ` : ''}
-      ${bankrollSystem.active ? `
-        <div class="bankroll-bet-info">
-          ${lang === 'ar-MA' ? 'الرهان المقترح:' : 'Suggested bet:'} 
-          ${bankrollSystem.betAmount}
-        </div>
-      ` : ''}
     </div>
   `;
-  
-  // تسجيل التوصية الأخيرة لنظام الرصيد
-  if (bankrollSystem.active && recommendation.recommendation !== "none") {
-    bankrollSystem.lastBetResult = recommendation.recommendation;
-  }
 }
 
 function updatePredictions() {
@@ -643,11 +622,6 @@ function updateUI() {
   document.querySelector('.big-road-container h2').textContent = isArabic ? 'Big Road (الميجورك)' : 'Big Road';
   document.querySelectorAll('.road-container h3')[0].textContent = isArabic ? 'Big Eye Road' : 'Big Eye Road';
   document.querySelectorAll('.road-container h3')[1].textContent = isArabic ? 'Small Road' : 'Small Road';
-  document.querySelector('.bankroll-container h3').textContent = isArabic ? '💰 إدارة الرصيد' : '💰 Bankroll Management';
-  document.querySelector('.bankroll-controls label[for="initialBankroll"]').textContent = isArabic ? 'الرصيد الأولي:' : 'Initial Bankroll:';
-  document.querySelector('.bankroll-controls label[for="betAmount"]').textContent = isArabic ? 'مبلغ الرهان:' : 'Bet Amount:';
-  document.querySelector('.bankroll-controls label[for="targetProfit"]').textContent = isArabic ? 'هدف الربح:' : 'Target Profit:';
-  document.querySelector('.bankroll-controls button').textContent = isArabic ? 'بدء النظام' : 'Start System';
   
   if (history.length > 0) {
     updateDisplay();
@@ -656,95 +630,7 @@ function updateUI() {
     updateTrendsAndStreaks();
     showRecommendation();
     updateChart();
-    updateBankrollDisplay();
   }
-}
-
-function startBankrollSystem() {
-  const initial = parseInt(document.getElementById('initialBankroll').value);
-  const bet = parseInt(document.getElementById('betAmount').value);
-  const target = parseInt(document.getElementById('targetProfit').value);
-  
-  if (initial < 100 || bet < 10 || target < 50) {
-    alert(lang === 'ar-MA' ? 'القيم المدخلة غير صالحة' : 'Invalid input values');
-    return;
-  }
-  
-  bankrollSystem = {
-    active: true,
-    currentBankroll: initial,
-    initialBankroll: initial,
-    betAmount: bet,
-    targetProfit: target,
-    currentProfit: 0,
-    lastBetResult: null
-  };
-  
-  updateBankrollDisplay();
-  showRecommendation();
-}
-
-function updateBankrollSystem(result) {
-  if (!bankrollSystem.active) return;
-  
-  // حساب نتيجة الرهان الأخير
-  if (bankrollSystem.lastBetResult === result) {
-    // إذا كانت التوصية صحيحة
-    if (result === 'P') {
-      bankrollSystem.currentBankroll += bankrollSystem.betAmount;
-    } else if (result === 'B') {
-      bankrollSystem.currentBankroll += bankrollSystem.betAmount * 0.95; // عمولة البنك
-    } else if (result === 'T') {
-      bankrollSystem.currentBankroll += bankrollSystem.betAmount * 8; // ربح التعادل
-    }
-  } else if (bankrollSystem.lastBetResult !== null) {
-    // إذا كانت التوصية خاطئة
-    bankrollSystem.currentBankroll -= bankrollSystem.betAmount;
-  }
-  
-  bankrollSystem.currentProfit = bankrollSystem.currentBankroll - bankrollSystem.initialBankroll;
-  bankrollSystem.lastBetResult = null;
-  
-  updateBankrollDisplay();
-  
-  // التحقق إذا تم تحقيق الهدف
-  if (bankrollSystem.currentProfit >= bankrollSystem.targetProfit) {
-    showProfitAlert();
-    bankrollSystem.active = false;
-  }
-}
-
-function updateBankrollDisplay() {
-  if (!bankrollSystem.active) return;
-  
-  const isArabic = lang === 'ar-MA';
-  const statusElement = document.getElementById('bankrollStatus');
-  
-  statusElement.innerHTML = `
-    <div><strong>${isArabic ? 'الرصيد الحالي:' : 'Current Bankroll:'}</strong> ${bankrollSystem.currentBankroll}</div>
-    <div><strong>${isArabic ? 'الربح الحالي:' : 'Current Profit:'}</strong> 
-      <span class="${bankrollSystem.currentProfit >= 0 ? 'tie-text' : 'banker-text'}">
-        ${bankrollSystem.currentProfit >= 0 ? '+' : ''}${bankrollSystem.currentProfit}
-      </span>
-    </div>
-    <div><strong>${isArabic ? 'الرهان الحالي:' : 'Current Bet:'}</strong> ${bankrollSystem.betAmount}</div>
-    <div><strong>${isArabic ? 'الهدف:' : 'Target:'}</strong> ${bankrollSystem.targetProfit}</div>
-  `;
-}
-
-function showProfitAlert() {
-  const isArabic = lang === 'ar-MA';
-  const alertElement = document.getElementById('profitAlert');
-  
-  alertElement.textContent = isArabic ? 
-    `🎉 لقد حققت هدفك! الربح: +${bankrollSystem.currentProfit}` :
-    `🎉 Target achieved! Profit: +${bankrollSystem.currentProfit}`;
-  
-  alertElement.style.display = 'block';
-  
-  setTimeout(() => {
-    alertElement.style.display = 'none';
-  }, 5000);
 }
 
 function resetData() {
@@ -757,21 +643,9 @@ function resetData() {
     history = [];
     currentStreak = { type: null, count: 0 };
     markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
-    bankrollSystem = {
-      active: false,
-      currentBankroll: 0,
-      initialBankroll: 0,
-      betAmount: 0,
-      targetProfit: 0,
-      currentProfit: 0,
-      lastBetResult: null
-    };
-    
     updateBigRoad();
     document.getElementById('bigEyeRoad').innerHTML = '';
     document.getElementById('smallRoad').innerHTML = '';
-    document.getElementById('bankrollStatus').innerHTML = '';
-    document.getElementById('profitAlert').style.display = 'none';
     if (window.statsChart) {
       window.statsChart.destroy();
     }
@@ -804,4 +678,4 @@ function resetData() {
     document.getElementById('trendsContent').innerHTML = '';
     document.getElementById('recommendation').innerHTML = '';
   }
-}
+      }
