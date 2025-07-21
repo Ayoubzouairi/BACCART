@@ -119,7 +119,7 @@ body.light-mode .theme-toggle {
 }
 
 /* أنماط الصناديق */
-.result, .stats, .history, .ai-stats, .ai-advice, .trends-container {
+.result, .stats, .history, .ai-stats, .ai-advice, .trends-container, .notes-container {
   margin-top: 1.5em;
   font-size: 1.2em;
   padding: 15px;
@@ -133,7 +133,8 @@ body.light-mode .stats,
 body.light-mode .history, 
 body.light-mode .ai-stats, 
 body.light-mode .ai-advice,
-body.light-mode .trends-container {
+body.light-mode .trends-container,
+body.light-mode .notes-container {
   background-color: rgba(0,0,0,0.05);
 }
 
@@ -382,6 +383,76 @@ body.light-mode .results-table td {
   margin-right: auto;
 }
 
+/* أنماط المذكرة الجديدة */
+#baccaratNotes {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: gold;
+  font-family: inherit;
+  resize: vertical;
+}
+
+body.light-mode #baccaratNotes {
+  background-color: white;
+  color: #333;
+}
+
+.notes-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.save-note, .clear-note {
+  padding: 0.8em 1.5em;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.save-note {
+  background-color: #28a745;
+  color: white;
+  border-bottom: 3px solid #1e7e34;
+}
+
+.clear-note {
+  background-color: #dc3545;
+  color: white;
+  border-bottom: 3px solid #a71d2a;
+}
+
+.save-note:hover, .clear-note:hover {
+  transform: translateY(-2px);
+}
+
+.notes-list {
+  margin-top: 15px;
+  text-align: right;
+}
+
+.note-item {
+  background: rgba(255, 215, 0, 0.1);
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  border-right: 3px solid gold;
+}
+
+.note-date {
+  font-size: 0.8em;
+  color: #aaa;
+  margin-bottom: 5px;
+}
+
 /* التكيف مع الشاشات الصغيرة */
 @media (max-width: 768px) {
   body {
@@ -397,5 +468,11 @@ body.light-mode .results-table td {
   }
   .derivative-roads {
     flex-direction: column;
+  }
+  .notes-buttons {
+    flex-direction: column;
+  }
+  .save-note, .clear-note {
+    width: 100%;
   }
   }
