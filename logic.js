@@ -234,14 +234,13 @@ function showToast(result, isWin) {
       }
 
 function addResult(result) {
- 
   history.push(result);
   
-  // تحديد إذا كانت النتيجة فوزًا أو خسارة (مثال: يمكنك تغيير الشرط حسب قواعد اللعبة)
-  const isWin = true; // يمكنك تعديل هذا بناءً على منطق اللعبة
+  // حساب التنبؤات الحالية
+  const prediction = advancedPredict(history);
   
-  // عرض الإشعار
-  showToast(result, isWin);
+  // عرض الإشعار الذكي
+  showAdvancedToast(result, prediction);
   
   // تحديث الواجهة
   updateMarkovModel();
@@ -253,6 +252,7 @@ function addResult(result) {
   generateAdvice();
   showRecommendation();
   updateChart();
+}
 
 }
 
