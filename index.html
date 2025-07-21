@@ -1,64 +1,96 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تحليل الباكارات الاحترافي</title>
+  <meta charset="UTF-8" />
+  <title>Baccarat Analyzer Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>🃏 محلل الباكارات PRO</h1>
-    
-    <div class="controls">
-      <button id="playerBtn" class="btn player">🔵 لاعب (P)</button>
-      <button id="bankerBtn" class="btn banker">🔴 مصرفي (B)</button>
-      <button id="tieBtn" class="btn tie">🟢 تعادل (T)</button>
-      <button id="resetBtn" class="btn reset">🔄 إعادة ضبط</button>
+  <div class="language-container">
+    <select id="langSelect" class="language">
+      <option value="ar-MA">🇲🇦 العربية</option>
+      <option value="en-US">🇺🇸 English</option>
+    </select>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+  </div>
+
+  <h1><span class="logo-b">B</span><span class="logo-rest">ACCARAT</span> <span class="logo-rest">ANALYZER PRO</span></h1>
+  
+  <p>📲 اختر نتيجة الجولة:</p>
+  <div class="buttons">
+    <button class="player" onclick="addResult('P')">
+      🔵 اللاعب
+    </button>
+    <button class="banker" onclick="addResult('B')">
+      🔴 المصرفي
+    </button>
+    <button class="tie" onclick="addResult('T')">
+      🟢 تعادل
+    </button>
+  </div>
+
+  <div class="prediction-section" id="predictionResult">
+    <div class="prediction-title">📊 تنبؤات متقدمة</div>
+    <div id="predictionBars" class="prediction-bars">
+      <div class="prediction-bar player-bar" style="width:33%">P</div>
+      <div class="prediction-bar banker-bar" style="width:34%">B</div>
+      <div class="prediction-bar tie-bar" style="width:33%">T</div>
     </div>
-
-    <div class="dashboard">
-      <div class="prediction-card">
-        <h2>📊 تنبؤات مباشرة</h2>
-        <div class="bars-container">
-          <div class="bar-label">لاعب:</div>
-          <div class="prediction-bar">
-            <div id="playerBar" class="fill player-fill" style="width: 33%"></div>
-            <span id="playerPercent" class="percent">33%</span>
-          </div>
-          
-          <div class="bar-label">مصرفي:</div>
-          <div class="prediction-bar">
-            <div id="bankerBar" class="fill banker-fill" style="width: 34%"></div>
-            <span id="bankerPercent" class="percent">34%</span>
-          </div>
-          
-          <div class="bar-label">تعادل:</div>
-          <div class="prediction-bar">
-            <div id="tieBar" class="fill tie-fill" style="width: 33%"></div>
-            <span id="tiePercent" class="percent">33%</span>
-          </div>
-        </div>
+    <div class="probability-display">
+      <div class="probability-item">
+        <span class="player-text">لاعب</span>
+        <span id="playerProb" class="probability-value player-text">33%</span>
       </div>
-
-      <div class="recommendation-card">
-        <h2>💡 توصية الذكاء الاصطناعي</h2>
-        <div id="recommendation" class="recommendation-box">
-          <p>أدخل النتائج لرؤية التحليل</p>
-        </div>
-        <div id="confidenceMeter" class="confidence-meter">
-          <div id="confidenceBar" class="confidence-fill"></div>
-          <span id="confidencePercent">0%</span>
-        </div>
+      <div class="probability-item">
+        <span class="banker-text">مصرفي</span>
+        <span id="bankerProb" class="probability-value banker-text">34%</span>
       </div>
-    </div>
-
-    <div class="history-section">
-      <h2>📝 سجل النتائج</h2>
-      <div id="historyDisplay" class="history-display"></div>
+      <div class="probability-item">
+        <span class="tie-text">تعادل</span>
+        <span id="tieProb" class="probability-value tie-text">33%</span>
+      </div>
     </div>
   </div>
 
-  <script src="baccarat-analyzer.js"></script>
+  <div id="recommendation" class="recommendation-container"></div>
+  
+  <div class="stats" id="statsResult"></div>
+  <div class="ai-stats" id="aiStats"></div>
+  
+  <div class="trends-container" id="trendsContainer">
+    <h3>📈 تحليل الاتجاهات والأنماط</h3>
+    <div id="trendsContent"></div>
+  </div>
+  
+  <div class="ai-advice" id="aiAdvice"></div>
+  <div class="history" id="historyDisplay"></div>
+  
+  <div style="margin-top: 20px;">
+    <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
+  </div>
+
+  <div class="big-road-container">
+    <h2>Big Road (الميجورك)</h2>
+    <div id="bigRoad" class="big-road"></div>
+  </div>
+
+  <div class="derivative-roads">
+    <div class="road-container">
+      <h3>Big Eye Road</h3>
+      <div id="bigEyeRoad" class="road"></div>
+    </div>
+    <div class="road-container">
+      <h3>Small Road</h3>
+      <div id="smallRoad" class="road"></div>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="statsChart"></canvas>
+  </div>
+
+  <script src="logic.js"></script>
 </body>
-</html>
+  </html>
