@@ -399,3 +399,51 @@ body.light-mode .results-table td {
     flex-direction: column;
   }
   }
+/* أنماط الإشعارات */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 20px;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.3s ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast.hide {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.toast-player {
+  background-color: #007bff;
+  border-left: 5px solid #0056b3;
+}
+
+.toast-banker {
+  background-color: #dc3545;
+  border-left: 5px solid #a71d2a;
+}
+
+.toast-tie {
+  background-color: #28a745;
+  border-left: 5px solid #1e7e34;
+}
+
+.toast-loss {
+  background-color: #6c757d;
+  border-left: 5px solid #495057;
+}
