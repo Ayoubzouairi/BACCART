@@ -199,44 +199,51 @@ function updateChart() {
   });
 }
 
-function showAdvancedToast(result, prediction) {
+// دالة عرض الإشعارات المعدلة
+function showToast(result, isWin, confidence) {
   const toast = document.createElement('div');
-  toast.className = `toast-3d ${result.toLowerCase()}`;
+  toast.className = `toast ${result} ${isWin ? 'win' : 'loss'}`;
   
-  const isWin = prediction[result] >= 50;
   const emoji = isWin ? '🎉' : '💔';
-  let message, confidenceText;
+  const messageAr = isWin ? 
+    (result === 'P' ? 'فوز اللاعب!' : result === 'B' ? 'فوز المصرفي!' : 'تعادل!') :
+    (result === 'P' ? 'خسارة اللاعب!' : result === 'B' ? 'خسارة المصرفي!' : 'تعادل!');
   
-  if (result === 'P') {
-    message = lang === 'ar-MA' ? (isWin ? 'فوز اللاعب!' : 'خسارة اللاعب!') : (isWin ? 'Player wins!' : 'Player loses!');
-  } else if (result === 'B') {
-    message = lang === 'ar-MA' ? (isWin ? 'فوز المصرفي!' : 'خسارة المصرفي!') : (isWin ? 'Banker wins!' : 'Banker loses!');
-  } else {
-    message = lang === 'ar-MA' ? 'تعادل!' : 'Tie!';
-  }
-  
-  confidenceText = lang === 'ar-MA' ? 
-    `(ثقة: ${Math.round(prediction[result])}%)` : 
-    `(Confidence: ${Math.round(prediction[result])}%)`;
+  const messageEn = isWin ? 
+    (result === 'P' ? 'Player Wins!' : result === 'B' ? 'Banker Wins!' : 'Tie!') :
+    (result === 'P' ? 'Player Loses!' : result === 'B' ? 'Banker Loses!' : 'Tie!');
 
   toast.innerHTML = `
     <span class="emoji">${emoji}</span>
-    <span class="message">${message}</span>
-    <span class="confidence">${confidenceText}</span>
+    <span class="message">${lang === 'ar-MA' ? messageAr : messageEn}</span>
+    <span class="confidence">${confidence}%</span>
   `;
   
   document.body.appendChild(toast);
   setTimeout(() => toast.classList.add('show'), 100);
   setTimeout(() => {
     toast.classList.remove('show');
-    setTimeout(() => toast.remove(), 600);
-  }, 4000);
+    setTimeout(() => toast.remove(), 500);
+  }, 3000);
 }
 
-// عدّل دالة addResult كما يلي:
+// دالة مساعدة لتحديد الفوز/الخسارة
+function determineWin(result, prediction) {
+  const threshold = 50; // يمكن تعديل هذا الرقم
+  return {
+    isWin: prediction[result] >= threshold,
+    confidence: Math.round(prediction[result])
+  };
+}
+
 function addResult(result) {
+  // التأكد من وجود المتغيرات الأساسية
+  if (!history) history = [];
+  if (!currentStreak) currentStreak = { type: null, count: 0 };
+  
   history.push(result);
   
+  // تحديث الخط المتتالي
   if (result === currentStreak.type) {
     currentStreak.count++;
   } else {
@@ -244,32 +251,14 @@ function addResult(result) {
     currentStreak.count = 1;
   }
   
+  // حساب التنبؤات
   const prediction = advancedPredict(history);
-  showAdvancedToast(result, prediction);
+  const { isWin, confidence } = determineWin(result, prediction);
   
-  updateMarkovModel();
-  updateDisplay();
-  updateBigRoad();
-  updateDerivativeRoads();
-  updateTrendsAndStreaks();
-  updatePredictions();
-  generateAdvice();
-  showRecommendation();
-  updateChart();
-}
-
-// باقي الكود يبقى كما هو دون تغيير
-
-function addResult(result) {
-  history.push(result);
+  // عرض الإشعار
+  showToast(result, isWin, confidence);
   
-  if (result === currentStreak.type) {
-    currentStreak.count++;
-  } else {
-    currentStreak.type = result;
-    currentStreak.count = 1;
-  }
-  
+  // تحديث الواجهة
   updateMarkovModel();
   updateDisplay();
   updateBigRoad();
