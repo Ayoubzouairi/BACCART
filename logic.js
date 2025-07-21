@@ -204,28 +204,19 @@ function showAdvancedToast(result, prediction) {
   const toast = document.createElement('div');
   toast.className = `toast-3d ${result.toLowerCase()}`;
   
-  // تحديد إذا كانت النتيجة "فوز" بناءً على نسبة التنبؤ
-  const isWin = prediction[result] >= 50; // إذا كانت النسبة ≥ 50% تعتبر فوزًا
-  
-  // تحديد الرسالة واللون
+  const isWin = prediction[result] >= 50;
   const emoji = isWin ? '🎉' : '💔';
   let message, confidenceText;
   
   if (result === 'P') {
-    message = lang === 'ar-MA' ? 
-      (isWin ? 'فوز اللاعب!' : 'خسارة اللاعب!') : 
-      (isWin ? 'Player wins!' : 'Player loses!');
+    message = lang === 'ar-MA' ? (isWin ? 'فوز اللاعب!' : 'خسارة اللاعب!') : (isWin ? 'Player wins!' : 'Player loses!');
   } else if (result === 'B') {
-    message = lang === 'ar-MA' ? 
-      (isWin ? 'فوز المصرفي!' : 'خسارة المصرفي!') : 
-      (isWin ? 'Banker wins!' : 'Banker loses!');
+    message = lang === 'ar-MA' ? (isWin ? 'فوز المصرفي!' : 'خسارة المصرفي!') : (isWin ? 'Banker wins!' : 'Banker loses!');
   } else {
     message = lang === 'ar-MA' ? 'تعادل!' : 'Tie!';
   }
   
-  confidenceText = lang === 'ar-MA' ? 
-    `(ثقة: ${Math.round(prediction[result])}%)` : 
-    `(Confidence: ${Math.round(prediction[result])}%)`;
+  confidenceText = lang === 'ar-MA' ? `(ثقة: ${Math.round(prediction[result])}%)` : `(Confidence: ${Math.round(prediction[result])}%)`;
 
   toast.innerHTML = `
     <span class="emoji">${emoji}</span>
@@ -234,15 +225,12 @@ function showAdvancedToast(result, prediction) {
   `;
   
   document.body.appendChild(toast);
-
-  // إظهار الإشعار
   setTimeout(() => toast.classList.add('show'), 100);
-
-  // إخفاء الإشعار بعد 4 ثواني
   setTimeout(() => {
     toast.classList.remove('show');
     setTimeout(() => toast.remove(), 600);
   }, 4000);
+
 }
 
 function addResult(result) {
