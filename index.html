@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Baccarat Analyzer Pro</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+  <div class="notification-container" id="notificationContainer"></div>
+  
   <div class="language-container">
     <select id="langSelect" class="language">
       <option value="ar-MA">🇲🇦 العربية</option>
@@ -91,8 +93,6 @@
     <canvas id="statsChart"></canvas>
   </div>
 
-  <div id="notificationContainer" class="notification-container"></div>
-
   <script src="logic.js"></script>
 </body>
-</html>
+    </html>
