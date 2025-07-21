@@ -199,70 +199,25 @@ function updateChart() {
   });
 }
 
-function showToast(result, isWin) {
-function showAdvancedToast(result, prediction) {
-  const toast = document.createElement('div');
-  toast.className = `toast-3d ${result.toLowerCase()}`;
-  
-  const isWin = prediction[result] >= 50;
-  const emoji = isWin ? '🎉' : '💔';
-  let message, confidenceText;
-  
-  if (result === 'P') {
-    message = lang === 'ar-MA' ? (isWin ? 'فوز اللاعب!' : 'خسارة اللاعب!') : (isWin ? 'Player wins!' : 'Player loses!');
-  } else if (result === 'B') {
-    message = lang === 'ar-MA' ? (isWin ? 'فوز المصرفي!' : 'خسارة المصرفي!') : (isWin ? 'Banker wins!' : 'Banker loses!');
-  } else {
-    message = lang === 'ar-MA' ? 'تعادل!' : 'Tie!';
-  }
-  
-  confidenceText = lang === 'ar-MA' ? `(ثقة: ${Math.round(prediction[result])}%)` : `(Confidence: ${Math.round(prediction[result])}%)`;
-
-  toast.innerHTML = `
-    <span class="emoji">${emoji}</span>
-    <span class="message">${message}</span>
-    <span class="confidence">${confidenceText}</span>
-  `;
-  
-  document.body.appendChild(toast);
-  setTimeout(() => toast.classList.add('show'), 100);
-  setTimeout(() => {
-    toast.classList.remove('show');
-    setTimeout(() => toast.remove(), 600);
-  }, 4000);
-
-}
-
 function addResult(result) {
-  console.log("تم الضغط على:", result); 
-}
-  // التأكد من أن المتغيرات الأساسية موجودة
-  if (!history) history = [];
-  if (!markovModel) markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
-  
   history.push(result);
   
-  try {
-    const prediction = advancedPredict(history);
-    showAdvancedToast(result, prediction);
-    
-    // تحديث كل الوظائف الأخرى
-    updateMarkovModel();
-    updateDisplay();
-    updateBigRoad();
-    updateDerivativeRoads();
-    updateTrendsAndStreaks();
-    updatePredictions();
-    generateAdvice();
-    showRecommendation();
-    updateChart();
-    
-  } catch (error) {
-    console.error("حدث خطأ:", error);
+  if (result === currentStreak.type) {
+    currentStreak.count++;
+  } else {
+    currentStreak.type = result;
+    currentStreak.count = 1;
   }
-}
-}
-
+  
+  updateMarkovModel();
+  updateDisplay();
+  updateBigRoad();
+  updateDerivativeRoads();
+  updateTrendsAndStreaks();
+  updatePredictions();
+  generateAdvice();
+  showRecommendation();
+  updateChart();
 }
 
 function updateDisplay() {
