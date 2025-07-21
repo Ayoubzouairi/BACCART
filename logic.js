@@ -200,38 +200,50 @@ function updateChart() {
 }
 
 function showToast(result, isWin) {
+function showAdvancedToast(result, prediction) {
   const toast = document.createElement('div');
+  toast.className = `toast-3d ${result.toLowerCase()}`;
+  
+  // تحديد إذا كانت النتيجة "فوز" بناءً على نسبة التنبؤ
+  const isWin = prediction[result] >= 50; // إذا كانت النسبة ≥ 50% تعتبر فوزًا
+  
+  // تحديد الرسالة واللون
   const emoji = isWin ? '🎉' : '💔';
-  let message, toastClass;
-
+  let message, confidenceText;
+  
   if (result === 'P') {
     message = lang === 'ar-MA' ? 
       (isWin ? 'فوز اللاعب!' : 'خسارة اللاعب!') : 
       (isWin ? 'Player wins!' : 'Player loses!');
-    toastClass = isWin ? 'toast-player' : 'toast-loss';
   } else if (result === 'B') {
     message = lang === 'ar-MA' ? 
       (isWin ? 'فوز المصرفي!' : 'خسارة المصرفي!') : 
       (isWin ? 'Banker wins!' : 'Banker loses!');
-    toastClass = isWin ? 'toast-banker' : 'toast-loss';
   } else {
     message = lang === 'ar-MA' ? 'تعادل!' : 'Tie!';
-    toastClass = 'toast-tie';
   }
+  
+  confidenceText = lang === 'ar-MA' ? 
+    `(ثقة: ${Math.round(prediction[result])}%)` : 
+    `(Confidence: ${Math.round(prediction[result])}%)`;
 
-  toast.className = `toast ${toastClass}`;
-  toast.innerHTML = `${emoji} ${message}`;
+  toast.innerHTML = `
+    <span class="emoji">${emoji}</span>
+    <span class="message">${message}</span>
+    <span class="confidence">${confidenceText}</span>
+  `;
+  
   document.body.appendChild(toast);
 
   // إظهار الإشعار
   setTimeout(() => toast.classList.add('show'), 100);
 
-  // إخفاء الإشعار بعد 3 ثواني
+  // إخفاء الإشعار بعد 4 ثواني
   setTimeout(() => {
     toast.classList.remove('show');
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
-      }
+    setTimeout(() => toast.remove(), 600);
+  }, 4000);
+}
 
 function addResult(result) {
   history.push(result);
