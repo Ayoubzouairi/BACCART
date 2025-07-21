@@ -66,6 +66,17 @@
   
   <div class="ai-advice" id="aiAdvice"></div>
   <div class="history" id="historyDisplay"></div>
+
+  <!-- قسم المذكرة الجديد -->
+  <div class="notes-container">
+    <h3>📝 مذكرة الباكارات</h3>
+    <textarea id="baccaratNotes" placeholder="اكتب ملاحظاتك هنا عن الجولات أو الاستراتيجيات..."></textarea>
+    <div class="notes-buttons">
+      <button class="save-note" onclick="saveNote()">💾 حفظ الملاحظة</button>
+      <button class="clear-note" onclick="clearNote()">🗑️ مسح</button>
+    </div>
+    <div id="savedNotes" class="notes-list"></div>
+  </div>
   
   <div style="margin-top: 20px;">
     <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
@@ -93,4 +104,4 @@
 
   <script src="logic.js"></script>
 </body>
-  </html>
+          </html>
