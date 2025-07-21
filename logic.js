@@ -199,51 +199,75 @@ function updateChart() {
   });
 }
 
-// دالة عرض الإشعارات المعدلة
-function showToast(result, isWin, confidence) {
-  const toast = document.createElement('div');
-  toast.className = `toast ${result} ${isWin ? 'win' : 'loss'}`;
+function showNotification(type, message) {
+  const container = document.getElementById('notificationContainer');
+  const notification = document.createElement('div');
   
-  const emoji = isWin ? '🎉' : '💔';
-  const messageAr = isWin ? 
-    (result === 'P' ? 'فوز اللاعب!' : result === 'B' ? 'فوز المصرفي!' : 'تعادل!') :
-    (result === 'P' ? 'خسارة اللاعب!' : result === 'B' ? 'خسارة المصرفي!' : 'تعادل!');
+  const icon = type === 'win' ? '🎉' : '💥';
+  const notificationClass = type === 'win' ? 'win' : 'lose';
   
-  const messageEn = isWin ? 
-    (result === 'P' ? 'Player Wins!' : result === 'B' ? 'Banker Wins!' : 'Tie!') :
-    (result === 'P' ? 'Player Loses!' : result === 'B' ? 'Banker Loses!' : 'Tie!');
-
-  toast.innerHTML = `
-    <span class="emoji">${emoji}</span>
-    <span class="message">${lang === 'ar-MA' ? messageAr : messageEn}</span>
-    <span class="confidence">${confidence}%</span>
+  notification.className = `notification ${notificationClass}`;
+  notification.innerHTML = `
+    <span class="icon">${icon}</span>
+    <span>${message}</span>
   `;
   
-  document.body.appendChild(toast);
-  setTimeout(() => toast.classList.add('show'), 100);
+  container.appendChild(notification);
+  
   setTimeout(() => {
-    toast.classList.remove('show');
-    setTimeout(() => toast.remove(), 500);
-  }, 3000);
+    notification.classList.add('show');
+    
+    setTimeout(() => {
+      notification.classList.remove('show');
+      setTimeout(() => {
+        notification.remove();
+      }, 300);
+    }, 5000);
+  }, 100);
+  
+  const effect = document.createElement('div');
+  effect.className = `${type}-effect`;
+  document.body.appendChild(effect);
+  
+  setTimeout(() => {
+    effect.remove();
+  }, 2000);
 }
 
-// دالة مساعدة لتحديد الفوز/الخسارة
-function determineWin(result, prediction) {
-  const threshold = 50; // يمكن تعديل هذا الرقم
-  return {
-    isWin: prediction[result] >= threshold,
-    confidence: Math.round(prediction[result])
-  };
+function checkWinLoss(result) {
+  if (history.length < 3) return;
+  
+  const lastPrediction = advancedPredict(history.slice(0, -1));
+  const predicted = Object.keys(lastPrediction).reduce((a, b) => 
+    lastPrediction[a] > lastPrediction[b] ? a : b
+  );
+  
+  const confidence = lastPrediction[predicted];
+  const isWin = predicted === result;
+  
+  if (confidence > 60) {
+    const isArabic = lang === 'ar-MA';
+    const message = isWin ? 
+      (isArabic ? 
+        `🎉 فوز! توقعنا ${getResultName(predicted, isArabic)} بثقة ${Math.round(confidence)}%` : 
+        `🎉 Win! We predicted ${getResultName(predicted, isArabic)} with ${Math.round(confidence)}% confidence`) :
+      (isArabic ? 
+        `💥 خسارة! توقعنا ${getResultName(predicted, isArabic)} بثقة ${Math.round(confidence)}%` : 
+        `💥 Loss! We predicted ${getResultName(predicted, isArabic)} with ${Math.round(confidence)}% confidence`);
+    
+    showNotification(isWin ? 'win' : 'lose', message);
+  }
+}
+
+function getResultName(result, isArabic) {
+  return result === 'P' ? (isArabic ? 'اللاعب' : 'Player') :
+         result === 'B' ? (isArabic ? 'المصرفي' : 'Banker') :
+         (isArabic ? 'التعادل' : 'Tie');
 }
 
 function addResult(result) {
-  // التأكد من وجود المتغيرات الأساسية
-  if (!history) history = [];
-  if (!currentStreak) currentStreak = { type: null, count: 0 };
-  
   history.push(result);
   
-  // تحديث الخط المتتالي
   if (result === currentStreak.type) {
     currentStreak.count++;
   } else {
@@ -251,14 +275,6 @@ function addResult(result) {
     currentStreak.count = 1;
   }
   
-  // حساب التنبؤات
-  const prediction = advancedPredict(history);
-  const { isWin, confidence } = determineWin(result, prediction);
-  
-  // عرض الإشعار
-  showToast(result, isWin, confidence);
-  
-  // تحديث الواجهة
   updateMarkovModel();
   updateDisplay();
   updateBigRoad();
@@ -268,6 +284,7 @@ function addResult(result) {
   generateAdvice();
   showRecommendation();
   updateChart();
+  checkWinLoss(result);
 }
 
 function updateDisplay() {
@@ -362,7 +379,6 @@ function detectAdvancedPatterns(fullHistory) {
     }
   });
 
-  // تحليل التكرار التاريخي
   const last5 = fullHistory.slice(-5).join('');
   let historicalMatches = 0;
   for (let i = 0; i < fullHistoryStr.length - 5; i++) {
@@ -425,14 +441,12 @@ function advancedPredict(history) {
     T: (freq20.T / lastTwenty.length) * 100
   };
   
-  // حساب المتوسط المرجح
   let weightedAvg = {
     P: (percent5.P * 0.6 + percent10.P * 0.3 + percent20.P * 0.1),
     B: (percent5.B * 0.6 + percent10.B * 0.3 + percent20.B * 0.1),
     T: (percent5.T * 0.6 + percent10.T * 0.3 + percent20.T * 0.1)
   };
   
-  // تطبيق Markov Chain
   const lastResult = history[history.length - 1];
   if (lastResult) {
     weightedAvg.P = (weightedAvg.P + markovModel[lastResult].P) / 2;
@@ -440,7 +454,6 @@ function advancedPredict(history) {
     weightedAvg.T = (weightedAvg.T + markovModel[lastResult].T) / 2;
   }
   
-  // تطبيق تصحيح الأنماط
   const patterns = detectAdvancedPatterns(history);
   patterns.forEach(p => {
     if (p.pattern.includes('P')) {
@@ -458,7 +471,6 @@ function advancedPredict(history) {
     }
   });
   
-  // اكتشاف Dragon وتعديل الاحتمالات
   const dragon = detectDragon(history);
   if (dragon.dragon) {
     weightedAvg[dragon.dragon] += 15 * (dragon.length / 10);
@@ -466,7 +478,6 @@ function advancedPredict(history) {
     weightedAvg.T -= 5 * (dragon.length / 10);
   }
   
-  // ضمان عدم وجود قيم سلبية
   weightedAvg.P = Math.max(5, weightedAvg.P);
   weightedAvg.B = Math.max(5, weightedAvg.B);
   weightedAvg.T = Math.max(5, weightedAvg.T);
@@ -728,4 +739,4 @@ function resetData() {
     document.getElementById('trendsContent').innerHTML = '';
     document.getElementById('recommendation').innerHTML = '';
   }
-      }
+       }
