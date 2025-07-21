@@ -399,6 +399,7 @@ body.light-mode .results-table td {
     flex-direction: column;
   }
   }
+
 /* أنماط الإشعارات ثلاثية الأبعاد */
 .toast-3d {
   position: fixed;
