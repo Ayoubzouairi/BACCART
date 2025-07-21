@@ -2,10 +2,12 @@ let history = [];
 let currentStreak = { type: null, count: 0 };
 let lang = 'ar-MA';
 let markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
+let notes = [];
 
 document.addEventListener('DOMContentLoaded', function() {
   loadTheme();
   loadLanguage();
+  loadNotes();
   document.getElementById('langSelect').addEventListener('change', changeLanguage);
 });
 
@@ -39,6 +41,72 @@ function speak(text, lang) {
   speechSynthesis.speak(utter);
 }
 
+/* ========== وظائف المذكرة الجديدة ========== */
+function saveNote() {
+  const noteText = document.getElementById('baccaratNotes').value.trim();
+  if (noteText) {
+    const newNote = {
+      text: noteText,
+      date: new Date().toLocaleString(),
+      round: history.length
+    };
+    notes.push(newNote);
+    localStorage.setItem('baccaratNotes', JSON.stringify(notes));
+    renderNotes();
+    document.getElementById('baccaratNotes').value = '';
+    
+    const message = lang === 'ar-MA' ? 'تم حفظ الملاحظة بنجاح' : 'Note saved successfully';
+    alert(message);
+  } else {
+    const message = lang === 'ar-MA' ? 'الرجاء إدخال ملاحظة قبل الحفظ' : 'Please enter a note before saving';
+    alert(message);
+  }
+}
+
+function clearNote() {
+  document.getElementById('baccaratNotes').value = '';
+}
+
+function loadNotes() {
+  const savedNotes = localStorage.getItem('baccaratNotes');
+  if (savedNotes) {
+    notes = JSON.parse(savedNotes);
+    renderNotes();
+  }
+}
+
+function renderNotes() {
+  const notesContainer = document.getElementById('savedNotes');
+  notesContainer.innerHTML = '';
+  
+  if (notes.length === 0) {
+    notesContainer.innerHTML = lang === 'ar-MA' 
+      ? '<p>لا توجد ملاحظات محفوظة</p>' 
+      : '<p>No saved notes</p>';
+    return;
+  }
+  
+  notes.slice().reverse().forEach((note, index) => {
+    const noteElement = document.createElement('div');
+    noteElement.className = 'note-item';
+    noteElement.innerHTML = `
+      <div class="note-date">${note.date} - ${lang === 'ar-MA' ? 'الجولة' : 'Round'} ${note.round}</div>
+      <div class="note-text">${note.text}</div>
+      <button onclick="deleteNote(${notes.length - 1 - index})" class="delete-note">${lang === 'ar-MA' ? 'حذف' : 'Delete'}</button>
+    `;
+    notesContainer.appendChild(noteElement);
+  });
+}
+
+function deleteNote(index) {
+  if (confirm(lang === 'ar-MA' ? 'هل أنت متأكد من حذف هذه الملاحظة؟' : 'Are you sure you want to delete this note?')) {
+    notes.splice(index, 1);
+    localStorage.setItem('baccaratNotes', JSON.stringify(notes));
+    renderNotes();
+  }
+}
+
+/* ========== وظائف الباكارات الأساسية ========== */
 function updateBigRoad() {
   const bigRoadElement = document.getElementById('bigRoad');
   bigRoadElement.innerHTML = '';
@@ -135,7 +203,6 @@ function updateMarkovModel() {
     markovModel[from][to]++;
   }
 
-  // حساب الاحتمالات
   for (const from in markovModel) {
     const total = Object.values(markovModel[from]).reduce((a, b) => a + b, 0);
     for (const to in markovModel[from]) {
@@ -312,7 +379,6 @@ function detectAdvancedPatterns(fullHistory) {
     }
   });
 
-  // تحليل التكرار التاريخي
   const last5 = fullHistory.slice(-5).join('');
   let historicalMatches = 0;
   for (let i = 0; i < fullHistoryStr.length - 5; i++) {
@@ -347,7 +413,7 @@ function advancedPredict(history) {
 
   const lastFive = history.slice(-5);
   const lastTen = history.length >= 10 ? history.slice(-10) : lastFive;
-  const lastTwenty = history.length >= 20 ? history.slice(-20) : lastTen;
+  const lastTwenty = history.length >= 20 ? history.slice(-20) : lastFive;
   
   const freq5 = { P: 0, B: 0, T: 0 };
   const freq10 = { P: 0, B: 0, T: 0 };
@@ -375,14 +441,12 @@ function advancedPredict(history) {
     T: (freq20.T / lastTwenty.length) * 100
   };
   
-  // حساب المتوسط المرجح
   let weightedAvg = {
     P: (percent5.P * 0.6 + percent10.P * 0.3 + percent20.P * 0.1),
     B: (percent5.B * 0.6 + percent10.B * 0.3 + percent20.B * 0.1),
     T: (percent5.T * 0.6 + percent10.T * 0.3 + percent20.T * 0.1)
   };
   
-  // تطبيق Markov Chain
   const lastResult = history[history.length - 1];
   if (lastResult) {
     weightedAvg.P = (weightedAvg.P + markovModel[lastResult].P) / 2;
@@ -390,7 +454,6 @@ function advancedPredict(history) {
     weightedAvg.T = (weightedAvg.T + markovModel[lastResult].T) / 2;
   }
   
-  // تطبيق تصحيح الأنماط
   const patterns = detectAdvancedPatterns(history);
   patterns.forEach(p => {
     if (p.pattern.includes('P')) {
@@ -408,7 +471,6 @@ function advancedPredict(history) {
     }
   });
   
-  // اكتشاف Dragon وتعديل الاحتمالات
   const dragon = detectDragon(history);
   if (dragon.dragon) {
     weightedAvg[dragon.dragon] += 15 * (dragon.length / 10);
@@ -416,7 +478,6 @@ function advancedPredict(history) {
     weightedAvg.T -= 5 * (dragon.length / 10);
   }
   
-  // ضمان عدم وجود قيم سلبية
   weightedAvg.P = Math.max(5, weightedAvg.P);
   weightedAvg.B = Math.max(5, weightedAvg.B);
   weightedAvg.T = Math.max(5, weightedAvg.T);
@@ -622,6 +683,10 @@ function updateUI() {
   document.querySelector('.big-road-container h2').textContent = isArabic ? 'Big Road (الميجورك)' : 'Big Road';
   document.querySelectorAll('.road-container h3')[0].textContent = isArabic ? 'Big Eye Road' : 'Big Eye Road';
   document.querySelectorAll('.road-container h3')[1].textContent = isArabic ? 'Small Road' : 'Small Road';
+  document.querySelector('.notes-container h3').textContent = isArabic ? '📝 مذكرة الباكارات' : '📝 Baccarat Notes';
+  document.getElementById('baccaratNotes').placeholder = isArabic ? 'اكتب ملاحظاتك هنا عن الجولات أو الاستراتيجيات...' : 'Write your notes about rounds or strategies here...';
+  document.querySelector('.save-note').textContent = isArabic ? '💾 حفظ الملاحظة' : '💾 Save Note';
+  document.querySelector('.clear-note').textContent = isArabic ? '🗑️ مسح' : '🗑️ Clear';
   
   if (history.length > 0) {
     updateDisplay();
@@ -631,18 +696,23 @@ function updateUI() {
     showRecommendation();
     updateChart();
   }
+  
+  renderNotes();
 }
 
 function resetData() {
   const isArabic = lang === 'ar-MA';
   const confirmMsg = isArabic ? 
-    "هل أنت متأكد من أنك تريد إعادة تعيين جميع البيانات؟" : 
-    "Are you sure you want to reset all data?";
+    "هل أنت متأكد من أنك تريد إعادة تعيين جميع البيانات والملاحظات؟" : 
+    "Are you sure you want to reset all data and notes?";
   
   if (confirm(confirmMsg)) {
     history = [];
     currentStreak = { type: null, count: 0 };
     markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
+    notes = [];
+    localStorage.removeItem('baccaratNotes');
+    
     updateBigRoad();
     document.getElementById('bigEyeRoad').innerHTML = '';
     document.getElementById('smallRoad').innerHTML = '';
@@ -677,5 +747,6 @@ function resetData() {
     document.getElementById('historyDisplay').innerText = '';
     document.getElementById('trendsContent').innerHTML = '';
     document.getElementById('recommendation').innerHTML = '';
+    renderNotes();
   }
       }
