@@ -234,6 +234,8 @@ function showAdvancedToast(result, prediction) {
 }
 
 function addResult(result) {
+  console.log("تم الضغط على:", result); 
+}
   // التأكد من أن المتغيرات الأساسية موجودة
   if (!history) history = [];
   if (!markovModel) markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
