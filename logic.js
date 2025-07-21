@@ -199,6 +199,39 @@ function updateChart() {
   });
 }
 
+function showToast(result, isWin) {
+  const toast = document.createElement('div');
+  const emoji = isWin ? '🎉' : '💔';
+  let message, toastClass;
+
+  if (result === 'P') {
+    message = lang === 'ar-MA' ? 
+      (isWin ? 'فوز اللاعب!' : 'خسارة اللاعب!') : 
+      (isWin ? 'Player wins!' : 'Player loses!');
+    toastClass = isWin ? 'toast-player' : 'toast-loss';
+  } else if (result === 'B') {
+    message = lang === 'ar-MA' ? 
+      (isWin ? 'فوز المصرفي!' : 'خسارة المصرفي!') : 
+      (isWin ? 'Banker wins!' : 'Banker loses!');
+    toastClass = isWin ? 'toast-banker' : 'toast-loss';
+  } else {
+    message = lang === 'ar-MA' ? 'تعادل!' : 'Tie!';
+    toastClass = 'toast-tie';
+  }
+
+  toast.className = `toast ${toastClass}`;
+  toast.innerHTML = `${emoji} ${message}`;
+  document.body.appendChild(toast);
+
+  // إظهار الإشعار
+  setTimeout(() => toast.classList.add('show'), 100);
+
+  // إخفاء الإشعار بعد 3 ثواني
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+      }
 function addResult(result) {
   history.push(result);
   
