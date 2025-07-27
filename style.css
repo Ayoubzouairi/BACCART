@@ -119,7 +119,7 @@ body.light-mode .theme-toggle {
 }
 
 /* أنماط الصناديق */
-.result, .stats, .history, .ai-stats, .ai-advice, .trends-container, .notes-container {
+.result, .stats, .history, .ai-stats, .ai-advice, .trends-container {
   margin-top: 1.5em;
   font-size: 1.2em;
   padding: 15px;
@@ -133,8 +133,7 @@ body.light-mode .stats,
 body.light-mode .history, 
 body.light-mode .ai-stats, 
 body.light-mode .ai-advice,
-body.light-mode .trends-container,
-body.light-mode .notes-container {
+body.light-mode .trends-container {
   background-color: rgba(0,0,0,0.05);
 }
 
@@ -287,18 +286,36 @@ body.light-mode .results-table td {
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.3);
   border-left: 5px solid gold;
+  position: relative;
+  overflow: hidden;
+}
+
+.recommendation-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, 
+    rgba(255,255,255,0.1) 0%, 
+    rgba(255,255,255,0) 50%);
+  pointer-events: none;
 }
 
 .recommendation-box.P {
   border-left-color: #007bff;
+  background: linear-gradient(to right, rgba(0, 123, 255, 0.1), rgba(0,0,0,0.3));
 }
 
 .recommendation-box.B {
   border-left-color: #dc3545;
+  background: linear-gradient(to right, rgba(220, 53, 69, 0.1), rgba(0,0,0,0.3));
 }
 
 .recommendation-box.T {
   border-left-color: #28a745;
+  background: linear-gradient(to right, rgba(40, 167, 69, 0.1), rgba(0,0,0,0.3));
 }
 
 .confidence-meter {
@@ -383,74 +400,90 @@ body.light-mode .results-table td {
   margin-right: auto;
 }
 
-/* أنماط المذكرة الجديدة */
-#baccaratNotes {
-  width: 100%;
-  height: 100px;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  background-color: rgba(0, 0, 0, 0.5);
-  color: gold;
-  font-family: inherit;
-  resize: vertical;
+/* ======= [ تحليل الأنماط المتقدم ] ======= */
+.pattern-analysis {
+  margin-top: 25px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  border-left: 4px solid gold;
 }
 
-body.light-mode #baccaratNotes {
-  background-color: white;
-  color: #333;
-}
-
-.notes-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 10px 0;
-}
-
-.save-note, .clear-note {
-  padding: 0.8em 1.5em;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s ease;
-}
-
-.save-note {
-  background-color: #28a745;
-  color: white;
-  border-bottom: 3px solid #1e7e34;
-}
-
-.clear-note {
-  background-color: #dc3545;
-  color: white;
-  border-bottom: 3px solid #a71d2a;
-}
-
-.save-note:hover, .clear-note:hover {
-  transform: translateY(-2px);
-}
-
-.notes-list {
+.pattern-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
   margin-top: 15px;
-  text-align: right;
 }
 
-.note-item {
-  background: rgba(255, 215, 0, 0.1);
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 5px;
-  border-right: 3px solid gold;
+.pattern-card {
+  padding: 15px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
 }
 
-.note-date {
-  font-size: 0.8em;
+.pattern-card:hover {
+  transform: translateY(-5px);
+}
+
+.pattern-card.P {
+  border-top: 3px solid #007bff;
+}
+
+.pattern-card.B {
+  border-top: 3px solid #dc3545;
+}
+
+.pattern-card.T {
+  border-top: 3px solid #28a745;
+}
+
+.pattern-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.pattern-name {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.pattern-confidence {
+  background: gold;
+  color: black;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+.pattern-details {
+  margin: 8px 0;
+  font-size: 0.95em;
+}
+
+.pattern-empty {
+  text-align: center;
+  padding: 20px;
   color: #aaa;
-  margin-bottom: 5px;
+  font-style: italic;
+}
+
+/* دقة التنبؤ */
+.prediction-accuracy {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.7);
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.85em;
 }
 
 /* التكيف مع الشاشات الصغيرة */
@@ -469,10 +502,7 @@ body.light-mode #baccaratNotes {
   .derivative-roads {
     flex-direction: column;
   }
-  .notes-buttons {
-    flex-direction: column;
+  .pattern-cards {
+    grid-template-columns: 1fr;
   }
-  .save-note, .clear-note {
-    width: 100%;
-  }
-  }
+}
