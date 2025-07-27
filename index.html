@@ -33,6 +33,7 @@
 
   <div class="prediction-section" id="predictionResult">
     <div class="prediction-title">📊 تنبؤات متقدمة</div>
+    <div class="prediction-accuracy">الدقة: <span id="accuracyValue">85%</span></div>
     <div id="predictionBars" class="prediction-bars">
       <div class="prediction-bar player-bar" style="width:33%">P</div>
       <div class="prediction-bar banker-bar" style="width:34%">B</div>
@@ -66,20 +67,15 @@
   
   <div class="ai-advice" id="aiAdvice"></div>
   <div class="history" id="historyDisplay"></div>
-
-  <!-- قسم المذكرة الجديد -->
-  <div class="notes-container">
-    <h3>📝 مذكرة الباكارات</h3>
-    <textarea id="baccaratNotes" placeholder="اكتب ملاحظاتك هنا عن الجولات أو الاستراتيجيات..."></textarea>
-    <div class="notes-buttons">
-      <button class="save-note" onclick="saveNote()">💾 حفظ الملاحظة</button>
-      <button class="clear-note" onclick="clearNote()">🗑️ مسح</button>
-    </div>
-    <div id="savedNotes" class="notes-list"></div>
-  </div>
   
   <div style="margin-top: 20px;">
     <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
+  </div>
+
+  <!-- قسم تحليل الأنماط الجديد -->
+  <div class="pattern-analysis">
+    <h3>🔍 تحليل الأنماط المتقدم</h3>
+    <div id="patternsContainer" class="pattern-cards"></div>
   </div>
 
   <div class="big-road-container">
