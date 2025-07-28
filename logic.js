@@ -47,6 +47,11 @@ const COMMON_CASINO_PATTERNS = [
   }
 ];
 
+// إنشاء عنصر الإشعارات
+const notificationContainer = document.createElement('div');
+notificationContainer.className = 'notification-container';
+document.body.appendChild(notificationContainer);
+
 document.addEventListener('DOMContentLoaded', function() {
   checkTimeForTheme();
   loadTheme();
@@ -90,6 +95,60 @@ function loadLanguage() {
   lang = savedLang;
 }
 
+function showNotification(type, message) {
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+  
+  const icon = type === 'win' ? '🎉' : type === 'lose' ? '💥' : '🔄';
+  
+  notification.innerHTML = `
+    <div>
+      <span class="notification-icon">${icon}</span>
+      <span>${message}</span>
+    </div>
+    <button class="close-notification" onclick="this.parentElement.remove()">×</button>
+  `;
+  
+  notificationContainer.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.classList.add('show');
+  }, 100);
+  
+  setTimeout(() => {
+    notification.classList.remove('show');
+    setTimeout(() => {
+      notification.remove();
+    }, 500);
+  }, 5000);
+}
+
+function showEffect(type) {
+  const effect = document.createElement('div');
+  effect.className = `${type}-effect`;
+  document.body.appendChild(effect);
+  
+  setTimeout(() => {
+    effect.remove();
+  }, 2000);
+}
+
+function applyButtonEffect(type) {
+  const button = document.querySelector(`.${type}`);
+  if (!button) return;
+  
+  const effectClass = 
+    type === 'player' ? 'jump-effect' : 
+    type === 'banker' ? 'shake-effect' : 
+    'spin-effect';
+  
+  button.classList.add(effectClass);
+  
+  setTimeout(() => {
+    button.classList.remove(effectClass);
+  }, 1000);
+}
+
 function updateCommonPatterns() {
   const container = document.getElementById('casinoPatterns');
   container.innerHTML = '';
@@ -123,7 +182,6 @@ function updateLast5Analysis() {
   });
   html += '</div>';
   
-  // تحليل النتائج
   const counts = { P: 0, B: 0, T: 0 };
   last5.forEach(r => counts[r]++);
   
@@ -241,7 +299,6 @@ function updateMarkovModel() {
     markovModel[from][to]++;
   }
 
-  // حساب الاحتمالات
   for (const from in markovModel) {
     const total = Object.values(markovModel[from]).reduce((a, b) => a + b, 0);
     for (const to in markovModel[from]) {
@@ -308,7 +365,37 @@ function updateChart() {
 function addResult(result) {
   history.push(result);
   
-  if (result === currentStreak.type) {
+  const lastRecommendation = generateBetRecommendation();
+  let notificationShown = false;
+  
+  if (lastRecommendation.recommendation !== 'none' && history.length > 1) {
+    if (result === lastRecommendation.recommendation) {
+      const message = lang === 'ar-MA' 
+        ? `فوز! ${lastRecommendation.message}` 
+        : `Win! ${lastRecommendation.message}`;
+      showNotification('win', message);
+      showEffect('win');
+      applyButtonEffect(result === 'P' ? 'player' : result === 'B' ? 'banker' : 'tie');
+      notificationShown = true;
+    } else if (result !== 'T' && lastRecommendation.recommendation !== 'T') {
+      const message = lang === 'ar-MA' 
+        ? `خسارة! ${lastRecommendation.message}` 
+        : `Lose! ${lastRecommendation.message}`;
+      showNotification('lose', message);
+      showEffect('lose');
+      applyButtonEffect(result === 'P' ? 'player' : 'banker');
+      notificationShown = true;
+    }
+  }
+  
+  if (!notificationShown && result === 'T') {
+    const message = lang === 'ar-MA' ? 'تعادل!' : 'Tie!';
+    showNotification('tie', message);
+    showEffect('tie');
+    applyButtonEffect('tie');
+  }
+  
+  if (currentStreak.type === result) {
     currentStreak.count++;
   } else {
     currentStreak.type = result;
@@ -446,7 +533,6 @@ function detectAdvancedPatterns(fullHistory) {
     }
   });
 
-  // تحليل التكرار التاريخي
   const last5 = fullHistory.slice(-5).join('');
   let historicalMatches = 0;
   for (let i = 0; i < fullHistoryStr.length - 5; i++) {
@@ -509,14 +595,12 @@ function advancedPredict(history) {
     T: (freq20.T / lastTwenty.length) * 100
   };
   
-  // حساب المتوسط المرجح مع تركيز أكبر على آخر 5 جولات
   let weightedAvg = {
     P: (percent5.P * 0.7 + percent10.P * 0.2 + percent20.P * 0.1),
     B: (percent5.B * 0.7 + percent10.B * 0.2 + percent20.B * 0.1),
     T: (percent5.T * 0.7 + percent10.T * 0.2 + percent20.T * 0.1)
   };
   
-  // تطبيق Markov Chain
   const lastResult = history[history.length - 1];
   if (lastResult) {
     weightedAvg.P = (weightedAvg.P + markovModel[lastResult].P) / 2;
@@ -524,7 +608,6 @@ function advancedPredict(history) {
     weightedAvg.T = (weightedAvg.T + markovModel[lastResult].T) / 2;
   }
   
-  // تطبيق تصحيح الأنماط
   const patterns = detectAdvancedPatterns(history);
   patterns.forEach(p => {
     if (p.pattern.includes('P')) {
@@ -542,7 +625,6 @@ function advancedPredict(history) {
     }
   });
   
-  // اكتشاف Dragon وتعديل الاحتمالات
   const dragon = detectDragon(history);
   if (dragon.dragon) {
     weightedAvg[dragon.dragon] += 20 * (dragon.length / 10);
@@ -550,7 +632,6 @@ function advancedPredict(history) {
     weightedAvg.T -= 5 * (dragon.length / 10);
   }
   
-  // ضمان عدم وجود قيم سلبية
   weightedAvg.P = Math.max(5, weightedAvg.P);
   weightedAvg.B = Math.max(5, weightedAvg.B);
   weightedAvg.T = Math.max(5, weightedAvg.T);
@@ -740,7 +821,7 @@ function updateTrendsAndStreaks() {
 function updateUI() {
   const isArabic = lang === 'ar-MA';
   
-  document.title = isArabic ? 'محلل الباكارات المتقدم' : 'Advanced Baccarat Analyzer';
+  document.title = isArabic ? 'BACCARAT SPEED ANALYZER' : 'BACCARAT SPEED ANALYZER';
   document.querySelector('h1').innerHTML = 
     '<span class="logo-b">BACCARAT</span> <span class="logo-s">SPEED</span> <span class="logo-rest">ANALYZER</span>';
   document.querySelector('p').textContent = isArabic ? '📲 اختر نتيجة الجولة:' : '📲 Select round result:';
@@ -815,4 +896,4 @@ function resetData() {
     document.getElementById('recommendation').innerHTML = '';
     document.getElementById('last5Results').innerHTML = '';
   }
-                          }
+}
