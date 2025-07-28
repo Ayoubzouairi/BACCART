@@ -2,102 +2,29 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8" />
-  <title>Baccarat Analyzer Pro</title>
+  <title>BACCARAT AI PREDICTOR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="language-container">
-    <select id="langSelect" class="language">
-      <option value="ar-MA">🇲🇦 العربية</option>
-      <option value="en-US">🇺🇸 English</option>
-    </select>
-    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
-  </div>
+  <div class="container">
+    <h1>BACCARAT AI PREDICTOR</h1>
+    <h2>SPEED BACCARAT</h2>
 
-  <h1><span class="logo-b">B</span><span class="logo-rest">ACCARAT</span> <span class="logo-rest">ANALYZER PRO</span></h1>
-  
-  <p>📲 اختر نتيجة الجولة:</p>
-  <div class="buttons">
-    <button class="player" onclick="addResult('P')">
-      🔵 اللاعب
-    </button>
-    <button class="banker" onclick="addResult('B')">
-      🔴 المصرفي
-    </button>
-    <button class="tie" onclick="addResult('T')">
-      🟢 تعادل
-    </button>
-  </div>
+    <div class="balance">الرصيد: <span id="balance"></span></div>
+    <div class="pattern-display" id="patternDisplay"></div>
+    <div class="result" id="patternType"></div>
 
-  <div class="prediction-section" id="predictionResult">
-    <div class="prediction-title">📊 تنبؤات متقدمة</div>
-    <div class="prediction-accuracy">الدقة: <span id="accuracyValue">85%</span></div>
-    <div id="predictionBars" class="prediction-bars">
-      <div class="prediction-bar player-bar" style="width:33%">P</div>
-      <div class="prediction-bar banker-bar" style="width:34%">B</div>
-      <div class="prediction-bar tie-bar" style="width:33%">T</div>
-    </div>
-    <div class="probability-display">
-      <div class="probability-item">
-        <span class="player-text">لاعب</span>
-        <span id="playerProb" class="probability-value player-text">33%</span>
-      </div>
-      <div class="probability-item">
-        <span class="banker-text">مصرفي</span>
-        <span id="bankerProb" class="probability-value banker-text">34%</span>
-      </div>
-      <div class="probability-item">
-        <span class="tie-text">تعادل</span>
-        <span id="tieProb" class="probability-value tie-text">33%</span>
-      </div>
+    <h3 id="prediction">NEXT: -</h3>
+
+    <div class="buttons">
+      <button onclick="addResult('B')">🟥 Banker</button>
+      <button onclick="addResult('P')">🔵 Player</button>
+      <button onclick="addResult('T')">🟢 Tie</button>
+      <button onclick="reset()">🔄 Reset</button>
+      <button onclick="resetBalance()">💼 Reset Balance</button>
     </div>
   </div>
-
-  <div id="recommendation" class="recommendation-container"></div>
-  
-  <div class="stats" id="statsResult"></div>
-  <div class="ai-stats" id="aiStats"></div>
-  
-  <div class="trends-container" id="trendsContainer">
-    <h3>📈 تحليل الاتجاهات والأنماط</h3>
-    <div id="trendsContent"></div>
-  </div>
-  
-  <div class="ai-advice" id="aiAdvice"></div>
-  <div class="history" id="historyDisplay"></div>
-  
-  <div style="margin-top: 20px;">
-    <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
-  </div>
-
-  <!-- قسم تحليل الأنماط الجديد -->
-  <div class="pattern-analysis">
-    <h3>🔍 تحليل الأنماط المتقدم</h3>
-    <div id="patternsContainer" class="pattern-cards"></div>
-  </div>
-
-  <div class="big-road-container">
-    <h2>Big Road (الميجورك)</h2>
-    <div id="bigRoad" class="big-road"></div>
-  </div>
-
-  <div class="derivative-roads">
-    <div class="road-container">
-      <h3>Big Eye Road</h3>
-      <div id="bigEyeRoad" class="road"></div>
-    </div>
-    <div class="road-container">
-      <h3>Small Road</h3>
-      <div id="smallRoad" class="road"></div>
-    </div>
-  </div>
-
-  <div class="chart-container">
-    <canvas id="statsChart"></canvas>
-  </div>
-
-  <script src="logic.js"></script>
+  <script src="script.js"></script>
 </body>
-          </html>
+</html>
