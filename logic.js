@@ -4,7 +4,10 @@ const AppState = {
   currentStreak: { type: null, count: 0 },
   lang: 'ar-MA',
   markovModel: { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } },
-  statsChart: null
+  statsChart: null,
+  sessionTimer: null,
+  sessionStartTime: null,
+  sessionActive: false
 };
 
 // أنماط شائعة في الكازينوهات الحية
@@ -59,6 +62,7 @@ function initializeApp() {
   loadTheme();
   loadLanguage();
   updateCommonPatterns();
+  startSessionTimer();
 }
 
 // إنشاء عنصر الإشعارات
@@ -113,12 +117,61 @@ function loadLanguage() {
   AppState.lang = savedLang;
 }
 
+// بدء عداد الجلسة
+function startSessionTimer() {
+  if (AppState.sessionTimer) {
+    clearTimeout(AppState.sessionTimer);
+  }
+  
+  AppState.sessionStartTime = Date.now();
+  AppState.sessionActive = true;
+  
+  // تنبيه بعد 15 دقيقة (900000 مللي ثانية)
+  AppState.sessionTimer = setTimeout(() => {
+    showSessionAlert();
+  }, 900000);
+}
+
+// عرض تنبيه الجلسة
+function showSessionAlert() {
+  const isArabic = AppState.lang === 'ar-MA';
+  const message = isArabic ? 
+    'لقد استخدمت التطبيق لمدة 15 دقيقة. هل تريد أخذ استراحة؟' : 
+    'You have been using the app for 15 minutes. Do you want to take a break?';
+  
+  const alertDiv = document.createElement('div');
+  alertDiv.className = 'session-alert';
+  alertDiv.innerHTML = `
+    <div class="session-alert-content">
+      <p>${message}</p>
+      <div class="session-alert-buttons">
+        <button class="session-alert-button continue">${isArabic ? 'متابعة' : 'Continue'}</button>
+        <button class="session-alert-button break">${isArabic ? 'استراحة' : 'Take Break'}</button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(alertDiv);
+  
+  // إضافة مستمعي الأحداث للأزرار
+  alertDiv.querySelector('.continue').addEventListener('click', () => {
+    alertDiv.remove();
+    startSessionTimer();
+  });
+  
+  alertDiv.querySelector('.break').addEventListener('click', () => {
+    alertDiv.remove();
+    AppState.sessionActive = false;
+    showNotification('info', isArabic ? 'خذ استراحة! عد لاحقاً.' : 'Take a break! Come back later.');
+  });
+}
+
 // عرض الإشعار
 function showNotification(type, message) {
   const notification = document.createElement('div');
   notification.className = `notification ${type}`;
   
-  const icon = type === 'win' ? '🎉' : type === 'lose' ? '💥' : '🔄';
+  const icon = type === 'win' ? '🎉' : type === 'lose' ? '💥' : 'ℹ️';
   
   notification.innerHTML = `
     <div>
@@ -942,6 +995,13 @@ function resetData() {
     AppState.history = [];
     AppState.currentStreak = { type: null, count: 0 };
     AppState.markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
+    
+    // إعادة تعيين عداد الجلسة
+    if (AppState.sessionTimer) {
+      clearTimeout(AppState.sessionTimer);
+    }
+    startSessionTimer();
+    
     updateBigRoad();
     document.getElementById('bigEyeRoad').innerHTML = '';
     document.getElementById('smallRoad').innerHTML = '';
