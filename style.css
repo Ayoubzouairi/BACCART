@@ -45,6 +45,8 @@ body.light-mode {
   font-weight: bold;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   min-width: 120px;
+  position: relative;
+  overflow: hidden;
 }
 
 .player { 
@@ -87,6 +89,88 @@ body.light-mode {
 .reset:hover {
   background-color: #444;
   transform: translateY(-2px);
+}
+
+/* تأثيرات الأزرار الجديدة */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 5px 0px currentColor; }
+  50% { box-shadow: 0 0 20px 5px currentColor; }
+  100% { box-shadow: 0 0 5px 0px currentColor; }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(10);
+    opacity: 0;
+  }
+}
+
+.button-effect::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: translate(-50%, -50%);
+}
+
+.button-effect.active::after {
+  animation: ripple 0.6s ease-out;
+}
+
+.player.effect-active {
+  animation: pulse 0.5s ease, glow 1s ease;
+}
+
+.banker.effect-active {
+  animation: shake 0.5s ease, glow 1s ease;
+}
+
+.tie.effect-active {
+  animation: spin 0.5s linear, glow 1s ease;
+}
+
+.percentage-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: gold;
+  color: #121212;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.8em;
+  animation: float-up 1s ease-out forwards;
+  z-index: 10;
+}
+
+@keyframes float-up {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
 }
 
 /* أنماط اللغة والثيم */
