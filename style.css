@@ -638,95 +638,6 @@ body.light-mode .results-table td {
   100% { transform: scale(1); }
 }
 
-/* أنماط عداد الجلسة الجديدة */
-.session-timer {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  background: rgba(0, 0, 0, 0.7);
-  color: gold;
-  padding: 8px 15px;
-  border-radius: 20px;
-  font-family: monospace;
-  font-size: 14px;
-  z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-}
-
-.session-alert {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #222;
-  border-radius: 10px;
-  padding: 20px;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-  z-index: 2000;
-  opacity: 0;
-  transition: opacity 0.3s;
-  border-left: 5px solid gold;
-}
-
-.session-alert.show {
-  opacity: 1;
-}
-
-.session-warning {
-  border-left-color: orange;
-}
-
-.session-danger {
-  border-left-color: #dc3545;
-}
-
-.alert-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.alert-icon {
-  font-size: 24px;
-}
-
-.alert-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.alert-buttons button {
-  padding: 8px 15px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.2s;
-}
-
-.dismiss-alert {
-  background: #444;
-  color: white;
-}
-
-.dismiss-alert:hover {
-  background: #555;
-}
-
-.pause-session {
-  background: gold;
-  color: black;
-}
-
-.pause-session:hover {
-  background: #ffd700;
-}
-
 /* التكيف مع الشاشات الصغيرة */
 @media (max-width: 768px) {
   body {
@@ -755,9 +666,4 @@ body.light-mode .results-table td {
     justify-content: center;
     margin-bottom: 15px;
   }
-  .session-timer {
-    bottom: 10px;
-    left: 10px;
-    font-size: 12px;
-  }
-              }
+}
