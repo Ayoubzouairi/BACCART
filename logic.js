@@ -1,7 +1,11 @@
-let history = [];
-let currentStreak = { type: null, count: 0 };
-let lang = 'ar-MA';
-let markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
+// حالة التطبيق
+const AppState = {
+  history: [],
+  currentStreak: { type: null, count: 0 },
+  lang: 'ar-MA',
+  markovModel: { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } },
+  statsChart: null
+};
 
 // أنماط شائعة في الكازينوهات الحية
 const COMMON_CASINO_PATTERNS = [
@@ -47,19 +51,29 @@ const COMMON_CASINO_PATTERNS = [
   }
 ];
 
-// إنشاء عنصر الإشعارات
-const notificationContainer = document.createElement('div');
-notificationContainer.className = 'notification-container';
-document.body.appendChild(notificationContainer);
-
-document.addEventListener('DOMContentLoaded', function() {
+// تهيئة التطبيق
+function initializeApp() {
+  createNotificationContainer();
+  setupEventListeners();
   checkTimeForTheme();
   loadTheme();
   loadLanguage();
-  document.getElementById('langSelect').addEventListener('change', changeLanguage);
   updateCommonPatterns();
-});
+}
 
+// إنشاء عنصر الإشعارات
+function createNotificationContainer() {
+  const notificationContainer = document.createElement('div');
+  notificationContainer.className = 'notification-container';
+  document.body.appendChild(notificationContainer);
+}
+
+// إعداد مستمعي الأحداث
+function setupEventListeners() {
+  document.getElementById('langSelect').addEventListener('change', changeLanguage);
+}
+
+// التحقق من الوقت لتحديد الثيم
 function checkTimeForTheme() {
   const hour = new Date().getHours();
   const isDayTime = hour >= 6 && hour < 18;
@@ -70,31 +84,36 @@ function checkTimeForTheme() {
   }
 }
 
+// تبديل الثيم
 function toggleTheme() {
   document.body.classList.toggle('light-mode');
   const isLight = document.body.classList.contains('light-mode');
   localStorage.setItem('theme', isLight ? 'light' : 'dark');
 }
 
+// تحميل الثيم
 function loadTheme() {
   if (localStorage.getItem('theme') === 'light') {
     document.body.classList.add('light-mode');
   }
 }
 
+// تغيير اللغة
 function changeLanguage() {
-  lang = document.getElementById('langSelect').value;
-  localStorage.setItem('lang', lang);
+  AppState.lang = document.getElementById('langSelect').value;
+  localStorage.setItem('lang', AppState.lang);
   updateUI();
   updateCommonPatterns();
 }
 
+// تحميل اللغة
 function loadLanguage() {
   const savedLang = localStorage.getItem('lang') || 'ar-MA';
   document.getElementById('langSelect').value = savedLang;
-  lang = savedLang;
+  AppState.lang = savedLang;
 }
 
+// عرض الإشعار
 function showNotification(type, message) {
   const notification = document.createElement('div');
   notification.className = `notification ${type}`;
@@ -109,7 +128,7 @@ function showNotification(type, message) {
     <button class="close-notification" onclick="this.parentElement.remove()">×</button>
   `;
   
-  notificationContainer.appendChild(notification);
+  document.querySelector('.notification-container').appendChild(notification);
   
   setTimeout(() => {
     notification.classList.add('show');
@@ -123,6 +142,7 @@ function showNotification(type, message) {
   }, 5000);
 }
 
+// عرض التأثير البصري
 function showEffect(type) {
   const effect = document.createElement('div');
   effect.className = `${type}-effect`;
@@ -133,42 +153,35 @@ function showEffect(type) {
   }, 2000);
 }
 
-function applyPercentageBasedEffect(type) {
+// عرض تأثير نسبة عالية
+function showHighProbabilityEffect(type) {
+  const effect = document.createElement('div');
+  effect.className = `high-prob-effect high-prob-${type.toLowerCase()}`;
+  document.body.appendChild(effect);
+  
+  setTimeout(() => {
+    effect.remove();
+  }, 2000);
+}
+
+// تطبيق تأثير على الزر
+function applyButtonEffect(type) {
   const button = document.querySelector(`.${type}`);
   if (!button) return;
-
-  // الحصول على النسبة المئوية الحالية
-  let percentage = 0;
-  switch (type) {
-    case 'player': 
-      percentage = parseFloat(document.getElementById('playerProb').textContent); 
-      break;
-    case 'banker': 
-      percentage = parseFloat(document.getElementById('bankerProb').textContent); 
-      break;
-    case 'tie': 
-      percentage = parseFloat(document.getElementById('tieProb').textContent); 
-      break;
-  }
-
-  // إضافة تأثير النسبة المئوية
-  const percentageBadge = document.createElement('div');
-  percentageBadge.className = 'percentage-badge';
-  percentageBadge.textContent = `${percentage.toFixed(0)}%`;
-  button.appendChild(percentageBadge);
-
-  // إضافة تأثير الزر
-  button.classList.add('effect-active', 'button-effect', 'active');
-
-  // إزالة التأثير بعد الانتهاء
+  
+  const effectClass = 
+    type === 'player' ? 'jump-effect' : 
+    type === 'banker' ? 'shake-effect' : 
+    'spin-effect';
+  
+  button.classList.add(effectClass);
+  
   setTimeout(() => {
-    button.classList.remove('effect-active', 'active');
-    setTimeout(() => {
-      percentageBadge.remove();
-    }, 1000);
+    button.classList.remove(effectClass);
   }, 1000);
 }
 
+// تحديث الأنماط الشائعة
 function updateCommonPatterns() {
   const container = document.getElementById('casinoPatterns');
   container.innerHTML = '';
@@ -177,20 +190,21 @@ function updateCommonPatterns() {
     const patternElement = document.createElement('div');
     patternElement.className = 'pattern-item';
     patternElement.innerHTML = `
-      <div class="pattern-name">${pattern.name[lang] || pattern.name['en-US']}</div>
-      <div class="pattern-desc">${pattern.description[lang] || pattern.description['en-US']}</div>
-      <div class="pattern-example">${lang === 'ar-MA' ? 'مثال:' : 'Example:'} ${pattern.example}</div>
+      <div class="pattern-name">${pattern.name[AppState.lang] || pattern.name['en-US']}</div>
+      <div class="pattern-desc">${pattern.description[AppState.lang] || pattern.description['en-US']}</div>
+      <div class="pattern-example">${AppState.lang === 'ar-MA' ? 'مثال:' : 'Example:'} ${pattern.example}</div>
     `;
     container.appendChild(patternElement);
   });
 }
 
+// تحليل آخر 5 جولات
 function updateLast5Analysis() {
-  const last5 = history.slice(-5);
+  const last5 = AppState.history.slice(-5);
   const container = document.getElementById('last5Results');
   
   if (last5.length === 0) {
-    container.innerHTML = lang === 'ar-MA' ? 
+    container.innerHTML = AppState.lang === 'ar-MA' ? 
       '<div style="text-align:center;padding:10px;">⏳ لا توجد بيانات كافية لتحليل آخر 5 جولات</div>' : 
       '<div style="text-align:center;padding:10px;">⏳ Not enough data for last 5 rounds analysis</div>';
     return;
@@ -207,15 +221,15 @@ function updateLast5Analysis() {
   
   html += `<div style="margin-top:15px;">
     <div class="trend-item">
-      <span class="player-text">${lang === 'ar-MA' ? 'لاعب' : 'Player'}</span>
+      <span class="player-text">${AppState.lang === 'ar-MA' ? 'لاعب' : 'Player'}</span>
       <span class="trend-value">${counts.P}/5 (${(counts.P/5*100).toFixed(0)}%)</span>
     </div>
     <div class="trend-item">
-      <span class="banker-text">${lang === 'ar-MA' ? 'مصرفي' : 'Banker'}</span>
+      <span class="banker-text">${AppState.lang === 'ar-MA' ? 'مصرفي' : 'Banker'}</span>
       <span class="trend-value">${counts.B}/5 (${(counts.B/5*100).toFixed(0)}%)</span>
     </div>
     <div class="trend-item">
-      <span class="tie-text">${lang === 'ar-MA' ? 'تعادل' : 'Tie'}</span>
+      <span class="tie-text">${AppState.lang === 'ar-MA' ? 'تعادل' : 'Tie'}</span>
       <span class="trend-value">${counts.T}/5 (${(counts.T/5*100).toFixed(0)}%)</span>
     </div>
   </div>`;
@@ -223,6 +237,7 @@ function updateLast5Analysis() {
   container.innerHTML = html;
 }
 
+// تحديث Big Road
 function updateBigRoad() {
   const bigRoadElement = document.getElementById('bigRoad');
   bigRoadElement.innerHTML = '';
@@ -231,7 +246,7 @@ function updateBigRoad() {
   let col = 0;
   const maxRows = 6;
 
-  const filteredHistory = history.filter(result => result !== 'T');
+  const filteredHistory = AppState.history.filter(result => result !== 'T');
 
   for (let i = 0; i < filteredHistory.length; i++) {
     const result = filteredHistory[i];
@@ -256,12 +271,14 @@ function updateBigRoad() {
   }
 }
 
+// تحديث الطرق المشتقة
 function updateDerivativeRoads() {
-  const filteredHistory = history.filter(r => r !== 'T');
+  const filteredHistory = AppState.history.filter(r => r !== 'T');
   updateBigEyeRoad(filteredHistory);
   updateSmallRoad(filteredHistory);
 }
 
+// تحديث Big Eye Road
 function updateBigEyeRoad(history) {
   const bigEyeRoad = document.getElementById('bigEyeRoad');
   bigEyeRoad.innerHTML = '';
@@ -280,6 +297,7 @@ function updateBigEyeRoad(history) {
   renderRoad(matrix, bigEyeRoad);
 }
 
+// تحديث Small Road
 function updateSmallRoad(history) {
   const smallRoad = document.getElementById('smallRoad');
   smallRoad.innerHTML = '';
@@ -298,6 +316,7 @@ function updateSmallRoad(history) {
   renderRoad(matrix, smallRoad);
 }
 
+// عرض الطريق
 function renderRoad(matrix, container) {
   matrix.forEach((row, rowIndex) => {
     row.forEach((result, colIndex) => {
@@ -310,23 +329,25 @@ function renderRoad(matrix, container) {
   });
 }
 
+// تحديث نموذج ماركوف
 function updateMarkovModel() {
-  markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
+  AppState.markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
   
-  for (let i = 0; i < history.length - 1; i++) {
-    const from = history[i];
-    const to = history[i + 1];
-    markovModel[from][to]++;
+  for (let i = 0; i < AppState.history.length - 1; i++) {
+    const from = AppState.history[i];
+    const to = AppState.history[i + 1];
+    AppState.markovModel[from][to]++;
   }
 
-  for (const from in markovModel) {
-    const total = Object.values(markovModel[from]).reduce((a, b) => a + b, 0);
-    for (const to in markovModel[from]) {
-      markovModel[from][to] = total > 0 ? (markovModel[from][to] / total) * 100 : 33.3;
+  for (const from in AppState.markovModel) {
+    const total = Object.values(AppState.markovModel[from]).reduce((a, b) => a + b, 0);
+    for (const to in AppState.markovModel[from]) {
+      AppState.markovModel[from][to] = total > 0 ? (AppState.markovModel[from][to] / total) * 100 : 33.3;
     }
   }
 }
 
+// اكتشاف Dragon
 function detectDragon(history) {
   const last15 = history.slice(-15);
   const streaks = { P: 0, B: 0 };
@@ -349,24 +370,25 @@ function detectDragon(history) {
   };
 }
 
+// تحديث الرسم البياني
 function updateChart() {
   const ctx = document.getElementById('statsChart').getContext('2d');
-  const last20 = history.slice(-20);
+  const last20 = AppState.history.slice(-20);
   const counts = { P: 0, B: 0, T: 0 };
   last20.forEach(r => counts[r]++);
 
-  if (window.statsChart) {
-    window.statsChart.destroy();
+  if (AppState.statsChart) {
+    AppState.statsChart.destroy();
   }
 
-  window.statsChart = new Chart(ctx, {
+  AppState.statsChart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: [lang === 'ar-MA' ? 'لاعب' : 'Player', 
-               lang === 'ar-MA' ? 'مصرفي' : 'Banker', 
-               lang === 'ar-MA' ? 'تعادل' : 'Tie'],
+      labels: [AppState.lang === 'ar-MA' ? 'لاعب' : 'Player', 
+               AppState.lang === 'ar-MA' ? 'مصرفي' : 'Banker', 
+               AppState.lang === 'ar-MA' ? 'تعادل' : 'Tie'],
       datasets: [{
-        label: lang === 'ar-MA' ? 'آخر 20 جولة' : 'Last 20 Rounds',
+        label: AppState.lang === 'ar-MA' ? 'آخر 20 جولة' : 'Last 20 Rounds',
         data: [counts.P, counts.B, counts.T],
         backgroundColor: ['#007BFF', '#DC3545', '#28A745']
       }]
@@ -382,44 +404,45 @@ function updateChart() {
   });
 }
 
+// إضافة نتيجة جديدة
 function addResult(result) {
-  history.push(result);
+  AppState.history.push(result);
   
   const lastRecommendation = generateBetRecommendation();
   let notificationShown = false;
   
-  if (lastRecommendation.recommendation !== 'none' && history.length > 1) {
+  if (lastRecommendation.recommendation !== 'none' && AppState.history.length > 1) {
     if (result === lastRecommendation.recommendation) {
-      const message = lang === 'ar-MA' 
+      const message = AppState.lang === 'ar-MA' 
         ? `فوز! ${lastRecommendation.message}` 
         : `Win! ${lastRecommendation.message}`;
       showNotification('win', message);
       showEffect('win');
-      applyPercentageBasedEffect(result === 'P' ? 'player' : result === 'B' ? 'banker' : 'tie');
+      applyButtonEffect(result === 'P' ? 'player' : result === 'B' ? 'banker' : 'tie');
       notificationShown = true;
     } else if (result !== 'T' && lastRecommendation.recommendation !== 'T') {
-      const message = lang === 'ar-MA' 
+      const message = AppState.lang === 'ar-MA' 
         ? `خسارة! ${lastRecommendation.message}` 
         : `Lose! ${lastRecommendation.message}`;
       showNotification('lose', message);
       showEffect('lose');
-      applyPercentageBasedEffect(result === 'P' ? 'player' : 'banker');
+      applyButtonEffect(result === 'P' ? 'player' : 'banker');
       notificationShown = true;
     }
   }
   
   if (!notificationShown && result === 'T') {
-    const message = lang === 'ar-MA' ? 'تعادل!' : 'Tie!';
+    const message = AppState.lang === 'ar-MA' ? 'تعادل!' : 'Tie!';
     showNotification('tie', message);
     showEffect('tie');
-    applyPercentageBasedEffect('tie');
+    applyButtonEffect('tie');
   }
   
-  if (currentStreak.type === result) {
-    currentStreak.count++;
+  if (AppState.currentStreak.type === result) {
+    AppState.currentStreak.count++;
   } else {
-    currentStreak.type = result;
-    currentStreak.count = 1;
+    AppState.currentStreak.type = result;
+    AppState.currentStreak.count = 1;
   }
   
   updateMarkovModel();
@@ -434,25 +457,26 @@ function addResult(result) {
   updateLast5Analysis();
 }
 
+// تحديث العرض
 function updateDisplay() {
-  const displayText = history.map(r => {
+  const displayText = AppState.history.map(r => {
     if (r === 'P') return '🔵';
     if (r === 'B') return '🔴';
     if (r === 'T') return '🟢';
   }).join(' ');
-  document.getElementById('historyDisplay').innerText = (lang === 'ar-MA' ? "جميع الجولات: " : "All rounds: ") + displayText;
+  document.getElementById('historyDisplay').innerText = (AppState.lang === 'ar-MA' ? "جميع الجولات: " : "All rounds: ") + displayText;
 
-  const totalRounds = history.length;
+  const totalRounds = AppState.history.length;
   const count = { P: 0, B: 0, T: 0 };
-  history.forEach(r => { if (count[r] !== undefined) count[r]++; });
+  AppState.history.forEach(r => { if (count[r] !== undefined) count[r]++; });
 
   const statsHTML = `
     <table class="results-table">
       <tr>
-        <th>${lang === 'ar-MA' ? 'عدد الجولات' : 'Rounds'}</th>
-        <th class="player-text">${lang === 'ar-MA' ? 'لاعب' : 'Player'}</th>
-        <th class="banker-text">${lang === 'ar-MA' ? 'مصرفي' : 'Banker'}</th>
-        <th class="tie-text">${lang === 'ar-MA' ? 'تعادل' : 'Tie'}</th>
+        <th>${AppState.lang === 'ar-MA' ? 'عدد الجولات' : 'Rounds'}</th>
+        <th class="player-text">${AppState.lang === 'ar-MA' ? 'لاعب' : 'Player'}</th>
+        <th class="banker-text">${AppState.lang === 'ar-MA' ? 'مصرفي' : 'Banker'}</th>
+        <th class="tie-text">${AppState.lang === 'ar-MA' ? 'تعادل' : 'Tie'}</th>
       </tr>
       <tr>
         <td>${totalRounds}</td>
@@ -465,6 +489,7 @@ function updateDisplay() {
   document.getElementById('aiStats').innerHTML = statsHTML;
 }
 
+// اكتشاف الأنماط المتقدمة
 function detectAdvancedPatterns(fullHistory) {
   if (fullHistory.length < 5) return [];
   
@@ -576,6 +601,7 @@ function detectAdvancedPatterns(fullHistory) {
   return patterns.sort((a, b) => b.confidence - a.confidence);
 }
 
+// التنبؤ المتقدم
 function advancedPredict(history) {
   if (history.length < 3) {
     return {
@@ -623,9 +649,9 @@ function advancedPredict(history) {
   
   const lastResult = history[history.length - 1];
   if (lastResult) {
-    weightedAvg.P = (weightedAvg.P + markovModel[lastResult].P) / 2;
-    weightedAvg.B = (weightedAvg.B + markovModel[lastResult].B) / 2;
-    weightedAvg.T = (weightedAvg.T + markovModel[lastResult].T) / 2;
+    weightedAvg.P = (weightedAvg.P + AppState.markovModel[lastResult].P) / 2;
+    weightedAvg.B = (weightedAvg.B + AppState.markovModel[lastResult].B) / 2;
+    weightedAvg.T = (weightedAvg.T + AppState.markovModel[lastResult].T) / 2;
   }
   
   const patterns = detectAdvancedPatterns(history);
@@ -664,19 +690,20 @@ function advancedPredict(history) {
   };
 }
 
+// توليد توصية الرهان
 function generateBetRecommendation() {
-  if (history.length < 5) {
+  if (AppState.history.length < 5) {
     return {
       recommendation: "none",
       confidence: 0,
-      message: lang === 'ar-MA' ? 
+      message: AppState.lang === 'ar-MA' ? 
         "غير كافي من البيانات للتوصية" : 
         "Not enough data for recommendation"
     };
   }
 
-  const prediction = advancedPredict(history);
-  const patterns = detectAdvancedPatterns(history);
+  const prediction = advancedPredict(AppState.history);
+  const patterns = detectAdvancedPatterns(AppState.history);
   const strongestPrediction = Object.entries(prediction).reduce((a, b) => 
     a[1] > b[1] ? a : b
   );
@@ -705,42 +732,44 @@ function generateBetRecommendation() {
   return {
     recommendation: "none",
     confidence: 0,
-    message: lang === 'ar-MA' ?
+    message: AppState.lang === 'ar-MA' ?
       "لا توجد توصية واضحة حالياً" :
       "No clear recommendation at this time"
   };
 }
 
+// بناء رسالة التوصية
 function buildRecommendationMessage(type, confidence, patterns) {
-  const typeName = lang === 'ar-MA' ? 
+  const typeName = AppState.lang === 'ar-MA' ? 
     (type === 'P' ? 'اللاعب' : type === 'B' ? 'المصرفي' : 'التعادل') :
     (type === 'P' ? 'Player' : type === 'B' ? 'Banker' : 'Tie');
 
   let reason = '';
   
   if (patterns.length > 0) {
-    const patternDesc = patterns[0].description[lang] || patterns[0].description.en;
-    reason = lang === 'ar-MA' ?
+    const patternDesc = patterns[0].description[AppState.lang] || patterns[0].description.en;
+    reason = AppState.lang === 'ar-MA' ?
       `بسبب النمط: ${patternDesc} (ثقة ${Math.round(confidence)}%)` :
       `Due to pattern: ${patternDesc} (${Math.round(confidence)}% confidence)`;
   } else {
-    reason = lang === 'ar-MA' ?
+    reason = AppState.lang === 'ar-MA' ?
       `بسبب التكرار التاريخي (ثقة ${Math.round(confidence)}%)` :
       `Due to historical frequency (${Math.round(confidence)}% confidence)`;
   }
 
-  return lang === 'ar-MA' ?
+  return AppState.lang === 'ar-MA' ?
     `توصية: ${typeName} - ${reason}` :
     `Recommend: ${typeName} - ${reason}`;
 }
 
+// عرض التوصية
 function showRecommendation() {
   const recommendation = generateBetRecommendation();
   const recommendationElement = document.getElementById('recommendation');
   
   recommendationElement.innerHTML = `
     <div class="recommendation-box ${recommendation.recommendation}">
-      <h3>${lang === 'ar-MA' ? 'توصية التحليل' : 'Analysis Recommendation'}</h3>
+      <h3>${AppState.lang === 'ar-MA' ? 'توصية التحليل' : 'Analysis Recommendation'}</h3>
       <p>${recommendation.message}</p>
       ${recommendation.confidence > 0 ? `
         <div class="confidence-meter">
@@ -752,14 +781,26 @@ function showRecommendation() {
   `;
 }
 
+// تحديث التنبؤات
 function updatePredictions() {
-  const prediction = advancedPredict(history);
+  const prediction = advancedPredict(AppState.history);
   displayPrediction(prediction);
 }
 
+// عرض التنبؤ
 function displayPrediction(prediction) {
-  const isArabic = lang === 'ar-MA';
+  const isArabic = AppState.lang === 'ar-MA';
+  const threshold = 55.7;
   
+  // إزالة الفئات السابقة
+  document.querySelectorAll('.prediction-bar').forEach(bar => {
+    bar.classList.remove('high-prob');
+  });
+  document.querySelectorAll('.probability-value').forEach(el => {
+    el.classList.remove('high');
+  });
+
+  // تحديث الأشرطة والقيم
   document.querySelector('.player-bar').style.width = `${prediction.P}%`;
   document.querySelector('.banker-bar').style.width = `${prediction.B}%`;
   document.querySelector('.tie-bar').style.width = `${prediction.T}%`;
@@ -767,6 +808,23 @@ function displayPrediction(prediction) {
   document.getElementById('playerProb').textContent = `${prediction.P.toFixed(1)}%`;
   document.getElementById('bankerProb').textContent = `${prediction.B.toFixed(1)}%`;
   document.getElementById('tieProb').textContent = `${prediction.T.toFixed(1)}%`;
+
+  // تطبيق تأثيرات النسب العالية
+  if (prediction.P >= threshold) {
+    document.querySelector('.player-bar').classList.add('high-prob');
+    document.getElementById('playerProb').classList.add('high');
+    showHighProbabilityEffect('player');
+  }
+  if (prediction.B >= threshold) {
+    document.querySelector('.banker-bar').classList.add('high-prob');
+    document.getElementById('bankerProb').classList.add('high');
+    showHighProbabilityEffect('banker');
+  }
+  if (prediction.T >= threshold) {
+    document.querySelector('.tie-bar').classList.add('high-prob');
+    document.getElementById('tieProb').classList.add('high');
+    showHighProbabilityEffect('tie');
+  }
   
   const statsHTML = `
     <span class="player-text">🔵 ${isArabic ? 'لاعب' : 'Player'}: ${prediction.P.toFixed(1)}%</span> | 
@@ -777,17 +835,18 @@ function displayPrediction(prediction) {
   document.getElementById('statsResult').innerHTML = statsHTML;
 }
 
+// توليد النصيحة
 function generateAdvice() {
-  const isArabic = lang === 'ar-MA';
+  const isArabic = AppState.lang === 'ar-MA';
   
-  if (history.length < 3) {
+  if (AppState.history.length < 3) {
     document.getElementById('aiAdvice').innerHTML = isArabic ? 
       "⏳ انتظر المزيد من الجولات لتحليل الأنماط..." : 
       "⏳ Wait for more rounds to analyze patterns...";
     return;
   }
 
-  const patterns = detectAdvancedPatterns(history);
+  const patterns = detectAdvancedPatterns(AppState.history);
   let patternAdvice = "";
   
   if (patterns.length > 0) {
@@ -800,17 +859,18 @@ function generateAdvice() {
   document.getElementById('aiAdvice').innerHTML = patternAdvice;
 }
 
+// تحديث الاتجاهات والمتتاليات
 function updateTrendsAndStreaks() {
-  const isArabic = lang === 'ar-MA';
+  const isArabic = AppState.lang === 'ar-MA';
   
-  if (history.length < 3) {
+  if (AppState.history.length < 3) {
     document.getElementById('trendsContent').innerHTML = isArabic ? 
       `<div style="text-align:center;padding:10px;">⏳ انتظر المزيد من الجولات لتحليل الاتجاهات...</div>` : 
       `<div style="text-align:center;padding:10px;">⏳ Wait for more rounds to analyze trends...</div>`;
     return;
   }
 
-  const lastSeven = history.slice(-7);
+  const lastSeven = AppState.history.slice(-7);
   const counts = { P: 0, B: 0, T: 0 };
   lastSeven.forEach(r => counts[r]++);
   
@@ -838,8 +898,9 @@ function updateTrendsAndStreaks() {
   document.getElementById('trendsContent').innerHTML = trendsHTML;
 }
 
+// تحديث واجهة المستخدم
 function updateUI() {
-  const isArabic = lang === 'ar-MA';
+  const isArabic = AppState.lang === 'ar-MA';
   
   document.title = isArabic ? 'BACCARAT SPEED ANALYZER' : 'BACCARAT SPEED ANALYZER';
   document.querySelector('h1').innerHTML = 
@@ -859,7 +920,7 @@ function updateUI() {
   document.querySelector('.last5-analysis h3').textContent = isArabic ? 'تحليل آخر 5 جولات' : 'Last 5 Rounds Analysis';
   document.querySelector('.common-patterns h3').textContent = isArabic ? 'الأنماط الشائعة في الكازينو' : 'Common Casino Patterns';
   
-  if (history.length > 0) {
+  if (AppState.history.length > 0) {
     updateDisplay();
     updatePredictions();
     generateAdvice();
@@ -870,21 +931,23 @@ function updateUI() {
   }
 }
 
+// إعادة تعيين البيانات
 function resetData() {
-  const isArabic = lang === 'ar-MA';
+  const isArabic = AppState.lang === 'ar-MA';
   const confirmMsg = isArabic ? 
     "هل أنت متأكد من أنك تريد إعادة تعيين جميع البيانات؟" : 
     "Are you sure you want to reset all data?";
   
   if (confirm(confirmMsg)) {
-    history = [];
-    currentStreak = { type: null, count: 0 };
-    markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
+    AppState.history = [];
+    AppState.currentStreak = { type: null, count: 0 };
+    AppState.markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
     updateBigRoad();
     document.getElementById('bigEyeRoad').innerHTML = '';
     document.getElementById('smallRoad').innerHTML = '';
-    if (window.statsChart) {
-      window.statsChart.destroy();
+    if (AppState.statsChart) {
+      AppState.statsChart.destroy();
+      AppState.statsChart = null;
     }
     document.getElementById('predictionResult').innerHTML = `
       <div class="prediction-title">${isArabic ? '📊 تنبؤات متقدمة' : '📊 Advanced Predictions'}</div>
@@ -917,3 +980,6 @@ function resetData() {
     document.getElementById('last5Results').innerHTML = '';
   }
 }
+
+// تهيئة التطبيق عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', initializeApp);
