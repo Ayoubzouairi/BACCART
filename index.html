@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BACCARAT SPEED ANALYZER</title>
+    <title>BACCARAT SPEED ANALYZER PRO</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
     <script src="logic.js" defer></script>
 </head>
 <body>
@@ -18,19 +19,44 @@
     </div>
 
     <div class="container">
-        <h1><span class="logo-b">BACCARAT</span> <span class="logo-s">SPEED</span> <span class="logo-rest">ANALYZER</span></h1>
-        <p>📲 اختر نتيجة الجولة:</p>
+        <h1><span class="logo-b">BACCARAT</span> <span class="logo-s">SPEED</span> <span class="logo-rest">ANALYZER PRO</span></h1>
         
-        <div class="buttons">
-            <button class="player" onclick="addResult('P')">🔵 اللاعب</button>
-            <button class="banker" onclick="addResult('B')">🔴 المصرفي</button>
-            <button class="tie" onclick="addResult('T')">🟢 تعادل</button>
-            <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
+        <div class="game-controls">
+            <div class="game-settings">
+                <div class="setting-item">
+                    <label for="shoeType">نوع الشوز:</label>
+                    <select id="shoeType">
+                        <option value="8">8 Decks</option>
+                        <option value="6">6 Decks</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label for="commission">عمولة المصرفي:</label>
+                    <select id="commission">
+                        <option value="5">5%</option>
+                        <option value="4">4%</option>
+                    </select>
+                </div>
+            </div>
+            
+            <p>📲 اختر نتيجة الجولة:</p>
+            
+            <div class="buttons">
+                <button class="player" onclick="addResult('P')">🔵 اللاعب</button>
+                <button class="banker" onclick="addResult('B')">🔴 المصرفي</button>
+                <button class="tie" onclick="addResult('T')">🟢 تعادل</button>
+                <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
+            </div>
         </div>
 
         <div class="prediction-section">
             <div id="predictionResult">
                 <div class="prediction-title">📊 تنبؤات متقدمة</div>
+                <div class="prediction-methods">
+                    <button class="method-btn active" onclick="setPredictionMethod('markov')">ماركوف</button>
+                    <button class="method-btn" onclick="setPredictionMethod('lstm')">LSTM</button>
+                    <button class="method-btn" onclick="setPredictionMethod('ensemble')">المجموع</button>
+                </div>
                 <div id="predictionBars" class="prediction-bars">
                     <div class="prediction-bar player-bar" style="width:33%">P</div>
                     <div class="prediction-bar banker-bar" style="width:34%">B</div>
@@ -48,6 +74,12 @@
                     <div class="probability-item">
                         <span class="tie-text">تعادل</span>
                         <span id="tieProb" class="probability-value tie-text">33%</span>
+                    </div>
+                </div>
+                <div class="confidence-indicator">
+                    <span id="confidenceValue">ثقة التنبؤ: 75%</span>
+                    <div class="confidence-meter">
+                        <div class="confidence-bar" style="width: 75%"></div>
                     </div>
                 </div>
             </div>
@@ -105,6 +137,11 @@
         <div class="common-patterns">
             <h3>الأنماط الشائعة في الكازينو</h3>
             <div id="casinoPatterns"></div>
+        </div>
+
+        <div class="model-performance">
+            <h3>أداء النماذج</h3>
+            <div id="modelAccuracy"></div>
         </div>
     </div>
 
