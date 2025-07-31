@@ -7,11 +7,19 @@ body {
     direction: rtl;
     text-align: center;
     transition: all 0.3s ease;
+    margin: 0;
+    min-height: 100vh;
 }
 
 body.light-mode {
     background-color: #f5f5f5;
     color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
 /* تحسينات العنوان */
@@ -38,6 +46,7 @@ body.light-mode {
     padding: 15px;
     border-radius: 10px;
     margin-bottom: 20px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
 .game-settings {
@@ -45,6 +54,7 @@ body.light-mode {
     justify-content: center;
     gap: 20px;
     margin-bottom: 15px;
+    flex-wrap: wrap;
 }
 
 .setting-item {
@@ -59,11 +69,71 @@ body.light-mode {
 }
 
 .setting-item select {
-    padding: 5px;
+    padding: 5px 10px;
     border-radius: 5px;
     background: rgba(255, 255, 255, 0.1);
     color: white;
     border: 1px solid gold;
+    font-size: 14px;
+}
+
+body.light-mode .setting-item select {
+    background: rgba(0, 0, 0, 0.05);
+    color: #333;
+    border: 1px solid #555;
+}
+
+/* أزرار النتائج */
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.buttons button {
+    padding: 12px 24px;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    min-width: 100px;
+}
+
+.player { 
+    background-color: #007bff; 
+    color: white; 
+    border-bottom: 4px solid #0056b3;
+}
+
+.banker { 
+    background-color: #dc3545; 
+    color: white;
+    border-bottom: 4px solid #a71d2a;
+}
+
+.tie { 
+    background-color: #28a745; 
+    color: white;
+    border-bottom: 4px solid #1e7e34;
+}
+
+.reset { 
+    background-color: #555; 
+    color: gold; 
+    border-bottom: 4px solid #333;
+    flex: 1 1 100%;
+    max-width: 300px;
+    margin-top: 10px;
+}
+
+.buttons button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* تحسينات أزرار التنبؤ */
@@ -72,6 +142,7 @@ body.light-mode {
     justify-content: center;
     gap: 10px;
     margin-bottom: 15px;
+    flex-wrap: wrap;
 }
 
 .method-btn {
@@ -82,12 +153,23 @@ body.light-mode {
     color: white;
     cursor: pointer;
     transition: all 0.3s;
+    font-size: 14px;
 }
 
 .method-btn.active {
     background: gold;
     color: #121212;
     font-weight: bold;
+}
+
+body.light-mode .method-btn {
+    background: rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+body.light-mode .method-btn.active {
+    background: #ffc107;
+    color: #121212;
 }
 
 /* تحسينات مؤشر الثقة */
@@ -135,29 +217,167 @@ body.light-mode {
     100% { transform: scale(1); }
 }
 
-/* قسم أداء النماذج الجديد */
-.model-performance {
-    margin-top: 30px;
+/* أقسام المحتوى */
+.result, .stats, .history, .ai-advice, .trends-container,
+.recommendation-container, .last5-analysis, .common-patterns,
+.model-performance, .prediction-section {
+    margin-top: 1.5em;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+body.light-mode .result, 
+body.light-mode .stats, 
+body.light-mode .history, 
+body.light-mode .ai-advice,
+body.light-mode .trends-container,
+body.light-mode .last5-analysis,
+body.light-mode .common-patterns,
+body.light-mode .model-performance,
+body.light-mode .prediction-section {
+    background-color: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* أنماط Big Road */
+.big-road-container {
+    margin-top: 2em;
+    padding: 1em;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    direction: ltr;
+    overflow-x: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.big-road {
+    display: inline-grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(6, 30px);
+    gap: 4px;
+    padding: 10px;
+    min-width: 100%;
+}
+
+.big-road-cell {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.big-road-P { background-color: #007bff; color: white; }
+.big-road-B { background-color: #dc3545; color: white; }
+.big-road-T { background-color: #28a745; color: white; }
+
+/* أنماط الطرق المشتقة */
+.derivative-roads {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.road-container {
+    flex: 1;
+    min-width: 300px;
     padding: 15px;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 10px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
 }
 
-.model-performance h3 {
+.road {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(6, 20px);
+    gap: 3px;
+    margin-top: 10px;
+    direction: ltr;
+}
+
+.road-cell {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+}
+
+.road-P { background-color: #007BFF; }
+.road-B { background-color: #DC3545; }
+
+/* أنماط الرسم البياني */
+.chart-container {
+    margin-top: 30px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+/* تحليل آخر 5 جولات */
+.last5-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.last5-cell {
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.last5-P { background-color: #007BFF; color: white; }
+.last5-B { background-color: #DC3545; color: white; }
+.last5-T { background-color: #28A745; color: white; }
+
+/* الأنماط الشائعة */
+.pattern-item {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-left: 3px solid gold;
+}
+
+.pattern-name {
+    font-weight: bold;
     color: gold;
-    margin-bottom: 10px;
 }
 
+.pattern-desc {
+    margin-top: 5px;
+    font-size: 0.9em;
+}
+
+/* قسم أداء النماذج */
 .model-accuracy {
     display: flex;
     justify-content: space-around;
     margin-top: 10px;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .model-accuracy-item {
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-width: 100px;
 }
 
 .model-name {
@@ -170,39 +390,197 @@ body.light-mode {
     font-weight: bold;
 }
 
-/* تأثيرات جديدة */
-.neural-effect {
+.mini-meter {
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.mini-meter div {
+    height: 100%;
+    background: linear-gradient(90deg, #28a745, #ffc107);
+}
+
+/* إشعارات */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 300px;
+}
+
+.notification {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification.info {
+    background: linear-gradient(135deg, #17a2b8, #138496);
+    border-left: 5px solid #117a8b;
+}
+
+.notification.success {
+    background: linear-gradient(135deg, #28a745, #218838);
+    border-left: 5px solid #1e7e34;
+}
+
+.notification.error {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    border-left: 5px solid #a71d2a;
+}
+
+.notification-icon {
+    font-size: 1.5em;
+    margin-right: 10px;
+}
+
+.close-notification {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* تأثيرات بصرية */
+.effect {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle, rgba(0, 123, 255, 0.1) 0%, rgba(0, 123, 255, 0) 70%);
     pointer-events: none;
     opacity: 0;
-    z-index: 950;
-    animation: neural-pulse 3s ease-out;
+    z-index: 900;
+    animation: fadeInOut 2s ease;
 }
 
-@keyframes neural-pulse {
-    0% { opacity: 0; transform: scale(0.5); }
-    50% { opacity: 0.5; transform: scale(1); }
-    100% { opacity: 0; transform: scale(1.5); }
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    50% { opacity: 0.7; }
+    100% { opacity: 0; }
 }
 
-/* تحسينات للشاشات الصغيرة */
+.player-effect {
+    background: radial-gradient(circle, rgba(0, 123, 255, 0.2) 0%, rgba(0, 123, 255, 0) 70%);
+}
+
+.banker-effect {
+    background: radial-gradient(circle, rgba(220, 53, 69, 0.2) 0%, rgba(220, 53, 69, 0) 70%);
+}
+
+.tie-effect {
+    background: radial-gradient(circle, rgba(40, 167, 69, 0.2) 0%, rgba(40, 167, 69, 0) 70%);
+}
+
+.neural-effect {
+    background: radial-gradient(circle, rgba(255, 193, 7, 0.2) 0%, rgba(255, 193, 7, 0) 70%);
+}
+
+/* تأثيرات الأزرار */
+@keyframes buttonPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.button-effect {
+    animation: buttonPulse 0.5s ease;
+}
+
+/* اللغة والثيم */
+.language-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 1001;
+}
+
+.language {
+    padding: 0.5em;
+    font-size: 1em;
+    width: 150px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: gold;
+    transition: transform 0.3s ease;
+    padding: 5px;
+    border-radius: 50%;
+}
+
+.theme-toggle:hover {
+    transform: rotate(30deg);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+body.light-mode .theme-toggle {
+    color: #333;
+}
+
+/* التكيف مع الشاشات الصغيرة */
 @media (max-width: 768px) {
-    .game-settings {
-        flex-direction: column;
-        gap: 10px;
+    body {
+        padding: 1em;
     }
     
-    .prediction-methods {
-        flex-wrap: wrap;
+    .language-container {
+        position: static;
+        justify-content: center;
+        margin-bottom: 15px;
     }
     
-    .model-accuracy {
-        flex-direction: column;
-        gap: 10px;
+    .buttons button {
+        padding: 10px 15px;
+        min-width: 80px;
+        font-size: 0.9em;
     }
-  }
+    
+    .derivative-roads {
+        flex-direction: column;
+    }
+    
+    .road-container {
+        min-width: 100%;
+    }
+    
+    .notification-container {
+        max-width: 90%;
+        right: 5%;
+    }
+    
+    .chart-container {
+        max-width: 100%;
+    }
+}
