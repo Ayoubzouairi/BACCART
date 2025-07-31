@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
-    <script src="logic.js" defer></script>
 </head>
 <body>
     <div class="language-container">
@@ -15,7 +14,7 @@
             <option value="ar-MA">العربية</option>
             <option value="en-US">English</option>
         </select>
-        <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+        <button id="themeToggle" class="theme-toggle">🌓</button>
     </div>
 
     <div class="container">
@@ -39,13 +38,13 @@
                 </div>
             </div>
             
-            <p>📲 اختر نتيجة الجولة:</p>
+            <p id="roundPrompt">📲 اختر نتيجة الجولة:</p>
             
             <div class="buttons">
-                <button class="player" onclick="addResult('P')">🔵 اللاعب</button>
-                <button class="banker" onclick="addResult('B')">🔴 المصرفي</button>
-                <button class="tie" onclick="addResult('T')">🟢 تعادل</button>
-                <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
+                <button id="playerBtn" class="player">🔵 اللاعب</button>
+                <button id="bankerBtn" class="banker">🔴 المصرفي</button>
+                <button id="tieBtn" class="tie">🟢 تعادل</button>
+                <button id="resetBtn" class="reset">🔄 إعادة تعيين</button>
             </div>
         </div>
 
@@ -53,9 +52,9 @@
             <div id="predictionResult">
                 <div class="prediction-title">📊 تنبؤات متقدمة</div>
                 <div class="prediction-methods">
-                    <button class="method-btn active" onclick="setPredictionMethod('markov')">ماركوف</button>
-                    <button class="method-btn" onclick="setPredictionMethod('lstm')">LSTM</button>
-                    <button class="method-btn" onclick="setPredictionMethod('ensemble')">المجموع</button>
+                    <button id="markovMethod" class="method-btn active">ماركوف</button>
+                    <button id="lstmMethod" class="method-btn">LSTM</button>
+                    <button id="ensembleMethod" class="method-btn">المجموع</button>
                 </div>
                 <div id="predictionBars" class="prediction-bars">
                     <div class="prediction-bar player-bar" style="width:33%">P</div>
@@ -110,17 +109,17 @@
         </div>
 
         <div class="big-road-container">
-            <h2>Big Road (الميجورك)</h2>
+            <h2 id="bigRoadTitle">Big Road (الميجورك)</h2>
             <div class="big-road" id="bigRoad"></div>
         </div>
 
         <div class="derivative-roads">
             <div class="road-container">
-                <h3>Big Eye Road</h3>
+                <h3 id="bigEyeRoadTitle">Big Eye Road</h3>
                 <div class="road" id="bigEyeRoad"></div>
             </div>
             <div class="road-container">
-                <h3>Small Road</h3>
+                <h3 id="smallRoadTitle">Small Road</h3>
                 <div class="road" id="smallRoad"></div>
             </div>
         </div>
@@ -130,21 +129,24 @@
         </div>
 
         <div class="last5-analysis">
-            <h3>تحليل آخر 5 جولات</h3>
+            <h3 id="last5Title">تحليل آخر 5 جولات</h3>
             <div id="last5Results"></div>
         </div>
 
         <div class="common-patterns">
-            <h3>الأنماط الشائعة في الكازينو</h3>
+            <h3 id="patternsTitle">الأنماط الشائعة في الكازينو</h3>
             <div id="casinoPatterns"></div>
         </div>
 
         <div class="model-performance">
-            <h3>أداء النماذج</h3>
+            <h3 id="performanceTitle">أداء النماذج</h3>
             <div id="modelAccuracy"></div>
         </div>
     </div>
 
     <div id="effects-container"></div>
+    <div id="notification-container" class="notification-container"></div>
+
+    <script src="logic.js"></script>
 </body>
-</html>
+                        </html>
