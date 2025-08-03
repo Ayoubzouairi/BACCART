@@ -709,8 +709,6 @@ function updateCockroachRoad(history) {
 async function addResult(result) {
   AppState.history.push(result);
   saveHistory();
-} 
-} 
 
   // الكود الجديد المضاف ↓
   if (AppState.history.length >= 20 && AppState.history.length % 20 === 0) {
