@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BACCARAT SPEED</title>
+    <title>BACCARAT PRO ANALYZER</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
@@ -19,7 +19,7 @@
     </div>
 
     <div class="container">
-        <h1><span class="logo-b">BACCARAT</span> <span class="logo-s">SPEED</span> </h1>
+        <h1><span class="logo-b">BACCARAT</span> <span class="logo-s">PRO</span> <span class="logo-rest">ANALYZER</span></h1>
         <p>📲 اختر نتيجة الجولة:</p>
         
         <div class="buttons">
@@ -27,6 +27,27 @@
             <button class="banker" onclick="addResult('B')">🔴 المصرفي</button>
             <button class="tie" onclick="addResult('T')">🟢 تعادل</button>
             <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
+        </div>
+
+        <div class="prediction-stats">
+            <h3>📈 إحصائيات التوصيات</h3>
+            <div class="stats-grid">
+                <div class="stat-box win">
+                    <span class="stat-icon">✅</span>
+                    <span class="stat-label">الربح</span>
+                    <span id="winCount" class="stat-value">0</span>
+                </div>
+                <div class="stat-box lose">
+                    <span class="stat-icon">❌</span>
+                    <span class="stat-label">الخسارة</span>
+                    <span id="loseCount" class="stat-value">0</span>
+                </div>
+                <div class="stat-box tie">
+                    <span class="stat-icon">🟰</span>
+                    <span class="stat-label">تعادل</span>
+                    <span id="tieCount" class="stat-value">0</span>
+                </div>
+            </div>
         </div>
 
         <div class="prediction-section">
@@ -59,13 +80,8 @@
             <div id="advancedPredictionResults"></div>
             <div class="model-controls">
                 <button onclick="toggleAdvancedModel()">تبديل النموذج المتقدم</button>
-                <span id="modelStatus">النموذج الأساسي (ماركوف)</span>
+                <span id="modelStatus">النموذج الحالي: الأساسي</span>
             </div>
-        </div>
-
-        <div class="diamond-pattern">
-            <h3>💎 تحليل نمط الدايموند</h3>
-            <div id="diamondAnalysis"></div>
         </div>
 
         <div class="result">
@@ -134,15 +150,4 @@
 
     <div id="effects-container"></div>
 </body>
-                        </html>            <div id="last5Results"></div>
-        </div>
-
-        <div class="common-patterns">
-            <h3>الأنماط الشائعة في الكازينو</h3>
-            <div id="casinoPatterns"></div>
-        </div>
-    </div>
-
-    <div id="effects-container"></div>
-</body>
-    </html>
+</html>
