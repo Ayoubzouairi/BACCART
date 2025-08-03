@@ -88,6 +88,7 @@ async function initializeApp() {
   loadLanguage();
   loadHistory();
   updateCommonPatterns();
+  updateWinStats();
   
   if (AppState.history.length > 30) {
     await initializeModels();
@@ -328,7 +329,7 @@ function analyze8Pattern(history) {
       pattern: '8-8',
       pCount,
       bCount,
-      confidence: Math.min(0.85, 0.6 + (Math.min(pCount, bCount) * 0.03))
+      confidence: Math.min(0.85, 0.6 + (Math.min(pCount, bCount) * 0.03)
     };
   }
   return null;
@@ -774,6 +775,7 @@ async function addResult(result) {
   updateLast5Analysis();
   updateAdvancedPredictionDisplay();
   updateDiamondAnalysis();
+  updateWinStats();
 }
 
 // تحديث العرض
@@ -806,6 +808,22 @@ function updateDisplay() {
     </table>
   `;
   document.getElementById('aiStats').innerHTML = statsHTML;
+}
+
+// تحديث إحصائيات الفوز
+function updateWinStats() {
+    const counts = { P: 0, B: 0, T: 0 };
+    AppState.history.forEach(r => counts[r]++);
+    
+    const total = AppState.history.length || 1;
+    
+    document.getElementById('playerWins').textContent = counts.P;
+    document.getElementById('bankerWins').textContent = counts.B;
+    document.getElementById('tieWins').textContent = counts.T;
+    
+    document.getElementById('playerWinPercent').textContent = `${((counts.P / total) * 100).toFixed(1)}%`;
+    document.getElementById('bankerWinPercent').textContent = `${((counts.B / total) * 100).toFixed(1)}%`;
+    document.getElementById('tieWinPercent').textContent = `${((counts.T / total) * 100).toFixed(1)}%`;
 }
 
 // توليد توصية الرهان
@@ -1160,6 +1178,7 @@ function updateUI() {
     updateLast5Analysis();
     updateAdvancedPredictionDisplay();
     updateDiamondAnalysis();
+    updateWinStats();
   }
 }
 
@@ -1226,6 +1245,7 @@ async function resetData() {
     document.getElementById('advancedPredictionResults').innerHTML = '';
     document.getElementById('diamondAnalysis').innerHTML = '';
     document.getElementById('modelPerformance').innerHTML = '';
+    updateWinStats();
     
     showNotification('info', isArabic ? 'تم إعادة تعيين جميع البيانات' : 'All data has been reset');
   }
