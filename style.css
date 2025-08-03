@@ -127,6 +127,59 @@ body.light-mode .theme-toggle {
   color: #333;
 }
 
+/* أنماط إحصائيات الفوز */
+.win-stats {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 12px;
+  border-left: 4px solid #ffc107;
+}
+
+.win-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.win-stat {
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.player-stat {
+  background: rgba(0, 123, 255, 0.1);
+  border: 1px solid rgba(0, 123, 255, 0.3);
+}
+
+.banker-stat {
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.tie-stat {
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.stat-title {
+  font-size: 1.1em;
+  margin-bottom: 5px;
+}
+
+.stat-count {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 5px 0;
+}
+
+.stat-percent {
+  font-size: 1.2em;
+  color: gold;
+}
+
 /* أنماط الصناديق */
 .result, .stats, .history, .ai-stats, .ai-advice, .trends-container,
 .last5-analysis, .common-patterns, .advanced-prediction, .diamond-pattern,
@@ -716,6 +769,10 @@ body.light-mode .results-table td {
     padding: 0.8em;
     min-width: 100px;
     font-size: 1em;
+  }
+  .win-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
   .recommendation-container {
     margin: 10px;
