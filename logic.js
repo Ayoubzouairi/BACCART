@@ -709,6 +709,16 @@ function updateCockroachRoad(history) {
 async function addResult(result) {
   AppState.history.push(result);
   saveHistory();
+} 
+} 
+
+  // الكود الجديد المضاف ↓
+  if (AppState.history.length >= 20 && AppState.history.length % 20 === 0) {
+    showNotification('info', AppState.lang === 'ar-MA' ? 
+      `تم الوصول إلى ${AppState.history.length} جولة - تحليل دقيق متاح الآن` : 
+      `${AppState.history.length} rounds reached - Advanced analysis available`);
+  }
+  }
   
   // تدريب النماذج عند وجود بيانات كافية
   if (AppState.history.length === 30 || (AppState.history.length % 50 === 0 && !AppState.advancedModel)) {
