@@ -16,18 +16,7 @@ const AppState = {
     cockroach: 0.09
   },
   modelPerformance: { basic: 0, advanced: 0 },
-  lastPredictions: [],
-  selectedResults: [],
-  selectedPatterns: [],
-  sessionStats: {
-    wins: 0,
-    losses: 0,
-    ties: 0,
-    winStreak: 0,
-    maxWinStreak: 0,
-    lossStreak: 0,
-    maxLossStreak: 0
-  }
+  lastPredictions: []
 };
 
 // أنماط شائعة في الكازينوهات الحية
@@ -87,14 +76,6 @@ const COMMON_CASINO_PATTERNS = [
       'en-US': 'Balance between Player and Banker in 16 rounds'
     },
     example: '8P و 8B في آخر 16 جولة'
-  },
-  {
-    name: { 'ar-MA': 'نمط الصرصور', 'en-US': 'Cockroach Pattern' },
-    description: {
-      'ar-MA': 'تكرار كل 3 جولات (P..P..P أو B..B..B)',
-      'en-US': 'Every 3rd round repetition (P..P..P or B..B..B)'
-    },
-    example: 'P..P..P أو B..B..B'
   }
 ];
 
@@ -107,8 +88,6 @@ async function initializeApp() {
   loadLanguage();
   loadHistory();
   updateCommonPatterns();
-  setupSelectionHandlers();
-  addSelectionStyles();
   
   if (AppState.history.length > 30) {
     await initializeModels();
@@ -121,16 +100,11 @@ function loadHistory() {
   if (savedHistory) {
     AppState.history = JSON.parse(savedHistory);
   }
-  const savedSession = localStorage.getItem('baccaratSessionStats');
-  if (savedSession) {
-    AppState.sessionStats = JSON.parse(savedSession);
-  }
 }
 
 // حفظ التاريخ إلى localStorage
 function saveHistory() {
   localStorage.setItem('baccaratHistory', JSON.stringify(AppState.history));
-  localStorage.setItem('baccaratSessionStats', JSON.stringify(AppState.sessionStats));
 }
 
 // إنشاء عنصر الإشعارات
@@ -143,50 +117,6 @@ function createNotificationContainer() {
 // إعداد مستمعي الأحداث
 function setupEventListeners() {
   document.getElementById('langSelect').addEventListener('change', changeLanguage);
-  document.getElementById('toggleAdvancedModel').addEventListener('click', toggleAdvancedModel);
-  document.getElementById('resetBtn').addEventListener('click', resetData);
-  document.querySelector('.player').addEventListener('click', () => addResult('P'));
-  document.querySelector('.banker').addEventListener('click', () => addResult('B'));
-  document.querySelector('.tie').addEventListener('click', () => addResult('T'));
-}
-
-// إعداد معالجات التحديد
-function setupSelectionHandlers() {
-  const historyDisplay = document.getElementById('historyDisplay');
-  historyDisplay.onclick = null;
-  
-  historyDisplay.addEventListener('click', function(e) {
-    if (e.target.classList.contains('history-item')) {
-      toggleResultSelection(e.target);
-    }
-  });
-  
-  const analyzeSelectedBtn = document.createElement('button');
-  analyzeSelectedBtn.id = 'analyzeSelectedBtn';
-  analyzeSelectedBtn.textContent = AppState.lang === 'ar-MA' ? 'تحليل النتائج المحددة' : 'Analyze Selected';
-  analyzeSelectedBtn.addEventListener('click', analyzeSelectedResults);
-  historyDisplay.parentNode.insertBefore(analyzeSelectedBtn, historyDisplay.nextSibling);
-  
-  const clearSelectionBtn = document.createElement('button');
-  clearSelectionBtn.id = 'clearSelectionBtn';
-  clearSelectionBtn.textContent = AppState.lang === 'ar-MA' ? 'مسح التحديد' : 'Clear Selection';
-  clearSelectionBtn.addEventListener('click', clearSelection);
-  historyDisplay.parentNode.insertBefore(clearSelectionBtn, analyzeSelectedBtn.nextSibling);
-}
-
-// تبديل النموذج المتقدم
-function toggleAdvancedModel() {
-  AppState.useAdvancedModel = !AppState.useAdvancedModel;
-  document.getElementById('modelStatus').textContent = 
-    AppState.lang === 'ar-MA' ? 
-    `النموذج الحالي: ${AppState.useAdvancedModel ? 'المتقدم' : 'الأساسي'}` :
-    `Current model: ${AppState.useAdvancedModel ? 'Advanced' : 'Basic'}`;
-  
-  showNotification('info', AppState.lang === 'ar-MA' ?
-    `تم التبديل إلى النموذج ${AppState.useAdvancedModel ? 'المتقدم' : 'الأساسي'}` :
-    `Switched to ${AppState.useAdvancedModel ? 'advanced' : 'basic'} model`);
-  
-  updatePredictions();
 }
 
 // التحقق من الوقت لتحديد الثيم
@@ -271,6 +201,7 @@ async function trainLSTMModel(history) {
   
   const { xs, ys } = prepareData(history);
   
+  // تقسيم البيانات إلى تدريب واختبار
   const splitIdx = Math.floor(xs.shape[0] * 0.8);
   const xTrain = xs.slice(0, splitIdx);
   const xTest = xs.slice(splitIdx);
@@ -288,10 +219,12 @@ async function trainLSTMModel(history) {
     }
   });
   
+  // تقييم النموذج
   const evalResult = model.evaluate(xTest, yTest);
   const testAccuracy = evalResult[1].dataSync()[0];
   console.log(`Test accuracy: ${(testAccuracy * 100).toFixed(1)}%`);
   
+  // تحرير الذاكرة
   tf.dispose([xs, ys, xTrain, xTest, yTrain, yTest]);
   
   return model;
@@ -303,6 +236,7 @@ function prepareData(history) {
   const xs = [];
   const ys = [];
   
+  // تحويل التاريخ إلى متتابعات
   for (let i = sequenceLength; i < history.length; i++) {
     const sequence = history.slice(i - sequenceLength, i);
     const next = history[i];
@@ -319,6 +253,7 @@ function prepareData(history) {
     ys.push(y);
   }
   
+  // تحويل إلى tensors
   const xsTensor = tf.tensor3d(xs, [xs.length, sequenceLength, 1]);
   const ysTensor = tf.oneHot(tf.tensor1d(ys, 'int32'), 3);
   
@@ -482,6 +417,7 @@ function detectAdvancedPatterns(history) {
     }
   });
 
+  // إضافة الأنماط الجديدة
   const diamond = analyzeDiamondPattern(history);
   if (diamond) {
     patterns.push({
@@ -564,15 +500,19 @@ async function advancedPredict(history) {
     return { P: 33.3, B: 33.3, T: 33.3 };
   }
   
+  // الحصول على تنبؤات من النموذج الأساسي
   const basicPrediction = basicMarkovPredict(history);
   
+  // الحصول على تنبؤات من النموذج المتقدم إذا كان مفعل
   let advancedPrediction = null;
   if (AppState.useAdvancedModel && AppState.advancedModel) {
     advancedPrediction = await predictWithAdvancedModel(history);
   }
   
+  // دمج النتائج
   let finalPrediction;
   if (advancedPrediction) {
+    // متوسط مرجح بين النموذجين مع تعديل الأداء
     const basicWeight = 0.6 * AppState.modelPerformance.basic;
     const advancedWeight = 0.6 * AppState.modelPerformance.advanced;
     const totalWeight = basicWeight + advancedWeight;
@@ -586,6 +526,7 @@ async function advancedPredict(history) {
     finalPrediction = basicPrediction;
   }
   
+  // تطبيق تصحيح للأنماط
   const patterns = detectAdvancedPatterns(history);
   patterns.forEach(pattern => {
     const weight = AppState.patternWeights[pattern.pattern.toLowerCase()] || 0.05;
@@ -606,6 +547,7 @@ async function advancedPredict(history) {
     }
   });
   
+  // تطبيع النتائج
   const total = finalPrediction.P + finalPrediction.B + finalPrediction.T;
   finalPrediction.P = (finalPrediction.P / total) * 100;
   finalPrediction.B = (finalPrediction.B / total) * 100;
@@ -623,6 +565,7 @@ function updateModelPerformance() {
   
   if (!prevPrediction) return;
   
+  // حساب دقة النموذج الأساسي
   const basicCorrect = (prevPrediction.basic.P > prevPrediction.basic.B && 
                        prevPrediction.basic.P > prevPrediction.basic.T && 
                        lastResult === 'P') ||
@@ -633,6 +576,7 @@ function updateModelPerformance() {
                        prevPrediction.basic.T > prevPrediction.basic.B && 
                        lastResult === 'T');
   
+  // حساب دقة النموذج المتقدم
   let advancedCorrect = false;
   if (prevPrediction.advanced) {
     advancedCorrect = (prevPrediction.advanced.P > prevPrediction.advanced.B && 
@@ -646,12 +590,14 @@ function updateModelPerformance() {
                       lastResult === 'T');
   }
   
+  // تحديث معدلات الأداء
   AppState.modelPerformance.basic = (AppState.modelPerformance.basic * 0.9) + (basicCorrect ? 0.1 : 0);
   
   if (prevPrediction.advanced) {
     AppState.modelPerformance.advanced = (AppState.modelPerformance.advanced * 0.9) + (advancedCorrect ? 0.1 : 0);
   }
   
+  // تبديل النموذج تلقائياً إذا كان الأداء ضعيفاً
   if (AppState.modelPerformance.advanced < 0.6 && AppState.modelPerformance.basic > 0.65) {
     AppState.useAdvancedModel = false;
     showNotification('info', AppState.lang === 'ar-MA' ? 
@@ -660,25 +606,123 @@ function updateModelPerformance() {
   }
 }
 
+// تبديل النموذج المتقدم
+function toggleAdvancedModel() {
+  AppState.useAdvancedModel = !AppState.useAdvancedModel;
+  document.getElementById('modelStatus').textContent = 
+    AppState.lang === 'ar-MA' ? 
+    `النموذج الحالي: ${AppState.useAdvancedModel ? 'المتقدم' : 'الأساسي'}` :
+    `Current model: ${AppState.useAdvancedModel ? 'Advanced' : 'Basic'}`;
+  
+  showNotification('info', AppState.lang === 'ar-MA' ?
+    `تم التبديل إلى النموذج ${AppState.useAdvancedModel ? 'المتقدم' : 'الأساسي'}` :
+    `Switched to ${AppState.useAdvancedModel ? 'advanced' : 'basic'} model`);
+  
+  updatePredictions();
+}
+
+// تحديث واجهة التنبؤات المتقدمة
+function updateAdvancedPredictionDisplay() {
+  const container = document.getElementById('advancedPredictionResults');
+  
+  if (AppState.history.length < 5) {
+    container.innerHTML = AppState.lang === 'ar-MA' ?
+      '<p>⏳ يحتاج إلى المزيد من البيانات للتنبؤ المتقدم</p>' :
+      '<p>⏳ Need more data for advanced prediction</p>';
+    return;
+  }
+  
+  let html = '<div class="model-performance">';
+  
+  // عرض أداء النماذج
+  html += `<p><strong>${AppState.lang === 'ar-MA' ? 'أداء النماذج:' : 'Model performance:'}</strong></p>`;
+  html += `<p>${AppState.lang === 'ar-MA' ? 'الأساسي:' : 'Basic:'} ${(AppState.modelPerformance.basic * 100).toFixed(1)}%</p>`;
+  
+  if (AppState.advancedModel) {
+    html += `<p>${AppState.lang === 'ar-MA' ? 'المتقدم:' : 'Advanced:'} ${(AppState.modelPerformance.advanced * 100).toFixed(1)}%</p>`;
+  } else {
+    html += `<p>${AppState.lang === 'ar-MA' ? 'المتقدم:' : 'Advanced:'} ${AppState.lang === 'ar-MA' ? 'غير متاح' : 'Not available'}</p>`;
+  }
+  
+  // عرض الأنماط المكتشفة
+  const patterns = detectAdvancedPatterns(AppState.history);
+  if (patterns.length > 0) {
+    html += '<div class="detected-patterns">';
+    html += `<p><strong>${AppState.lang === 'ar-MA' ? 'الأنماط المكتشفة:' : 'Detected patterns:'}</strong></p>`;
+    
+    patterns.slice(0, 3).forEach(pattern => {
+      html += `<div class="pattern-item">
+        <span class="pattern-name">${pattern.pattern}</span>
+        <span class="pattern-confidence">${(pattern.confidence * 100).toFixed(1)}%</span>
+        <p class="pattern-desc">${pattern.description[AppState.lang] || pattern.description.en}</p>
+      </div>`;
+    });
+    
+    html += '</div>';
+  }
+  
+  container.innerHTML = html;
+}
+
+// تحديث تحليل الدايموند
+function updateDiamondAnalysis() {
+  const container = document.getElementById('diamondAnalysis');
+  const analysis = analyzeDiamondPattern(AppState.history);
+  
+  if (!analysis) {
+    container.innerHTML = AppState.lang === 'ar-MA' ?
+      '<p>لم يتم اكتشاف نمط دايموند في آخر 15 جولة</p>' :
+      '<p>No diamond pattern detected in last 15 rounds</p>';
+    return;
+  }
+  
+  container.innerHTML = `
+    <div class="diamond-result">
+      <p>${AppState.lang === 'ar-MA' ? 'تم اكتشاف نمط دايموند' : 'Diamond pattern detected'}:</p>
+      <p><strong>${analysis.lastPattern.sequence}</strong></p>
+      <p>${AppState.lang === 'ar-MA' ? 'عدد التكرارات:' : 'Occurrences:'} ${analysis.count}</p>
+      <p>${AppState.lang === 'ar-MA' ? 'مستوى الثقة:' : 'Confidence:'} ${(analysis.confidence * 100).toFixed(1)}%</p>
+    </div>
+  `;
+}
+
+// تحديث Cockroach Road
+function updateCockroachRoad(history) {
+  const cockroachRoad = document.getElementById('cockroachRoad');
+  cockroachRoad.innerHTML = '';
+  let matrix = [[]];
+  let row = 0;
+
+  for (let i = 3; i < history.length; i++) {
+    if (history[i] === history[i - 3]) {
+      matrix[row].push(history[i]);
+    } else {
+      row++;
+      matrix[row] = [history[i]];
+    }
+  }
+
+  renderRoad(matrix, cockroachRoad);
+}
+
 // إضافة نتيجة جديدة
 async function addResult(result) {
   AppState.history.push(result);
-  
-  // Update session stats
-  updateSessionStats(result);
-  
   saveHistory();
   
+  // تدريب النماذج عند وجود بيانات كافية
   if (AppState.history.length === 30 || (AppState.history.length % 50 === 0 && !AppState.advancedModel)) {
     await initializeModels();
   }
   
+  // حفظ التنبؤات السابقة لتقييم الأداء
   const lastPrediction = {
     basic: basicMarkovPredict(AppState.history.slice(0, -1)),
     advanced: AppState.advancedModel ? await predictWithAdvancedModel(AppState.history.slice(0, -1)) : null
   };
   AppState.lastPredictions.push(lastPrediction);
   
+  // تحديث أداء النماذج
   updateModelPerformance();
   
   const lastRecommendation = await generateBetRecommendation();
@@ -730,123 +774,16 @@ async function addResult(result) {
   updateLast5Analysis();
   updateAdvancedPredictionDisplay();
   updateDiamondAnalysis();
-  updateSessionStatsDisplay();
-}
-
-// تحديث إحصائيات الجلسة
-function updateSessionStats(result) {
-  if (result === 'T') {
-    AppState.sessionStats.ties++;
-    return;
-  }
-
-  const lastPrediction = AppState.lastPredictions[AppState.lastPredictions.length - 1];
-  if (!lastPrediction) return;
-
-  const predicted = lastPrediction.advanced || lastPrediction.basic;
-  const predictedResult = predicted.P > predicted.B ? 
-    (predicted.P > predicted.T ? 'P' : 'T') : 
-    (predicted.B > predicted.T ? 'B' : 'T');
-
-  if (result === predictedResult) {
-    AppState.sessionStats.wins++;
-    AppState.sessionStats.winStreak++;
-    AppState.sessionStats.maxWinStreak = Math.max(
-      AppState.sessionStats.maxWinStreak, 
-      AppState.sessionStats.winStreak
-    );
-    AppState.sessionStats.lossStreak = 0;
-  } else if (result !== 'T') {
-    AppState.sessionStats.losses++;
-    AppState.sessionStats.lossStreak++;
-    AppState.sessionStats.maxLossStreak = Math.max(
-      AppState.sessionStats.maxLossStreak, 
-      AppState.sessionStats.lossStreak
-    );
-    AppState.sessionStats.winStreak = 0;
-  }
-}
-
-// تحديث عرض إحصائيات الجلسة
-function updateSessionStatsDisplay() {
-  const container = document.getElementById('sessionStats') || createSessionStatsContainer();
-  const isArabic = AppState.lang === 'ar-MA';
-
-  const stats = AppState.sessionStats;
-  const totalBets = stats.wins + stats.losses;
-  const winRate = totalBets > 0 ? (stats.wins / totalBets * 100).toFixed(1) : 0;
-
-  container.innerHTML = `
-    <h3>${isArabic ? 'إحصائيات الجلسة' : 'Session Stats'}</h3>
-    <div class="stats-grid">
-      <div class="stat-item">
-        <span class="stat-label">${isArabic ? 'الفوز' : 'Wins'}</span>
-        <span class="stat-value win">${stats.wins}</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">${isArabic ? 'الخسارة' : 'Losses'}</span>
-        <span class="stat-value loss">${stats.losses}</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">${isArabic ? 'التعادل' : 'Ties'}</span>
-        <span class="stat-value tie">${stats.ties}</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">${isArabic ? 'معدل الفوز' : 'Win Rate'}</span>
-        <span class="stat-value">${winRate}%</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">${isArabic ? 'أكبر سلسلة فوز' : 'Max Win Streak'}</span>
-        <span class="stat-value">${stats.maxWinStreak}</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">${isArabic ? 'أكبر سلسلة خسارة' : 'Max Loss Streak'}</span>
-        <span class="stat-value">${stats.maxLossStreak}</span>
-      </div>
-    </div>
-  `;
-}
-
-// إنشاء حاوية إحصائيات الجلسة
-function createSessionStatsContainer() {
-  const container = document.createElement('div');
-  container.id = 'sessionStats';
-  container.className = 'session-stats';
-  
-  const trendsSection = document.querySelector('.trends-section');
-  trendsSection.parentNode.insertBefore(container, trendsSection.nextSibling);
-  
-  return container;
 }
 
 // تحديث العرض
 function updateDisplay() {
-  const displayContainer = document.getElementById('historyDisplay');
-  displayContainer.innerHTML = '';
-  
-  let displayText = document.createElement('div');
-  displayText.className = 'history-items-container';
-  
-  AppState.history.forEach((r, index) => {
-    const item = document.createElement('span');
-    item.className = `history-item ${AppState.selectedResults.includes(index) ? 'selected' : ''}`;
-    item.dataset.index = index;
-    
-    if (r === 'P') {
-      item.textContent = '🔵';
-      item.classList.add('player-history');
-    } else if (r === 'B') {
-      item.textContent = '🔴';
-      item.classList.add('banker-history');
-    } else if (r === 'T') {
-      item.textContent = '🟢';
-      item.classList.add('tie-history');
-    }
-    
-    displayText.appendChild(item);
-  });
-  
-  displayContainer.appendChild(displayText);
+  const displayText = AppState.history.map(r => {
+    if (r === 'P') return '🔵';
+    if (r === 'B') return '🔴';
+    if (r === 'T') return '🟢';
+  }).join(' ');
+  document.getElementById('historyDisplay').innerText = (AppState.lang === 'ar-MA' ? "جميع الجولات: " : "All rounds: ") + displayText;
 
   const totalRounds = AppState.history.length;
   const count = { P: 0, B: 0, T: 0 };
@@ -1122,25 +1059,6 @@ function updateSmallRoad(history) {
   renderRoad(matrix, smallRoad);
 }
 
-// تحديث Cockroach Road
-function updateCockroachRoad(history) {
-  const cockroachRoad = document.getElementById('cockroachRoad');
-  cockroachRoad.innerHTML = '';
-  let matrix = [[]];
-  let row = 0;
-
-  for (let i = 3; i < history.length; i++) {
-    if (history[i] === history[i - 3]) {
-      matrix[row].push(history[i]);
-    } else {
-      row++;
-      matrix[row] = [history[i]];
-    }
-  }
-
-  renderRoad(matrix, cockroachRoad);
-}
-
 // عرض الطريق
 function renderRoad(matrix, container) {
   matrix.forEach((row, rowIndex) => {
@@ -1232,12 +1150,6 @@ function updateUI() {
   document.querySelector('.diamond-pattern h3').textContent = isArabic ? '💎 تحليل نمط الدايموند' : '💎 Diamond Pattern Analysis';
   document.querySelector('.performance-analysis h3').textContent = isArabic ? 'تحليل أداء النماذج' : 'Model Performance Analysis';
   
-  // Update selection buttons
-  const analyzeSelectedBtn = document.getElementById('analyzeSelectedBtn');
-  const clearSelectionBtn = document.getElementById('clearSelectionBtn');
-  if (analyzeSelectedBtn) analyzeSelectedBtn.textContent = isArabic ? 'تحليل النتائج المحددة' : 'Analyze Selected';
-  if (clearSelectionBtn) clearSelectionBtn.textContent = isArabic ? 'مسح التحديد' : 'Clear Selection';
-  
   if (AppState.history.length > 0) {
     updateDisplay();
     updatePredictions();
@@ -1248,7 +1160,6 @@ function updateUI() {
     updateLast5Analysis();
     updateAdvancedPredictionDisplay();
     updateDiamondAnalysis();
-    updateSessionStatsDisplay();
   }
 }
 
@@ -1265,17 +1176,6 @@ async function resetData() {
     AppState.markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
     AppState.lastPredictions = [];
     AppState.modelPerformance = { basic: 0, advanced: 0 };
-    AppState.selectedResults = [];
-    AppState.selectedPatterns = [];
-    AppState.sessionStats = {
-      wins: 0,
-      losses: 0,
-      ties: 0,
-      winStreak: 0,
-      maxWinStreak: 0,
-      lossStreak: 0,
-      maxLossStreak: 0
-    };
     
     if (AppState.advancedModel) {
       tf.dispose(AppState.advancedModel);
@@ -1326,7 +1226,6 @@ async function resetData() {
     document.getElementById('advancedPredictionResults').innerHTML = '';
     document.getElementById('diamondAnalysis').innerHTML = '';
     document.getElementById('modelPerformance').innerHTML = '';
-    document.getElementById('sessionStats').innerHTML = '';
     
     showNotification('info', isArabic ? 'تم إعادة تعيين جميع البيانات' : 'All data has been reset');
   }
@@ -1488,257 +1387,6 @@ function updateBigRoad() {
     cell.style.gridRow = row + 1;
     bigRoadElement.appendChild(cell);
   }
-}
-
-// تبديل تحديد النتيجة
-function toggleResultSelection(element) {
-  const index = parseInt(element.dataset.index);
-  
-  if (isNaN(index)) return;
-  
-  if (AppState.selectedResults.includes(index)) {
-    AppState.selectedResults = AppState.selectedResults.filter(i => i !== index);
-    element.classList.remove('selected');
-  } else {
-    AppState.selectedResults.push(index);
-    element.classList.add('selected');
-  }
-  
-  AppState.selectedResults.sort((a, b) => a - b);
-}
-
-// تحليل النتائج المحددة
-function analyzeSelectedResults() {
-  if (AppState.selectedResults.length < 3) {
-    showNotification('error', AppState.lang === 'ar-MA' ? 
-      'يجب تحديد 3 نتائج على الأقل للتحليل' : 
-      'Please select at least 3 results for analysis');
-    return;
-  }
-  
-  const selectedHistory = AppState.selectedResults
-    .sort((a, b) => a - b)
-    .map(index => AppState.history[index]);
-  
-  AppState.selectedPatterns = detectAdvancedPatterns(selectedHistory);
-  
-  updateSelectedPatternsDisplay();
-}
-
-// تحديث عرض الأنماط المحددة
-function updateSelectedPatternsDisplay() {
-  const container = document.getElementById('selectedPatternsAnalysis') || 
-    createSelectedPatternsContainer();
-  
-  if (AppState.selectedPatterns.length === 0) {
-    container.innerHTML = AppState.lang === 'ar-MA' ? 
-      '<p>لا توجد أنماط مكتشفة في النتائج المحددة</p>' : 
-      '<p>No patterns detected in selected results</p>';
-    return;
-  }
-  
-  let html = '<div class="selected-patterns-container">';
-  html += `<h3>${AppState.lang === 'ar-MA' ? 'الأنماط المكتشفة في النتائج المحددة' : 'Patterns in Selected Results'}</h3>`;
-  
-  AppState.selectedPatterns.forEach(pattern => {
-    html += `
-      <div class="selected-pattern-item">
-        <div class="pattern-header">
-          <span class="pattern-name">${pattern.pattern}</span>
-          <span class="pattern-confidence">${(pattern.confidence * 100).toFixed(1)}%</span>
-        </div>
-        <p class="pattern-desc">${pattern.description[AppState.lang] || pattern.description.en}</p>
-        ${pattern.length ? `<p class="pattern-length">${AppState.lang === 'ar-MA' ? 'الطول:' : 'Length:'} ${pattern.length}</p>` : ''}
-      </div>
-    `;
-  });
-  
-  html += '</div>';
-  container.innerHTML = html;
-}
-
-// إنشاء حاوية الأنماط المحددة
-function createSelectedPatternsContainer() {
-  const container = document.createElement('div');
-  container.id = 'selectedPatternsAnalysis';
-  container.className = 'selected-patterns-section';
-  
-  const historyDisplay = document.getElementById('historyDisplay');
-  historyDisplay.parentNode.insertBefore(container, historyDisplay.nextSibling.nextSibling);
-  
-  return container;
-}
-
-// مسح التحديد
-function clearSelection() {
-  AppState.selectedResults = [];
-  AppState.selectedPatterns = [];
-  
-  document.querySelectorAll('.history-item.selected').forEach(el => {
-    el.classList.remove('selected');
-  });
-  
-  updateSelectedPatternsDisplay();
-}
-
-// إضافة أنماط التحديد إلى CSS
-function addSelectionStyles() {
-  const style = document.createElement('style');
-  style.textContent = `
-    .history-items-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      padding: 10px;
-      background: #f5f5f5;
-      border-radius: 5px;
-      margin-bottom: 10px;
-    }
-    
-    .history-item {
-      cursor: pointer;
-      padding: 5px;
-      border-radius: 3px;
-      transition: all 0.2s;
-      user-select: none;
-    }
-    
-    .history-item:hover {
-      transform: scale(1.1);
-    }
-    
-    .history-item.selected {
-      box-shadow: 0 0 0 2px gold;
-      transform: scale(1.1);
-    }
-    
-    .player-history {
-      color: #007BFF;
-    }
-    
-    .banker-history {
-      color: #DC3545;
-    }
-    
-    .tie-history {
-      color: #28A745;
-    }
-    
-    #analyzeSelectedBtn, #clearSelectionBtn {
-      padding: 8px 15px;
-      margin: 5px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    
-    #analyzeSelectedBtn {
-      background-color: #4CAF50;
-      color: white;
-    }
-    
-    #clearSelectionBtn {
-      background-color: #f44336;
-      color: white;
-    }
-    
-    .selected-patterns-section {
-      margin-top: 20px;
-      padding: 15px;
-      background: #f9f9f9;
-      border-radius: 5px;
-    }
-    
-    .selected-patterns-container h3 {
-      margin-top: 0;
-      color: #333;
-    }
-    
-    .selected-pattern-item {
-      padding: 10px;
-      margin: 10px 0;
-      background: white;
-      border-radius: 5px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    
-    .pattern-header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 5px;
-    }
-    
-    .pattern-name {
-      font-weight: bold;
-      color: #333;
-    }
-    
-    .pattern-confidence {
-      color: #4CAF50;
-      font-weight: bold;
-    }
-    
-    .pattern-desc {
-      margin: 5px 0;
-      color: #666;
-    }
-    
-    .pattern-length {
-      font-size: 0.9em;
-      color: #888;
-      margin: 5px 0 0;
-    }
-    
-    .session-stats {
-      margin: 20px 0;
-      padding: 15px;
-      background: #f5f5f5;
-      border-radius: 5px;
-    }
-    
-    .session-stats h3 {
-      margin-top: 0;
-      color: #333;
-    }
-    
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-    
-    .stat-item {
-      padding: 10px;
-      background: white;
-      border-radius: 5px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    
-    .stat-label {
-      display: block;
-      font-size: 0.9em;
-      color: #666;
-    }
-    
-    .stat-value {
-      font-weight: bold;
-      font-size: 1.2em;
-    }
-    
-    .stat-value.win {
-      color: #28a745;
-    }
-    
-    .stat-value.loss {
-      color: #dc3545;
-    }
-    
-    .stat-value.tie {
-      color: #17a2b8;
-    }
-  `;
-  document.head.appendChild(style);
 }
 
 // تهيئة التطبيق عند تحميل الصفحة
