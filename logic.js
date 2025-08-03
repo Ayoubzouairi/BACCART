@@ -16,13 +16,7 @@ const AppState = {
     cockroach: 0.09
   },
   modelPerformance: { basic: 0, advanced: 0 },
-  lastPredictions: [],
-  recommendationStats: {
-    wins: 0,
-    losses: 0,
-    ties: 0
-  },
-  lastRecommendation: null
+  lastPredictions: []
 };
 
 // أنماط شائعة في الكازينوهات الحية
@@ -94,7 +88,6 @@ async function initializeApp() {
   loadLanguage();
   loadHistory();
   updateCommonPatterns();
-  updateRecommendationStats();
   
   if (AppState.history.length > 30) {
     await initializeModels();
@@ -335,7 +328,7 @@ function analyze8Pattern(history) {
       pattern: '8-8',
       pCount,
       bCount,
-      confidence: Math.min(0.85, 0.6 + (Math.min(pCount, bCount) * 0.03)
+      confidence: Math.min(0.85, 0.6 + (Math.min(pCount, bCount) * 0.03))
     };
   }
   return null;
@@ -628,11 +621,88 @@ function toggleAdvancedModel() {
   updatePredictions();
 }
 
-// تحديث إحصائيات التوصيات
-function updateRecommendationStats() {
-  document.getElementById('winCount').textContent = AppState.recommendationStats.wins;
-  document.getElementById('loseCount').textContent = AppState.recommendationStats.losses;
-  document.getElementById('tieCount').textContent = AppState.recommendationStats.ties;
+// تحديث واجهة التنبؤات المتقدمة
+function updateAdvancedPredictionDisplay() {
+  const container = document.getElementById('advancedPredictionResults');
+  
+  if (AppState.history.length < 5) {
+    container.innerHTML = AppState.lang === 'ar-MA' ?
+      '<p>⏳ يحتاج إلى المزيد من البيانات للتنبؤ المتقدم</p>' :
+      '<p>⏳ Need more data for advanced prediction</p>';
+    return;
+  }
+  
+  let html = '<div class="model-performance">';
+  
+  // عرض أداء النماذج
+  html += `<p><strong>${AppState.lang === 'ar-MA' ? 'أداء النماذج:' : 'Model performance:'}</strong></p>`;
+  html += `<p>${AppState.lang === 'ar-MA' ? 'الأساسي:' : 'Basic:'} ${(AppState.modelPerformance.basic * 100).toFixed(1)}%</p>`;
+  
+  if (AppState.advancedModel) {
+    html += `<p>${AppState.lang === 'ar-MA' ? 'المتقدم:' : 'Advanced:'} ${(AppState.modelPerformance.advanced * 100).toFixed(1)}%</p>`;
+  } else {
+    html += `<p>${AppState.lang === 'ar-MA' ? 'المتقدم:' : 'Advanced:'} ${AppState.lang === 'ar-MA' ? 'غير متاح' : 'Not available'}</p>`;
+  }
+  
+  // عرض الأنماط المكتشفة
+  const patterns = detectAdvancedPatterns(AppState.history);
+  if (patterns.length > 0) {
+    html += '<div class="detected-patterns">';
+    html += `<p><strong>${AppState.lang === 'ar-MA' ? 'الأنماط المكتشفة:' : 'Detected patterns:'}</strong></p>`;
+    
+    patterns.slice(0, 3).forEach(pattern => {
+      html += `<div class="pattern-item">
+        <span class="pattern-name">${pattern.pattern}</span>
+        <span class="pattern-confidence">${(pattern.confidence * 100).toFixed(1)}%</span>
+        <p class="pattern-desc">${pattern.description[AppState.lang] || pattern.description.en}</p>
+      </div>`;
+    });
+    
+    html += '</div>';
+  }
+  
+  container.innerHTML = html;
+}
+
+// تحديث تحليل الدايموند
+function updateDiamondAnalysis() {
+  const container = document.getElementById('diamondAnalysis');
+  const analysis = analyzeDiamondPattern(AppState.history);
+  
+  if (!analysis) {
+    container.innerHTML = AppState.lang === 'ar-MA' ?
+      '<p>لم يتم اكتشاف نمط دايموند في آخر 15 جولة</p>' :
+      '<p>No diamond pattern detected in last 15 rounds</p>';
+    return;
+  }
+  
+  container.innerHTML = `
+    <div class="diamond-result">
+      <p>${AppState.lang === 'ar-MA' ? 'تم اكتشاف نمط دايموند' : 'Diamond pattern detected'}:</p>
+      <p><strong>${analysis.lastPattern.sequence}</strong></p>
+      <p>${AppState.lang === 'ar-MA' ? 'عدد التكرارات:' : 'Occurrences:'} ${analysis.count}</p>
+      <p>${AppState.lang === 'ar-MA' ? 'مستوى الثقة:' : 'Confidence:'} ${(analysis.confidence * 100).toFixed(1)}%</p>
+    </div>
+  `;
+}
+
+// تحديث Cockroach Road
+function updateCockroachRoad(history) {
+  const cockroachRoad = document.getElementById('cockroachRoad');
+  cockroachRoad.innerHTML = '';
+  let matrix = [[]];
+  let row = 0;
+
+  for (let i = 3; i < history.length; i++) {
+    if (history[i] === history[i - 3]) {
+      matrix[row].push(history[i]);
+    } else {
+      row++;
+      matrix[row] = [history[i]];
+    }
+  }
+
+  renderRoad(matrix, cockroachRoad);
 }
 
 // إضافة نتيجة جديدة
@@ -640,48 +710,50 @@ async function addResult(result) {
   AppState.history.push(result);
   saveHistory();
   
+  // تدريب النماذج عند وجود بيانات كافية
   if (AppState.history.length === 30 || (AppState.history.length % 50 === 0 && !AppState.advancedModel)) {
     await initializeModels();
   }
   
+  // حفظ التنبؤات السابقة لتقييم الأداء
   const lastPrediction = {
     basic: basicMarkovPredict(AppState.history.slice(0, -1)),
     advanced: AppState.advancedModel ? await predictWithAdvancedModel(AppState.history.slice(0, -1)) : null
   };
   AppState.lastPredictions.push(lastPrediction);
   
+  // تحديث أداء النماذج
   updateModelPerformance();
   
-  // تحديث الإحصائيات بناءً على التوصية السابقة والنتيجة الحالية
-  if (AppState.lastRecommendation && AppState.lastRecommendation.recommendation !== 'none') {
-    if (result === AppState.lastRecommendation.recommendation) {
-      AppState.recommendationStats.wins++;
+  const lastRecommendation = await generateBetRecommendation();
+  let notificationShown = false;
+  
+  if (lastRecommendation.recommendation !== 'none' && AppState.history.length > 1) {
+    if (result === lastRecommendation.recommendation) {
       const message = AppState.lang === 'ar-MA' 
-        ? `فوز! ${AppState.lastRecommendation.message}` 
-        : `Win! ${AppState.lastRecommendation.message}`;
+        ? `فوز! ${lastRecommendation.message}` 
+        : `Win! ${lastRecommendation.message}`;
       showNotification('win', message);
       showEffect('win');
       applyButtonEffect(result === 'P' ? 'player' : result === 'B' ? 'banker' : 'tie');
-    } else if (result !== 'T' && AppState.lastRecommendation.recommendation !== 'T') {
-      AppState.recommendationStats.losses++;
+      notificationShown = true;
+    } else if (result !== 'T' && lastRecommendation.recommendation !== 'T') {
       const message = AppState.lang === 'ar-MA' 
-        ? `خسارة! ${AppState.lastRecommendation.message}` 
-        : `Lose! ${AppState.lastRecommendation.message}`;
+        ? `خسارة! ${lastRecommendation.message}` 
+        : `Lose! ${lastRecommendation.message}`;
       showNotification('lose', message);
       showEffect('lose');
       applyButtonEffect(result === 'P' ? 'player' : 'banker');
+      notificationShown = true;
     }
   }
   
-  if (result === 'T') {
-    AppState.recommendationStats.ties++;
+  if (!notificationShown && result === 'T') {
     const message = AppState.lang === 'ar-MA' ? 'تعادل!' : 'Tie!';
     showNotification('tie', message);
     showEffect('tie');
     applyButtonEffect('tie');
   }
-  
-  updateRecommendationStats();
   
   if (AppState.currentStreak.type === result) {
     AppState.currentStreak.count++;
@@ -689,9 +761,6 @@ async function addResult(result) {
     AppState.currentStreak.type = result;
     AppState.currentStreak.count = 1;
   }
-  
-  // توليد توصية جديدة للجولة القادمة
-  AppState.lastRecommendation = await generateBetRecommendation();
   
   updateMarkovModel();
   updateDisplay();
@@ -740,8 +809,8 @@ function updateDisplay() {
 }
 
 // توليد توصية الرهان
-async function generateBetRecommendation(history = AppState.history) {
-  if (history.length < 5) {
+async function generateBetRecommendation() {
+  if (AppState.history.length < 5) {
     return {
       recommendation: "none",
       confidence: 0,
@@ -751,13 +820,13 @@ async function generateBetRecommendation(history = AppState.history) {
     };
   }
 
-  const prediction = await advancedPredict(history);
-  const patterns = detectAdvancedPatterns(history);
+  const prediction = await advancedPredict(AppState.history);
+  const patterns = detectAdvancedPatterns(AppState.history);
   const strongestPrediction = Object.entries(prediction).reduce((a, b) => 
     a[1] > b[1] ? a : b
   );
 
-  if (strongestPrediction[1] >= 50) {
+  if (strongestPrediction[1] >= 65) {
     const recType = strongestPrediction[0];
     const confidence = Math.min(95, strongestPrediction[1] * 1.1);
     
@@ -766,7 +835,7 @@ async function generateBetRecommendation(history = AppState.history) {
       confidence: confidence,
       message: buildRecommendationMessage(recType, confidence, patterns)
     };
-  } else if (patterns.length > 0 && patterns[0].confidence >= 0.65) {
+  } else if (patterns.length > 0 && patterns[0].confidence >= 0.75) {
     const pattern = patterns[0];
     const recType = pattern.pattern.includes('P') ? 'P' : 
                    pattern.pattern.includes('B') ? 'B' : 'T';
@@ -813,7 +882,7 @@ function buildRecommendationMessage(type, confidence, patterns) {
 
 // عرض التوصية
 async function showRecommendation() {
-  const recommendation = AppState.lastRecommendation || await generateBetRecommendation();
+  const recommendation = await generateBetRecommendation();
   const recommendationElement = document.getElementById('recommendation');
   
   recommendationElement.innerHTML = `
@@ -990,25 +1059,6 @@ function updateSmallRoad(history) {
   renderRoad(matrix, smallRoad);
 }
 
-// تحديث Cockroach Road
-function updateCockroachRoad(history) {
-  const cockroachRoad = document.getElementById('cockroachRoad');
-  cockroachRoad.innerHTML = '';
-  let matrix = [[]];
-  let row = 0;
-
-  for (let i = 3; i < history.length; i++) {
-    if (history[i] === history[i - 3]) {
-      matrix[row].push(history[i]);
-    } else {
-      row++;
-      matrix[row] = [history[i]];
-    }
-  }
-
-  renderRoad(matrix, cockroachRoad);
-}
-
 // عرض الطريق
 function renderRoad(matrix, container) {
   matrix.forEach((row, rowIndex) => {
@@ -1126,8 +1176,6 @@ async function resetData() {
     AppState.markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
     AppState.lastPredictions = [];
     AppState.modelPerformance = { basic: 0, advanced: 0 };
-    AppState.recommendationStats = { wins: 0, losses: 0, ties: 0 };
-    AppState.lastRecommendation = null;
     
     if (AppState.advancedModel) {
       tf.dispose(AppState.advancedModel);
@@ -1139,7 +1187,6 @@ async function resetData() {
     document.getElementById('bigEyeRoad').innerHTML = '';
     document.getElementById('smallRoad').innerHTML = '';
     document.getElementById('cockroachRoad').innerHTML = '';
-    updateRecommendationStats();
     
     if (AppState.statsChart) {
       AppState.statsChart.destroy();
@@ -1340,71 +1387,6 @@ function updateBigRoad() {
     cell.style.gridRow = row + 1;
     bigRoadElement.appendChild(cell);
   }
-}
-
-// تحديث واجهة التنبؤات المتقدمة
-function updateAdvancedPredictionDisplay() {
-  const container = document.getElementById('advancedPredictionResults');
-  
-  if (AppState.history.length < 5) {
-    container.innerHTML = AppState.lang === 'ar-MA' ?
-      '<p>⏳ يحتاج إلى المزيد من البيانات للتنبؤ المتقدم</p>' :
-      '<p>⏳ Need more data for advanced prediction</p>';
-    return;
-  }
-  
-  let html = '<div class="model-performance">';
-  
-  // عرض أداء النماذج
-  html += `<p><strong>${AppState.lang === 'ar-MA' ? 'أداء النماذج:' : 'Model performance:'}</strong></p>`;
-  html += `<p>${AppState.lang === 'ar-MA' ? 'الأساسي:' : 'Basic:'} ${(AppState.modelPerformance.basic * 100).toFixed(1)}%</p>`;
-  
-  if (AppState.advancedModel) {
-    html += `<p>${AppState.lang === 'ar-MA' ? 'المتقدم:' : 'Advanced:'} ${(AppState.modelPerformance.advanced * 100).toFixed(1)}%</p>`;
-  } else {
-    html += `<p>${AppState.lang === 'ar-MA' ? 'المتقدم:' : 'Advanced:'} ${AppState.lang === 'ar-MA' ? 'غير متاح' : 'Not available'}</p>`;
-  }
-  
-  // عرض الأنماط المكتشفة
-  const patterns = detectAdvancedPatterns(AppState.history);
-  if (patterns.length > 0) {
-    html += '<div class="detected-patterns">';
-    html += `<p><strong>${AppState.lang === 'ar-MA' ? 'الأنماط المكتشفة:' : 'Detected patterns:'}</strong></p>`;
-    
-    patterns.slice(0, 3).forEach(pattern => {
-      html += `<div class="pattern-item">
-        <span class="pattern-name">${pattern.pattern}</span>
-        <span class="pattern-confidence">${(pattern.confidence * 100).toFixed(1)}%</span>
-        <p class="pattern-desc">${pattern.description[AppState.lang] || pattern.description.en}</p>
-      </div>`;
-    });
-    
-    html += '</div>';
-  }
-  
-  container.innerHTML = html;
-}
-
-// تحديث تحليل الدايموند
-function updateDiamondAnalysis() {
-  const container = document.getElementById('diamondAnalysis');
-  const analysis = analyzeDiamondPattern(AppState.history);
-  
-  if (!analysis) {
-    container.innerHTML = AppState.lang === 'ar-MA' ?
-      '<p>لم يتم اكتشاف نمط دايموند في آخر 15 جولة</p>' :
-      '<p>No diamond pattern detected in last 15 rounds</p>';
-    return;
-  }
-  
-  container.innerHTML = `
-    <div class="diamond-result">
-      <p>${AppState.lang === 'ar-MA' ? 'تم اكتشاف نمط دايموند' : 'Diamond pattern detected'}:</p>
-      <p><strong>${analysis.lastPattern.sequence}</strong></p>
-      <p>${AppState.lang === 'ar-MA' ? 'عدد التكرارات:' : 'Occurrences:'} ${analysis.count}</p>
-      <p>${AppState.lang === 'ar-MA' ? 'مستوى الثقة:' : 'Confidence:'} ${(analysis.confidence * 100).toFixed(1)}%</p>
-    </div>
-  `;
 }
 
 // تهيئة التطبيق عند تحميل الصفحة
