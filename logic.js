@@ -88,10 +88,31 @@ async function initializeApp() {
   loadLanguage();
   loadHistory();
   updateCommonPatterns();
+  updateInstantResults();
   
   if (AppState.history.length > 30) {
     await initializeModels();
   }
+}
+
+// تحديث النتائج المباشرة
+function updateInstantResults() {
+  const total = AppState.history.length;
+  const counts = { P: 0, B: 0, T: 0 };
+  
+  AppState.history.forEach(r => counts[r]++);
+  
+  document.getElementById('playerCount').textContent = counts.P;
+  document.getElementById('bankerCount').textContent = counts.B;
+  document.getElementById('tieCount').textContent = counts.T;
+  
+  const playerPercent = total > 0 ? Math.round((counts.P / total) * 100) : 0;
+  const bankerPercent = total > 0 ? Math.round((counts.B / total) * 100) : 0;
+  const tiePercent = total > 0 ? Math.round((counts.T / total) * 100) : 0;
+  
+  document.querySelector('.player-box .result-percent').textContent = `${playerPercent}%`;
+  document.querySelector('.banker-box .result-percent').textContent = `${bankerPercent}%`;
+  document.querySelector('.tie-box .result-percent').textContent = `${tiePercent}%`;
 }
 
 // تحميل التاريخ من localStorage
@@ -342,7 +363,7 @@ function analyzeCockroachPattern(history) {
   let cockroachCount = 0;
   
   for (let i = 3; i < filtered.length; i++) {
-    if (filtered[i] === filtered[i-3]) {
+    if (filtered[i] === filtered[i - 3]) {
       cockroachCount++;
     }
   }
@@ -664,6 +685,32 @@ function updateAdvancedPredictionDisplay() {
   container.innerHTML = html;
 }
 
+// تحليل نمط الدايموند
+function analyzeDiamondPattern(history) {
+  if (history.length < 15) return null;
+  
+  const filtered = history.filter(r => r !== 'T');
+  const patterns = [];
+  
+  for (let i = 4; i < filtered.length; i++) {
+    const seq = filtered.slice(i-4, i+1);
+    if ((seq[0] === 'P' && seq[1] === 'B' && seq[2] === 'P' && seq[3] === 'B' && seq[4] === 'P') ||
+        (seq[0] === 'B' && seq[1] === 'P' && seq[2] === 'B' && seq[3] === 'P' && seq[4] === 'B')) {
+      patterns.push({
+        type: 'diamond',
+        index: i,
+        sequence: seq.join('')
+      });
+    }
+  }
+  
+  return patterns.length > 0 ? {
+    count: patterns.length,
+    lastPattern: patterns[patterns.length - 1],
+    confidence: Math.min(0.9, patterns.length * 0.1)
+  } : null;
+}
+
 // تحديث تحليل الدايموند
 function updateDiamondAnalysis() {
   const container = document.getElementById('diamondAnalysis');
@@ -764,6 +811,7 @@ async function addResult(result) {
   
   updateMarkovModel();
   updateDisplay();
+  updateInstantResults();
   updateBigRoad();
   updateDerivativeRoads();
   updateTrendsAndStreaks();
@@ -1152,6 +1200,7 @@ function updateUI() {
   
   if (AppState.history.length > 0) {
     updateDisplay();
+    updateInstantResults();
     updatePredictions();
     generateAdvice();
     updateTrendsAndStreaks();
@@ -1226,6 +1275,7 @@ async function resetData() {
     document.getElementById('advancedPredictionResults').innerHTML = '';
     document.getElementById('diamondAnalysis').innerHTML = '';
     document.getElementById('modelPerformance').innerHTML = '';
+    updateInstantResults();
     
     showNotification('info', isArabic ? 'تم إعادة تعيين جميع البيانات' : 'All data has been reset');
   }
