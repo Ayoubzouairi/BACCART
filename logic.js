@@ -21,7 +21,8 @@ const AppState = {
     wins: 0,
     losses: 0,
     ties: 0
-  }
+  },
+  lastRecommendation: null
 };
 
 // أنماط شائعة في الكازينوهات الحية
@@ -334,7 +335,7 @@ function analyze8Pattern(history) {
       pattern: '8-8',
       pCount,
       bCount,
-      confidence: Math.min(0.85, 0.6 + (Math.min(pCount, bCount) * 0.03))
+      confidence: Math.min(0.85, 0.6 + (Math.min(pCount, bCount) * 0.03)
     };
   }
   return null;
@@ -651,32 +652,28 @@ async function addResult(result) {
   
   updateModelPerformance();
   
-  const lastRecommendation = await generateBetRecommendation();
-  let notificationShown = false;
-  
-  if (lastRecommendation.recommendation !== 'none' && AppState.history.length > 1) {
-    if (result === lastRecommendation.recommendation) {
+  // تحديث الإحصائيات بناءً على التوصية السابقة والنتيجة الحالية
+  if (AppState.lastRecommendation && AppState.lastRecommendation.recommendation !== 'none') {
+    if (result === AppState.lastRecommendation.recommendation) {
       AppState.recommendationStats.wins++;
       const message = AppState.lang === 'ar-MA' 
-        ? `فوز! ${lastRecommendation.message}` 
-        : `Win! ${lastRecommendation.message}`;
+        ? `فوز! ${AppState.lastRecommendation.message}` 
+        : `Win! ${AppState.lastRecommendation.message}`;
       showNotification('win', message);
       showEffect('win');
       applyButtonEffect(result === 'P' ? 'player' : result === 'B' ? 'banker' : 'tie');
-      notificationShown = true;
-    } else if (result !== 'T' && lastRecommendation.recommendation !== 'T') {
+    } else if (result !== 'T' && AppState.lastRecommendation.recommendation !== 'T') {
       AppState.recommendationStats.losses++;
       const message = AppState.lang === 'ar-MA' 
-        ? `خسارة! ${lastRecommendation.message}` 
-        : `Lose! ${lastRecommendation.message}`;
+        ? `خسارة! ${AppState.lastRecommendation.message}` 
+        : `Lose! ${AppState.lastRecommendation.message}`;
       showNotification('lose', message);
       showEffect('lose');
       applyButtonEffect(result === 'P' ? 'player' : 'banker');
-      notificationShown = true;
     }
   }
   
-  if (!notificationShown && result === 'T') {
+  if (result === 'T') {
     AppState.recommendationStats.ties++;
     const message = AppState.lang === 'ar-MA' ? 'تعادل!' : 'Tie!';
     showNotification('tie', message);
@@ -692,6 +689,9 @@ async function addResult(result) {
     AppState.currentStreak.type = result;
     AppState.currentStreak.count = 1;
   }
+  
+  // توليد توصية جديدة للجولة القادمة
+  AppState.lastRecommendation = await generateBetRecommendation();
   
   updateMarkovModel();
   updateDisplay();
@@ -740,8 +740,8 @@ function updateDisplay() {
 }
 
 // توليد توصية الرهان
-async function generateBetRecommendation() {
-  if (AppState.history.length < 5) {
+async function generateBetRecommendation(history = AppState.history) {
+  if (history.length < 5) {
     return {
       recommendation: "none",
       confidence: 0,
@@ -751,13 +751,13 @@ async function generateBetRecommendation() {
     };
   }
 
-  const prediction = await advancedPredict(AppState.history);
-  const patterns = detectAdvancedPatterns(AppState.history);
+  const prediction = await advancedPredict(history);
+  const patterns = detectAdvancedPatterns(history);
   const strongestPrediction = Object.entries(prediction).reduce((a, b) => 
     a[1] > b[1] ? a : b
   );
 
-  if (strongestPrediction[1] >= 65) {
+  if (strongestPrediction[1] >= 50) {
     const recType = strongestPrediction[0];
     const confidence = Math.min(95, strongestPrediction[1] * 1.1);
     
@@ -766,7 +766,7 @@ async function generateBetRecommendation() {
       confidence: confidence,
       message: buildRecommendationMessage(recType, confidence, patterns)
     };
-  } else if (patterns.length > 0 && patterns[0].confidence >= 0.75) {
+  } else if (patterns.length > 0 && patterns[0].confidence >= 0.65) {
     const pattern = patterns[0];
     const recType = pattern.pattern.includes('P') ? 'P' : 
                    pattern.pattern.includes('B') ? 'B' : 'T';
@@ -813,7 +813,7 @@ function buildRecommendationMessage(type, confidence, patterns) {
 
 // عرض التوصية
 async function showRecommendation() {
-  const recommendation = await generateBetRecommendation();
+  const recommendation = AppState.lastRecommendation || await generateBetRecommendation();
   const recommendationElement = document.getElementById('recommendation');
   
   recommendationElement.innerHTML = `
@@ -1127,6 +1127,7 @@ async function resetData() {
     AppState.lastPredictions = [];
     AppState.modelPerformance = { basic: 0, advanced: 0 };
     AppState.recommendationStats = { wins: 0, losses: 0, ties: 0 };
+    AppState.lastRecommendation = null;
     
     if (AppState.advancedModel) {
       tf.dispose(AppState.advancedModel);
