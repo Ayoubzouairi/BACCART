@@ -19,7 +19,7 @@
     </div>
 
     <div class="container">
-        <h1><span class="logo-b">BACCARAT</span> <span class="logo-s">PRO</span> <span class="logo-rest">ANALYZER</span></h1>
+        <h1><span class="logo-b">BACCARAT</span> <span class="logo-s">PRO</span> </h1>
         <p>📲 اختر نتيجة الجولة:</p>
         
         <div class="buttons">
@@ -29,24 +29,34 @@
             <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
         </div>
 
-        <div class="win-stats">
-            <h3>📈 إحصائيات الفوز</h3>
-            <div class="win-stats-grid">
-                <div class="win-stat player-stat">
-                    <div class="stat-title">🔵 اللاعب</div>
-                    <div class="stat-count" id="playerWins">0</div>
-                    <div class="stat-percent" id="playerWinPercent">0%</div>
+        <div class="profit-tracker">
+            <h3>💰 تتبع الأرباح والخسائر</h3>
+            <div class="profit-stats">
+                <div class="profit-item">
+                    <span>إجمالي الرهانات:</span>
+                    <span id="totalBets">0</span>
                 </div>
-                <div class="win-stat banker-stat">
-                    <div class="stat-title">🔴 المصرفي</div>
-                    <div class="stat-count" id="bankerWins">0</div>
-                    <div class="stat-percent" id="bankerWinPercent">0%</div>
+                <div class="profit-item">
+                    <span>إجمالي الربح:</span>
+                    <span id="totalProfit" class="positive">0</span>
                 </div>
-                <div class="win-stat tie-stat">
-                    <div class="stat-title">🟢 تعادل</div>
-                    <div class="stat-count" id="tieWins">0</div>
-                    <div class="stat-percent" id="tieWinPercent">0%</div>
+                <div class="profit-item">
+                    <span>أعلى ربح:</span>
+                    <span id="highestWin" class="positive">0</span>
                 </div>
+                <div class="profit-item">
+                    <span>أكبر خسارة:</span>
+                    <span id="biggestLoss" class="negative">0</span>
+                </div>
+                <div class="profit-item">
+                    <span>معدل الربح:</span>
+                    <span id="winRate">0%</span>
+                </div>
+            </div>
+            <div class="bet-controls">
+                <label for="betAmount">مبلغ الرهان:</label>
+                <input type="number" id="betAmount" min="1" value="10">
+                <button onclick="placeBet()">تأكيد الرهان</button>
             </div>
         </div>
 
