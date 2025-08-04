@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BACCARAT PRO</title>
+    <title>BACCARAT PRO ANALYZER</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
@@ -19,7 +19,7 @@
     </div>
 
     <div class="container">
-        <h1><span class="logo-b">BACCARAT</span> <span class="logo-s">PRO</span> </h1>
+        <h1><span class="logo-b">BACCARAT</span> <span class="logo-s">PRO</span> <span class="logo-rest">ANALYZER</span></h1>
         <p>📲 اختر نتيجة الجولة:</p>
         
         <div class="buttons">
@@ -29,15 +29,22 @@
             <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
         </div>
 
-        <div class="stats">
-            <div class="stat-box">
-                <h3>اللاعب: <span id="player-wins">0</span></h3>
+        <!-- إحصاءات النتائج الجديدة -->
+        <div class="stats-container">
+            <div class="stats-box player-stats">
+                <h3>اللاعب</h3>
+                <div class="stats-value" id="player-wins">0</div>
+                <div class="stats-percentage" id="player-percentage">0%</div>
             </div>
-            <div class="stat-box">
-                <h3>تعادل: <span id="ties">0</span></h3>
+            <div class="stats-box tie-stats">
+                <h3>تعادل</h3>
+                <div class="stats-value" id="ties">0</div>
+                <div class="stats-percentage" id="tie-percentage">0%</div>
             </div>
-            <div class="stat-box">
-                <h3>البانكر: <span id="banker-wins">0</span></h3>
+            <div class="stats-box banker-stats">
+                <h3>المصرفي</h3>
+                <div class="stats-value" id="banker-wins">0</div>
+                <div class="stats-percentage" id="banker-percentage">0%</div>
             </div>
         </div>
 
