@@ -127,10 +127,51 @@ body.light-mode .theme-toggle {
   color: #333;
 }
 
+/* أنماط إحصاءات النتائج */
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+  padding: 15px;
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 10px;
+}
+
+.stat-box {
+  text-align: center;
+  padding: 10px 20px;
+  border-radius: 8px;
+  background-color: rgba(255,255,255,0.05);
+}
+
+.stat-box h3 {
+  margin: 5px 0;
+  font-size: 1.1em;
+}
+
+.stat-box span {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: gold;
+}
+
+/* ألوان النتائج */
+.stat-box:nth-child(1) span {
+  color: #007BFF; /* لون اللاعب */
+}
+
+.stat-box:nth-child(2) span {
+  color: #28A745; /* لون التعادل */
+}
+
+.stat-box:nth-child(3) span {
+  color: #DC3545; /* لون البانكر */
+}
+
 /* أنماط الصناديق */
 .result, .stats, .history, .ai-stats, .ai-advice, .trends-container,
 .last5-analysis, .common-patterns, .advanced-prediction, .diamond-pattern,
-.performance-analysis, .profit-tracker {
+.performance-analysis {
   margin-top: 1.5em;
   font-size: 1.2em;
   padding: 15px;
@@ -149,8 +190,7 @@ body.light-mode .last5-analysis,
 body.light-mode .common-patterns,
 body.light-mode .advanced-prediction,
 body.light-mode .diamond-pattern,
-body.light-mode .performance-analysis,
-body.light-mode .profit-tracker {
+body.light-mode .performance-analysis {
   background-color: rgba(0,0,0,0.05);
 }
 
@@ -496,71 +536,6 @@ body.light-mode .results-table td {
   border-left: 4px solid #6f42c1;
 }
 
-/* أنماط تتبع الأرباح */
-.profit-tracker {
-  border-left: 4px solid #20c997;
-}
-
-.profit-stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.profit-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 5px;
-}
-
-.positive {
-  color: #28a745;
-}
-
-.negative {
-  color: #dc3545;
-}
-
-.bet-controls {
-  margin-top: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.bet-controls label {
-  margin-right: 5px;
-}
-
-.bet-controls input {
-  width: 80px;
-  padding: 5px;
-  border-radius: 5px;
-  border: 1px solid rgba(255,215,0,0.3);
-  background: rgba(0,0,0,0.3);
-  color: white;
-  text-align: center;
-}
-
-.bet-controls button {
-  padding: 8px 15px;
-  background-color: #20c997;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.bet-controls button:hover {
-  background-color: #17a2b8;
-}
-
 /* أنماط الإشعارات والتأثيرات البصرية */
 .notification-container {
   position: fixed;
@@ -804,7 +779,11 @@ body.light-mode .results-table td {
     justify-content: center;
     margin-bottom: 15px;
   }
-  .profit-stats {
-    grid-template-columns: 1fr;
+  .stats {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .stat-box {
+    padding: 8px;
   }
 }
