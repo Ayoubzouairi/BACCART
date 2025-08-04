@@ -29,34 +29,15 @@
             <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
         </div>
 
-        <div class="profit-tracker">
-            <h3>💰 تتبع الأرباح والخسائر</h3>
-            <div class="profit-stats">
-                <div class="profit-item">
-                    <span>إجمالي الرهانات:</span>
-                    <span id="totalBets">0</span>
-                </div>
-                <div class="profit-item">
-                    <span>إجمالي الربح:</span>
-                    <span id="totalProfit" class="positive">0</span>
-                </div>
-                <div class="profit-item">
-                    <span>أعلى ربح:</span>
-                    <span id="highestWin" class="positive">0</span>
-                </div>
-                <div class="profit-item">
-                    <span>أكبر خسارة:</span>
-                    <span id="biggestLoss" class="negative">0</span>
-                </div>
-                <div class="profit-item">
-                    <span>معدل الربح:</span>
-                    <span id="winRate">0%</span>
-                </div>
+        <div class="stats">
+            <div class="stat-box">
+                <h3>اللاعب: <span id="player-wins">0</span></h3>
             </div>
-            <div class="bet-controls">
-                <label for="betAmount">مبلغ الرهان:</label>
-                <input type="number" id="betAmount" min="1" value="10">
-                <button onclick="placeBet()">تأكيد الرهان</button>
+            <div class="stat-box">
+                <h3>تعادل: <span id="ties">0</span></h3>
+            </div>
+            <div class="stat-box">
+                <h3>البانكر: <span id="banker-wins">0</span></h3>
             </div>
         </div>
 
