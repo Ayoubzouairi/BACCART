@@ -16,17 +16,15 @@ const AppState = {
     cockroach: 0.09
   },
   modelPerformance: { basic: 0, advanced: 0 },
-  lastPredictions: [],
-  bettingStats: {
-    totalBets: 0,
-    totalProfit: 0,
-    highestWin: 0,
-    biggestLoss: 0,
-    wins: 0,
-    losses: 0,
-    currentBet: null,
-    betAmount: 10
-  }
+  lastPredictions: []
+};
+
+// إحصاءات النتائج
+const GameStats = {
+  playerWins: 0,
+  bankerWins: 0,
+  ties: 0,
+  lastResult: null
 };
 
 // أنماط شائعة في الكازينوهات الحية
@@ -97,7 +95,7 @@ async function initializeApp() {
   loadTheme();
   loadLanguage();
   loadHistory();
-  loadBettingStats();
+  loadStats();
   updateCommonPatterns();
   
   if (AppState.history.length > 30) {
@@ -113,130 +111,38 @@ function loadHistory() {
   }
 }
 
+// تحميل الإحصاءات المحفوظة
+function loadStats() {
+  const savedStats = localStorage.getItem('baccaratStats');
+  if (savedStats) {
+    Object.assign(GameStats, JSON.parse(savedStats));
+    updateStats(GameStats.lastResult); // لتحديث العرض
+  }
+}
+
+// تحديث الإحصاءات
+function updateStats(result) {
+  if (result === 'P') {
+    GameStats.playerWins++;
+  } else if (result === 'B') {
+    GameStats.bankerWins++;
+  } else if (result === 'T') {
+    GameStats.ties++;
+  }
+  GameStats.lastResult = result;
+  
+  // تحديث العرض
+  document.getElementById('player-wins').textContent = GameStats.playerWins;
+  document.getElementById('banker-wins').textContent = GameStats.bankerWins;
+  document.getElementById('ties').textContent = GameStats.ties;
+  
+  // حفظ الإحصاءات
+  localStorage.setItem('baccaratStats', JSON.stringify(GameStats));
+}
+
 // حفظ التاريخ إلى localStorage
 function saveHistory() {
   localStorage.setItem('baccaratHistory', JSON.stringify(AppState.history));
-}
-
-// تحميل إحصائيات الرهان من localStorage
-function loadBettingStats() {
-  const savedStats = localStorage.getItem('baccaratBettingStats');
-  if (savedStats) {
-    AppState.bettingStats = JSON.parse(savedStats);
-    updateBettingStatsDisplay();
-  }
-}
-
-// حفظ إحصائيات الرهان إلى localStorage
-function saveBettingStats() {
-  localStorage.setItem('baccaratBettingStats', JSON.stringify(AppState.bettingStats));
-}
-
-// تحديث عرض إحصائيات الرهان
-function updateBettingStatsDisplay() {
-  const isArabic = AppState.lang === 'ar-MA';
-  
-  document.getElementById('totalBets').textContent = AppState.bettingStats.totalBets;
-  document.getElementById('totalProfit').textContent = AppState.bettingStats.totalProfit;
-  document.getElementById('highestWin').textContent = AppState.bettingStats.highestWin;
-  document.getElementById('biggestLoss').textContent = AppState.bettingStats.biggestLoss;
-  
-  const winRate = AppState.bettingStats.totalBets > 0 
-    ? (AppState.bettingStats.wins / AppState.bettingStats.totalBets * 100).toFixed(1) 
-    : 0;
-  document.getElementById('winRate').textContent = `${winRate}%`;
-  
-  // تحديث ألوان الأرباح والخسائر
-  const totalProfitElement = document.getElementById('totalProfit');
-  totalProfitElement.className = AppState.bettingStats.totalProfit >= 0 ? 'positive' : 'negative';
-  
-  document.getElementById('betAmount').value = AppState.bettingStats.betAmount;
-}
-
-// وضع الرهان
-function placeBet() {
-  const betAmount = parseInt(document.getElementById('betAmount').value);
-  if (isNaN(betAmount) || betAmount <= 0) {
-    showNotification('error', AppState.lang === 'ar-MA' ? 'الرجاء إدخال مبلغ رهان صحيح' : 'Please enter a valid bet amount');
-    return;
-  }
-  
-  AppState.bettingStats.betAmount = betAmount;
-  AppState.bettingStats.currentBet = {
-    amount: betAmount,
-    recommendation: null,
-    placedAt: new Date().toISOString()
-  };
-  
-  saveBettingStats();
-  updateBettingStatsDisplay();
-  
-  showNotification('info', AppState.lang === 'ar-MA' 
-    ? `تم وضع رهان بقيمة ${betAmount}` 
-    : `Bet placed for ${betAmount}`);
-}
-
-// حساب نتيجة الرهان
-function calculateBetResult(result) {
-  if (!AppState.bettingStats.currentBet) return;
-  
-  const bet = AppState.bettingStats.currentBet;
-  const recommendation = AppState.lastPredictions[AppState.lastPredictions.length - 1];
-  let profit = 0;
-  let isWin = false;
-  
-  if (recommendation) {
-    // تحديد التوصية الأقوى
-    let recommendedBet = null;
-    if (recommendation.advanced) {
-      recommendedBet = Object.entries(recommendation.advanced).reduce((a, b) => a[1] > b[1] ? a : b)[0];
-    } else {
-      recommendedBet = Object.entries(recommendation.basic).reduce((a, b) => a[1] > b[1] ? a : b)[0];
-    }
-    
-    bet.recommendation = recommendedBet;
-    
-    // حساب الربح/الخسارة
-    if (recommendedBet === result) {
-      if (result === 'T') {
-        profit = bet.amount * 8; // عادةً يكون العائد 8:1 للتعادل
-      } else {
-        profit = bet.amount * (result === 'P' ? 1 : 0.95); // اللاعب 1:1، المصرفي 0.95:1
-      }
-      isWin = true;
-      AppState.bettingStats.wins++;
-    } else {
-      profit = -bet.amount;
-      AppState.bettingStats.losses++;
-    }
-    
-    AppState.bettingStats.totalBets++;
-    AppState.bettingStats.totalProfit += profit;
-    
-    if (profit > 0 && profit > AppState.bettingStats.highestWin) {
-      AppState.bettingStats.highestWin = profit;
-    }
-    
-    if (profit < 0 && profit < AppState.bettingStats.biggestLoss) {
-      AppState.bettingStats.biggestLoss = profit;
-    }
-    
-    saveBettingStats();
-    updateBettingStatsDisplay();
-    
-    // إظهار إشعار بالنتيجة
-    if (isWin) {
-      showNotification('win', AppState.lang === 'ar-MA' 
-        ? `ربح! +${profit} (توصية: ${bet.recommendation === 'P' ? 'لاعب' : bet.recommendation === 'B' ? 'مصرفي' : 'تعادل'})` 
-        : `Win! +${profit} (recommendation: ${bet.recommendation})`);
-    } else {
-      showNotification('lose', AppState.lang === 'ar-MA' 
-        ? `خسارة! ${profit} (توصية: ${bet.recommendation === 'P' ? 'لاعب' : bet.recommendation === 'B' ? 'مصرفي' : 'تعادل'})` 
-        : `Lose! ${profit} (recommendation: ${bet.recommendation})`);
-    }
-  }
-  
-  AppState.bettingStats.currentBet = null;
 }
 
 // إنشاء عنصر الإشعارات
@@ -249,7 +155,6 @@ function createNotificationContainer() {
 // إعداد مستمعي الأحداث
 function setupEventListeners() {
   document.getElementById('langSelect').addEventListener('change', changeLanguage);
-  document.querySelector('.bet-controls button').addEventListener('click', placeBet);
 }
 
 // التحقق من الوقت لتحديد الثيم
@@ -841,10 +746,8 @@ function updateCockroachRoad(history) {
 // إضافة نتيجة جديدة
 async function addResult(result) {
   AppState.history.push(result);
+  updateStats(result);
   saveHistory();
-  
-  // حساب نتيجة الرهان إذا كان هناك رهان نشط
-  calculateBetResult(result);
   
   // تدريب النماذج عند وجود بيانات كافية
   if (AppState.history.length === 30 || (AppState.history.length % 50 === 0 && !AppState.advancedModel)) {
@@ -1285,7 +1188,6 @@ function updateUI() {
   document.querySelector('.advanced-prediction h3').textContent = isArabic ? '🛠 التنبؤات المتقدمة' : '🛠 Advanced Predictions';
   document.querySelector('.diamond-pattern h3').textContent = isArabic ? '💎 تحليل نمط الدايموند' : '💎 Diamond Pattern Analysis';
   document.querySelector('.performance-analysis h3').textContent = isArabic ? 'تحليل أداء النماذج' : 'Model Performance Analysis';
-  document.querySelector('.profit-tracker h3').textContent = isArabic ? '💰 تتبع الأرباح والخسائر' : '💰 Profit Tracker';
   
   if (AppState.history.length > 0) {
     updateDisplay();
@@ -1297,7 +1199,6 @@ function updateUI() {
     updateLast5Analysis();
     updateAdvancedPredictionDisplay();
     updateDiamondAnalysis();
-    updateBettingStatsDisplay();
   }
 }
 
@@ -1314,16 +1215,18 @@ async function resetData() {
     AppState.markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
     AppState.lastPredictions = [];
     AppState.modelPerformance = { basic: 0, advanced: 0 };
-    AppState.bettingStats = {
-      totalBets: 0,
-      totalProfit: 0,
-      highestWin: 0,
-      biggestLoss: 0,
-      wins: 0,
-      losses: 0,
-      currentBet: null,
-      betAmount: 10
-    };
+    
+    // إعادة تعيين الإحصاءات
+    GameStats.playerWins = 0;
+    GameStats.bankerWins = 0;
+    GameStats.ties = 0;
+    GameStats.lastResult = null;
+    localStorage.removeItem('baccaratStats');
+    
+    // تحديث العرض
+    document.getElementById('player-wins').textContent = '0';
+    document.getElementById('banker-wins').textContent = '0';
+    document.getElementById('ties').textContent = '0';
     
     if (AppState.advancedModel) {
       tf.dispose(AppState.advancedModel);
@@ -1331,7 +1234,6 @@ async function resetData() {
     }
     
     saveHistory();
-    saveBettingStats();
     updateBigRoad();
     document.getElementById('bigEyeRoad').innerHTML = '';
     document.getElementById('smallRoad').innerHTML = '';
@@ -1375,7 +1277,6 @@ async function resetData() {
     document.getElementById('advancedPredictionResults').innerHTML = '';
     document.getElementById('diamondAnalysis').innerHTML = '';
     document.getElementById('modelPerformance').innerHTML = '';
-    updateBettingStatsDisplay();
     
     showNotification('info', isArabic ? 'تم إعادة تعيين جميع البيانات' : 'All data has been reset');
   }
