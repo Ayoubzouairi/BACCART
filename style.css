@@ -1,3 +1,74 @@
+/* أنماط إحصاءات النتائج الجديدة */
+.stats-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    gap: 10px;
+}
+
+.stats-box {
+    flex: 1;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.player-stats {
+    background: rgba(0, 123, 255, 0.1);
+    border: 2px solid #007bff;
+}
+
+.banker-stats {
+    background: rgba(220, 53, 69, 0.1);
+    border: 2px solid #dc3545;
+}
+
+.tie-stats {
+    background: rgba(40, 167, 69, 0.1);
+    border: 2px solid #28a745;
+}
+
+.stats-box h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+}
+
+.stats-value {
+    font-size: 2em;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.player-stats .stats-value {
+    color: #007bff;
+}
+
+.banker-stats .stats-value {
+    color: #dc3545;
+}
+
+.tie-stats .stats-value {
+    color: #28a745;
+}
+
+.stats-percentage {
+    font-size: 1.1em;
+    opacity: 0.8;
+}
+
+/* أنماط التكيف مع الشاشات الصغيرة */
+@media (max-width: 768px) {
+    .stats-container {
+        flex-direction: column;
+    }
+    
+    .stats-box {
+        margin-bottom: 10px;
+    }
+}
+
+/* باقي أنماط CSS الأصلية تبقى كما هي */
 /* أنماط عامة */
 body {
   background-color: #121212;
@@ -125,47 +196,6 @@ body.light-mode {
 }
 body.light-mode .theme-toggle {
   color: #333;
-}
-
-/* أنماط إحصاءات النتائج */
-.stats {
-  display: flex;
-  justify-content: space-around;
-  margin: 20px 0;
-  padding: 15px;
-  background-color: rgba(0,0,0,0.2);
-  border-radius: 10px;
-}
-
-.stat-box {
-  text-align: center;
-  padding: 10px 20px;
-  border-radius: 8px;
-  background-color: rgba(255,255,255,0.05);
-}
-
-.stat-box h3 {
-  margin: 5px 0;
-  font-size: 1.1em;
-}
-
-.stat-box span {
-  font-size: 1.3em;
-  font-weight: bold;
-  color: gold;
-}
-
-/* ألوان النتائج */
-.stat-box:nth-child(1) span {
-  color: #007BFF; /* لون اللاعب */
-}
-
-.stat-box:nth-child(2) span {
-  color: #28A745; /* لون التعادل */
-}
-
-.stat-box:nth-child(3) span {
-  color: #DC3545; /* لون البانكر */
 }
 
 /* أنماط الصناديق */
@@ -778,12 +808,5 @@ body.light-mode .results-table td {
     position: static;
     justify-content: center;
     margin-bottom: 15px;
-  }
-  .stats {
-    flex-direction: column;
-    gap: 10px;
-  }
-  .stat-box {
-    padding: 8px;
   }
 }
