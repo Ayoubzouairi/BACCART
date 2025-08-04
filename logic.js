@@ -19,14 +19,6 @@ const AppState = {
   lastPredictions: []
 };
 
-// إحصاءات اللعبة الجديدة
-const GameStats = {
-    playerWins: 0,
-    bankerWins: 0,
-    ties: 0,
-    totalRounds: 0
-};
-
 // أنماط شائعة في الكازينوهات الحية
 const COMMON_CASINO_PATTERNS = [
   {
@@ -95,57 +87,11 @@ async function initializeApp() {
   loadTheme();
   loadLanguage();
   loadHistory();
-  loadStats(); // تحميل الإحصاءات المحفوظة
   updateCommonPatterns();
   
   if (AppState.history.length > 30) {
     await initializeModels();
   }
-}
-
-// الدوال الجديدة للإحصاءات
-function updateGameStats(result) {
-    GameStats.totalRounds++;
-    
-    if (result === 'P') {
-        GameStats.playerWins++;
-    } else if (result === 'B') {
-        GameStats.bankerWins++;
-    } else if (result === 'T') {
-        GameStats.ties++;
-    }
-    
-    saveStats();
-    displayStats();
-}
-
-function saveStats() {
-    localStorage.setItem('baccaratStats', JSON.stringify(GameStats));
-}
-
-function loadStats() {
-    const savedStats = localStorage.getItem('baccaratStats');
-    if (savedStats) {
-        Object.assign(GameStats, JSON.parse(savedStats));
-        displayStats();
-    }
-}
-
-function displayStats() {
-    document.getElementById('player-wins').textContent = GameStats.playerWins;
-    document.getElementById('banker-wins').textContent = GameStats.bankerWins;
-    document.getElementById('ties').textContent = GameStats.ties;
-    
-    // حساب النسب المئوية
-    if (GameStats.totalRounds > 0) {
-        const playerPercent = (GameStats.playerWins / GameStats.totalRounds * 100).toFixed(1);
-        const bankerPercent = (GameStats.bankerWins / GameStats.totalRounds * 100).toFixed(1);
-        const tiePercent = (GameStats.ties / GameStats.totalRounds * 100).toFixed(1);
-        
-        document.getElementById('player-percentage').textContent = `${playerPercent}%`;
-        document.getElementById('banker-percentage').textContent = `${bankerPercent}%`;
-        document.getElementById('tie-percentage').textContent = `${tiePercent}%`;
-    }
 }
 
 // تحميل التاريخ من localStorage
@@ -764,9 +710,6 @@ async function addResult(result) {
   AppState.history.push(result);
   saveHistory();
   
-  // تحديث إحصاءات اللعبة
-  updateGameStats(result);
-  
   // تدريب النماذج عند وجود بيانات كافية
   if (AppState.history.length === 30 || (AppState.history.length % 50 === 0 && !AppState.advancedModel)) {
     await initializeModels();
@@ -1233,14 +1176,6 @@ async function resetData() {
     AppState.markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
     AppState.lastPredictions = [];
     AppState.modelPerformance = { basic: 0, advanced: 0 };
-    
-    // إعادة تعيين إحصاءات اللعبة
-    GameStats.playerWins = 0;
-    GameStats.bankerWins = 0;
-    GameStats.ties = 0;
-    GameStats.totalRounds = 0;
-    saveStats();
-    displayStats();
     
     if (AppState.advancedModel) {
       tf.dispose(AppState.advancedModel);
