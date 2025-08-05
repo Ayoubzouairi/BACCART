@@ -130,7 +130,7 @@ body.light-mode .theme-toggle {
 /* أنماط الصناديق */
 .result, .stats, .history, .ai-stats, .ai-advice, .trends-container,
 .last5-analysis, .common-patterns, .advanced-prediction, .diamond-pattern,
-.performance-analysis {
+.performance-analysis, .prediction-stats {
   margin-top: 1.5em;
   font-size: 1.2em;
   padding: 15px;
@@ -149,7 +149,8 @@ body.light-mode .last5-analysis,
 body.light-mode .common-patterns,
 body.light-mode .advanced-prediction,
 body.light-mode .diamond-pattern,
-body.light-mode .performance-analysis {
+body.light-mode .performance-analysis,
+body.light-mode .prediction-stats {
   background-color: rgba(0,0,0,0.05);
 }
 
@@ -493,6 +494,53 @@ body.light-mode .results-table td {
 /* أنماط أداء النماذج */
 .performance-analysis {
   border-left: 4px solid #6f42c1;
+}
+
+/* أنماط إحصائيات التنبؤات */
+.prediction-stats {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 10px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.stat-item {
+  padding: 10px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 5px;
+  text-align: center;
+}
+
+.stat-item span {
+  display: block;
+}
+
+.win-text {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.lose-text {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.last-prediction {
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 5px;
+}
+
+.last-prediction p {
+  margin: 5px 0;
 }
 
 /* أنماط الإشعارات والتأثيرات البصرية */
