@@ -16,7 +16,14 @@ const AppState = {
     cockroach: 0.09
   },
   modelPerformance: { basic: 0, advanced: 0 },
-  lastPredictions: []
+  lastPredictions: [],
+  predictionStats: {
+    wins: 0,
+    losses: 0,
+    winRate: 0,
+    lastPrediction: null,
+    lastActual: null
+  }
 };
 
 // أنماط شائعة في الكازينوهات الحية
@@ -87,6 +94,7 @@ async function initializeApp() {
   loadTheme();
   loadLanguage();
   loadHistory();
+  loadPredictionStats();
   updateCommonPatterns();
   
   if (AppState.history.length > 30) {
@@ -102,9 +110,22 @@ function loadHistory() {
   }
 }
 
+// تحميل إحصائيات التنبؤات من localStorage
+function loadPredictionStats() {
+  const savedStats = localStorage.getItem('predictionStats');
+  if (savedStats) {
+    AppState.predictionStats = JSON.parse(savedStats);
+  }
+}
+
 // حفظ التاريخ إلى localStorage
 function saveHistory() {
   localStorage.setItem('baccaratHistory', JSON.stringify(AppState.history));
+}
+
+// حفظ إحصائيات التنبؤات إلى localStorage
+function savePredictionStats() {
+  localStorage.setItem('predictionStats', JSON.stringify(AppState.predictionStats));
 }
 
 // إنشاء عنصر الإشعارات
@@ -606,6 +627,43 @@ function updateModelPerformance() {
   }
 }
 
+// تحديث إحصائيات التنبؤات
+function updatePredictionStats(actualResult) {
+  if (AppState.lastPredictions.length === 0) return;
+
+  const lastPred = AppState.lastPredictions[AppState.lastPredictions.length - 1];
+  const prediction = lastPred.advanced || lastPred.basic;
+  
+  // تحديد التنبؤ الأقوى (أعلى نسبة)
+  let predictedResult = null;
+  if (prediction.P > prediction.B && prediction.P > prediction.T) {
+    predictedResult = 'P';
+  } else if (prediction.B > prediction.P && prediction.B > prediction.T) {
+    predictedResult = 'B';
+  } else if (prediction.T > prediction.P && prediction.T > prediction.B) {
+    predictedResult = 'T';
+  }
+
+  // إذا كان هناك تنبؤ واضح (أعلى من 40%)
+  if (predictedResult && Math.max(prediction.P, prediction.B, prediction.T) > 40) {
+    AppState.predictionStats.lastPrediction = predictedResult;
+    AppState.predictionStats.lastActual = actualResult;
+    
+    if (predictedResult === actualResult) {
+      AppState.predictionStats.wins++;
+    } else if (actualResult !== 'T') { // لا تحسب الخسارة إذا كانت النتيجة تعادل
+      AppState.predictionStats.losses++;
+    }
+    
+    // حساب معدل الفوز
+    const total = AppState.predictionStats.wins + AppState.predictionStats.losses;
+    AppState.predictionStats.winRate = total > 0 ? 
+      (AppState.predictionStats.wins / total) * 100 : 0;
+  }
+  
+  savePredictionStats();
+}
+
 // تبديل النموذج المتقدم
 function toggleAdvancedModel() {
   AppState.useAdvancedModel = !AppState.useAdvancedModel;
@@ -661,6 +719,62 @@ function updateAdvancedPredictionDisplay() {
     html += '</div>';
   }
   
+  // إضافة إحصائيات التنبؤات
+  html += `
+    <div class="prediction-stats">
+      <p><strong>${AppState.lang === 'ar-MA' ? 'إحصائيات التنبؤات:' : 'Prediction Stats:'}</strong></p>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span>${AppState.lang === 'ar-MA' ? 'الفوز:' : 'Wins:'}</span>
+          <span class="win-text">${AppState.predictionStats.wins}</span>
+        </div>
+        <div class="stat-item">
+          <span>${AppState.lang === 'ar-MA' ? 'الخسارة:' : 'Losses:'}</span>
+          <span class="lose-text">${AppState.predictionStats.losses}</span>
+        </div>
+        <div class="stat-item">
+          <span>${AppState.lang === 'ar-MA' ? 'معدل الفوز:' : 'Win Rate:'}</span>
+          <span>${AppState.predictionStats.winRate.toFixed(1)}%</span>
+        </div>
+      </div>
+  `;
+  
+  if (AppState.predictionStats.lastPrediction) {
+    html += `
+      <div class="last-prediction">
+        <p>${AppState.lang === 'ar-MA' ? 'آخر تنبؤ:' : 'Last prediction:'}</p>
+        <p>
+          ${AppState.lang === 'ar-MA' ? 'تنبأ:' : 'Predicted:'} 
+          <span class="${AppState.predictionStats.lastPrediction === 'P' ? 'player-text' : 
+                       AppState.predictionStats.lastPrediction === 'B' ? 'banker-text' : 'tie-text'}">
+            ${AppState.predictionStats.lastPrediction === 'P' ? 
+              (AppState.lang === 'ar-MA' ? 'لاعب' : 'Player') : 
+              AppState.predictionStats.lastPrediction === 'B' ? 
+              (AppState.lang === 'ar-MA' ? 'مصرفي' : 'Banker') : 
+              (AppState.lang === 'ar-MA' ? 'تعادل' : 'Tie')}
+          </span>
+          | 
+          ${AppState.lang === 'ar-MA' ? 'النتيجة:' : 'Actual:'} 
+          <span class="${AppState.predictionStats.lastActual === 'P' ? 'player-text' : 
+                       AppState.predictionStats.lastActual === 'B' ? 'banker-text' : 'tie-text'}">
+            ${AppState.predictionStats.lastActual === 'P' ? 
+              (AppState.lang === 'ar-MA' ? 'لاعب' : 'Player') : 
+              AppState.predictionStats.lastActual === 'B' ? 
+              (AppState.lang === 'ar-MA' ? 'مصرفي' : 'Banker') : 
+              (AppState.lang === 'ar-MA' ? 'تعادل' : 'Tie')}
+          </span>
+        </p>
+        <p class="${AppState.predictionStats.lastPrediction === AppState.predictionStats.lastActual ? 
+                  'win-text' : 'lose-text'}">
+          ${AppState.predictionStats.lastPrediction === AppState.predictionStats.lastActual ? 
+            (AppState.lang === 'ar-MA' ? '✔ تنبؤ صحيح' : '✔ Correct prediction') : 
+            (AppState.lang === 'ar-MA' ? '✖ تنبؤ خاطئ' : '✖ Wrong prediction')}
+        </p>
+      </div>
+    `;
+  }
+  
+  html += '</div>';
   container.innerHTML = html;
 }
 
@@ -709,6 +823,9 @@ function updateCockroachRoad(history) {
 async function addResult(result) {
   AppState.history.push(result);
   saveHistory();
+  
+  // تحديث إحصائيات التنبؤات
+  updatePredictionStats(result);
   
   // تدريب النماذج عند وجود بيانات كافية
   if (AppState.history.length === 30 || (AppState.history.length % 50 === 0 && !AppState.advancedModel)) {
@@ -1176,6 +1293,13 @@ async function resetData() {
     AppState.markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
     AppState.lastPredictions = [];
     AppState.modelPerformance = { basic: 0, advanced: 0 };
+    AppState.predictionStats = {
+      wins: 0,
+      losses: 0,
+      winRate: 0,
+      lastPrediction: null,
+      lastActual: null
+    };
     
     if (AppState.advancedModel) {
       tf.dispose(AppState.advancedModel);
@@ -1183,6 +1307,7 @@ async function resetData() {
     }
     
     saveHistory();
+    savePredictionStats();
     updateBigRoad();
     document.getElementById('bigEyeRoad').innerHTML = '';
     document.getElementById('smallRoad').innerHTML = '';
