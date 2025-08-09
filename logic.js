@@ -16,12 +16,7 @@ const AppState = {
     cockroach: 0.09
   },
   modelPerformance: { basic: 0, advanced: 0 },
-  lastPredictions: [],
-  recommendationStats: {
-    correct: 0,
-    incorrect: 0,
-    total: 0
-  }
+  lastPredictions: []
 };
 
 // أنماط شائعة في الكازينوهات الحية
@@ -649,29 +644,6 @@ function updateAdvancedPredictionDisplay() {
     html += `<p>${AppState.lang === 'ar-MA' ? 'المتقدم:' : 'Advanced:'} ${AppState.lang === 'ar-MA' ? 'غير متاح' : 'Not available'}</p>`;
   }
   
-  // عرض إحصائيات التوصيات
-  const winRate = AppState.recommendationStats.total > 0 
-    ? (AppState.recommendationStats.correct / AppState.recommendationStats.total * 100).toFixed(1)
-    : 0;
-  
-  html += `
-    <div class="recommendation-stats">
-      <p><strong>${AppState.lang === 'ar-MA' ? 'إحصائيات التوصيات:' : 'Recommendation Stats:'}</strong></p>
-      <div class="stat-item">
-        <span>${AppState.lang === 'ar-MA' ? 'صحيحة:' : 'Correct:'}</span>
-        <span id="correctRecommendations">${AppState.recommendationStats.correct}</span>
-      </div>
-      <div class="stat-item">
-        <span>${AppState.lang === 'ar-MA' ? 'خاطئة:' : 'Incorrect:'}</span>
-        <span id="incorrectRecommendations">${AppState.recommendationStats.incorrect}</span>
-      </div>
-      <div class="stat-item">
-        <span>${AppState.lang === 'ar-MA' ? 'معدل الفوز:' : 'Win Rate:'}</span>
-        <span id="winRate">${winRate}%</span>
-      </div>
-    </div>
-  `;
-  
   // عرض الأنماط المكتشفة
   const patterns = detectAdvancedPatterns(AppState.history);
   if (patterns.length > 0) {
@@ -765,7 +737,6 @@ async function addResult(result) {
       showEffect('win');
       applyButtonEffect(result === 'P' ? 'player' : result === 'B' ? 'banker' : 'tie');
       notificationShown = true;
-      updateRecommendationStats(true);
     } else if (result !== 'T' && lastRecommendation.recommendation !== 'T') {
       const message = AppState.lang === 'ar-MA' 
         ? `خسارة! ${lastRecommendation.message}` 
@@ -774,7 +745,6 @@ async function addResult(result) {
       showEffect('lose');
       applyButtonEffect(result === 'P' ? 'player' : 'banker');
       notificationShown = true;
-      updateRecommendationStats(false);
     }
   }
   
@@ -804,28 +774,6 @@ async function addResult(result) {
   updateLast5Analysis();
   updateAdvancedPredictionDisplay();
   updateDiamondAnalysis();
-}
-
-// تحديث إحصائيات التوصيات
-function updateRecommendationStats(isCorrect) {
-  if (isCorrect) {
-    AppState.recommendationStats.correct++;
-  } else {
-    AppState.recommendationStats.incorrect++;
-  }
-  AppState.recommendationStats.total++;
-  
-  const correctEl = document.getElementById('correctRecommendations');
-  const incorrectEl = document.getElementById('incorrectRecommendations');
-  const rateEl = document.getElementById('winRate');
-  
-  if (correctEl) correctEl.textContent = AppState.recommendationStats.correct;
-  if (incorrectEl) incorrectEl.textContent = AppState.recommendationStats.incorrect;
-  
-  const winRate = AppState.recommendationStats.total > 0 
-    ? (AppState.recommendationStats.correct / AppState.recommendationStats.total * 100).toFixed(1)
-    : 0;
-  if (rateEl) rateEl.textContent = `${winRate}%`;
 }
 
 // تحديث العرض
@@ -1228,7 +1176,6 @@ async function resetData() {
     AppState.markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
     AppState.lastPredictions = [];
     AppState.modelPerformance = { basic: 0, advanced: 0 };
-    AppState.recommendationStats = { correct: 0, incorrect: 0, total: 0 };
     
     if (AppState.advancedModel) {
       tf.dispose(AppState.advancedModel);
@@ -1240,11 +1187,6 @@ async function resetData() {
     document.getElementById('bigEyeRoad').innerHTML = '';
     document.getElementById('smallRoad').innerHTML = '';
     document.getElementById('cockroachRoad').innerHTML = '';
-    
-    // تحديث عرض الإحصائيات
-    document.getElementById('correctRecommendations').textContent = '0';
-    document.getElementById('incorrectRecommendations').textContent = '0';
-    document.getElementById('winRate').textContent = '0%';
     
     if (AppState.statsChart) {
       AppState.statsChart.destroy();

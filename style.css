@@ -707,59 +707,6 @@ body.light-mode .results-table td {
   100% { transform: scale(1); }
 }
 
-/* أنماط إحصائيات التوصيات */
-.recommendation-stats {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 12px;
-    background-color: rgba(0,0,0,0.2);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    border-left: 4px solid #17a2b8;
-}
-
-body.light-mode .recommendation-stats {
-    background-color: rgba(0,0,0,0.05);
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.stat-item {
-    padding: 10px;
-    border-radius: 8px;
-    text-align: center;
-}
-
-.stat-item.correct {
-    background-color: rgba(40, 167, 69, 0.2);
-    border: 1px solid #28a745;
-}
-
-.stat-item.incorrect {
-    background-color: rgba(220, 53, 69, 0.2);
-    border: 1px solid #dc3545;
-}
-
-.stat-item.rate {
-    background-color: rgba(255, 193, 7, 0.2);
-    border: 1px solid #ffc107;
-}
-
-.stat-label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.stat-value {
-    font-size: 1.2em;
-    font-weight: bold;
-}
-
 /* التكيف مع الشاشات الصغيرة */
 @media (max-width: 768px) {
   body {
@@ -791,7 +738,4 @@ body.light-mode .recommendation-stats {
     justify-content: center;
     margin-bottom: 15px;
   }
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-  } 
+}
