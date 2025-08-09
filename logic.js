@@ -16,7 +16,13 @@ const AppState = {
     cockroach: 0.09
   },
   modelPerformance: { basic: 0, advanced: 0 },
-  lastPredictions: []
+  lastPredictions: [],
+  winLossStats: {
+    totalPredictions: 0,
+    correctPredictions: 0,
+    wrongPredictions: 0,
+    winRate: 0
+  }
 };
 
 // أنماط شائعة في الكازينوهات الحية
@@ -92,6 +98,7 @@ async function initializeApp() {
   if (AppState.history.length > 30) {
     await initializeModels();
   }
+  updateUI();
 }
 
 // تحميل التاريخ من localStorage
@@ -99,6 +106,7 @@ function loadHistory() {
   const savedHistory = localStorage.getItem('baccaratHistory');
   if (savedHistory) {
     AppState.history = JSON.parse(savedHistory);
+    updateMarkovModel();
   }
 }
 
@@ -710,6 +718,12 @@ async function addResult(result) {
   AppState.history.push(result);
   saveHistory();
   
+  // تحديث إحصائيات الفوز/الخسارة
+  const lastRecommendation = await generateBetRecommendation();
+  if (lastRecommendation.recommendation !== 'none' && AppState.history.length > 1) {
+    updateWinLossStats(result, lastRecommendation.recommendation);
+  }
+
   // تدريب النماذج عند وجود بيانات كافية
   if (AppState.history.length === 30 || (AppState.history.length % 50 === 0 && !AppState.advancedModel)) {
     await initializeModels();
@@ -725,35 +739,8 @@ async function addResult(result) {
   // تحديث أداء النماذج
   updateModelPerformance();
   
-  const lastRecommendation = await generateBetRecommendation();
-  let notificationShown = false;
-  
-  if (lastRecommendation.recommendation !== 'none' && AppState.history.length > 1) {
-    if (result === lastRecommendation.recommendation) {
-      const message = AppState.lang === 'ar-MA' 
-        ? `فوز! ${lastRecommendation.message}` 
-        : `Win! ${lastRecommendation.message}`;
-      showNotification('win', message);
-      showEffect('win');
-      applyButtonEffect(result === 'P' ? 'player' : result === 'B' ? 'banker' : 'tie');
-      notificationShown = true;
-    } else if (result !== 'T' && lastRecommendation.recommendation !== 'T') {
-      const message = AppState.lang === 'ar-MA' 
-        ? `خسارة! ${lastRecommendation.message}` 
-        : `Lose! ${lastRecommendation.message}`;
-      showNotification('lose', message);
-      showEffect('lose');
-      applyButtonEffect(result === 'P' ? 'player' : 'banker');
-      notificationShown = true;
-    }
-  }
-  
-  if (!notificationShown && result === 'T') {
-    const message = AppState.lang === 'ar-MA' ? 'تعادل!' : 'Tie!';
-    showNotification('tie', message);
-    showEffect('tie');
-    applyButtonEffect('tie');
-  }
+  // إشعارات التأثيرات
+  showResultNotification(result, lastRecommendation);
   
   if (AppState.currentStreak.type === result) {
     AppState.currentStreak.count++;
@@ -774,6 +761,48 @@ async function addResult(result) {
   updateLast5Analysis();
   updateAdvancedPredictionDisplay();
   updateDiamondAnalysis();
+}
+
+// تحديث إحصائيات الفوز/الخسارة
+function updateWinLossStats(actualResult, predictedResult) {
+  AppState.winLossStats.totalPredictions++;
+
+  if (actualResult === predictedResult) {
+    AppState.winLossStats.correctPredictions++;
+  } else if (actualResult !== 'T' && predictedResult !== 'T') {
+    AppState.winLossStats.wrongPredictions++;
+  }
+
+  AppState.winLossStats.winRate = 
+    (AppState.winLossStats.correctPredictions / AppState.winLossStats.totalPredictions) * 100;
+}
+
+// عرض إشعار النتيجة
+function showResultNotification(result, recommendation) {
+  if (recommendation.recommendation !== 'none' && AppState.history.length > 1) {
+    if (result === recommendation.recommendation) {
+      const message = AppState.lang === 'ar-MA' 
+        ? `فوز! ${recommendation.message}` 
+        : `Win! ${recommendation.message}`;
+      showNotification('win', message);
+      showEffect('win');
+      applyButtonEffect(result === 'P' ? 'player' : result === 'B' ? 'banker' : 'tie');
+    } else if (result !== 'T' && recommendation.recommendation !== 'T') {
+      const message = AppState.lang === 'ar-MA' 
+        ? `خسارة! ${recommendation.message}` 
+        : `Lose! ${recommendation.message}`;
+      showNotification('lose', message);
+      showEffect('lose');
+      applyButtonEffect(result === 'P' ? 'player' : 'banker');
+    }
+  }
+  
+  if (result === 'T') {
+    const message = AppState.lang === 'ar-MA' ? 'تعادل!' : 'Tie!';
+    showNotification('tie', message);
+    showEffect('tie');
+    applyButtonEffect('tie');
+  }
 }
 
 // تحديث العرض
@@ -1150,6 +1179,12 @@ function updateUI() {
   document.querySelector('.diamond-pattern h3').textContent = isArabic ? '💎 تحليل نمط الدايموند' : '💎 Diamond Pattern Analysis';
   document.querySelector('.performance-analysis h3').textContent = isArabic ? 'تحليل أداء النماذج' : 'Model Performance Analysis';
   
+  // تحديث إحصائيات الفوز/الخسارة
+  document.getElementById('totalPredictions').textContent = AppState.winLossStats.totalPredictions;
+  document.getElementById('correctPredictions').textContent = AppState.winLossStats.correctPredictions;
+  document.getElementById('wrongPredictions').textContent = AppState.winLossStats.wrongPredictions;
+  document.getElementById('winRate').textContent = AppState.winLossStats.winRate.toFixed(1) + '%';
+  
   if (AppState.history.length > 0) {
     updateDisplay();
     updatePredictions();
@@ -1176,6 +1211,12 @@ async function resetData() {
     AppState.markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
     AppState.lastPredictions = [];
     AppState.modelPerformance = { basic: 0, advanced: 0 };
+    AppState.winLossStats = {
+      totalPredictions: 0,
+      correctPredictions: 0,
+      wrongPredictions: 0,
+      winRate: 0
+    };
     
     if (AppState.advancedModel) {
       tf.dispose(AppState.advancedModel);
