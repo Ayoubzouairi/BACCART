@@ -17,11 +17,10 @@ const AppState = {
   },
   modelPerformance: { basic: 0, advanced: 0 },
   lastPredictions: [],
-  winLossStats: {
-    totalPredictions: 0,
-    correctPredictions: 0,
-    wrongPredictions: 0,
-    winRate: 0
+  recommendationStats: {
+    correct: 0,
+    incorrect: 0,
+    total: 0
   }
 };
 
@@ -98,7 +97,6 @@ async function initializeApp() {
   if (AppState.history.length > 30) {
     await initializeModels();
   }
-  updateUI();
 }
 
 // تحميل التاريخ من localStorage
@@ -106,7 +104,6 @@ function loadHistory() {
   const savedHistory = localStorage.getItem('baccaratHistory');
   if (savedHistory) {
     AppState.history = JSON.parse(savedHistory);
-    updateMarkovModel();
   }
 }
 
@@ -652,6 +649,29 @@ function updateAdvancedPredictionDisplay() {
     html += `<p>${AppState.lang === 'ar-MA' ? 'المتقدم:' : 'Advanced:'} ${AppState.lang === 'ar-MA' ? 'غير متاح' : 'Not available'}</p>`;
   }
   
+  // عرض إحصائيات التوصيات
+  const winRate = AppState.recommendationStats.total > 0 
+    ? (AppState.recommendationStats.correct / AppState.recommendationStats.total * 100).toFixed(1)
+    : 0;
+  
+  html += `
+    <div class="recommendation-stats">
+      <p><strong>${AppState.lang === 'ar-MA' ? 'إحصائيات التوصيات:' : 'Recommendation Stats:'}</strong></p>
+      <div class="stat-item">
+        <span>${AppState.lang === 'ar-MA' ? 'صحيحة:' : 'Correct:'}</span>
+        <span id="correctRecommendations">${AppState.recommendationStats.correct}</span>
+      </div>
+      <div class="stat-item">
+        <span>${AppState.lang === 'ar-MA' ? 'خاطئة:' : 'Incorrect:'}</span>
+        <span id="incorrectRecommendations">${AppState.recommendationStats.incorrect}</span>
+      </div>
+      <div class="stat-item">
+        <span>${AppState.lang === 'ar-MA' ? 'معدل الفوز:' : 'Win Rate:'}</span>
+        <span id="winRate">${winRate}%</span>
+      </div>
+    </div>
+  `;
+  
   // عرض الأنماط المكتشفة
   const patterns = detectAdvancedPatterns(AppState.history);
   if (patterns.length > 0) {
@@ -718,12 +738,6 @@ async function addResult(result) {
   AppState.history.push(result);
   saveHistory();
   
-  // تحديث إحصائيات الفوز/الخسارة
-  const lastRecommendation = await generateBetRecommendation();
-  if (lastRecommendation.recommendation !== 'none' && AppState.history.length > 1) {
-    updateWinLossStats(result, lastRecommendation.recommendation);
-  }
-
   // تدريب النماذج عند وجود بيانات كافية
   if (AppState.history.length === 30 || (AppState.history.length % 50 === 0 && !AppState.advancedModel)) {
     await initializeModels();
@@ -739,8 +753,37 @@ async function addResult(result) {
   // تحديث أداء النماذج
   updateModelPerformance();
   
-  // إشعارات التأثيرات
-  showResultNotification(result, lastRecommendation);
+  const lastRecommendation = await generateBetRecommendation();
+  let notificationShown = false;
+  
+  if (lastRecommendation.recommendation !== 'none' && AppState.history.length > 1) {
+    if (result === lastRecommendation.recommendation) {
+      const message = AppState.lang === 'ar-MA' 
+        ? `فوز! ${lastRecommendation.message}` 
+        : `Win! ${lastRecommendation.message}`;
+      showNotification('win', message);
+      showEffect('win');
+      applyButtonEffect(result === 'P' ? 'player' : result === 'B' ? 'banker' : 'tie');
+      notificationShown = true;
+      updateRecommendationStats(true);
+    } else if (result !== 'T' && lastRecommendation.recommendation !== 'T') {
+      const message = AppState.lang === 'ar-MA' 
+        ? `خسارة! ${lastRecommendation.message}` 
+        : `Lose! ${lastRecommendation.message}`;
+      showNotification('lose', message);
+      showEffect('lose');
+      applyButtonEffect(result === 'P' ? 'player' : 'banker');
+      notificationShown = true;
+      updateRecommendationStats(false);
+    }
+  }
+  
+  if (!notificationShown && result === 'T') {
+    const message = AppState.lang === 'ar-MA' ? 'تعادل!' : 'Tie!';
+    showNotification('tie', message);
+    showEffect('tie');
+    applyButtonEffect('tie');
+  }
   
   if (AppState.currentStreak.type === result) {
     AppState.currentStreak.count++;
@@ -763,46 +806,26 @@ async function addResult(result) {
   updateDiamondAnalysis();
 }
 
-// تحديث إحصائيات الفوز/الخسارة
-function updateWinLossStats(actualResult, predictedResult) {
-  AppState.winLossStats.totalPredictions++;
-
-  if (actualResult === predictedResult) {
-    AppState.winLossStats.correctPredictions++;
-  } else if (actualResult !== 'T' && predictedResult !== 'T') {
-    AppState.winLossStats.wrongPredictions++;
+// تحديث إحصائيات التوصيات
+function updateRecommendationStats(isCorrect) {
+  if (isCorrect) {
+    AppState.recommendationStats.correct++;
+  } else {
+    AppState.recommendationStats.incorrect++;
   }
-
-  AppState.winLossStats.winRate = 
-    (AppState.winLossStats.correctPredictions / AppState.winLossStats.totalPredictions) * 100;
-}
-
-// عرض إشعار النتيجة
-function showResultNotification(result, recommendation) {
-  if (recommendation.recommendation !== 'none' && AppState.history.length > 1) {
-    if (result === recommendation.recommendation) {
-      const message = AppState.lang === 'ar-MA' 
-        ? `فوز! ${recommendation.message}` 
-        : `Win! ${recommendation.message}`;
-      showNotification('win', message);
-      showEffect('win');
-      applyButtonEffect(result === 'P' ? 'player' : result === 'B' ? 'banker' : 'tie');
-    } else if (result !== 'T' && recommendation.recommendation !== 'T') {
-      const message = AppState.lang === 'ar-MA' 
-        ? `خسارة! ${recommendation.message}` 
-        : `Lose! ${recommendation.message}`;
-      showNotification('lose', message);
-      showEffect('lose');
-      applyButtonEffect(result === 'P' ? 'player' : 'banker');
-    }
-  }
+  AppState.recommendationStats.total++;
   
-  if (result === 'T') {
-    const message = AppState.lang === 'ar-MA' ? 'تعادل!' : 'Tie!';
-    showNotification('tie', message);
-    showEffect('tie');
-    applyButtonEffect('tie');
-  }
+  const correctEl = document.getElementById('correctRecommendations');
+  const incorrectEl = document.getElementById('incorrectRecommendations');
+  const rateEl = document.getElementById('winRate');
+  
+  if (correctEl) correctEl.textContent = AppState.recommendationStats.correct;
+  if (incorrectEl) incorrectEl.textContent = AppState.recommendationStats.incorrect;
+  
+  const winRate = AppState.recommendationStats.total > 0 
+    ? (AppState.recommendationStats.correct / AppState.recommendationStats.total * 100).toFixed(1)
+    : 0;
+  if (rateEl) rateEl.textContent = `${winRate}%`;
 }
 
 // تحديث العرض
@@ -1179,12 +1202,6 @@ function updateUI() {
   document.querySelector('.diamond-pattern h3').textContent = isArabic ? '💎 تحليل نمط الدايموند' : '💎 Diamond Pattern Analysis';
   document.querySelector('.performance-analysis h3').textContent = isArabic ? 'تحليل أداء النماذج' : 'Model Performance Analysis';
   
-  // تحديث إحصائيات الفوز/الخسارة
-  document.getElementById('totalPredictions').textContent = AppState.winLossStats.totalPredictions;
-  document.getElementById('correctPredictions').textContent = AppState.winLossStats.correctPredictions;
-  document.getElementById('wrongPredictions').textContent = AppState.winLossStats.wrongPredictions;
-  document.getElementById('winRate').textContent = AppState.winLossStats.winRate.toFixed(1) + '%';
-  
   if (AppState.history.length > 0) {
     updateDisplay();
     updatePredictions();
@@ -1211,12 +1228,7 @@ async function resetData() {
     AppState.markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
     AppState.lastPredictions = [];
     AppState.modelPerformance = { basic: 0, advanced: 0 };
-    AppState.winLossStats = {
-      totalPredictions: 0,
-      correctPredictions: 0,
-      wrongPredictions: 0,
-      winRate: 0
-    };
+    AppState.recommendationStats = { correct: 0, incorrect: 0, total: 0 };
     
     if (AppState.advancedModel) {
       tf.dispose(AppState.advancedModel);
@@ -1228,6 +1240,11 @@ async function resetData() {
     document.getElementById('bigEyeRoad').innerHTML = '';
     document.getElementById('smallRoad').innerHTML = '';
     document.getElementById('cockroachRoad').innerHTML = '';
+    
+    // تحديث عرض الإحصائيات
+    document.getElementById('correctRecommendations').textContent = '0';
+    document.getElementById('incorrectRecommendations').textContent = '0';
+    document.getElementById('winRate').textContent = '0%';
     
     if (AppState.statsChart) {
       AppState.statsChart.destroy();
