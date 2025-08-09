@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BACCARAT PRO ANALYZER</title>
+    <title>BACCARAT PRO</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
@@ -19,7 +19,7 @@
     </div>
 
     <div class="container">
-        <h1><span class="logo-b">BACCARAT</span> <span class="logo-s">PRO</span> <span class="logo-rest">ANALYZER</span></h1>
+        <h1><span class="logo-b">BACCARAT</span> <span class="logo-s">PRO</span> </h1>
         <p>📲 اختر نتيجة الجولة:</p>
         
         <div class="buttons">
@@ -27,6 +27,24 @@
             <button class="banker" onclick="addResult('B')">🔴 المصرفي</button>
             <button class="tie" onclick="addResult('T')">🟢 تعادل</button>
             <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
+        </div>
+
+        <div class="recommendation-stats">
+            <h3>📈 إحصائيات التوصيات</h3>
+            <div class="stats-grid">
+                <div class="stat-item correct">
+                    <span class="stat-label">صحيح</span>
+                    <span id="correctRecommendations" class="stat-value">0</span>
+                </div>
+                <div class="stat-item incorrect">
+                    <span class="stat-label">خاطئ</span>
+                    <span id="incorrectRecommendations" class="stat-value">0</span>
+                </div>
+                <div class="stat-item rate">
+                    <span class="stat-label">نسبة الربح</span>
+                    <span id="winRate" class="stat-value">0%</span>
+                </div>
+            </div>
         </div>
 
         <div class="prediction-section">
@@ -66,16 +84,6 @@
         <div class="diamond-pattern">
             <h3>💎 تحليل نمط الدايموند</h3>
             <div id="diamondAnalysis"></div>
-        </div>
-
-        <div class="performance-analysis">
-            <h3>📈 إحصائيات التوصيات</h3>
-            <div id="winLossStats">
-                <p>إجمالي التوصيات: <span id="totalPredictions">0</span></p>
-                <p>توصيات صحيحة: <span id="correctPredictions">0</span></p>
-                <p>توصيات خاطئة: <span id="wrongPredictions">0</span></p>
-                <p>نسبة الربح: <span id="winRate">0%</span></p>
-            </div>
         </div>
 
         <div class="result">
@@ -135,8 +143,13 @@
             <h3>الأنماط الشائعة في الكازينو</h3>
             <div id="casinoPatterns"></div>
         </div>
+
+        <div class="performance-analysis">
+            <h3>تحليل أداء النماذج</h3>
+            <div id="modelPerformance"></div>
+        </div>
     </div>
 
     <div id="effects-container"></div>
 </body>
-                                   </html>
+</html>
