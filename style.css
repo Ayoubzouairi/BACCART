@@ -129,8 +129,8 @@ body.light-mode .theme-toggle {
 
 /* أنماط الصناديق */
 .result, .stats, .history, .ai-stats, .ai-advice, .trends-container,
-.last5-analysis, .common-patterns, .advanced-prediction, .diamond-pattern,
-.performance-analysis {
+.last5-analysis, .common-patterns, .advanced-prediction, .volatility-warning,
+.heatmap-container, .performance-analysis {
   margin-top: 1.5em;
   font-size: 1.2em;
   padding: 15px;
@@ -148,7 +148,8 @@ body.light-mode .trends-container,
 body.light-mode .last5-analysis,
 body.light-mode .common-patterns,
 body.light-mode .advanced-prediction,
-body.light-mode .diamond-pattern,
+body.light-mode .volatility-warning,
+body.light-mode .heatmap-container,
 body.light-mode .performance-analysis {
   background-color: rgba(0,0,0,0.05);
 }
@@ -477,91 +478,61 @@ body.light-mode .results-table td {
   margin-top: 15px;
 }
 
-/* أنماط تحليل الدايموند */
-.diamond-pattern {
-  border-left: 4px solid #ffc107;
+/* أنماط Heatmap */
+.heatmap-container {
+  margin-top: 20px;
 }
 
-.diamond-result {
-  text-align: center;
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 5px;
+  margin: 15px 0;
 }
 
-.diamond-result p {
-  margin: 8px 0;
-}
-
-/* أنماط أداء النماذج */
-.performance-analysis {
-  border-left: 4px solid #6f42c1;
-}
-
-/* أنماط الإشعارات والتأثيرات البصرية */
-.notification-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-  max-width: 300px;
-}
-
-.notification {
-  padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  color: white;
-  font-weight: bold;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  opacity: 0;
-  transform: translateX(100%);
-  transition: all 0.5s ease;
+.heatmap-cell {
+  height: 30px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  font-weight: bold;
+  border-radius: 4px;
 }
 
-.notification.show {
-  opacity: 1;
-  transform: translateX(0);
+.heatmap-P { background-color: rgba(0, 123, 255, 0.3); }
+.heatmap-B { background-color: rgba(220, 53, 69, 0.3); }
+.heatmap-T { background-color: rgba(40, 167, 69, 0.3); }
+
+/* أنماط تحذيرات التقلب */
+.volatility-warning {
+  margin-top: 15px;
 }
 
-.notification.win {
-  background: linear-gradient(135deg, #28a745, #218838);
-  border-left: 5px solid #1e7e34;
+.risk-warning {
+  padding: 10px;
+  border-radius: 8px;
+  background-color: rgba(220, 53, 69, 0.2);
+  border-left: 4px solid #dc3545;
+  margin: 10px 0;
+  animation: pulseWarning 1.5s infinite;
 }
 
-.notification.lose {
-  background: linear-gradient(135deg, #dc3545, #c82333);
-  border-left: 5px solid #a71d2a;
+@keyframes pulseWarning {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
 }
 
-.notification.tie {
-  background: linear-gradient(135deg, #17a2b8, #138496);
-  border-left: 5px solid #117a8b;
+.confidence-indicator {
+  height: 10px;
+  border-radius: 5px;
+  margin-top: 5px;
+  transition: all 0.3s;
 }
 
-.notification.info {
-  background: linear-gradient(135deg, #6c757d, #5a6268);
-  border-left: 5px solid #4e555b;
-}
-
-.notification.error {
-  background: linear-gradient(135deg, #dc3545, #c82333);
-  border-left: 5px solid #a71d2a;
-}
-
-.notification-icon {
-  font-size: 1.5em;
-  margin-right: 10px;
-}
-
-.close-notification {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.2em;
-  cursor: pointer;
-  margin-left: 10px;
-}
+.high-confidence { background: linear-gradient(90deg, #28a745, #5cb85c); }
+.medium-confidence { background: linear-gradient(90deg, #ffc107, #f0ad4e); }
+.low-confidence { background: linear-gradient(90deg, #dc3545, #d9534f); }
 
 /* تأثيرات الفوز */
 .win-effect {
@@ -737,5 +708,8 @@ body.light-mode .results-table td {
     position: static;
     justify-content: center;
     margin-bottom: 15px;
+  }
+  .heatmap-grid {
+    grid-template-columns: repeat(5, 1fr);
   }
 }
