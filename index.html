@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BACCARAT PRO</title>
+    <title>BACCARAT PRO ANALYZER</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
@@ -19,7 +19,7 @@
     </div>
 
     <div class="container">
-        <h1><span class="logo-b">BACCARAT</span> <span class="logo-s">PRO</span> </h1>
+        <h1><span class="logo-b">BACCARAT</span> <span class="logo-s">PRO</span> <span class="logo-rest">ANALYZER</span></h1>
         <p>📲 اختر نتيجة الجولة:</p>
         
         <div class="buttons">
@@ -63,9 +63,15 @@
             </div>
         </div>
 
-        <div class="diamond-pattern">
-            <h3>💎 تحليل نمط الدايموند</h3>
-            <div id="diamondAnalysis"></div>
+        <div class="volatility-warning" id="volatilityWarning" style="display:none;">
+            <div class="risk-warning">
+                ⚠️ تحذير: تقلبات عالية في النتائج الأخيرة - تنبؤات غير مستقرة
+            </div>
+        </div>
+
+        <div class="heatmap-container" id="heatmapContainer">
+            <h3>خريطة التوزيع</h3>
+            <div id="heatmapDisplay"></div>
         </div>
 
         <div class="result">
@@ -125,24 +131,8 @@
             <h3>الأنماط الشائعة في الكازينو</h3>
             <div id="casinoPatterns"></div>
         </div>
-
-        <div class="performance-analysis">
-            <h3>تحليل أداء النماذج</h3>
-            <div id="modelPerformance"></div>
-        </div>
     </div>
 
     <div id="effects-container"></div>
 </body>
-                        </html>            <div id="last5Results"></div>
-        </div>
-
-        <div class="common-patterns">
-            <h3>الأنماط الشائعة في الكازينو</h3>
-            <div id="casinoPatterns"></div>
-        </div>
-    </div>
-
-    <div id="effects-container"></div>
-</body>
-    </html>
+</html>
