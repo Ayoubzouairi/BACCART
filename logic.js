@@ -16,8 +16,7 @@ const AppState = {
     cockroach: 0.09
   },
   modelPerformance: { basic: 0, advanced: 0 },
-  lastPredictions: [],
-  volatilityHistory: []
+  lastPredictions: []
 };
 
 // أنماط شائعة في الكازينوهات الحية
@@ -164,8 +163,8 @@ function loadLanguage() {
 async function initializeModels() {
   try {
     if (AppState.history.length > 30) {
-      AppState.advancedModel = await trainAdvancedModel(AppState.history);
-      console.log("Advanced Model trained successfully");
+      AppState.advancedModel = await trainLSTMModel(AppState.history);
+      console.log("LSTM Model trained successfully");
       showNotification('info', AppState.lang === 'ar-MA' ? 
         'تم تدريب النموذج المتقدم بنجاح' : 'Advanced model trained successfully');
     }
@@ -176,21 +175,22 @@ async function initializeModels() {
   }
 }
 
-// تدريب النموذج المتقدم
-async function trainAdvancedModel(history) {
+// تدريب نموذج LSTM
+async function trainLSTMModel(history) {
   if (history.length < 50) {
-    console.log("Not enough data for advanced training");
+    console.log("Not enough data for LSTM training");
     return null;
   }
   
   const model = tf.sequential();
   model.add(tf.layers.lstm({
-    units: 64,
+    units: 32,
     inputShape: [10, 1],
-    returnSequences: true
+    returnSequences: false,
+    kernelRegularizer: tf.regularizers.l2({ l2: 0.01 })
   }));
-  model.add(tf.layers.dropout({ rate: 0.3 }));
-  model.add(tf.layers.lstm({ units: 32 }));
+  
+  model.add(tf.layers.dropout({ rate: 0.2 }));
   model.add(tf.layers.dense({ units: 3, activation: 'softmax' }));
   
   model.compile({
@@ -201,6 +201,7 @@ async function trainAdvancedModel(history) {
   
   const { xs, ys } = prepareData(history);
   
+  // تقسيم البيانات إلى تدريب واختبار
   const splitIdx = Math.floor(xs.shape[0] * 0.8);
   const xTrain = xs.slice(0, splitIdx);
   const xTest = xs.slice(splitIdx);
@@ -218,10 +219,12 @@ async function trainAdvancedModel(history) {
     }
   });
   
+  // تقييم النموذج
   const evalResult = model.evaluate(xTest, yTest);
   const testAccuracy = evalResult[1].dataSync()[0];
   console.log(`Test accuracy: ${(testAccuracy * 100).toFixed(1)}%`);
   
+  // تحرير الذاكرة
   tf.dispose([xs, ys, xTrain, xTest, yTrain, yTest]);
   
   return model;
@@ -233,6 +236,7 @@ function prepareData(history) {
   const xs = [];
   const ys = [];
   
+  // تحويل التاريخ إلى متتابعات
   for (let i = sequenceLength; i < history.length; i++) {
     const sequence = history.slice(i - sequenceLength, i);
     const next = history[i];
@@ -249,62 +253,11 @@ function prepareData(history) {
     ys.push(y);
   }
   
+  // تحويل إلى tensors
   const xsTensor = tf.tensor3d(xs, [xs.length, sequenceLength, 1]);
   const ysTensor = tf.oneHot(tf.tensor1d(ys, 'int32'), 3);
   
   return { xs: xsTensor, ys: ysTensor };
-}
-
-// حساب التقلبات
-function calculateVolatility(history) {
-  if (history.length < 5) return 0;
-  
-  const values = history.slice(-20).map(r => {
-    if (r === 'P') return 1;
-    if (r === 'B') return -1;
-    return 0;
-  });
-  
-  const mean = values.reduce((a,b) => a + b, 0) / values.length;
-  const squareDiffs = values.map(v => Math.pow(v - mean, 2));
-  return Math.sqrt(squareDiffs.reduce((a,b) => a + b, 0) / values.length);
-}
-
-// كشف نقاط التحول
-function detectChangePoints(history) {
-  const changePoints = [];
-  const windowSize = 5;
-  
-  for (let i = windowSize; i < history.length - windowSize; i++) {
-    const prevWindow = history.slice(i - windowSize, i);
-    const currentWindow = history.slice(i, i + windowSize);
-    
-    const prevP = prevWindow.filter(r => r === 'P').length;
-    const currentP = currentWindow.filter(r => r === 'P').length;
-    
-    if (Math.abs(prevP - currentP) >= windowSize * 0.6) {
-      changePoints.push(i);
-    }
-  }
-  
-  return changePoints;
-}
-
-// إنشاء Heatmap
-function generateHeatmap(history) {
-  const heatmap = document.createElement('div');
-  heatmap.className = 'heatmap-grid';
-  
-  const recentHistory = history.length > 30 ? history.slice(-30) : history;
-  
-  recentHistory.forEach(result => {
-    const cell = document.createElement('div');
-    cell.className = `heatmap-cell heatmap-${result}`;
-    cell.textContent = result;
-    heatmap.appendChild(cell);
-  });
-  
-  return heatmap;
 }
 
 // التنبؤ باستخدام النموذج المتقدم
@@ -362,6 +315,171 @@ function analyzeDiamondPattern(history) {
   } : null;
 }
 
+// تحليل نمط 8-8
+function analyze8Pattern(history) {
+  if (history.length < 16) return null;
+  
+  const last16 = history.slice(-16);
+  const pCount = last16.filter(r => r === 'P').length;
+  const bCount = last16.filter(r => r === 'B').length;
+  
+  if (Math.abs(pCount - bCount) <= 2) {
+    return {
+      pattern: '8-8',
+      pCount,
+      bCount,
+      confidence: Math.min(0.85, 0.6 + (Math.min(pCount, bCount) * 0.03))
+    };
+  }
+  return null;
+}
+
+// تحليل نمط Cockroach
+function analyzeCockroachPattern(history) {
+  if (history.length < 20) return null;
+  
+  const filtered = history.filter(r => r !== 'T');
+  let cockroachCount = 0;
+  
+  for (let i = 3; i < filtered.length; i++) {
+    if (filtered[i] === filtered[i-3]) {
+      cockroachCount++;
+    }
+  }
+  
+  const confidence = Math.min(0.8, 0.3 + (cockroachCount / filtered.length) * 2);
+  return cockroachCount > 3 ? {
+    pattern: 'cockroach',
+    count: cockroachCount,
+    confidence: confidence
+  } : null;
+}
+
+// اكتشاف الأنماط المتقدمة
+function detectAdvancedPatterns(history) {
+  if (history.length < 5) return [];
+  
+  const patterns = [];
+  const recentHistory = history.slice(-15).join('');
+  const fullHistoryStr = history.join('');
+
+  const patternDefinitions = [
+    {
+      name: 'Dragon',
+      regex: /(P{6,}|B{6,})$/,
+      description: {
+        ar: 'سلسلة طويلة من نفس النتيجة',
+        en: 'Long streak of same result'
+      },
+      baseConfidence: 0.9
+    },
+    {
+      name: 'ZigZag',
+      regex: /(PB){3,}$|(BP){3,}$/,
+      description: {
+        ar: 'نمط متعرج متكرر',
+        en: 'Repeated zigzag pattern'
+      },
+      baseConfidence: 0.8
+    },
+    {
+      name: '5P/5B',
+      regex: /PPPPP$|BBBBB$/,
+      description: {
+        ar: '5 نتائج متتالية متشابهة',
+        en: '5 consecutive same results'
+      },
+      baseConfidence: 0.85
+    },
+    {
+      name: '3T+',
+      regex: /TTT$/,
+      description: {
+        ar: '3 تعادلات متتالية',
+        en: '3 consecutive ties'
+      },
+      baseConfidence: 0.75
+    }
+  ];
+
+  patternDefinitions.forEach(p => {
+    const matches = recentHistory.match(p.regex);
+    if (matches) {
+      const lengthFactor = matches[0].length / 5;
+      const confidence = Math.min(0.99, p.baseConfidence * lengthFactor);
+      
+      patterns.push({
+        pattern: p.name,
+        description: p.description,
+        confidence: confidence,
+        length: matches[0].length
+      });
+    }
+  });
+
+  // إضافة الأنماط الجديدة
+  const diamond = analyzeDiamondPattern(history);
+  if (diamond) {
+    patterns.push({
+      pattern: 'Diamond',
+      description: {
+        ar: 'نمط دايموند متكرر (PBPBP أو BPBPB)',
+        en: 'Repeated diamond pattern (PBPBP or BPBPB)'
+      },
+      confidence: diamond.confidence,
+      length: 5
+    });
+  }
+  
+  const eightPattern = analyze8Pattern(history);
+  if (eightPattern) {
+    patterns.push({
+      pattern: '8-8',
+      description: {
+        ar: `توازن بين اللاعب والمصرفي (${eightPattern.pCount}P vs ${eightPattern.bCount}B)`,
+        en: `Balance between Player and Banker (${eightPattern.pCount}P vs ${eightPattern.bCount}B)`
+      },
+      confidence: eightPattern.confidence,
+      length: 16
+    });
+  }
+  
+  const cockroach = analyzeCockroachPattern(history);
+  if (cockroach) {
+    patterns.push({
+      pattern: 'Cockroach',
+      description: {
+        ar: 'تكرار كل 3 جولات (نمط الصرصور)',
+        en: 'Every 3rd round repetition (Cockroach pattern)'
+      },
+      confidence: cockroach.confidence,
+      length: cockroach.count
+    });
+  }
+
+  const last5 = history.slice(-5).join('');
+  let historicalMatches = 0;
+  for (let i = 0; i < fullHistoryStr.length - 5; i++) {
+    if (fullHistoryStr.substr(i, 5) === last5) {
+      historicalMatches++;
+    }
+  }
+
+  if (historicalMatches > 1) {
+    patterns.push({
+      pattern: 'Historic',
+      description: {
+        ar: `تكرر النمط ${historicalMatches} مرات سابقاً`,
+        en: `Pattern occurred ${historicalMatches} times before`
+      },
+      confidence: Math.min(0.9, 0.6 + (historicalMatches * 0.1)),
+      frequency: historicalMatches
+    });
+  }
+
+  return patterns.sort((a, b) => b.confidence - a.confidence);
+}
+
 // التنبؤ باستخدام نموذج ماركوف الأساسي
 function basicMarkovPredict(history) {
   if (history.length < 3) {
@@ -394,6 +512,7 @@ async function advancedPredict(history) {
   // دمج النتائج
   let finalPrediction;
   if (advancedPrediction) {
+    // متوسط مرجح بين النموذجين مع تعديل الأداء
     const basicWeight = 0.6 * AppState.modelPerformance.basic;
     const advancedWeight = 0.6 * AppState.modelPerformance.advanced;
     const totalWeight = basicWeight + advancedWeight;
@@ -405,19 +524,6 @@ async function advancedPredict(history) {
     };
   } else {
     finalPrediction = basicPrediction;
-  }
-  
-  // تحليل التقلبات
-  const volatility = calculateVolatility(history);
-  AppState.volatilityHistory.push(volatility);
-  
-  if (volatility > 0.8) {
-    finalPrediction.P *= 0.9;
-    finalPrediction.B *= 0.9;
-    finalPrediction.T *= 1.2;
-    document.getElementById('volatilityWarning').style.display = 'block';
-  } else {
-    document.getElementById('volatilityWarning').style.display = 'none';
   }
   
   // تطبيق تصحيح للأنماط
@@ -450,21 +556,173 @@ async function advancedPredict(history) {
   return finalPrediction;
 }
 
+// تحديث أداء النماذج
+function updateModelPerformance() {
+  if (AppState.history.length < 2) return;
+  
+  const lastResult = AppState.history[AppState.history.length - 1];
+  const prevPrediction = AppState.lastPredictions[AppState.lastPredictions.length - 1];
+  
+  if (!prevPrediction) return;
+  
+  // حساب دقة النموذج الأساسي
+  const basicCorrect = (prevPrediction.basic.P > prevPrediction.basic.B && 
+                       prevPrediction.basic.P > prevPrediction.basic.T && 
+                       lastResult === 'P') ||
+                      (prevPrediction.basic.B > prevPrediction.basic.P && 
+                       prevPrediction.basic.B > prevPrediction.basic.T && 
+                       lastResult === 'B') ||
+                      (prevPrediction.basic.T > prevPrediction.basic.P && 
+                       prevPrediction.basic.T > prevPrediction.basic.B && 
+                       lastResult === 'T');
+  
+  // حساب دقة النموذج المتقدم
+  let advancedCorrect = false;
+  if (prevPrediction.advanced) {
+    advancedCorrect = (prevPrediction.advanced.P > prevPrediction.advanced.B && 
+                      prevPrediction.advanced.P > prevPrediction.advanced.T && 
+                      lastResult === 'P') ||
+                     (prevPrediction.advanced.B > prevPrediction.advanced.P && 
+                      prevPrediction.advanced.B > prevPrediction.advanced.T && 
+                      lastResult === 'B') ||
+                     (prevPrediction.advanced.T > prevPrediction.advanced.P && 
+                      prevPrediction.advanced.T > prevPrediction.advanced.B && 
+                      lastResult === 'T');
+  }
+  
+  // تحديث معدلات الأداء
+  AppState.modelPerformance.basic = (AppState.modelPerformance.basic * 0.9) + (basicCorrect ? 0.1 : 0);
+  
+  if (prevPrediction.advanced) {
+    AppState.modelPerformance.advanced = (AppState.modelPerformance.advanced * 0.9) + (advancedCorrect ? 0.1 : 0);
+  }
+  
+  // تبديل النموذج تلقائياً إذا كان الأداء ضعيفاً
+  if (AppState.modelPerformance.advanced < 0.6 && AppState.modelPerformance.basic > 0.65) {
+    AppState.useAdvancedModel = false;
+    showNotification('info', AppState.lang === 'ar-MA' ? 
+      'تم التبديل للنموذج الأساسي بسبب دقة أفضل' : 
+      'Switched to basic model for better accuracy');
+  }
+}
+
+// تبديل النموذج المتقدم
+function toggleAdvancedModel() {
+  AppState.useAdvancedModel = !AppState.useAdvancedModel;
+  document.getElementById('modelStatus').textContent = 
+    AppState.lang === 'ar-MA' ? 
+    `النموذج الحالي: ${AppState.useAdvancedModel ? 'المتقدم' : 'الأساسي'}` :
+    `Current model: ${AppState.useAdvancedModel ? 'Advanced' : 'Basic'}`;
+  
+  showNotification('info', AppState.lang === 'ar-MA' ?
+    `تم التبديل إلى النموذج ${AppState.useAdvancedModel ? 'المتقدم' : 'الأساسي'}` :
+    `Switched to ${AppState.useAdvancedModel ? 'advanced' : 'basic'} model`);
+  
+  updatePredictions();
+}
+
+// تحديث واجهة التنبؤات المتقدمة
+function updateAdvancedPredictionDisplay() {
+  const container = document.getElementById('advancedPredictionResults');
+  
+  if (AppState.history.length < 5) {
+    container.innerHTML = AppState.lang === 'ar-MA' ?
+      '<p>⏳ يحتاج إلى المزيد من البيانات للتنبؤ المتقدم</p>' :
+      '<p>⏳ Need more data for advanced prediction</p>';
+    return;
+  }
+  
+  let html = '<div class="model-performance">';
+  
+  // عرض أداء النماذج
+  html += `<p><strong>${AppState.lang === 'ar-MA' ? 'أداء النماذج:' : 'Model performance:'}</strong></p>`;
+  html += `<p>${AppState.lang === 'ar-MA' ? 'الأساسي:' : 'Basic:'} ${(AppState.modelPerformance.basic * 100).toFixed(1)}%</p>`;
+  
+  if (AppState.advancedModel) {
+    html += `<p>${AppState.lang === 'ar-MA' ? 'المتقدم:' : 'Advanced:'} ${(AppState.modelPerformance.advanced * 100).toFixed(1)}%</p>`;
+  } else {
+    html += `<p>${AppState.lang === 'ar-MA' ? 'المتقدم:' : 'Advanced:'} ${AppState.lang === 'ar-MA' ? 'غير متاح' : 'Not available'}</p>`;
+  }
+  
+  // عرض الأنماط المكتشفة
+  const patterns = detectAdvancedPatterns(AppState.history);
+  if (patterns.length > 0) {
+    html += '<div class="detected-patterns">';
+    html += `<p><strong>${AppState.lang === 'ar-MA' ? 'الأنماط المكتشفة:' : 'Detected patterns:'}</strong></p>`;
+    
+    patterns.slice(0, 3).forEach(pattern => {
+      html += `<div class="pattern-item">
+        <span class="pattern-name">${pattern.pattern}</span>
+        <span class="pattern-confidence">${(pattern.confidence * 100).toFixed(1)}%</span>
+        <p class="pattern-desc">${pattern.description[AppState.lang] || pattern.description.en}</p>
+      </div>`;
+    });
+    
+    html += '</div>';
+  }
+  
+  container.innerHTML = html;
+}
+
+// تحديث تحليل الدايموند
+function updateDiamondAnalysis() {
+  const container = document.getElementById('diamondAnalysis');
+  const analysis = analyzeDiamondPattern(AppState.history);
+  
+  if (!analysis) {
+    container.innerHTML = AppState.lang === 'ar-MA' ?
+      '<p>لم يتم اكتشاف نمط دايموند في آخر 15 جولة</p>' :
+      '<p>No diamond pattern detected in last 15 rounds</p>';
+    return;
+  }
+  
+  container.innerHTML = `
+    <div class="diamond-result">
+      <p>${AppState.lang === 'ar-MA' ? 'تم اكتشاف نمط دايموند' : 'Diamond pattern detected'}:</p>
+      <p><strong>${analysis.lastPattern.sequence}</strong></p>
+      <p>${AppState.lang === 'ar-MA' ? 'عدد التكرارات:' : 'Occurrences:'} ${analysis.count}</p>
+      <p>${AppState.lang === 'ar-MA' ? 'مستوى الثقة:' : 'Confidence:'} ${(analysis.confidence * 100).toFixed(1)}%</p>
+    </div>
+  `;
+}
+
+// تحديث Cockroach Road
+function updateCockroachRoad(history) {
+  const cockroachRoad = document.getElementById('cockroachRoad');
+  cockroachRoad.innerHTML = '';
+  let matrix = [[]];
+  let row = 0;
+
+  for (let i = 3; i < history.length; i++) {
+    if (history[i] === history[i - 3]) {
+      matrix[row].push(history[i]);
+    } else {
+      row++;
+      matrix[row] = [history[i]];
+    }
+  }
+
+  renderRoad(matrix, cockroachRoad);
+}
+
 // إضافة نتيجة جديدة
 async function addResult(result) {
   AppState.history.push(result);
   saveHistory();
   
+  // تدريب النماذج عند وجود بيانات كافية
   if (AppState.history.length === 30 || (AppState.history.length % 50 === 0 && !AppState.advancedModel)) {
     await initializeModels();
   }
   
+  // حفظ التنبؤات السابقة لتقييم الأداء
   const lastPrediction = {
     basic: basicMarkovPredict(AppState.history.slice(0, -1)),
     advanced: AppState.advancedModel ? await predictWithAdvancedModel(AppState.history.slice(0, -1)) : null
   };
   AppState.lastPredictions.push(lastPrediction);
   
+  // تحديث أداء النماذج
   updateModelPerformance();
   
   const lastRecommendation = await generateBetRecommendation();
@@ -516,16 +774,6 @@ async function addResult(result) {
   updateLast5Analysis();
   updateAdvancedPredictionDisplay();
   updateDiamondAnalysis();
-  updateHeatmap();
-}
-
-// تحديث Heatmap
-function updateHeatmap() {
-  const heatmapContainer = document.getElementById('heatmapDisplay');
-  heatmapContainer.innerHTML = '';
-  if (AppState.history.length > 0) {
-    heatmapContainer.appendChild(generateHeatmap(AppState.history));
-  }
 }
 
 // تحديث العرض
@@ -651,55 +899,152 @@ async function showRecommendation() {
   `;
 }
 
-// تحديث التنبؤات
-async function updatePredictions() {
-  const prediction = await advancedPredict(AppState.history);
-  displayPrediction(prediction);
+// 1. دالة كشف التعارض مع ألوان مخصصة
+function checkConflict() {
+    if (AppState.history.length < 20 || !AppState.useAdvancedModel) return null;
+
+    const last20 = AppState.history.slice(-20);
+    const pCount = last20.filter(r => r === 'P').length;
+    const bCount = last20.filter(r => r === 'B').length;
+    const tCount = last20.filter(r => r === 'T').length;
+    const bigRoadDominance = 
+        pCount > bCount ? 'P' : 
+        bCount > pCount ? 'B' : 
+        'T'; // في حال التعادل
+
+    const lstmPrediction = AppState.lastPredictions[AppState.lastPredictions.length - 1]?.advanced;
+    if (!lstmPrediction) return null;
+
+    const lstmDominance = Object.keys(lstmPrediction).reduce((a, b) => 
+        lstmPrediction[a] > lstmPrediction[b] ? a : b
+    );
+
+    if (lstmDominance !== bigRoadDominance) {
+        // ألوان كل جهة (من ملف style.css الأصلي)
+        const colors = {
+            P: { class: 'player-text', hex: '#007bff', icon: '🔵', name: { 'ar-MA': 'اللاعب', 'en-US': 'Player' } },
+            B: { class: 'banker-text', hex: '#dc3545', icon: '🔴', name: { 'ar-MA': 'المصرفي', 'en-US': 'Banker' } },
+            T: { class: 'tie-text', hex: '#28a745', icon: '🟢', name: { 'ar-MA': 'التعادل', 'en-US': 'Tie' } }
+        };
+
+        // نص الرسالة (ملوّن + أيقونة)
+        const conflictMessage = AppState.lang === 'ar-MA' ?
+            `${colors[lstmDominance].icon} <span class="${colors[lstmDominance].class}">LSTM يُفضل ${colors[lstmDominance].name['ar-MA']}</span> (${lstmPrediction[lstmDominance].toFixed(1)}%)،<br>
+             ${colors[bigRoadDominance].icon} <span class="${colors[bigRoadDominance].class}">Big Road يُظهر هيمنة ${colors[bigRoadDominance].name['ar-MA']}</span> (${Math.max(pCount, bCount, tCount)}/20 جولة).` :
+            `${colors[lstmDominance].icon} <span class="${colors[lstmDominance].class}">LSTM favors ${colors[lstmDominance].name['en-US']}</span> (${lstmPrediction[lstmDominance].toFixed(1)}%),<br>
+             ${colors[bigRoadDominance].icon} <span class="${colors[bigRoadDominance].class}">Big Road shows ${colors[bigRoadDominance].name['en-US']} dominance</span> (${Math.max(pCount, bCount, tCount)}/20 rounds).`;
+
+        return {
+            conflict: true,
+            message: conflictMessage,
+            lstm: lstmDominance,
+            bigRoad: bigRoadDominance
+        };
+    }
+    return null;
 }
 
-// عرض التنبؤ
+// 2. دالة عرض التنبيه في الواجهة
+function showConflictAlert(conflict) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'conflict-alert';
+    alertDiv.style.cssText = `
+        background: rgba(255, 165, 0, 0.1);
+        border-left: 4px solid orange;
+        padding: 12px;
+        margin: 15px 0;
+        border-radius: 8px;
+        font-size: 0.95em;
+        line-height: 1.5;
+    `;
+    alertDiv.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.2em;">⚠️</span>
+            <span>${conflict.message}</span>
+        </div>
+        <div style="margin-top: 8px; font-size: 0.85em; color: #ff9800;">
+            ${AppState.lang === 'ar-MA' ? 'نوصي بالانتظار 3 جولات إضافية لتأكيد الاتجاه.' : 'We recommend waiting for 3 more rounds to confirm the trend.'}
+        </div>
+    `;
+    
+    // إضافة زر لحل التعارض (اختياري)
+    const resolveBtn = document.createElement('button');
+    resolveBtn.textContent = AppState.lang === 'ar-MA' ? 'حل التعارض' : 'Resolve';
+    resolveBtn.style.cssText = `
+        margin-top: 10px;
+        padding: 5px 10px;
+        background: #ff9800;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.85em;
+    `;
+    resolveBtn.onclick = () => {
+        alertDiv.remove();
+        showNotification('info', AppState.lang === 'ar-MA' ? 
+            'تم تجاهل التعارض مؤقتًا. سيتم تحديث التنبؤات تلقائيًا.' : 
+            'Conflict ignored temporarily. Predictions will auto-update.');
+    };
+    
+    alertDiv.appendChild(resolveBtn);
+    return alertDiv;
+}
+
+// 3. تعديل دالة displayPrediction
 function displayPrediction(prediction) {
-  const isArabic = AppState.lang === 'ar-MA';
-  const threshold = 55.7;
-  
-  document.querySelectorAll('.prediction-bar').forEach(bar => {
-    bar.classList.remove('high-prob');
-  });
-  document.querySelectorAll('.probability-value').forEach(el => {
-    el.classList.remove('high');
-  });
+    const conflict = checkConflict();
+    const predictionResult = document.getElementById('predictionResult');
+    
+    // مسح التنبيهات القديمة
+    const oldAlert = predictionResult.querySelector('.conflict-alert');
+    if (oldAlert) oldAlert.remove();
 
-  document.querySelector('.player-bar').style.width = `${prediction.P}%`;
-  document.querySelector('.banker-bar').style.width = `${prediction.B}%`;
-  document.querySelector('.tie-bar').style.width = `${prediction.T}%`;
-  
-  document.getElementById('playerProb').textContent = `${prediction.P.toFixed(1)}%`;
-  document.getElementById('bankerProb').textContent = `${prediction.B.toFixed(1)}%`;
-  document.getElementById('tieProb').textContent = `${prediction.T.toFixed(1)}%`;
+    if (conflict) {
+        predictionResult.appendChild(showConflictAlert(conflict));
+    }
+    
+    const isArabic = AppState.lang === 'ar-MA';
+    const threshold = 55.7;
+    
+    document.querySelectorAll('.prediction-bar').forEach(bar => {
+        bar.classList.remove('high-prob');
+    });
+    document.querySelectorAll('.probability-value').forEach(el => {
+        el.classList.remove('high');
+    });
 
-  if (prediction.P >= threshold) {
-    document.querySelector('.player-bar').classList.add('high-prob');
-    document.getElementById('playerProb').classList.add('high');
-    showHighProbabilityEffect('player');
-  }
-  if (prediction.B >= threshold) {
-    document.querySelector('.banker-bar').classList.add('high-prob');
-    document.getElementById('bankerProb').classList.add('high');
-    showHighProbabilityEffect('banker');
-  }
-  if (prediction.T >= threshold) {
-    document.querySelector('.tie-bar').classList.add('high-prob');
-    document.getElementById('tieProb').classList.add('high');
-    showHighProbabilityEffect('tie');
-  }
-  
-  const statsHTML = `
-    <span class="player-text">🔵 ${isArabic ? 'لاعب' : 'Player'}: ${prediction.P.toFixed(1)}%</span> | 
-    <span class="banker-text">🔴 ${isArabic ? 'مصرفي' : 'Banker'}: ${prediction.B.toFixed(1)}%</span> | 
-    <span class="tie-text">🟢 ${isArabic ? 'تعادل' : 'Tie'}: ${prediction.T.toFixed(1)}%</span>
-  `;
-  
-  document.getElementById('statsResult').innerHTML = statsHTML;
+    document.querySelector('.player-bar').style.width = `${prediction.P}%`;
+    document.querySelector('.banker-bar').style.width = `${prediction.B}%`;
+    document.querySelector('.tie-bar').style.width = `${prediction.T}%`;
+    
+    document.getElementById('playerProb').textContent = `${prediction.P.toFixed(1)}%`;
+    document.getElementById('bankerProb').textContent = `${prediction.B.toFixed(1)}%`;
+    document.getElementById('tieProb').textContent = `${prediction.T.toFixed(1)}%`;
+
+    if (prediction.P >= threshold) {
+        document.querySelector('.player-bar').classList.add('high-prob');
+        document.getElementById('playerProb').classList.add('high');
+        showHighProbabilityEffect('player');
+    }
+    if (prediction.B >= threshold) {
+        document.querySelector('.banker-bar').classList.add('high-prob');
+        document.getElementById('bankerProb').classList.add('high');
+        showHighProbabilityEffect('banker');
+    }
+    if (prediction.T >= threshold) {
+        document.querySelector('.tie-bar').classList.add('high-prob');
+        document.getElementById('tieProb').classList.add('high');
+        showHighProbabilityEffect('tie');
+    }
+    
+    const statsHTML = `
+        <span class="player-text">🔵 ${isArabic ? 'لاعب' : 'Player'}: ${prediction.P.toFixed(1)}%</span> | 
+        <span class="banker-text">🔴 ${isArabic ? 'مصرفي' : 'Banker'}: ${prediction.B.toFixed(1)}%</span> | 
+        <span class="tie-text">🟢 ${isArabic ? 'تعادل' : 'Tie'}: ${prediction.T.toFixed(1)}%</span>
+    `;
+    
+    document.getElementById('statsResult').innerHTML = statsHTML;
 }
 
 // توليد النصيحة
@@ -811,25 +1156,6 @@ function updateSmallRoad(history) {
   renderRoad(matrix, smallRoad);
 }
 
-// تحديث Cockroach Road
-function updateCockroachRoad(history) {
-  const cockroachRoad = document.getElementById('cockroachRoad');
-  cockroachRoad.innerHTML = '';
-  let matrix = [[]];
-  let row = 0;
-
-  for (let i = 3; i < history.length; i++) {
-    if (history[i] === history[i - 3]) {
-      matrix[row].push(history[i]);
-    } else {
-      row++;
-      matrix[row] = [history[i]];
-    }
-  }
-
-  renderRoad(matrix, cockroachRoad);
-}
-
 // عرض الطريق
 function renderRoad(matrix, container) {
   matrix.forEach((row, rowIndex) => {
@@ -919,7 +1245,7 @@ function updateUI() {
   document.querySelector('.common-patterns h3').textContent = isArabic ? 'الأنماط الشائعة في الكازينو' : 'Common Casino Patterns';
   document.querySelector('.advanced-prediction h3').textContent = isArabic ? '🛠 التنبؤات المتقدمة' : '🛠 Advanced Predictions';
   document.querySelector('.diamond-pattern h3').textContent = isArabic ? '💎 تحليل نمط الدايموند' : '💎 Diamond Pattern Analysis';
-  document.querySelector('.heatmap-container h3').textContent = isArabic ? 'خريطة التوزيع' : 'Distribution Heatmap';
+  document.querySelector('.performance-analysis h3').textContent = isArabic ? 'تحليل أداء النماذج' : 'Model Performance Analysis';
   
   if (AppState.history.length > 0) {
     updateDisplay();
@@ -931,7 +1257,6 @@ function updateUI() {
     updateLast5Analysis();
     updateAdvancedPredictionDisplay();
     updateDiamondAnalysis();
-    updateHeatmap();
   }
 }
 
@@ -948,7 +1273,6 @@ async function resetData() {
     AppState.markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
     AppState.lastPredictions = [];
     AppState.modelPerformance = { basic: 0, advanced: 0 };
-    AppState.volatilityHistory = [];
     
     if (AppState.advancedModel) {
       tf.dispose(AppState.advancedModel);
@@ -960,8 +1284,6 @@ async function resetData() {
     document.getElementById('bigEyeRoad').innerHTML = '';
     document.getElementById('smallRoad').innerHTML = '';
     document.getElementById('cockroachRoad').innerHTML = '';
-    document.getElementById('heatmapDisplay').innerHTML = '';
-    document.getElementById('volatilityWarning').style.display = 'none';
     
     if (AppState.statsChart) {
       AppState.statsChart.destroy();
@@ -1000,6 +1322,7 @@ async function resetData() {
     document.getElementById('last5Results').innerHTML = '';
     document.getElementById('advancedPredictionResults').innerHTML = '';
     document.getElementById('diamondAnalysis').innerHTML = '';
+    document.getElementById('modelPerformance').innerHTML = '';
     
     showNotification('info', isArabic ? 'تم إعادة تعيين جميع البيانات' : 'All data has been reset');
   }
@@ -1161,294 +1484,6 @@ function updateBigRoad() {
     cell.style.gridRow = row + 1;
     bigRoadElement.appendChild(cell);
   }
-}
-
-// تحديث أداء النماذج
-function updateModelPerformance() {
-  if (AppState.history.length < 2) return;
-  
-  const lastResult = AppState.history[AppState.history.length - 1];
-  const prevPrediction = AppState.lastPredictions[AppState.lastPredictions.length - 1];
-  
-  if (!prevPrediction) return;
-  
-  const basicCorrect = (prevPrediction.basic.P > prevPrediction.basic.B && 
-                       prevPrediction.basic.P > prevPrediction.basic.T && 
-                       lastResult === 'P') ||
-                      (prevPrediction.basic.B > prevPrediction.basic.P && 
-                       prevPrediction.basic.B > prevPrediction.basic.T && 
-                       lastResult === 'B') ||
-                      (prevPrediction.basic.T > prevPrediction.basic.P && 
-                       prevPrediction.basic.T > prevPrediction.basic.B && 
-                       lastResult === 'T');
-  
-  let advancedCorrect = false;
-  if (prevPrediction.advanced) {
-    advancedCorrect = (prevPrediction.advanced.P > prevPrediction.advanced.B && 
-                      prevPrediction.advanced.P > prevPrediction.advanced.T && 
-                      lastResult === 'P') ||
-                     (prevPrediction.advanced.B > prevPrediction.advanced.P && 
-                      prevPrediction.advanced.B > prevPrediction.advanced.T && 
-                      lastResult === 'B') ||
-                     (prevPrediction.advanced.T > prevPrediction.advanced.P && 
-                      prevPrediction.advanced.T > prevPrediction.advanced.B && 
-                      lastResult === 'T');
-  }
-  
-  AppState.modelPerformance.basic = (AppState.modelPerformance.basic * 0.9) + (basicCorrect ? 0.1 : 0);
-  
-  if (prevPrediction.advanced) {
-    AppState.modelPerformance.advanced = (AppState.modelPerformance.advanced * 0.9) + (advancedCorrect ? 0.1 : 0);
-  }
-  
-  if (AppState.modelPerformance.advanced < 0.6 && AppState.modelPerformance.basic > 0.65) {
-    AppState.useAdvancedModel = false;
-    showNotification('info', AppState.lang === 'ar-MA' ? 
-      'تم التبديل للنموذج الأساسي بسبب دقة أفضل' : 
-      'Switched to basic model for better accuracy');
-  }
-}
-
-// تبديل النموذج المتقدم
-function toggleAdvancedModel() {
-  AppState.useAdvancedModel = !AppState.useAdvancedModel;
-  document.getElementById('modelStatus').textContent = 
-    AppState.lang === 'ar-MA' ? 
-    `النموذج الحالي: ${AppState.useAdvancedModel ? 'المتقدم' : 'الأساسي'}` :
-    `Current model: ${AppState.useAdvancedModel ? 'Advanced' : 'Basic'}`;
-  
-  showNotification('info', AppState.lang === 'ar-MA' ?
-    `تم التبديل إلى النموذج ${AppState.useAdvancedModel ? 'المتقدم' : 'الأساسي'}` :
-    `Switched to ${AppState.useAdvancedModel ? 'advanced' : 'basic'} model`);
-  
-  updatePredictions();
-}
-
-// تحديث واجهة التنبؤات المتقدمة
-function updateAdvancedPredictionDisplay() {
-  const container = document.getElementById('advancedPredictionResults');
-  
-  if (AppState.history.length < 5) {
-    container.innerHTML = AppState.lang === 'ar-MA' ?
-      '<p>⏳ يحتاج إلى المزيد من البيانات للتنبؤ المتقدم</p>' :
-      '<p>⏳ Need more data for advanced prediction</p>';
-    return;
-  }
-  
-  let html = '<div class="model-performance">';
-  
-  html += `<p><strong>${AppState.lang === 'ar-MA' ? 'أداء النماذج:' : 'Model performance:'}</strong></p>`;
-  html += `<p>${AppState.lang === 'ar-MA' ? 'الأساسي:' : 'Basic:'} ${(AppState.modelPerformance.basic * 100).toFixed(1)}%</p>`;
-  
-  if (AppState.advancedModel) {
-    html += `<p>${AppState.lang === 'ar-MA' ? 'المتقدم:' : 'Advanced:'} ${(AppState.modelPerformance.advanced * 100).toFixed(1)}%</p>`;
-  } else {
-    html += `<p>${AppState.lang === 'ar-MA' ? 'المتقدم:' : 'Advanced:'} ${AppState.lang === 'ar-MA' ? 'غير متاح' : 'Not available'}</p>`;
-  }
-  
-  const patterns = detectAdvancedPatterns(AppState.history);
-  if (patterns.length > 0) {
-    html += '<div class="detected-patterns">';
-    html += `<p><strong>${AppState.lang === 'ar-MA' ? 'الأنماط المكتشفة:' : 'Detected patterns:'}</strong></p>`;
-    
-    patterns.slice(0, 3).forEach(pattern => {
-      html += `<div class="pattern-item">
-        <span class="pattern-name">${pattern.pattern}</span>
-        <span class="pattern-confidence">${(pattern.confidence * 100).toFixed(1)}%</span>
-        <p class="pattern-desc">${pattern.description[AppState.lang] || pattern.description.en}</p>
-      </div>`;
-    });
-    
-    html += '</div>';
-  }
-  
-  container.innerHTML = html;
-}
-
-// تحديث تحليل الدايموند
-function updateDiamondAnalysis() {
-  const container = document.getElementById('diamondAnalysis');
-  const analysis = analyzeDiamondPattern(AppState.history);
-  
-  if (!analysis) {
-    container.innerHTML = AppState.lang === 'ar-MA' ?
-      '<p>لم يتم اكتشاف نمط دايموند في آخر 15 جولة</p>' :
-      '<p>No diamond pattern detected in last 15 rounds</p>';
-    return;
-  }
-  
-  container.innerHTML = `
-    <div class="diamond-result">
-      <p>${AppState.lang === 'ar-MA' ? 'تم اكتشاف نمط دايموند' : 'Diamond pattern detected'}:</p>
-      <p><strong>${analysis.lastPattern.sequence}</strong></p>
-      <p>${AppState.lang === 'ar-MA' ? 'عدد التكرارات:' : 'Occurrences:'} ${analysis.count}</p>
-      <p>${AppState.lang === 'ar-MA' ? 'مستوى الثقة:' : 'Confidence:'} ${(analysis.confidence * 100).toFixed(1)}%</p>
-    </div>
-  `;
-}
-
-// اكتشاف الأنماط المتقدمة
-function detectAdvancedPatterns(history) {
-  if (history.length < 5) return [];
-  
-  const patterns = [];
-  const recentHistory = history.slice(-15).join('');
-  const fullHistoryStr = history.join('');
-
-  const patternDefinitions = [
-    {
-      name: 'Dragon',
-      regex: /(P{6,}|B{6,})$/,
-      description: {
-        ar: 'سلسلة طويلة من نفس النتيجة',
-        en: 'Long streak of same result'
-      },
-      baseConfidence: 0.9
-    },
-    {
-      name: 'ZigZag',
-      regex: /(PB){3,}$|(BP){3,}$/,
-      description: {
-        ar: 'نمط متعرج متكرر',
-        en: 'Repeated zigzag pattern'
-      },
-      baseConfidence: 0.8
-    },
-    {
-      name: '5P/5B',
-      regex: /PPPPP$|BBBBB$/,
-      description: {
-        ar: '5 نتائج متتالية متشابهة',
-        en: '5 consecutive same results'
-      },
-      baseConfidence: 0.85
-    },
-    {
-      name: '3T+',
-      regex: /TTT$/,
-      description: {
-        ar: '3 تعادلات متتالية',
-        en: '3 consecutive ties'
-      },
-      baseConfidence: 0.75
-    }
-  ];
-
-  patternDefinitions.forEach(p => {
-    const matches = recentHistory.match(p.regex);
-    if (matches) {
-      const lengthFactor = matches[0].length / 5;
-      const confidence = Math.min(0.99, p.baseConfidence * lengthFactor);
-      
-      patterns.push({
-        pattern: p.name,
-        description: p.description,
-        confidence: confidence,
-        length: matches[0].length
-      });
-    }
-  });
-
-  const diamond = analyzeDiamondPattern(history);
-  if (diamond) {
-    patterns.push({
-      pattern: 'Diamond',
-      description: {
-        ar: 'نمط دايموند متكرر (PBPBP أو BPBPB)',
-        en: 'Repeated diamond pattern (PBPBP or BPBPB)'
-      },
-      confidence: diamond.confidence,
-      length: 5
-    });
-  }
-  
-  const eightPattern = analyze8Pattern(history);
-  if (eightPattern) {
-    patterns.push({
-      pattern: '8-8',
-      description: {
-        ar: `توازن بين اللاعب والمصرفي (${eightPattern.pCount}P vs ${eightPattern.bCount}B)`,
-        en: `Balance between Player and Banker (${eightPattern.pCount}P vs ${eightPattern.bCount}B)`
-      },
-      confidence: eightPattern.confidence,
-      length: 16
-    });
-  }
-  
-  const cockroach = analyzeCockroachPattern(history);
-  if (cockroach) {
-    patterns.push({
-      pattern: 'Cockroach',
-      description: {
-        ar: 'تكرار كل 3 جولات (نمط الصرصور)',
-        en: 'Every 3rd round repetition (Cockroach pattern)'
-      },
-      confidence: cockroach.confidence,
-      length: cockroach.count
-    });
-  }
-
-  const last5 = history.slice(-5).join('');
-  let historicalMatches = 0;
-  for (let i = 0; i < fullHistoryStr.length - 5; i++) {
-    if (fullHistoryStr.substr(i, 5) === last5) {
-      historicalMatches++;
-    }
-  }
-
-  if (historicalMatches > 1) {
-    patterns.push({
-      pattern: 'Historic',
-      description: {
-        ar: `تكرر النمط ${historicalMatches} مرات سابقاً`,
-        en: `Pattern occurred ${historicalMatches} times before`
-      },
-      confidence: Math.min(0.9, 0.6 + (historicalMatches * 0.1)),
-      frequency: historicalMatches
-    });
-  }
-
-  return patterns.sort((a, b) => b.confidence - a.confidence);
-}
-
-// تحليل نمط 8-8
-function analyze8Pattern(history) {
-  if (history.length < 16) return null;
-  
-  const last16 = history.slice(-16);
-  const pCount = last16.filter(r => r === 'P').length;
-  const bCount = last16.filter(r => r === 'B').length;
-  
-  if (Math.abs(pCount - bCount) <= 2) {
-    return {
-      pattern: '8-8',
-      pCount,
-      bCount,
-      confidence: Math.min(0.85, 0.6 + (Math.min(pCount, bCount) * 0.03))
-    };
-  }
-  return null;
-}
-
-// تحليل نمط Cockroach
-function analyzeCockroachPattern(history) {
-  if (history.length < 20) return null;
-  
-  const filtered = history.filter(r => r !== 'T');
-  let cockroachCount = 0;
-  
-  for (let i = 3; i < filtered.length; i++) {
-    if (filtered[i] === filtered[i - 3]) {
-      cockroachCount++;
-    }
-  }
-  
-  const confidence = Math.min(0.8, 0.3 + (cockroachCount / filtered.length) * 2);
-  return cockroachCount > 3 ? {
-    pattern: 'cockroach',
-    count: cockroachCount,
-    confidence: confidence
-  } : null;
 }
 
 // تهيئة التطبيق عند تحميل الصفحة
