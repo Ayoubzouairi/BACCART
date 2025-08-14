@@ -129,8 +129,8 @@ body.light-mode .theme-toggle {
 
 /* أنماط الصناديق */
 .result, .stats, .history, .ai-stats, .ai-advice, .trends-container,
-.last5-analysis, .common-patterns, .advanced-prediction, .volatility-warning,
-.heatmap-container, .performance-analysis {
+.last5-analysis, .common-patterns, .advanced-prediction, .diamond-pattern,
+.performance-analysis {
   margin-top: 1.5em;
   font-size: 1.2em;
   padding: 15px;
@@ -148,8 +148,7 @@ body.light-mode .trends-container,
 body.light-mode .last5-analysis,
 body.light-mode .common-patterns,
 body.light-mode .advanced-prediction,
-body.light-mode .volatility-warning,
-body.light-mode .heatmap-container,
+body.light-mode .diamond-pattern,
 body.light-mode .performance-analysis {
   background-color: rgba(0,0,0,0.05);
 }
@@ -478,61 +477,91 @@ body.light-mode .results-table td {
   margin-top: 15px;
 }
 
-/* أنماط Heatmap */
-.heatmap-container {
-  margin-top: 20px;
+/* أنماط تحليل الدايموند */
+.diamond-pattern {
+  border-left: 4px solid #ffc107;
 }
 
-.heatmap-grid {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 5px;
-  margin: 15px 0;
+.diamond-result {
+  text-align: center;
 }
 
-.heatmap-cell {
-  height: 30px;
+.diamond-result p {
+  margin: 8px 0;
+}
+
+/* أنماط أداء النماذج */
+.performance-analysis {
+  border-left: 4px solid #6f42c1;
+}
+
+/* أنماط الإشعارات والتأثيرات البصرية */
+.notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  max-width: 300px;
+}
+
+.notification {
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.5s ease;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  border-radius: 4px;
+  justify-content: space-between;
 }
 
-.heatmap-P { background-color: rgba(0, 123, 255, 0.3); }
-.heatmap-B { background-color: rgba(220, 53, 69, 0.3); }
-.heatmap-T { background-color: rgba(40, 167, 69, 0.3); }
-
-/* أنماط تحذيرات التقلب */
-.volatility-warning {
-  margin-top: 15px;
+.notification.show {
+  opacity: 1;
+  transform: translateX(0);
 }
 
-.risk-warning {
-  padding: 10px;
-  border-radius: 8px;
-  background-color: rgba(220, 53, 69, 0.2);
-  border-left: 4px solid #dc3545;
-  margin: 10px 0;
-  animation: pulseWarning 1.5s infinite;
+.notification.win {
+  background: linear-gradient(135deg, #28a745, #218838);
+  border-left: 5px solid #1e7e34;
 }
 
-@keyframes pulseWarning {
-  0% { opacity: 0.8; }
-  50% { opacity: 1; }
-  100% { opacity: 0.8; }
+.notification.lose {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  border-left: 5px solid #a71d2a;
 }
 
-.confidence-indicator {
-  height: 10px;
-  border-radius: 5px;
-  margin-top: 5px;
-  transition: all 0.3s;
+.notification.tie {
+  background: linear-gradient(135deg, #17a2b8, #138496);
+  border-left: 5px solid #117a8b;
 }
 
-.high-confidence { background: linear-gradient(90deg, #28a745, #5cb85c); }
-.medium-confidence { background: linear-gradient(90deg, #ffc107, #f0ad4e); }
-.low-confidence { background: linear-gradient(90deg, #dc3545, #d9534f); }
+.notification.info {
+  background: linear-gradient(135deg, #6c757d, #5a6268);
+  border-left: 5px solid #4e555b;
+}
+
+.notification.error {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  border-left: 5px solid #a71d2a;
+}
+
+.notification-icon {
+  font-size: 1.5em;
+  margin-right: 10px;
+}
+
+.close-notification {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2em;
+  cursor: pointer;
+  margin-left: 10px;
+}
 
 /* تأثيرات الفوز */
 .win-effect {
@@ -678,6 +707,39 @@ body.light-mode .results-table td {
   100% { transform: scale(1); }
 }
 
+/* أنماط تنبيهات التعارض */
+.conflict-alert {
+  animation: pulseWarning 2s infinite;
+  background: rgba(255, 165, 0, 0.1);
+  border-left: 4px solid orange;
+  padding: 12px;
+  margin: 15px 0;
+  border-radius: 8px;
+  font-size: 0.95em;
+  line-height: 1.5;
+}
+
+.conflict-alert button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background: #ff9800;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.85em;
+}
+
+.conflict-alert button:hover {
+  background: #e68a00;
+}
+
+@keyframes pulseWarning {
+  0% { opacity: 0.9; }
+  50% { opacity: 1; }
+  100% { opacity: 0.9; }
+}
+
 /* التكيف مع الشاشات الصغيرة */
 @media (max-width: 768px) {
   body {
@@ -709,7 +771,8 @@ body.light-mode .results-table td {
     justify-content: center;
     margin-bottom: 15px;
   }
-  .heatmap-grid {
-    grid-template-columns: repeat(5, 1fr);
+  .conflict-alert {
+    margin: 10px 0;
+    padding: 10px;
   }
 }
