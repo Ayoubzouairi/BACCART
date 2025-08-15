@@ -899,152 +899,55 @@ async function showRecommendation() {
   `;
 }
 
-// 1. دالة كشف التعارض مع ألوان مخصصة
-function checkConflict() {
-    if (AppState.history.length < 20 || !AppState.useAdvancedModel) return null;
-
-    const last20 = AppState.history.slice(-20);
-    const pCount = last20.filter(r => r === 'P').length;
-    const bCount = last20.filter(r => r === 'B').length;
-    const tCount = last20.filter(r => r === 'T').length;
-    const bigRoadDominance = 
-        pCount > bCount ? 'P' : 
-        bCount > pCount ? 'B' : 
-        'T'; // في حال التعادل
-
-    const lstmPrediction = AppState.lastPredictions[AppState.lastPredictions.length - 1]?.advanced;
-    if (!lstmPrediction) return null;
-
-    const lstmDominance = Object.keys(lstmPrediction).reduce((a, b) => 
-        lstmPrediction[a] > lstmPrediction[b] ? a : b
-    );
-
-    if (lstmDominance !== bigRoadDominance) {
-        // ألوان كل جهة (من ملف style.css الأصلي)
-        const colors = {
-            P: { class: 'player-text', hex: '#007bff', icon: '🔵', name: { 'ar-MA': 'اللاعب', 'en-US': 'Player' } },
-            B: { class: 'banker-text', hex: '#dc3545', icon: '🔴', name: { 'ar-MA': 'المصرفي', 'en-US': 'Banker' } },
-            T: { class: 'tie-text', hex: '#28a745', icon: '🟢', name: { 'ar-MA': 'التعادل', 'en-US': 'Tie' } }
-        };
-
-        // نص الرسالة (ملوّن + أيقونة)
-        const conflictMessage = AppState.lang === 'ar-MA' ?
-            `${colors[lstmDominance].icon} <span class="${colors[lstmDominance].class}">LSTM يُفضل ${colors[lstmDominance].name['ar-MA']}</span> (${lstmPrediction[lstmDominance].toFixed(1)}%)،<br>
-             ${colors[bigRoadDominance].icon} <span class="${colors[bigRoadDominance].class}">Big Road يُظهر هيمنة ${colors[bigRoadDominance].name['ar-MA']}</span> (${Math.max(pCount, bCount, tCount)}/20 جولة).` :
-            `${colors[lstmDominance].icon} <span class="${colors[lstmDominance].class}">LSTM favors ${colors[lstmDominance].name['en-US']}</span> (${lstmPrediction[lstmDominance].toFixed(1)}%),<br>
-             ${colors[bigRoadDominance].icon} <span class="${colors[bigRoadDominance].class}">Big Road shows ${colors[bigRoadDominance].name['en-US']} dominance</span> (${Math.max(pCount, bCount, tCount)}/20 rounds).`;
-
-        return {
-            conflict: true,
-            message: conflictMessage,
-            lstm: lstmDominance,
-            bigRoad: bigRoadDominance
-        };
-    }
-    return null;
+// تحديث التنبؤات
+async function updatePredictions() {
+  const prediction = await advancedPredict(AppState.history);
+  displayPrediction(prediction);
 }
 
-// 2. دالة عرض التنبيه في الواجهة
-function showConflictAlert(conflict) {
-    const alertDiv = document.createElement('div');
-    alertDiv.className = 'conflict-alert';
-    alertDiv.style.cssText = `
-        background: rgba(255, 165, 0, 0.1);
-        border-left: 4px solid orange;
-        padding: 12px;
-        margin: 15px 0;
-        border-radius: 8px;
-        font-size: 0.95em;
-        line-height: 1.5;
-    `;
-    alertDiv.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 1.2em;">⚠️</span>
-            <span>${conflict.message}</span>
-        </div>
-        <div style="margin-top: 8px; font-size: 0.85em; color: #ff9800;">
-            ${AppState.lang === 'ar-MA' ? 'نوصي بالانتظار 3 جولات إضافية لتأكيد الاتجاه.' : 'We recommend waiting for 3 more rounds to confirm the trend.'}
-        </div>
-    `;
-    
-    // إضافة زر لحل التعارض (اختياري)
-    const resolveBtn = document.createElement('button');
-    resolveBtn.textContent = AppState.lang === 'ar-MA' ? 'حل التعارض' : 'Resolve';
-    resolveBtn.style.cssText = `
-        margin-top: 10px;
-        padding: 5px 10px;
-        background: #ff9800;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 0.85em;
-    `;
-    resolveBtn.onclick = () => {
-        alertDiv.remove();
-        showNotification('info', AppState.lang === 'ar-MA' ? 
-            'تم تجاهل التعارض مؤقتًا. سيتم تحديث التنبؤات تلقائيًا.' : 
-            'Conflict ignored temporarily. Predictions will auto-update.');
-    };
-    
-    alertDiv.appendChild(resolveBtn);
-    return alertDiv;
-}
-
-// 3. تعديل دالة displayPrediction
+// عرض التنبؤ
 function displayPrediction(prediction) {
-    const conflict = checkConflict();
-    const predictionResult = document.getElementById('predictionResult');
-    
-    // مسح التنبيهات القديمة
-    const oldAlert = predictionResult.querySelector('.conflict-alert');
-    if (oldAlert) oldAlert.remove();
+  const isArabic = AppState.lang === 'ar-MA';
+  const threshold = 55.7;
+  
+  document.querySelectorAll('.prediction-bar').forEach(bar => {
+    bar.classList.remove('high-prob');
+  });
+  document.querySelectorAll('.probability-value').forEach(el => {
+    el.classList.remove('high');
+  });
 
-    if (conflict) {
-        predictionResult.appendChild(showConflictAlert(conflict));
-    }
-    
-    const isArabic = AppState.lang === 'ar-MA';
-    const threshold = 55.7;
-    
-    document.querySelectorAll('.prediction-bar').forEach(bar => {
-        bar.classList.remove('high-prob');
-    });
-    document.querySelectorAll('.probability-value').forEach(el => {
-        el.classList.remove('high');
-    });
+  document.querySelector('.player-bar').style.width = `${prediction.P}%`;
+  document.querySelector('.banker-bar').style.width = `${prediction.B}%`;
+  document.querySelector('.tie-bar').style.width = `${prediction.T}%`;
+  
+  document.getElementById('playerProb').textContent = `${prediction.P.toFixed(1)}%`;
+  document.getElementById('bankerProb').textContent = `${prediction.B.toFixed(1)}%`;
+  document.getElementById('tieProb').textContent = `${prediction.T.toFixed(1)}%`;
 
-    document.querySelector('.player-bar').style.width = `${prediction.P}%`;
-    document.querySelector('.banker-bar').style.width = `${prediction.B}%`;
-    document.querySelector('.tie-bar').style.width = `${prediction.T}%`;
-    
-    document.getElementById('playerProb').textContent = `${prediction.P.toFixed(1)}%`;
-    document.getElementById('bankerProb').textContent = `${prediction.B.toFixed(1)}%`;
-    document.getElementById('tieProb').textContent = `${prediction.T.toFixed(1)}%`;
-
-    if (prediction.P >= threshold) {
-        document.querySelector('.player-bar').classList.add('high-prob');
-        document.getElementById('playerProb').classList.add('high');
-        showHighProbabilityEffect('player');
-    }
-    if (prediction.B >= threshold) {
-        document.querySelector('.banker-bar').classList.add('high-prob');
-        document.getElementById('bankerProb').classList.add('high');
-        showHighProbabilityEffect('banker');
-    }
-    if (prediction.T >= threshold) {
-        document.querySelector('.tie-bar').classList.add('high-prob');
-        document.getElementById('tieProb').classList.add('high');
-        showHighProbabilityEffect('tie');
-    }
-    
-    const statsHTML = `
-        <span class="player-text">🔵 ${isArabic ? 'لاعب' : 'Player'}: ${prediction.P.toFixed(1)}%</span> | 
-        <span class="banker-text">🔴 ${isArabic ? 'مصرفي' : 'Banker'}: ${prediction.B.toFixed(1)}%</span> | 
-        <span class="tie-text">🟢 ${isArabic ? 'تعادل' : 'Tie'}: ${prediction.T.toFixed(1)}%</span>
-    `;
-    
-    document.getElementById('statsResult').innerHTML = statsHTML;
+  if (prediction.P >= threshold) {
+    document.querySelector('.player-bar').classList.add('high-prob');
+    document.getElementById('playerProb').classList.add('high');
+    showHighProbabilityEffect('player');
+  }
+  if (prediction.B >= threshold) {
+    document.querySelector('.banker-bar').classList.add('high-prob');
+    document.getElementById('bankerProb').classList.add('high');
+    showHighProbabilityEffect('banker');
+  }
+  if (prediction.T >= threshold) {
+    document.querySelector('.tie-bar').classList.add('high-prob');
+    document.getElementById('tieProb').classList.add('high');
+    showHighProbabilityEffect('tie');
+  }
+  
+  const statsHTML = `
+    <span class="player-text">🔵 ${isArabic ? 'لاعب' : 'Player'}: ${prediction.P.toFixed(1)}%</span> | 
+    <span class="banker-text">🔴 ${isArabic ? 'مصرفي' : 'Banker'}: ${prediction.B.toFixed(1)}%</span> | 
+    <span class="tie-text">🟢 ${isArabic ? 'تعادل' : 'Tie'}: ${prediction.T.toFixed(1)}%</span>
+  `;
+  
+  document.getElementById('statsResult').innerHTML = statsHTML;
 }
 
 // توليد النصيحة
