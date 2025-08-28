@@ -1,9 +1,11 @@
 // حالة التطبيق الموسعة
 const AppState = {
-  
-  stats: { wins: 0, losses: 0, ties: 0, total: 0 },
-  pendingRecommendation: "none",
-history: [],
+  wins: 0,
+  losses: 0,
+  currentWinStreak: 0,
+  bestWinStreak: 0,
+  currentRecommendation: null,
+  history: [],
   currentStreak: { type: null, count: 0 },
   lang: 'ar-MA',
   markovModel: { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 }},
@@ -21,27 +23,6 @@ history: [],
   modelPerformance: { basic: 0, advanced: 0 },
   lastPredictions: []
 };
-
-function updatePerformanceBar(){
-  const winsEl = document.getElementById('perfWins');
-  if(!winsEl) return;
-  document.getElementById('perfWins').textContent = AppState.stats.wins;
-  document.getElementById('perfLosses').textContent = AppState.stats.losses;
-  document.getElementById('perfStreak').textContent = (AppState.currentStreak && AppState.currentStreak.count) ? AppState.currentStreak.count : 0;
-  const wr = AppState.stats.total > 0 ? Math.round((AppState.stats.wins / AppState.stats.total)*100) : 0;
-  document.getElementById('perfWR').textContent = wr + '%';
-}
-
-function registerOutcomeAgainstRecommendation(actual){
-  const rec = AppState.pendingRecommendation || 'none';
-  if(rec === 'none') return;
-  if(actual === 'T'){ AppState.stats.ties += 1; return; }
-  AppState.stats.total += 1;
-  if(rec === actual){ AppState.stats.wins += 1; }
-  else{ AppState.stats.losses += 1; }
-}
-
-
 
 // أنماط شائعة في الكازينوهات الحية
 const COMMON_CASINO_PATTERNS = [
@@ -104,7 +85,48 @@ const COMMON_CASINO_PATTERNS = [
 ];
 
 // تهيئة التطبيق
-async function initializeApp() {
+async 
+// ===== Stats Summary (Wins/Losses/Streak/WinRate) =====
+function saveStats(){
+  try{
+    localStorage.setItem('baccarat_stats', JSON.stringify({
+      wins: AppState.wins,
+      losses: AppState.losses,
+      currentWinStreak: AppState.currentWinStreak,
+      bestWinStreak: AppState.bestWinStreak
+    }));
+  }catch(e){}
+}
+
+function loadStats(){
+  try{
+    const raw = localStorage.getItem('baccarat_stats');
+    if(raw){
+      const s = JSON.parse(raw);
+      AppState.wins = s.wins || 0;
+      AppState.losses = s.losses || 0;
+      AppState.currentWinStreak = s.currentWinStreak || 0;
+      AppState.bestWinStreak = s.bestWinStreak || 0;
+    }
+  }catch(e){}
+}
+
+function updateStatsPanel(){
+  const total = AppState.wins + AppState.losses;
+  const winRate = total > 0 ? Math.round((AppState.wins/total)*100) : 0;
+  const winsEl = document.getElementById('winsCount');
+  const lossesEl = document.getElementById('lossesCount');
+  const streakEl = document.getElementById('currentStreakCount');
+  const rateEl = document.getElementById('winRatePercent');
+  if(winsEl){ winsEl.textContent = AppState.wins; }
+  if(lossesEl){ lossesEl.textContent = AppState.losses; }
+  if(streakEl){ streakEl.textContent = AppState.currentWinStreak; }
+  if(rateEl){ rateEl.textContent = winRate + '%'; }
+}
+
+function initializeApp() {
+  loadStats();
+  setTimeout(updateStatsPanel, 0);
   createNotificationContainer();
   setupEventListeners();
   checkTimeForTheme();
@@ -115,9 +137,7 @@ async function initializeApp() {
   
   if (AppState.history.length > 30) {
     await initializeModels();
-  
-  updatePerformanceBar();
-}
+  }
 }
 
 // تحميل التاريخ من localStorage
@@ -733,10 +753,27 @@ function updateCockroachRoad(history) {
 
 // إضافة نتيجة جديدة
 async function addResult(result) {
-  
-  registerOutcomeAgainstRecommendation(result);
-AppState.history.push(result);
+  AppState.history.push(result);
   saveHistory();
+  // === Stats: evaluate last recommendation vs actual result ===
+  const prevRec = AppState.currentRecommendation;
+  if(prevRec && prevRec !== 'none'){
+    if(result === prevRec){
+      AppState.wins++;
+      AppState.currentWinStreak++;
+      if(AppState.currentWinStreak > AppState.bestWinStreak) AppState.bestWinStreak = AppState.currentWinStreak;
+    } else {
+      // Consider tie as loss unless recommendation was T
+      if(!(result === 'T' && prevRec !== 'T')){
+        AppState.losses++;
+      } else {
+        AppState.losses++;
+      }
+      AppState.currentWinStreak = 0;
+    }
+    saveStats();
+    updateStatsPanel();
+  }
   
   // تدريب النماذج عند وجود بيانات كافية
   if (AppState.history.length === 30 || (AppState.history.length % 50 === 0 && !AppState.advancedModel)) {
@@ -798,7 +835,6 @@ AppState.history.push(result);
   await updatePredictions();
   generateAdvice();
   showRecommendation();
-  updatePerformanceBar();
   updateChart();
   updateLast5Analysis();
   updateAdvancedPredictionDisplay();
@@ -912,9 +948,9 @@ function buildRecommendationMessage(type, confidence, patterns) {
 // عرض التوصية
 async function showRecommendation() {
   const recommendation = await generateBetRecommendation();
-  AppState.pendingRecommendation = recommendation.recommendation;
   const recommendationElement = document.getElementById('recommendation');
   
+  AppState.currentRecommendation = recommendation.recommendation;
   recommendationElement.innerHTML = `
     <div class="recommendation-box ${recommendation.recommendation}">
       <h3>${AppState.lang === 'ar-MA' ? 'توصية التحليل' : 'Analysis Recommendation'}</h3>
@@ -1202,11 +1238,8 @@ async function resetData() {
   
   if (confirm(confirmMsg)) {
     AppState.history = [];
-    AppState.currentStreak = { type: null, count: 0 
-  AppState.stats = { wins:0, losses:0, ties:0, total:0 };
-  AppState.pendingRecommendation = "none";
-  updatePerformanceBar();
-};
+    AppState.currentStreak = { type: null, count: 0 };
+    AppState.wins = 0; AppState.losses = 0; AppState.currentWinStreak = 0; AppState.bestWinStreak = 0; AppState.currentRecommendation = null; saveStats(); setTimeout(updateStatsPanel,0);
     AppState.markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
     AppState.lastPredictions = [];
     AppState.modelPerformance = { basic: 0, advanced: 0 };
@@ -1217,6 +1250,25 @@ async function resetData() {
     }
     
     saveHistory();
+  // === Stats: evaluate last recommendation vs actual result ===
+  const prevRec = AppState.currentRecommendation;
+  if(prevRec && prevRec !== 'none'){
+    if(result === prevRec){
+      AppState.wins++;
+      AppState.currentWinStreak++;
+      if(AppState.currentWinStreak > AppState.bestWinStreak) AppState.bestWinStreak = AppState.currentWinStreak;
+    } else {
+      // Consider tie as loss unless recommendation was T
+      if(!(result === 'T' && prevRec !== 'T')){
+        AppState.losses++;
+      } else {
+        AppState.losses++;
+      }
+      AppState.currentWinStreak = 0;
+    }
+    saveStats();
+    updateStatsPanel();
+  }
     updateBigRoad();
     document.getElementById('bigEyeRoad').innerHTML = '';
     document.getElementById('smallRoad').innerHTML = '';
