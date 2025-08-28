@@ -1,6 +1,9 @@
 // حالة التطبيق الموسعة
 const AppState = {
-  history: [],
+  
+  stats: { wins: 0, losses: 0, ties: 0, total: 0 },
+  pendingRecommendation: "none",
+history: [],
   currentStreak: { type: null, count: 0 },
   lang: 'ar-MA',
   markovModel: { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 }},
@@ -18,6 +21,27 @@ const AppState = {
   modelPerformance: { basic: 0, advanced: 0 },
   lastPredictions: []
 };
+
+function updatePerformanceBar(){
+  const winsEl = document.getElementById('perfWins');
+  if(!winsEl) return;
+  document.getElementById('perfWins').textContent = AppState.stats.wins;
+  document.getElementById('perfLosses').textContent = AppState.stats.losses;
+  document.getElementById('perfStreak').textContent = (AppState.currentStreak && AppState.currentStreak.count) ? AppState.currentStreak.count : 0;
+  const wr = AppState.stats.total > 0 ? Math.round((AppState.stats.wins / AppState.stats.total)*100) : 0;
+  document.getElementById('perfWR').textContent = wr + '%';
+}
+
+function registerOutcomeAgainstRecommendation(actual){
+  const rec = AppState.pendingRecommendation || 'none';
+  if(rec === 'none') return;
+  if(actual === 'T'){ AppState.stats.ties += 1; return; }
+  AppState.stats.total += 1;
+  if(rec === actual){ AppState.stats.wins += 1; }
+  else{ AppState.stats.losses += 1; }
+}
+
+
 
 // أنماط شائعة في الكازينوهات الحية
 const COMMON_CASINO_PATTERNS = [
@@ -89,9 +113,11 @@ async function initializeApp() {
   loadHistory();
   updateCommonPatterns();
   
-  if (AppState.history.length > 50) {
+  if (AppState.history.length > 30) {
     await initializeModels();
-  }
+  
+  updatePerformanceBar();
+}
 }
 
 // تحميل التاريخ من localStorage
@@ -162,7 +188,7 @@ function loadLanguage() {
 // تهيئة نماذج تعلم الآلة
 async function initializeModels() {
   try {
-    if (AppState.history.length > 50) {
+    if (AppState.history.length > 30) {
       AppState.advancedModel = await trainLSTMModel(AppState.history);
       console.log("LSTM Model trained successfully");
       showNotification('info', AppState.lang === 'ar-MA' ? 
@@ -516,9 +542,6 @@ async function advancedPredict(history) {
     const basicWeight = 0.6 * AppState.modelPerformance.basic;
     const advancedWeight = 0.6 * AppState.modelPerformance.advanced;
     const totalWeight = basicWeight + advancedWeight;
-  if (!Number.isFinite(totalWeight) || totalWeight <= 0) {
-    return basicPrediction;
-  }
     
     finalPrediction = {
       P: (basicPrediction.P * (basicWeight/totalWeight) + advancedPrediction.P * (advancedWeight/totalWeight)),
@@ -710,7 +733,9 @@ function updateCockroachRoad(history) {
 
 // إضافة نتيجة جديدة
 async function addResult(result) {
-  AppState.history.push(result);
+  
+  registerOutcomeAgainstRecommendation(result);
+AppState.history.push(result);
   saveHistory();
   
   // تدريب النماذج عند وجود بيانات كافية
@@ -773,6 +798,7 @@ async function addResult(result) {
   await updatePredictions();
   generateAdvice();
   showRecommendation();
+  updatePerformanceBar();
   updateChart();
   updateLast5Analysis();
   updateAdvancedPredictionDisplay();
@@ -886,6 +912,7 @@ function buildRecommendationMessage(type, confidence, patterns) {
 // عرض التوصية
 async function showRecommendation() {
   const recommendation = await generateBetRecommendation();
+  AppState.pendingRecommendation = recommendation.recommendation;
   const recommendationElement = document.getElementById('recommendation');
   
   recommendationElement.innerHTML = `
@@ -1175,7 +1202,11 @@ async function resetData() {
   
   if (confirm(confirmMsg)) {
     AppState.history = [];
-    AppState.currentStreak = { type: null, count: 0 };
+    AppState.currentStreak = { type: null, count: 0 
+  AppState.stats = { wins:0, losses:0, ties:0, total:0 };
+  AppState.pendingRecommendation = "none";
+  updatePerformanceBar();
+};
     AppState.markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
     AppState.lastPredictions = [];
     AppState.modelPerformance = { basic: 0, advanced: 0 };

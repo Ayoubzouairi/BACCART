@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BACCARAT PRO</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
     <script src="logic.js" defer></script>
 </head>
 <body>
@@ -32,6 +32,26 @@
         <div class="prediction-section">
             <div id="predictionResult">
                 <div class="prediction-title">📊 تنبؤات متقدمة</div>
+        <!-- Performance Bar -->
+        <div class="perf-stats">
+            <div class="perf-card">
+                <div class="perf-value" id="perfWins">0</div>
+                <div class="perf-label">WINS</div>
+            </div>
+            <div class="perf-card">
+                <div class="perf-value" id="perfLosses">0</div>
+                <div class="perf-label">LOSSES</div>
+            </div>
+            <div class="perf-card">
+                <div class="perf-value" id="perfStreak">0</div>
+                <div class="perf-label">CURRENT STREAK</div>
+            </div>
+            <div class="perf-card">
+                <div class="perf-value" id="perfWR">0%</div>
+                <div class="perf-label">WIN RATE</div>
+            </div>
+        </div>
+
                 <div id="predictionBars" class="prediction-bars">
                     <div class="prediction-bar player-bar" style="width:33%">P</div>
                     <div class="prediction-bar banker-bar" style="width:34%">B</div>
@@ -134,4 +154,15 @@
 
     <div id="effects-container"></div>
 </body>
-                        </html>
+                        </html>            <div id="last5Results"></div>
+        </div>
+
+        <div class="common-patterns">
+            <h3>الأنماط الشائعة في الكازينو</h3>
+            <div id="casinoPatterns"></div>
+        </div>
+    </div>
+
+    <div id="effects-container"></div>
+</body>
+    </html>
