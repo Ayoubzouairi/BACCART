@@ -1,10 +1,5 @@
 // حالة التطبيق الموسعة
 const AppState = {
-  wins: 0,
-  losses: 0,
-  currentWinStreak: 0,
-  bestWinStreak: 0,
-  currentRecommendation: null,
   history: [],
   currentStreak: { type: null, count: 0 },
   lang: 'ar-MA',
@@ -85,48 +80,7 @@ const COMMON_CASINO_PATTERNS = [
 ];
 
 // تهيئة التطبيق
-async 
-// ===== Stats Summary (Wins/Losses/Streak/WinRate) =====
-function saveStats(){
-  try{
-    localStorage.setItem('baccarat_stats', JSON.stringify({
-      wins: AppState.wins,
-      losses: AppState.losses,
-      currentWinStreak: AppState.currentWinStreak,
-      bestWinStreak: AppState.bestWinStreak
-    }));
-  }catch(e){}
-}
-
-function loadStats(){
-  try{
-    const raw = localStorage.getItem('baccarat_stats');
-    if(raw){
-      const s = JSON.parse(raw);
-      AppState.wins = s.wins || 0;
-      AppState.losses = s.losses || 0;
-      AppState.currentWinStreak = s.currentWinStreak || 0;
-      AppState.bestWinStreak = s.bestWinStreak || 0;
-    }
-  }catch(e){}
-}
-
-function updateStatsPanel(){
-  const total = AppState.wins + AppState.losses;
-  const winRate = total > 0 ? Math.round((AppState.wins/total)*100) : 0;
-  const winsEl = document.getElementById('winsCount');
-  const lossesEl = document.getElementById('lossesCount');
-  const streakEl = document.getElementById('currentStreakCount');
-  const rateEl = document.getElementById('winRatePercent');
-  if(winsEl){ winsEl.textContent = AppState.wins; }
-  if(lossesEl){ lossesEl.textContent = AppState.losses; }
-  if(streakEl){ streakEl.textContent = AppState.currentWinStreak; }
-  if(rateEl){ rateEl.textContent = winRate + '%'; }
-}
-
 async function initializeApp() {
-  loadStats();
-  setTimeout(updateStatsPanel, 0);
   createNotificationContainer();
   setupEventListeners();
   checkTimeForTheme();
@@ -755,25 +709,6 @@ function updateCockroachRoad(history) {
 async function addResult(result) {
   AppState.history.push(result);
   saveHistory();
-  // === Stats: evaluate last recommendation vs actual result ===
-  const prevRec = AppState.currentRecommendation;
-  if(prevRec && prevRec !== 'none'){
-    if(result === prevRec){
-      AppState.wins++;
-      AppState.currentWinStreak++;
-      if(AppState.currentWinStreak > AppState.bestWinStreak) AppState.bestWinStreak = AppState.currentWinStreak;
-    } else {
-      // Consider tie as loss unless recommendation was T
-      if(!(result === 'T' && prevRec !== 'T')){
-        AppState.losses++;
-      } else {
-        AppState.losses++;
-      }
-      AppState.currentWinStreak = 0;
-    }
-    saveStats();
-    updateStatsPanel();
-  }
   
   // تدريب النماذج عند وجود بيانات كافية
   if (AppState.history.length === 30 || (AppState.history.length % 50 === 0 && !AppState.advancedModel)) {
@@ -950,7 +885,6 @@ async function showRecommendation() {
   const recommendation = await generateBetRecommendation();
   const recommendationElement = document.getElementById('recommendation');
   
-  AppState.currentRecommendation = recommendation.recommendation;
   recommendationElement.innerHTML = `
     <div class="recommendation-box ${recommendation.recommendation}">
       <h3>${AppState.lang === 'ar-MA' ? 'توصية التحليل' : 'Analysis Recommendation'}</h3>
@@ -1216,16 +1150,7 @@ function updateUI() {
   document.querySelector('.diamond-pattern h3').textContent = isArabic ? '💎 تحليل نمط الدايموند' : '💎 Diamond Pattern Analysis';
   document.querySelector('.performance-analysis h3').textContent = isArabic ? 'تحليل أداء النماذج' : 'Model Performance Analysis';
   
-  
-  // Update stats summary labels (Arabic/English)
-  const statLabels = document.querySelectorAll('#statsSummary .stat-label');
-  if (statLabels && statLabels.length >= 4) {
-    statLabels[0].textContent = isArabic ? 'الربحات' : 'WINS';
-    statLabels[1].textContent = isArabic ? 'الخسارات' : 'LOSSES';
-    statLabels[2].textContent = isArabic ? 'سلسلة حالية' : 'CURRENT STREAK';
-    statLabels[3].textContent = isArabic ? 'نسبة الفوز' : 'WIN RATE';
-  }
-if (AppState.history.length > 0) {
+  if (AppState.history.length > 0) {
     updateDisplay();
     updatePredictions();
     generateAdvice();
@@ -1248,7 +1173,6 @@ async function resetData() {
   if (confirm(confirmMsg)) {
     AppState.history = [];
     AppState.currentStreak = { type: null, count: 0 };
-    AppState.wins = 0; AppState.losses = 0; AppState.currentWinStreak = 0; AppState.bestWinStreak = 0; AppState.currentRecommendation = null; saveStats(); setTimeout(updateStatsPanel,0);
     AppState.markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0, B: 0, T: 0 } };
     AppState.lastPredictions = [];
     AppState.modelPerformance = { basic: 0, advanced: 0 };
@@ -1259,25 +1183,6 @@ async function resetData() {
     }
     
     saveHistory();
-  // === Stats: evaluate last recommendation vs actual result ===
-  const prevRec = AppState.currentRecommendation;
-  if(prevRec && prevRec !== 'none'){
-    if(result === prevRec){
-      AppState.wins++;
-      AppState.currentWinStreak++;
-      if(AppState.currentWinStreak > AppState.bestWinStreak) AppState.bestWinStreak = AppState.currentWinStreak;
-    } else {
-      // Consider tie as loss unless recommendation was T
-      if(!(result === 'T' && prevRec !== 'T')){
-        AppState.losses++;
-      } else {
-        AppState.losses++;
-      }
-      AppState.currentWinStreak = 0;
-    }
-    saveStats();
-    updateStatsPanel();
-  }
     updateBigRoad();
     document.getElementById('bigEyeRoad').innerHTML = '';
     document.getElementById('smallRoad').innerHTML = '';
