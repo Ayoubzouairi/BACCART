@@ -1391,3 +1391,158 @@ function updateBigRoad() {
 
 // تهيئة التطبيق عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', initializeApp);
+
+/* === Bankroll & Risk Management Add-on === */
+(function(){
+  const state = {
+    sessionActive: false,
+    paused: false,
+    bankroll: 0,
+    balance: 0,
+    stake: 0,
+    takeProfit: 0,
+    stopLoss: 0,
+    rounds: 0,
+    lossStreak: 0,
+    maxLossStreak: 3,
+    lastBet: null,
+  };
+
+  const els = {
+    bankrollInput: document.getElementById('bankrollInput'),
+    stakeInput: document.getElementById('stakeInput'),
+    takeProfitInput: document.getElementById('takeProfitInput'),
+    stopLossInput: document.getElementById('stopLossInput'),
+    maxLossStreakInput: document.getElementById('maxLossStreakInput'),
+    startBtn: document.getElementById('startSessionBtn'),
+    endBtn: document.getElementById('endSessionBtn'),
+    pauseBtn: document.getElementById('pauseBtn'),
+    resumeBtn: document.getElementById('resumeBtn'),
+    balanceDisplay: document.getElementById('balanceDisplay'),
+    plDisplay: document.getElementById('plDisplay'),
+    roundsDisplay: document.getElementById('roundsDisplay'),
+    lossStreakDisplay: document.getElementById('lossStreakDisplay'),
+    sessionStateDisplay: document.getElementById('sessionStateDisplay'),
+  };
+
+  function notify(msg, type='info'){
+    try {
+      const containerId = 'notification-container';
+      let container = document.getElementById(containerId);
+      if(!container){
+        container = document.createElement('div');
+        container.id = containerId;
+        container.className = 'notification-container';
+        document.body.appendChild(container);
+      }
+      const el = document.createElement('div');
+      el.className = 'notification show ' + (type==='error'?'error': type==='win'?'win': type==='lose'?'lose': 'info');
+      el.innerHTML = '<span>'+msg+'</span><button class="close-notification" onclick="this.parentElement.remove()">×</button>';
+      container.appendChild(el);
+      setTimeout(()=> el.remove(), 4000);
+    } catch(e){ console.warn(e); }
+  }
+
+  function updateUI(){
+    els.balanceDisplay.textContent = Math.round(state.balance);
+    els.plDisplay.textContent = Math.round(state.balance - state.bankroll);
+    els.roundsDisplay.textContent = state.rounds;
+    els.lossStreakDisplay.textContent = state.lossStreak;
+    els.sessionStateDisplay.textContent = !state.sessionActive ? 'متوقف' : (state.paused ? 'متوقف مؤقتًا' : 'نشط');
+  }
+
+  function startSession(){
+    if(state.sessionActive){ notify('جلسة شغالة بالفعل', 'info'); return; }
+    state.bankroll = Number(els.bankrollInput.value || 0);
+    state.balance = state.bankroll;
+    state.stake = Number(els.stakeInput.value || 0);
+    state.takeProfit = Number(els.takeProfitInput.value || 0);
+    state.stopLoss = Number(els.stopLossInput.value || 0);
+    state.maxLossStreak = Number(els.maxLossStreakInput.value || 3);
+    state.rounds = 0;
+    state.lossStreak = 0;
+    state.lastBet = null;
+    state.sessionActive = true;
+    state.paused = false;
+    els.startBtn.disabled = true;
+    els.endBtn.disabled = false;
+    els.pauseBtn.disabled = false;
+    els.resumeBtn.disabled = true;
+    updateUI();
+    notify('بدات الجلسة. العب بحذر!', 'info');
+  }
+
+  function endSession(){
+    if(!state.sessionActive){ return; }
+    state.sessionActive = false;
+    els.startBtn.disabled = false;
+    els.endBtn.disabled = true;
+    els.pauseBtn.disabled = true;
+    els.resumeBtn.disabled = true;
+    updateUI();
+    notify('تم إنهاء الجلسة.', 'info');
+  }
+
+  function pause(){ state.paused = true; els.pauseBtn.disabled = true; els.resumeBtn.disabled = false; updateUI(); }
+  function resume(){ state.paused = false; els.pauseBtn.disabled = false; els.resumeBtn.disabled = true; updateUI(); }
+
+  els.startBtn?.addEventListener('click', startSession);
+  els.endBtn?.addEventListener('click', endSession);
+  els.pauseBtn?.addEventListener('click', pause);
+  els.resumeBtn?.addEventListener('click', resume);
+
+  // تسوية رهان الباكارات
+  function settleBet(betSide, resultSide, stake){
+    // Player 1:1, Banker 0.95:1, Tie 8:1 — في حالة تعادل ورهان P/B: Push
+    if(resultSide==='T'){
+      if(betSide==='T'){ return stake*8; }
+      return 0; // Push
+    }
+    if(betSide===resultSide){
+      if(resultSide==='P') return stake*1;
+      if(resultSide==='B') return stake*0.95;
+    }
+    return -stake;
+  }
+
+  function readPendingBet(){
+    const side = document.querySelector('input[name="betSide"]:checked')?.value || 'P';
+    const stake = Number(document.getElementById('stakeInput')?.value || state.stake || 0);
+    return {side, stake};
+  }
+
+  function guard(){
+    if(!state.sessionActive){ notify('شغل الجلسة أولاً.', 'error'); return false; }
+    if(state.paused){ notify('الجلسة متوقفة مؤقتاً.', 'error'); return false; }
+    const pl = state.balance - state.bankroll;
+    if(state.takeProfit>0 && pl >= state.takeProfit){ notify('🎯 وصلتي لهدف الربح. توقف.', 'info'); pause(); return false; }
+    if(state.stopLoss>0 && -pl >= state.stopLoss){ notify('🛑 تجاوزت حد الخسارة. توقف.', 'error'); pause(); return false; }
+    if(state.lossStreak >= state.maxLossStreak){ notify('🧊 سلسلة خسائر طويلة. خذ استراحة.', 'error'); pause(); return false; }
+    return true;
+  }
+
+  // لفّ دالة addResult الأصلية باش نسوّي الربح/الخسارة تلقائياً
+  const originalAddResult = window.addResult;
+  window.addResult = function(resultSide){
+    if(!guard()){
+      try { originalAddResult && originalAddResult(resultSide); } catch(e){}
+      return;
+    }
+    const bet = readPendingBet();
+    const net = settleBet(bet.side, resultSide, bet.stake);
+    state.balance += net;
+    state.rounds += 1;
+
+    if(net < 0){ state.lossStreak += 1; notify('خسارة -'+Math.abs(net).toFixed(0)+' درهم', 'lose'); }
+    else if(net > 0){ state.lossStreak = 0; notify('ربح +'+net.toFixed(0)+' درهم', 'win'); }
+    else { notify('تعادل (Push)', 'info'); }
+
+    updateUI();
+    const plNow = state.balance - state.bankroll;
+    if(state.takeProfit>0 && plNow >= state.takeProfit){ notify('🎯 وصلت لهدف الربح. سيتم الإيقاف.', 'info'); pause(); }
+    if(state.stopLoss>0 && -plNow >= state.stopLoss){ notify('🛑 وصلت لحد الخسارة. سيتم الإيقاف.', 'error'); pause(); }
+    if(state.lossStreak >= state.maxLossStreak){ notify('🧊 وصلت لأقصى سلسلة خسائر. سيتم الإيقاف.', 'error'); pause(); }
+
+    try { originalAddResult && originalAddResult(resultSide); } catch(e){ console.warn(e); }
+  };
+})();
