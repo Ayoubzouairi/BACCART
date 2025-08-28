@@ -124,7 +124,7 @@ function updateStatsPanel(){
   if(rateEl){ rateEl.textContent = winRate + '%'; }
 }
 
-function initializeApp() {
+async function initializeApp() {
   loadStats();
   setTimeout(updateStatsPanel, 0);
   createNotificationContainer();
@@ -1216,7 +1216,16 @@ function updateUI() {
   document.querySelector('.diamond-pattern h3').textContent = isArabic ? '💎 تحليل نمط الدايموند' : '💎 Diamond Pattern Analysis';
   document.querySelector('.performance-analysis h3').textContent = isArabic ? 'تحليل أداء النماذج' : 'Model Performance Analysis';
   
-  if (AppState.history.length > 0) {
+  
+  // Update stats summary labels (Arabic/English)
+  const statLabels = document.querySelectorAll('#statsSummary .stat-label');
+  if (statLabels && statLabels.length >= 4) {
+    statLabels[0].textContent = isArabic ? 'الربحات' : 'WINS';
+    statLabels[1].textContent = isArabic ? 'الخسارات' : 'LOSSES';
+    statLabels[2].textContent = isArabic ? 'سلسلة حالية' : 'CURRENT STREAK';
+    statLabels[3].textContent = isArabic ? 'نسبة الفوز' : 'WIN RATE';
+  }
+if (AppState.history.length > 0) {
     updateDisplay();
     updatePredictions();
     generateAdvice();
