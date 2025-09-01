@@ -1,20 +1,5 @@
 // حالة التطبيق الموسعة
 const AppState = {
-  // ---- Win/Loss tracking state ----
-  winLoss: {
-    wins: 0,
-    losses: 0,
-    pushes: 0,
-    streak: 0,
-    bestStreak: 0,
-    total: 0,
-    countTieAsLoss: false
-  },
-  // last predicted outcome: 'P' | 'B' | 'T' | null
-  lastPrediction: null,
-  lastPredictionAmbiguous: false,
-  lastPredictionProbs: {P:0,B:0,T:0},
-
   history: [],
   currentStreak: { type: null, count: 0 },
   lang: 'ar-MA',
@@ -723,8 +708,6 @@ function updateCockroachRoad(history) {
 // إضافة نتيجة جديدة
 async function addResult(result) {
   AppState.history.push(result);
-  registerOutcomeFromPrediction(result);
-
   saveHistory();
   
   // تدريب النماذج عند وجود بيانات كافية
@@ -941,7 +924,6 @@ function displayPrediction(prediction) {
   document.getElementById('playerProb').textContent = `${prediction.P.toFixed(1)}%`;
   document.getElementById('bankerProb').textContent = `${prediction.B.toFixed(1)}%`;
   document.getElementById('tieProb').textContent = `${prediction.T.toFixed(1)}%`;
-  setLastPredictionFrom(prediction);
 
   if (prediction.P >= threshold) {
     document.querySelector('.player-bar').classList.add('high-prob');
@@ -1183,15 +1165,6 @@ function updateUI() {
 
 // إعادة تعيين البيانات
 async function resetData() {
-  // reset Win/Loss stats (preserve user preference for counting tie as loss)
-  AppState.winLoss = {
-    wins: 0, losses: 0, pushes: 0, streak: 0, bestStreak: 0, total: 0,
-    countTieAsLoss: AppState.winLoss && AppState.winLoss.countTieAsLoss ? true : false
-  };
-  AppState.lastPrediction = null;
-  saveWinLoss();
-  updateWinLossUI();
-
   const isArabic = AppState.lang === 'ar-MA';
   const confirmMsg = isArabic ? 
     "هل أنت متأكد من أنك تريد إعادة تعيين جميع البيانات؟" : 
@@ -1419,108 +1392,180 @@ function updateBigRoad() {
 // تهيئة التطبيق عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', initializeApp);
 
+/* =======================
+   ✅ Win/Loss Tracker Addon (no Ties, skip equal-prob cases)
+   ======================= */
+(function () {
+  const ids = { wins: 'wlWins', losses: 'wlLosses', rate: 'wlRate' };
+  const probIds = { P: 'playerProb', B: 'bankerProb', T: 'tieProb' };
+  const state = { wins: 0, losses: 0 };
 
-/* ===== Win/Loss persistence ===== */
-function saveWinLoss() {
-  try {
-    localStorage.setItem('wl_stats', JSON.stringify(AppState.winLoss));
-  } catch(e) {}
-}
-function loadWinLoss() {
-  try {
-    const raw = localStorage.getItem('wl_stats');
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed === 'object') {
-        AppState.winLoss = Object.assign({
-          wins:0, losses:0, pushes:0, streak:0, bestStreak:0, total:0, countTieAsLoss:false
-        }, parsed);
+  function getInt(valText) {
+    if (!valText) return null;
+    const n = parseFloat(String(valText).replace('%','').trim());
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function readCurrentProbs() {
+    const pEl = document.getElementById(probIds.P);
+    const bEl = document.getElementById(probIds.B);
+    const tEl = document.getElementById(probIds.T);
+    const P = getInt(pEl && pEl.textContent);
+    const B = getInt(bEl && bEl.textContent);
+    const T = getInt(tEl && tEl.textContent);
+    return { P, B, T };
+  }
+
+  function pickRecommendation() {
+    const { P, B, T } = readCurrentProbs();
+    if ([P,B,T].some(v => v === null)) return null;
+    const entries = [{k:'P',v:P},{k:'B',v:B},{k:'T',v:T}];
+    const maxVal = Math.max(P, B, T);
+    const top = entries.filter(e => e.v === maxVal);
+    if (top.length !== 1) return null;
+    return top[0].k; // 'P' or 'B' or 'T'
+  }
+
+  function updateWLUI() {
+    const winsEl = document.getElementById(ids.wins);
+    const lossesEl = document.getElementById(ids.losses);
+    const rateEl = document.getElementById(ids.rate);
+    if (!winsEl || !lossesEl || !rateEl) return;
+
+    winsEl.textContent = state.wins;
+    lossesEl.textContent = state.losses;
+
+    const total = state.wins + state.losses;
+    const rate = total > 0 ? Math.round((state.wins / total) * 100) : 0;
+    rateEl.textContent = rate + '%';
+  }
+
+  function shouldCount(roundOutcome, rec) {
+    if (roundOutcome === 'T') return false; // ignore ties
+    if (!rec) return false; // skip if equal-prob or unreadable
+    if (rec === 'T') return false; // only P/B count
+    return true;
+  }
+
+  const _origAddResult = window.addResult;
+  const _origResetData = window.resetData || function(){};
+
+  window.addResult = function(resultChar) {
+    if (typeof _origAddResult === 'function') {
+      _origAddResult(resultChar);
+    }
+    try {
+      const rec = pickRecommendation();
+      if (!shouldCount(resultChar, rec)) {
+        updateWLUI();
+        return;
+      }
+      if (rec === resultChar) {
+        state.wins += 1;
+      } else {
+        state.losses += 1;
+      }
+      updateWLUI();
+    } catch (e) {
+      console.warn('WL addon error:', e);
+    }
+  };
+
+  window.resetData = function() {
+    state.wins = 0;
+    state.losses = 0;
+    updateWLUI();
+    _origResetData();
+  };
+
+  document.addEventListener('DOMContentLoaded', updateWLUI);
+})();
+
+/* =======================
+   🌐 WL i18n (AR/EN auto-switch)
+   ======================= */
+(function(){
+  const STR = {
+    ar: {
+      title: "📈 معدل الربح/الخسارة (بدون تعادل وبدون تطابق النِّسب)",
+      wins: "الانتصارات:",
+      losses: "الهزائم:",
+      rate: "نسبة الفوز:",
+      note: "* ما كنحتسبوش التعادل، وما كنحتسبوش الجولة إلى كانت النِّسب متساوية."
+    },
+    en: {
+      title: "📈 Win/Loss (excludes ties & equal-prob rounds)",
+      wins: "Wins:",
+      losses: "Losses:",
+      rate: "Win Rate:",
+      note: "* Ties are ignored, and rounds with equal top probabilities are skipped."
+    }
+  };
+
+  function detectLang() {
+    // Try common selectors for language controls
+    const candidates = [
+      document.getElementById('langSelect'),
+      document.getElementById('language'),
+      document.getElementById('lang')
+    ].filter(Boolean);
+    if (candidates.length) {
+      const val = (candidates[0].value || '').toLowerCase();
+      if (val.startsWith('ar')) return 'ar';
+      if (val.startsWith('en')) return 'en';
+    }
+    // Try document language or body classes
+    const htmlLang = (document.documentElement.lang||'').toLowerCase();
+    if (htmlLang.startsWith('ar')) return 'ar';
+    if (htmlLang.startsWith('en')) return 'en';
+
+    if (document.body && document.body.classList.contains('ar')) return 'ar';
+    if (document.body && document.body.classList.contains('en')) return 'en';
+
+    // Default Arabic for this project
+    return 'ar';
+  }
+
+  function setWLTexts(lang){
+    const L = STR[lang] || STR.ar;
+    const byId = id => document.getElementById(id);
+    const t = [
+      ['wlTitle', L.title],
+      ['wlWinsLabel', L.wins],
+      ['wlLossesLabel', L.losses],
+      ['wlRateLabel', L.rate],
+      ['wlNote', L.note],
+    ];
+    t.forEach(([id, text]) => {
+      const el = byId(id);
+      if (el) el.textContent = text;
+    });
+
+    // RTL/LTR handling
+    const box = byId('wlBox');
+    if (box) {
+      if (lang === 'ar'){
+        box.dir = 'rtl';
+      } else {
+        box.dir = 'ltr';
       }
     }
-  } catch(e) {}
-}
-
-
-/* ===== Win/Loss UI ===== */
-function updateWinLossUI() {
-  const wl = AppState.winLoss;
-  const accuracy = wl.total ? ((wl.wins / wl.total) * 100).toFixed(1) : '—';
-  const el = document.getElementById('wlStats');
-  if (el) {
-    el.innerHTML = `
-      <div class="wl-badge win">✅ ربح: ${wl.wins}</div>
-      <div class="wl-badge lose">❌ خسارة: ${wl.losses}</div>
-      
-      <div class="wl-badge">📈 الدقة: ${accuracy}%</div>
-      <div class="wl-badge">🔥 ستريك: ${wl.streak} (أفضل: ${wl.bestStreak})</div>
-    `;
-  }
-  const tieAsLoss = document.getElementById('countTieAsLoss');
-  if (tieAsLoss) tieAsLoss.checked = !!wl.countTieAsLoss;
-}
-
-
-/* ===== Last Prediction helper ===== */
-function setLastPredictionFrom(probs) {
-  // probs: { P:number, B:number, T:number }
-  const keys = ['P','B','T'];
-  const maxVal = Math.max(probs.P, probs.B, probs.T);
-  const top = keys.filter(k => probs[k] === maxVal);
-  AppState.lastPredictionProbs = { P: probs.P, B: probs.B, T: probs.T };
-
-  if (top.length !== 1) {
-    // ambiguous (e.g., 50%/50%)
-    AppState.lastPrediction = null;
-    AppState.lastPredictionAmbiguous = true;
-    return;
-  }
-  AppState.lastPrediction = top[0];
-  AppState.lastPredictionAmbiguous = false;
-}
-  let best = 'P';
-  if (probs.B >= probs.P && probs.B >= probs.T) best = 'B';
-  if (probs.T >= probs.P && probs.T >= probs.B) best = 'T';
-  AppState.lastPrediction = best;
-}
-
-
-/* ===== Win/Loss bookkeeping on result entry ===== */
-function registerOutcomeFromPrediction(actual) {
-  // If prediction was ambiguous (e.g., 50%/50%), do not count as win/loss
-  if (AppState.lastPredictionAmbiguous) {
-    // Do not count ambiguous rounds at all
-    saveWinLoss();
-    updateWinLossUI();
-    return;
   }
 
-  const wl = AppState.winLoss;
-  const pred = AppState.lastPrediction;
-  if (!pred) return; // no prediction available yet
-
-  if (actual === 'T' && pred !== 'T') {
-    // Do NOT count ties unless user explicitly counts them as loss
-    if (AppState.winLoss.countTieAsLoss) {
-      wl.losses++;
-      wl.streak = 0;
-      wl.total = wl.wins + wl.losses;
-      saveWinLoss();
-      updateWinLossUI();
-    }
-    return;
-  } else {
-      wl.pushes++;
-    }
-  } else if (actual === pred) {
-    wl.wins++;
-    wl.streak++;
-    wl.bestStreak = Math.max(wl.bestStreak, wl.streak);
-  } else {
-    wl.losses++;
-    wl.streak = 0;
+  function hookLanguageChanges(){
+    const ids = ['langSelect','language','lang'];
+    ids.forEach(id=>{
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('change', () => setWLTexts(detectLang()));
+      }
+    });
+    // If app emits a custom event
+    window.addEventListener('languageChanged', () => setWLTexts(detectLang()));
   }
 
-  wl.total = wl.wins + wl.losses;
-  saveWinLoss();
-  updateWinLossUI();
-}
+  document.addEventListener('DOMContentLoaded', function(){
+    setWLTexts(detectLang());
+    hookLanguageChanges();
+  });
+})();

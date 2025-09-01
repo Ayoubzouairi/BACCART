@@ -740,35 +740,40 @@ body.light-mode .results-table td {
   }
 }
 
-/* ---- Win/Loss tracking ---- */
-.wl-container {
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 10px;
-  background: rgba(0,0,0,0.3);
-  border-left: 4px solid gold;
-}
-body.light-mode .wl-container {
-  background: rgba(0,0,0,0.05);
-}
-.wl-stats {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-  margin-top: 10px;
+/* ✅ صندوق الربح/الخسارة */
+.wl-box{
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.25);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   text-align: center;
-  font-weight: bold;
 }
-.wl-badge {
-  padding: 10px;
+body.light-mode .wl-box{ background: rgba(0,0,0,0.06); }
+
+.wl-title{
+  font-weight: 700;
+  color: gold;
+  margin-bottom: 10px;
+}
+
+.wl-stats{
+  display:flex;
+  gap: 14px;
+  justify-content:center;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.wl-item{
+  padding: 8px 12px;
   border-radius: 8px;
   background: rgba(255,255,255,0.06);
+  font-weight: 600;
 }
-.wl-badge.win { color:#28a745; }
-.wl-badge.lose { color:#dc3545; }
-.wl-badge.push { color:#17a2b8; }
-.wl-controls { margin-top: 10px; font-size: 0.95em; opacity: 0.9; }
+body.light-mode .wl-item{ background: rgba(0,0,0,0.06); }
 
-
-/* Hide countTieAsLoss control */
-.wl-controls{display:none !important;}
+.wl-note{
+  font-size: .9em;
+  opacity: .8;
+}
