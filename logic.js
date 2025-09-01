@@ -12,6 +12,8 @@ const AppState = {
   },
   // last predicted outcome: 'P' | 'B' | 'T' | null
   lastPrediction: null,
+  lastPredictionAmbiguous: false,
+  lastPredictionProbs: {P:0,B:0,T:0},
 
   history: [],
   currentStreak: { type: null, count: 0 },
@@ -1431,7 +1433,7 @@ function loadWinLoss() {
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === 'object') {
         AppState.winLoss = Object.assign({
-          wins:0, losses:0, pushes:0, streak:0, bestStreak:0, total:0, countTieAsLoss:false
+          wins:0, losses:0, pushes:0, streak:0, bestStreak:0, total:0, countTieAsLoss: false
         }, parsed);
       }
     }
@@ -1448,19 +1450,31 @@ function updateWinLossUI() {
     el.innerHTML = `
       <div class="wl-badge win">✅ ربح: ${wl.wins}</div>
       <div class="wl-badge lose">❌ خسارة: ${wl.losses}</div>
-      <div class="wl-badge push">🤝 Push: ${wl.pushes}</div>
+      
       <div class="wl-badge">📈 الدقة: ${accuracy}%</div>
       <div class="wl-badge">🔥 ستريك: ${wl.streak} (أفضل: ${wl.bestStreak})</div>
     `;
   }
-  const tieAsLoss = document.getElementById('countTieAsLoss');
-  if (tieAsLoss) tieAsLoss.checked = !!wl.countTieAsLoss;
-}
+  }
 
 
 /* ===== Last Prediction helper ===== */
 function setLastPredictionFrom(probs) {
   // probs: { P:number, B:number, T:number }
+  const keys = ['P','B','T'];
+  const maxVal = Math.max(probs.P, probs.B, probs.T);
+  const top = keys.filter(k => probs[k] === maxVal);
+  AppState.lastPredictionProbs = { P: probs.P, B: probs.B, T: probs.T };
+
+  if (top.length !== 1) {
+    // ambiguous (e.g., 50%/50%)
+    AppState.lastPrediction = null;
+    AppState.lastPredictionAmbiguous = true;
+    return;
+  }
+  AppState.lastPrediction = top[0];
+  AppState.lastPredictionAmbiguous = false;
+}
   let best = 'P';
   if (probs.B >= probs.P && probs.B >= probs.T) best = 'B';
   if (probs.T >= probs.P && probs.T >= probs.B) best = 'T';
@@ -1470,15 +1484,29 @@ function setLastPredictionFrom(probs) {
 
 /* ===== Win/Loss bookkeeping on result entry ===== */
 function registerOutcomeFromPrediction(actual) {
+  // If prediction was ambiguous (e.g., 50%/50%), do not count as win/loss
+  if (AppState.lastPredictionAmbiguous) {
+    // Do not count ambiguous rounds at all
+    saveWinLoss();
+    updateWinLossUI();
+    return;
+  }
+
   const wl = AppState.winLoss;
   const pred = AppState.lastPrediction;
   if (!pred) return; // no prediction available yet
 
   if (actual === 'T' && pred !== 'T') {
-    if (wl.countTieAsLoss) {
+    // Do NOT count ties unless user explicitly counts them as loss
+    if (AppState.winLoss.countTieAsLoss) {
       wl.losses++;
       wl.streak = 0;
-    } else {
+      wl.total = wl.wins + wl.losses;
+      saveWinLoss();
+      updateWinLossUI();
+    }
+    return;
+  } else {
       wl.pushes++;
     }
   } else if (actual === pred) {

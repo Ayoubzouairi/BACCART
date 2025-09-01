@@ -29,6 +29,12 @@
             <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
         </div>
 
+        <!-- سجل التنبؤ: ربح/خسارة/تعادل/سكيب -->
+        <div class="wl-container">
+            <h3>📒 سجل التنبؤ</h3>
+            <div id="wlStats" class="wl-stats"></div>
+        </div>
+
         <div class="prediction-section">
             <div id="predictionResult">
                 <div class="prediction-title">📊 تنبؤات متقدمة</div>
@@ -91,21 +97,7 @@
         <div class="recommendation-container">
             <div id="recommendation"></div>
         </div>
-
-
-        <!-- سجل التنبؤ: ربح/خسارة/تعادل -->
-        <div class="wl-container">
-            <h3>📒 سجل التنبؤ</h3>
-            <div id="wlStats" class="wl-stats"></div>
-            <div class="wl-controls">
-                <label style="display:inline-flex;align-items:center;gap:6px;">
-                    <input type="checkbox" id="countTieAsLoss">
-                    <span>احتسب التعادل كخسارة (اختياري)</span>
-                </label>
-            </div>
-        </div>
-
-        <div class="big-road-container">
+<div class="big-road-container">
             <h2>Big Road (الميجورك)</h2>
             <div class="big-road" id="bigRoad"></div>
         </div>
