@@ -1,5 +1,18 @@
 // حالة التطبيق الموسعة
 const AppState = {
+  // ---- Win/Loss tracking state ----
+  winLoss: {
+    wins: 0,
+    losses: 0,
+    pushes: 0,
+    streak: 0,
+    bestStreak: 0,
+    total: 0,
+    countTieAsLoss: false
+  },
+  // last predicted outcome: 'P' | 'B' | 'T' | null
+  lastPrediction: null,
+
   history: [],
   currentStreak: { type: null, count: 0 },
   lang: 'ar-MA',
@@ -25,7 +38,7 @@ const COMMON_CASINO_PATTERNS = [
     name: { 'ar-MA': 'التنين الطويل', 'en-US': 'Long Dragon' },
     description: {
       'ar-MA': '6 أو أكثر من النتائج المتتالية لنفس الجانب (لاعب/مصرفي)',
-      'en-US': '6 || more consecutive results for same side'
+      'en-US': '6 or more consecutive results for same side'
     },
     example: 'PPPPPPP أو BBBBBBB'
   },
@@ -41,7 +54,7 @@ const COMMON_CASINO_PATTERNS = [
     name: { 'ar-MA': '3 تعادلات', 'en-US': '3 Ties' },
     description: {
       'ar-MA': '3 تعادلات أو أكثر في آخر 10 جولات',
-      'en-US': '3 || more Ties in last 10 rounds'
+      'en-US': '3 or more Ties in last 10 rounds'
     },
     example: 'T..T..T أو TTT'
   },
@@ -49,7 +62,7 @@ const COMMON_CASINO_PATTERNS = [
     name: { 'ar-MA': '8 لاعب/مصرفي', 'en-US': '8 Player/Banker' },
     description: {
       'ar-MA': '8 أو أكثر من نفس النتيجة في آخر 10 جولات',
-      'en-US': '8 || more of same result in last 10 rounds'
+      'en-US': '8 or more of same result in last 10 rounds'
     },
     example: 'PPPPPPPP أو BBBBBBBB'
   },
@@ -65,7 +78,7 @@ const COMMON_CASINO_PATTERNS = [
     name: { 'ar-MA': 'نمط الدايموند', 'en-US': 'Diamond Pattern' },
     description: {
       'ar-MA': 'تناوب منتظم على شكل ماسة (PBPBP أو BPBPB)',
-      'en-US': 'Diamond-shaped alternation (PBPBP || BPBPB)'
+      'en-US': 'Diamond-shaped alternation (PBPBP or BPBPB)'
     },
     example: 'PBPBP أو BPBPB'
   },
@@ -424,7 +437,7 @@ function detectAdvancedPatterns(history) {
       pattern: 'Diamond',
       description: {
         ar: 'نمط دايموند متكرر (PBPBP أو BPBPB)',
-        en: 'Repeated diamond pattern (PBPBP || BPBPB)'
+        en: 'Repeated diamond pattern (PBPBP or BPBPB)'
       },
       confidence: diamond.confidence,
       length: 5
@@ -708,6 +721,8 @@ function updateCockroachRoad(history) {
 // إضافة نتيجة جديدة
 async function addResult(result) {
   AppState.history.push(result);
+  registerOutcomeFromPrediction(result);
+
   saveHistory();
   
   // تدريب النماذج عند وجود بيانات كافية
@@ -826,7 +841,7 @@ async function generateBetRecommendation() {
     a[1] > b[1] ? a : b
   );
 
-  if (strongestPrediction[1] >= 65 && (strongestPrediction[0] !== 'T' || strongestPrediction[1] >= 80)) {
+  if (strongestPrediction[1] >= 65) {
     const recType = strongestPrediction[0];
     const confidence = Math.min(95, strongestPrediction[1] * 1.1);
     
@@ -908,7 +923,7 @@ async function updatePredictions() {
 // عرض التنبؤ
 function displayPrediction(prediction) {
   const isArabic = AppState.lang === 'ar-MA';
-  const threshold = 56; const tieThreshold = 75;
+  const threshold = 55.7;
   
   document.querySelectorAll('.prediction-bar').forEach(bar => {
     bar.classList.remove('high-prob');
@@ -924,6 +939,7 @@ function displayPrediction(prediction) {
   document.getElementById('playerProb').textContent = `${prediction.P.toFixed(1)}%`;
   document.getElementById('bankerProb').textContent = `${prediction.B.toFixed(1)}%`;
   document.getElementById('tieProb').textContent = `${prediction.T.toFixed(1)}%`;
+  setLastPredictionFrom(prediction);
 
   if (prediction.P >= threshold) {
     document.querySelector('.player-bar').classList.add('high-prob');
@@ -935,7 +951,7 @@ function displayPrediction(prediction) {
     document.getElementById('bankerProb').classList.add('high');
     showHighProbabilityEffect('banker');
   }
-  if (prediction.T >= tieThreshold && threshold) {
+  if (prediction.T >= threshold) {
     document.querySelector('.tie-bar').classList.add('high-prob');
     document.getElementById('tieProb').classList.add('high');
     showHighProbabilityEffect('tie');
@@ -1085,7 +1101,7 @@ function updateMarkovModel() {
   for (const from in AppState.markovModel) {
     const total = Object.values(AppState.markovModel[from]).reduce((a, b) => a + b, 0);
     for (const to in AppState.markovModel[from]) {
-      AppState.markovModel[from][to] = total > 0 ? (AppState.markovModel[from][to] / total) * 100 : (to === 'P' ? 44.62 : (to === 'B' ? 45.86 : 9.52));
+      AppState.markovModel[from][to] = total > 0 ? (AppState.markovModel[from][to] / total) * 100 : 33.3;
     }
   }
 }
@@ -1165,6 +1181,15 @@ function updateUI() {
 
 // إعادة تعيين البيانات
 async function resetData() {
+  // reset Win/Loss stats (preserve user preference for counting tie as loss)
+  AppState.winLoss = {
+    wins: 0, losses: 0, pushes: 0, streak: 0, bestStreak: 0, total: 0,
+    countTieAsLoss: AppState.winLoss && AppState.winLoss.countTieAsLoss ? true : false
+  };
+  AppState.lastPrediction = null;
+  saveWinLoss();
+  updateWinLossUI();
+
   const isArabic = AppState.lang === 'ar-MA';
   const confirmMsg = isArabic ? 
     "هل أنت متأكد من أنك تريد إعادة تعيين جميع البيانات؟" : 
@@ -1391,3 +1416,81 @@ function updateBigRoad() {
 
 // تهيئة التطبيق عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', initializeApp);
+
+
+/* ===== Win/Loss persistence ===== */
+function saveWinLoss() {
+  try {
+    localStorage.setItem('wl_stats', JSON.stringify(AppState.winLoss));
+  } catch(e) {}
+}
+function loadWinLoss() {
+  try {
+    const raw = localStorage.getItem('wl_stats');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        AppState.winLoss = Object.assign({
+          wins:0, losses:0, pushes:0, streak:0, bestStreak:0, total:0, countTieAsLoss:false
+        }, parsed);
+      }
+    }
+  } catch(e) {}
+}
+
+
+/* ===== Win/Loss UI ===== */
+function updateWinLossUI() {
+  const wl = AppState.winLoss;
+  const accuracy = wl.total ? ((wl.wins / wl.total) * 100).toFixed(1) : '—';
+  const el = document.getElementById('wlStats');
+  if (el) {
+    el.innerHTML = `
+      <div class="wl-badge win">✅ ربح: ${wl.wins}</div>
+      <div class="wl-badge lose">❌ خسارة: ${wl.losses}</div>
+      <div class="wl-badge push">🤝 Push: ${wl.pushes}</div>
+      <div class="wl-badge">📈 الدقة: ${accuracy}%</div>
+      <div class="wl-badge">🔥 ستريك: ${wl.streak} (أفضل: ${wl.bestStreak})</div>
+    `;
+  }
+  const tieAsLoss = document.getElementById('countTieAsLoss');
+  if (tieAsLoss) tieAsLoss.checked = !!wl.countTieAsLoss;
+}
+
+
+/* ===== Last Prediction helper ===== */
+function setLastPredictionFrom(probs) {
+  // probs: { P:number, B:number, T:number }
+  let best = 'P';
+  if (probs.B >= probs.P && probs.B >= probs.T) best = 'B';
+  if (probs.T >= probs.P && probs.T >= probs.B) best = 'T';
+  AppState.lastPrediction = best;
+}
+
+
+/* ===== Win/Loss bookkeeping on result entry ===== */
+function registerOutcomeFromPrediction(actual) {
+  const wl = AppState.winLoss;
+  const pred = AppState.lastPrediction;
+  if (!pred) return; // no prediction available yet
+
+  if (actual === 'T' && pred !== 'T') {
+    if (wl.countTieAsLoss) {
+      wl.losses++;
+      wl.streak = 0;
+    } else {
+      wl.pushes++;
+    }
+  } else if (actual === pred) {
+    wl.wins++;
+    wl.streak++;
+    wl.bestStreak = Math.max(wl.bestStreak, wl.streak);
+  } else {
+    wl.losses++;
+    wl.streak = 0;
+  }
+
+  wl.total = wl.wins + wl.losses;
+  saveWinLoss();
+  updateWinLossUI();
+}

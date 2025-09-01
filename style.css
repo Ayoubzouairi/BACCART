@@ -739,3 +739,33 @@ body.light-mode .results-table td {
     margin-bottom: 15px;
   }
 }
+
+/* ---- Win/Loss tracking ---- */
+.wl-container {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.3);
+  border-left: 4px solid gold;
+}
+body.light-mode .wl-container {
+  background: rgba(0,0,0,0.05);
+}
+.wl-stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+.wl-badge {
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+}
+.wl-badge.win { color:#28a745; }
+.wl-badge.lose { color:#dc3545; }
+.wl-badge.push { color:#17a2b8; }
+.wl-controls { margin-top: 10px; font-size: 0.95em; opacity: 0.9; }
+
