@@ -919,3 +919,73 @@ body.light-mode #wlWinsItem{ background: rgba(0,180,0,0.10); }
 body.light-mode #wlLossesItem{ background: rgba(200,0,0,0.10); }
 body.light-mode #wlRateItem{ background: rgba(212,175,55,0.12); }
 
+
+/* 🌟 WL Widget Final Style */
+.wl-box{
+  margin-top: 20px !important;
+  padding: 20px !important;
+  border-radius: 18px !important;
+  background: linear-gradient(135deg, rgba(30,30,30,0.95), rgba(0,0,0,0.7)) !important;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.4) !important;
+  text-align: center !important;
+}
+
+.wl-title{
+  font-size: 1.4rem !important;
+  font-weight: 800 !important;
+  margin-bottom: 15px !important;
+  color: gold !important;
+}
+
+.wl-stats{
+  display: flex !important;
+  gap: 20px !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
+}
+
+.wl-item{
+  flex: 1 !important;
+  max-width: 260px !important;
+  padding: 18px 20px !important;
+  border-radius: 14px !important;
+  font-weight: 700 !important;
+  font-size: 1.3rem !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+#wlWinsItem{
+  background: rgba(0,180,0,0.15) !important;
+  color: #00ff00 !important;
+  border-color: rgba(0,180,0,0.35) !important;
+}
+
+#wlLossesItem{
+  background: rgba(200,0,0,0.15) !important;
+  color: #ff4d4d !important;
+  border-color: rgba(200,0,0,0.35) !important;
+}
+
+#wlRateItem{
+  background: rgba(212,175,55,0.15) !important;
+  color: #ffd700 !important;
+  border-color: rgba(212,175,55,0.35) !important;
+}
+
+#wlWins, #wlLosses, #wlRate{
+  font-size: 2rem !important;
+  margin-inline-start: 8px !important;
+}
+
+/* Light mode */
+body.light-mode .wl-box{
+  background: linear-gradient(135deg, rgba(250,250,250,0.95), rgba(240,240,240,0.9)) !important;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.15) !important;
+}
+body.light-mode #wlWinsItem{ background: rgba(0,180,0,0.10) !important; }
+body.light-mode #wlLossesItem{ background: rgba(200,0,0,0.10) !important; }
+body.light-mode #wlRateItem{ background: rgba(212,175,55,0.12) !important; }
+
