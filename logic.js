@@ -25,7 +25,7 @@ const COMMON_CASINO_PATTERNS = [
     name: { 'ar-MA': 'التنين الطويل', 'en-US': 'Long Dragon' },
     description: {
       'ar-MA': '6 أو أكثر من النتائج المتتالية لنفس الجانب (لاعب/مصرفي)',
-      'en-US': '6 or more consecutive results for same side'
+      'en-US': '6 || more consecutive results for same side'
     },
     example: 'PPPPPPP أو BBBBBBB'
   },
@@ -41,7 +41,7 @@ const COMMON_CASINO_PATTERNS = [
     name: { 'ar-MA': '3 تعادلات', 'en-US': '3 Ties' },
     description: {
       'ar-MA': '3 تعادلات أو أكثر في آخر 10 جولات',
-      'en-US': '3 or more Ties in last 10 rounds'
+      'en-US': '3 || more Ties in last 10 rounds'
     },
     example: 'T..T..T أو TTT'
   },
@@ -49,7 +49,7 @@ const COMMON_CASINO_PATTERNS = [
     name: { 'ar-MA': '8 لاعب/مصرفي', 'en-US': '8 Player/Banker' },
     description: {
       'ar-MA': '8 أو أكثر من نفس النتيجة في آخر 10 جولات',
-      'en-US': '8 or more of same result in last 10 rounds'
+      'en-US': '8 || more of same result in last 10 rounds'
     },
     example: 'PPPPPPPP أو BBBBBBBB'
   },
@@ -65,7 +65,7 @@ const COMMON_CASINO_PATTERNS = [
     name: { 'ar-MA': 'نمط الدايموند', 'en-US': 'Diamond Pattern' },
     description: {
       'ar-MA': 'تناوب منتظم على شكل ماسة (PBPBP أو BPBPB)',
-      'en-US': 'Diamond-shaped alternation (PBPBP or BPBPB)'
+      'en-US': 'Diamond-shaped alternation (PBPBP || BPBPB)'
     },
     example: 'PBPBP أو BPBPB'
   },
@@ -424,7 +424,7 @@ function detectAdvancedPatterns(history) {
       pattern: 'Diamond',
       description: {
         ar: 'نمط دايموند متكرر (PBPBP أو BPBPB)',
-        en: 'Repeated diamond pattern (PBPBP or BPBPB)'
+        en: 'Repeated diamond pattern (PBPBP || BPBPB)'
       },
       confidence: diamond.confidence,
       length: 5
@@ -826,7 +826,7 @@ async function generateBetRecommendation() {
     a[1] > b[1] ? a : b
   );
 
-  if (strongestPrediction[1] >= 65) {
+  if (strongestPrediction[1] >= 65 && (strongestPrediction[0] !== 'T' || strongestPrediction[1] >= 80)) {
     const recType = strongestPrediction[0];
     const confidence = Math.min(95, strongestPrediction[1] * 1.1);
     
@@ -908,7 +908,7 @@ async function updatePredictions() {
 // عرض التنبؤ
 function displayPrediction(prediction) {
   const isArabic = AppState.lang === 'ar-MA';
-  const threshold = 55.7;
+  const threshold = 56; const tieThreshold = 75;
   
   document.querySelectorAll('.prediction-bar').forEach(bar => {
     bar.classList.remove('high-prob');
@@ -935,7 +935,7 @@ function displayPrediction(prediction) {
     document.getElementById('bankerProb').classList.add('high');
     showHighProbabilityEffect('banker');
   }
-  if (prediction.T >= threshold) {
+  if (prediction.T >= tieThreshold && threshold) {
     document.querySelector('.tie-bar').classList.add('high-prob');
     document.getElementById('tieProb').classList.add('high');
     showHighProbabilityEffect('tie');
@@ -1085,7 +1085,7 @@ function updateMarkovModel() {
   for (const from in AppState.markovModel) {
     const total = Object.values(AppState.markovModel[from]).reduce((a, b) => a + b, 0);
     for (const to in AppState.markovModel[from]) {
-      AppState.markovModel[from][to] = total > 0 ? (AppState.markovModel[from][to] / total) * 100 : 33.3;
+      AppState.markovModel[from][to] = total > 0 ? (AppState.markovModel[from][to] / total) * 100 : (to === 'P' ? 44.62 : (to === 'B' ? 45.86 : 9.52));
     }
   }
 }
