@@ -769,3 +769,6 @@ body.light-mode .wl-container {
 .wl-badge.push { color:#17a2b8; }
 .wl-controls { margin-top: 10px; font-size: 0.95em; opacity: 0.9; }
 
+
+/* Hide countTieAsLoss control */
+.wl-controls{display:none !important;}

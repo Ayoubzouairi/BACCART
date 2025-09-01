@@ -1433,7 +1433,7 @@ function loadWinLoss() {
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === 'object') {
         AppState.winLoss = Object.assign({
-          wins:0, losses:0, pushes:0, streak:0, bestStreak:0, total:0, countTieAsLoss: false
+          wins:0, losses:0, pushes:0, streak:0, bestStreak:0, total:0, countTieAsLoss:false
         }, parsed);
       }
     }
@@ -1455,7 +1455,9 @@ function updateWinLossUI() {
       <div class="wl-badge">🔥 ستريك: ${wl.streak} (أفضل: ${wl.bestStreak})</div>
     `;
   }
-  }
+  const tieAsLoss = document.getElementById('countTieAsLoss');
+  if (tieAsLoss) tieAsLoss.checked = !!wl.countTieAsLoss;
+}
 
 
 /* ===== Last Prediction helper ===== */
