@@ -794,3 +794,128 @@ body.light-mode #wlRateItem{
   border-color: rgba(212, 175, 55, 0.25);
 }
 
+
+/* 🌟 ستايل محسّن لصندوق الربح/الخسارة */
+.wl-box{
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(30,30,30,0.95), rgba(0,0,0,0.7));
+  box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+  text-align: center;
+}
+
+.wl-title{
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 15px;
+  color: gold;
+}
+
+.wl-stats{
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.wl-item{
+  flex: 1;
+  max-width: 250px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#wlWinsItem{
+  background: rgba(0,180,0,0.15);
+  color: #00ff00;
+}
+#wlLossesItem{
+  background: rgba(200,0,0,0.15);
+  color: #ff4d4d;
+}
+#wlRateItem{
+  background: rgba(212,175,55,0.15);
+  color: #ffd700;
+}
+
+#wlWins, #wlLosses, #wlRate{
+  font-size: 2rem;
+  margin-left: 8px;
+}
+
+
+/* 🌟 WL Widget — vivid style */
+.wl-box{
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(30,30,30,0.95), rgba(0,0,0,0.7));
+  box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+  text-align: center;
+}
+
+.wl-title{
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 15px;
+  color: gold;
+}
+
+.wl-stats{
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.wl-item{
+  flex: 1;
+  max-width: 260px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+#wlWinsItem{
+  background: rgba(0,180,0,0.15);
+  color: #00ff00;
+  border-color: rgba(0,180,0,0.35);
+}
+
+#wlLossesItem{
+  background: rgba(200,0,0,0.15);
+  color: #ff4d4d;
+  border-color: rgba(200,0,0,0.35);
+}
+
+#wlRateItem{
+  background: rgba(212,175,55,0.15);
+  color: #ffd700;
+  border-color: rgba(212,175,55,0.35);
+}
+
+#wlWins, #wlLosses, #wlRate{
+  font-size: 2rem;
+  margin-inline-start: 8px;
+}
+
+/* Light mode tweaks */
+body.light-mode .wl-box{
+  background: linear-gradient(135deg, rgba(250,250,250,0.95), rgba(240,240,240,0.9));
+  box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+}
+body.light-mode #wlWinsItem{ background: rgba(0,180,0,0.10); }
+body.light-mode #wlLossesItem{ background: rgba(200,0,0,0.10); }
+body.light-mode #wlRateItem{ background: rgba(212,175,55,0.12); }
+
