@@ -133,6 +133,47 @@
     </div>
 
     <div id="effects-container"></div>
+<!-- ===== WL Widget (inline) ===== -->
+<style id="wlInlineStyles">
+/* 🌟 WL Widget Final Inline Style (forces override) */
+#wlBox{ all: initial; display:block; font-family: inherit; }
+#wlBox, #wlBox *{ box-sizing:border-box; font-family: inherit; }
+#wlContainer{
+  margin-top: 20px; padding: 20px; border-radius: 18px;
+  background: linear-gradient(135deg, rgba(30,30,30,0.95), rgba(0,0,0,0.7));
+  box-shadow: 0 4px 18px rgba(0,0,0,0.4); text-align:center; direction: rtl;
+}
+#wlTitle{ font-size: 1.4rem; font-weight: 800; margin-bottom: 15px; color: gold; }
+#wlStats{ display:flex; gap:20px; justify-content:center; flex-wrap:wrap; }
+.wlItem{
+  flex:1; max-width:260px; padding:18px 20px; border-radius:14px;
+  font-weight:700; font-size:1.3rem; display:flex; justify-content:center; align-items:center;
+  border:1px solid rgba(255,255,255,0.1);
+}
+#wlWinsItem{ background: rgba(0,180,0,0.15); color:#00ff00; border-color:rgba(0,180,0,0.35); }
+#wlLossesItem{ background: rgba(200,0,0,0.15); color:#ff4d4d; border-color:rgba(200,0,0,0.35); }
+#wlRateItem{ background: rgba(212,175,55,0.15); color:#ffd700; border-color:rgba(212,175,55,0.35); }
+#wlWins, #wlLosses, #wlRate{ font-size:2rem; margin-inline-start:8px; }
+@media (prefers-color-scheme: light){
+  #wlContainer{ background: linear-gradient(135deg, rgba(250,250,250,0.95), rgba(240,240,240,0.9)); box-shadow: 0 4px 18px rgba(0,0,0,0.15); }
+  #wlWinsItem{ background: rgba(0,180,0,0.10); }
+  #wlLossesItem{ background: rgba(200,0,0,0.10); }
+  #wlRateItem{ background: rgba(212,175,55,0.12); }
+}
+</style>
+
+<div id="wlBox">
+  <div id="wlContainer">
+    <div id="wlTitle">📈 معدل الربح/الخسارة (بدون تعادل وبدون تطابق النِّسب)</div>
+    <div id="wlStats">
+      <div class="wlItem" id="wlWinsItem"><span id="wlWinsLabel">الانتصارات:</span> <span id="wlWins">0</span></div>
+      <div class="wlItem" id="wlLossesItem"><span id="wlLossesLabel">الهزائم:</span> <span id="wlLosses">0</span></div>
+      <div class="wlItem" id="wlRateItem"><span id="wlRateLabel">نسبة الفوز:</span> <span id="wlRate">0%</span></div>
+    </div>
+    <div id="wlNote" style="opacity:.85;font-size:.95rem;margin-top:8px;">* ما كنحتسبوش التعادل، وما كنحتسبوش الجولة إلى كانت النِّسب متساوية.</div>
+  </div>
+</div>
+<!-- ===== /WL Widget ===== -->
 </body>
                         </html>            <div id="last5Results"></div>
         </div>

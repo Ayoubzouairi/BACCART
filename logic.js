@@ -1391,3 +1391,92 @@ function updateBigRoad() {
 
 // تهيئة التطبيق عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', initializeApp);
+
+/* =======================
+   ✅ Win/Loss Tracker Addon (no Ties, skip equal-prob cases)
+   ======================= */
+(function () {
+  const ids = { wins: 'wlWins', losses: 'wlLosses', rate: 'wlRate' };
+  const probIds = { P: 'playerProb', B: 'bankerProb', T: 'tieProb' };
+  const state = { wins: 0, losses: 0 };
+
+  function getInt(valText) {
+    if (!valText) return null;
+    const n = parseFloat(String(valText).replace('%','').trim());
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function readCurrentProbs() {
+    const pEl = document.getElementById(probIds.P);
+    const bEl = document.getElementById(probIds.B);
+    const tEl = document.getElementById(probIds.T);
+    const P = getInt(pEl && pEl.textContent);
+    const B = getInt(bEl && bEl.textContent);
+    const T = getInt(tEl && tEl.textContent);
+    return { P, B, T };
+  }
+
+  function pickRecommendation() {
+    const { P, B, T } = readCurrentProbs();
+    if ([P,B,T].some(v => v === null)) return null;
+    const entries = [{k:'P',v:P},{k:'B',v:B},{k:'T',v:T}];
+    const maxVal = Math.max(P, B, T);
+    const top = entries.filter(e => e.v === maxVal);
+    if (top.length !== 1) return null;
+    return top[0].k; // 'P' or 'B' or 'T'
+  }
+
+  function updateWLUI() {
+    const winsEl = document.getElementById(ids.wins);
+    const lossesEl = document.getElementById(ids.losses);
+    const rateEl = document.getElementById(ids.rate);
+    if (!winsEl || !lossesEl || !rateEl) return;
+
+    winsEl.textContent = state.wins;
+    lossesEl.textContent = state.losses;
+
+    const total = state.wins + state.losses;
+    const rate = total > 0 ? Math.round((state.wins / total) * 100) : 0;
+    rateEl.textContent = rate + '%';
+  }
+
+  function shouldCount(roundOutcome, rec) {
+    if (roundOutcome === 'T') return false;
+    if (!rec) return false;
+    if (rec === 'T') return false;
+    return true;
+  }
+
+  const _origAddResult = window.addResult;
+  const _origResetData = window.resetData || function(){};
+
+  window.addResult = function(resultChar) {
+    if (typeof _origAddResult === 'function') {
+      _origAddResult(resultChar);
+    }
+    try {
+      const rec = pickRecommendation();
+      if (!shouldCount(resultChar, rec)) {
+        updateWLUI();
+        return;
+      }
+      if (rec === resultChar) {
+        state.wins += 1;
+      } else {
+        state.losses += 1;
+      }
+      updateWLUI();
+    } catch (e) {
+      console.warn('WL addon error:', e);
+    }
+  };
+
+  window.resetData = function() {
+    state.wins = 0;
+    state.losses = 0;
+    updateWLUI();
+    _origResetData();
+  };
+
+  document.addEventListener('DOMContentLoaded', updateWLUI);
+})();
