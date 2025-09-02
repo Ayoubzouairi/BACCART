@@ -27,6 +27,7 @@
       <button class="banker" onclick="addResult('B')">🔴 البانكر</button>
       <button class="tie"    onclick="addResult('T')">🟢 تعادل</button>
       <button class="reset"  onclick="resetData()">🔄 نعاود من الأول</button>
+      <button class="reset"  onclick="undoLast()">↩️ تراجع آخر نتيجة</button>
     </div>
 
     <div class="controls">
@@ -36,6 +37,17 @@
         <input type="range" id="gapThreshold" min="0" max="40" value="15">
         <small>كنحسبو الرهانات غير إلا كان الفرق بين أعلى نسبة والثانية مساوي/يفوق هاد القيمة.</small>
       </div>
+      
+      <div class="threshold">
+        <label for="windowSize"><strong>📏 حجم النافذة (آخر جولات للتردد):</strong>
+          <span id="windowSizeValue">30</span></label>
+        <input type="range" id="windowSize" min="5" max="60" value="30">
+        <small>نستعمل هاد العدد من آخر الجولات لحساب تردد P/B/T.</small>
+      </div>
+      <div class="threshold">
+        <label><input type="checkbox" id="bankerCommission" checked> تفعيل عمولة البانكر 5% (0.95)</label>
+      </div>
+        
       <div class="io-buttons">
         <button onclick="exportJSON()">💾 صدّر JSON</button>
         <button onclick="exportCSV()">📄 صدّر CSV</button>
@@ -109,6 +121,13 @@
       </div>
     </div>
 
+    
+    <div class="derivative-roads">
+      <div class="road-container"><h3>Big Eye Road</h3><div id="bigEyeRoad" class="road"></div></div>
+      <div class="road-container"><h3>Small Road</h3><div id="smallRoad" class="road"></div></div>
+      <div class="road-container"><h3>Baby Road</h3><div id="babyRoad" class="road"></div></div>
+    </div>
+    
     <div class="big-road-container">
       <h2>Big Road (الميجورك)</h2>
       <div class="big-road" id="bigRoad"></div>
@@ -153,6 +172,9 @@
     </div>
 
     <div class="performance-analysis">
+      <button onclick="runBacktest()">🔁 Backtest على التاريخ</button>
+      <div id="backtestResults" style="margin-top:10px"></div>
+      <div class="chart-container" style="margin-top:10px"><canvas id="roiBacktestChart"></canvas></div>
       <h3>🧪 تحليل أداء الموديلات</h3>
       <div id="modelPerformance"></div>
       <div id="roiBox" class="recommendation-box">
