@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BACCARAT PRO – تخمين ذكي</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer src="logic.js"></script>
+</head>
+<body>
+  <div class="language-container">
+    <select id="langSelect" class="language" title="اللغة">
+      <option value="ar-MA">العربية (Darija)</option>
+      <option value="en-US">English</option>
+    </select>
+    <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الثيم">🌓</button>
+  </div>
+
+  <div class="container">
+    <h1><span class="logo-b">BACCARAT</span> <span class="logo-s">PRO</span></h1>
+    <p>📲 اختار شكون ربح فهاذ الراوند:</p>
+
+    <div class="buttons">
+      <button class="player" onclick="addResult('P')">🔵 اللاعب</button>
+      <button class="banker" onclick="addResult('B')">🔴 البانكر</button>
+      <button class="tie"    onclick="addResult('T')">🟢 تعادل</button>
+      <button class="reset"  onclick="resetData()">🔄 نعاود من الأول</button>
+      <button class="reset"  onclick="undoLast()">↩️ تراجع آخر نتيجة</button>
+    </div>
+
+    <div class="controls">
+      <div class="threshold">
+        <label for="gapThreshold"><strong>🔧 عتبة الثقة (الفرق بين النِّسب):</strong>
+          <span id="gapValue">15%</span></label>
+        <input type="range" id="gapThreshold" min="0" max="40" value="15">
+        <small>كنحسبو الرهانات غير إلا كان الفرق بين أعلى نسبة والثانية مساوي/يفوق هاد القيمة.</small>
+      </div>
+
+      <div class="threshold">
+        <label for="windowSize"><strong>📏 حجم النافذة (آخر جولات للتردد):</strong>
+          <span id="windowSizeValue">30</span></label>
+        <input type="range" id="windowSize" min="5" max="60" value="30">
+        <small>نستعمل هاد العدد من آخر الجولات لحساب تردد P/B/T.</small>
+      </div>
+
+      <div class="threshold">
+        <label><input type="checkbox" id="bankerCommission" checked> تفعيل عمولة البانكر 5% (0.95)</label>
+      </div>
+
+      <div class="io-buttons">
+        <button onclick="exportJSON()">💾 صدّر JSON</button>
+        <button onclick="exportCSV()">📄 صدّر CSV</button>
+        <label class="import-btn">📥 استورد
+          <input type="file" id="importFile" accept=".json,.csv" onchange="importHistory(event)">
+        </label>
+        <button onclick="clearStorage()">🗑️ مسح التخزين</button>
+      </div>
+    </div>
+
+    <div class="prediction-section">
+      <div id="predictionResult">
+        <div class="prediction-title">📊 التوقعات دابا</div>
+        <div id="predictionBars" class="prediction-bars">
+          <div class="prediction-bar player-bar" id="barP">P</div>
+          <div class="prediction-bar banker-bar" id="barB">B</div>
+          <div class="prediction-bar tie-bar"    id="barT">T</div>
+        </div>
+        <div class="probability-display">
+          <div class="probability-item">
+            <span class="player-text">نسبة اللاعب</span>
+            <span id="playerProb" class="probability-value player-text">33%</span>
+          </div>
+          <div class="probability-item">
+            <span class="banker-text">نسبة البانكر</span>
+            <span id="bankerProb" class="probability-value banker-text">34%</span>
+          </div>
+          <div class="probability-item">
+            <span class="tie-text">نسبة التعادل</span>
+            <span id="tieProb" class="probability-value tie-text">33%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="advanced-prediction">
+      <h3>🛠 التوقعات المتقدمة</h3>
+      <div id="advancedPredictionResults"></div>
+
+      <div id="wlBox">
+        <div id="wlContainer">
+          <div id="wlTitle">📈 الربح/الخسارة</div>
+          <div id="wlStats">
+            <div class="wlItem" id="wlWinsItem"><span>انتصارات:</span> <span id="wlWins">0</span></div>
+            <div class="wlItem" id="wlLossesItem"><span>خسائر:</span> <span id="wlLosses">0</span></div>
+            <div class="wlItem" id="wlRateItem"><span>نسبة الفوز:</span> <span id="wlRate">0%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="model-controls">
+        <button onclick="toggleAdvancedModel()">بدّل الموديل المتقدم</button>
+        <span id="modelStatus">الموديل الأساسي (ماركوف)</span>
+      </div>
+    </div>
+
+    <div class="big-road-container">
+      <h2>Big Road (الميجورك)</h2>
+      <div class="big-road" id="bigRoad"></div>
+    </div>
+
+    <div class="derivative-roads">
+      <div class="road-container"><h3>Big Eye Road</h3><div id="bigEyeRoad" class="road"></div></div>
+      <div class="road-container"><h3>Small Road</h3><div id="smallRoad" class="road"></div></div>
+      <div class="road-container"><h3>Baby Road</h3><div id="babyRoad" class="road"></div></div>
+    </div>
+
+    <div class="result"><div id="statsResult"></div></div>
+    <div class="stats"><div id="aiStats"></div></div>
+    <div class="history"><div id="historyDisplay"></div></div>
+    <div class="ai-advice"><div id="aiAdvice"></div></div>
+    <div class="trends-container"><div id="trendsContent"></div></div>
+    <div class="recommendation-container"><div id="recommendation"></div></div>
+    <div class="chart-container"><canvas id="statsChart"></canvas></div>
+    <div class="last5-analysis"><h3>🔍 آخر 5 جولات</h3><div id="last5Results"></div></div>
+    <div class="common-patterns"><h3>الأنماط الشائعة فالكازينو</h3><div id="casinoPatterns"></div></div>
+
+    <div class="performance-analysis">
+      <button onclick="runBacktest()">🔁 Backtest على التاريخ</button>
+      <div id="backtestResults" style="margin-top:10px"></div>
+      <div class="chart-container" style="margin-top:10px"><canvas id="roiBacktestChart"></canvas></div>
+
+      <h3>🧪 تحليل أداء الموديلات</h3>
+      <div id="modelPerformance"></div>
+      <div id="roiBox" class="recommendation-box">
+        <div><strong>📉 العائد (ROI) المجرب:</strong> <span id="roiValue">0</span></div>
+        <div class="confidence-meter" style="margin-top:10px;">
+          <div class="confidence-bar" id="roiBar" style="width:0%"></div>
+          <span id="roiLabel">0%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="effects-container"></div>
+</body>
+</html>
