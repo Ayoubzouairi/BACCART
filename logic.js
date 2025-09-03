@@ -1,4 +1,83 @@
+function getEffectsHost(){ const el = document.getElementById('effects-container'); return el || document.body; }
 // حالة التطبيق الموسعة
+
+// --- Big Road & Derived Roads helpers (official-style rules) ---
+function buildBigRoadColumns(history) {
+  const seq = history.filter(r => r !== 'T');
+  const cols = [];
+  const maxRows = 6;
+  let prev = null;
+  for (let i=0;i<seq.length;i++){
+    const r = seq[i];
+    if (prev === null){
+      cols.push([r]);
+      prev = r;
+      continue;
+    }
+    if (r === prev){
+      const cur = cols[cols.length-1];
+      if (cur.length < maxRows){
+        cur.push(r);
+      } else {
+        cols.push([r]);
+      }
+    } else {
+      cols.push([r]);
+      prev = r;
+    }
+  }
+  return cols;
+}
+
+function computeDerivedRoad(cols, shift) {
+  const derivedCols = [];
+  for (let c=0;c<cols.length;c++){
+    const height = cols[c].length;
+    for (let r=0;r<height;r++){
+      const refCol = c - 1 - shift;
+      const refCol2 = c - 2 - shift;
+      if (refCol < 0) { continue; }
+      let isRed;
+      if (r > 0){
+        const exists = (refCol >=0) && (cols[refCol] && cols[refCol].length >= r+1);
+        isRed = !!exists;
+      } else {
+        if (refCol2 < 0) { continue; }
+        const a = cols[refCol] ? cols[refCol].length : 0;
+        const b = cols[refCol2] ? cols[refCol2].length : 0;
+        isRed = (a === b);
+      }
+      const val = isRed ? 'B' : 'P'; // map: red->B, blue->P
+      if (derivedCols.length === 0){
+        derivedCols.push([val]);
+      } else {
+        if (r === 0){
+          derivedCols.push([val]);
+        } else {
+          const lastCol = derivedCols[derivedCols.length-1];
+          if (lastCol.length < 6){
+            lastCol.push(val);
+          } else {
+            derivedCols.push([val]);
+          }
+        }
+      }
+    }
+  }
+  return derivedCols;
+}
+
+function columnsToMatrix(cols) {
+  const rows = 6;
+  const matrix = Array.from({length: rows}, () => []);
+  for (let c=0;c<cols.length;c++){
+    for (let r=0;r<Math.min(cols[c].length, rows); r++){
+      matrix[r][c] = cols[c][r];
+    }
+  }
+  return matrix.map(row => row.map(x => x || null));
+}
+
 const AppState = {
   history: [],
   currentStreak: { type: null, count: 0 },
@@ -81,11 +160,15 @@ const COMMON_CASINO_PATTERNS = [
 
 // تهيئة التطبيق
 async function initializeApp() {
+  loadState();  loadTheme();
+  checkTimeForTheme();
+
   createNotificationContainer();
   setupEventListeners();
-  checkTimeForTheme();
-  loadTheme();
+  
+  
   loadLanguage();
+  updateAllUI();
   loadHistory();
   updateCommonPatterns();
   
@@ -111,7 +194,7 @@ function saveHistory() {
 function createNotificationContainer() {
   const notificationContainer = document.createElement('div');
   notificationContainer.className = 'notification-container';
-  document.body.appendChild(notificationContainer);
+  getEffectsHost().appendChild(notificationContainer);
 }
 
 // إعداد مستمعي الأحداث
@@ -121,6 +204,7 @@ function setupEventListeners() {
 
 // التحقق من الوقت لتحديد الثيم
 function checkTimeForTheme() {
+  try { if (localStorage.getItem("theme")) return; } catch(e) {}
   const hour = new Date().getHours();
   const isDayTime = hour >= 6 && hour < 18;
   if (isDayTime && !document.body.classList.contains('light-mode')) {
@@ -203,10 +287,10 @@ async function trainLSTMModel(history) {
   
   // تقسيم البيانات إلى تدريب واختبار
   const splitIdx = Math.floor(xs.shape[0] * 0.8);
-  const xTrain = xs.slice(0, splitIdx);
-  const xTest = xs.slice(splitIdx);
-  const yTrain = ys.slice(0, splitIdx);
-  const yTest = ys.slice(splitIdx);
+  const [xTrain, xTest] = tf.split(xs, [splitIdx, xs.shape[0]-splitIdx], 0);
+  // xTest produced by tf.split
+  const [yTrain, yTest] = tf.split(ys, [splitIdx, ys.shape[0]-splitIdx], 0);
+  // yTest produced by tf.split
   
   await model.fit(xTrain, yTrain, {
     epochs: 30,
@@ -687,23 +771,15 @@ function updateDiamondAnalysis() {
 }
 
 // تحديث Cockroach Road
+
 function updateCockroachRoad(history) {
   const cockroachRoad = document.getElementById('cockroachRoad');
   cockroachRoad.innerHTML = '';
-  let matrix = [[]];
-  let row = 0;
-
-  for (let i = 3; i < history.length; i++) {
-    if (history[i] === history[i - 3]) {
-      matrix[row].push(history[i]);
-    } else {
-      row++;
-      matrix[row] = [history[i]];
-    }
-  }
-
-  renderRoad(matrix, cockroachRoad);
+  const cols = buildBigRoadColumns(AppState.history);
+  const dcols = computeDerivedRoad(cols, 2);
+  renderRoad(columnsToMatrix(dcols), cockroachRoad);
 }
+
 
 // إضافة نتيجة جديدة
 async function addResult(result) {
@@ -1022,49 +1098,33 @@ function updateDerivativeRoads() {
 }
 
 // تحديث Big Eye Road
+
 function updateBigEyeRoad(history) {
   const bigEyeRoad = document.getElementById('bigEyeRoad');
   bigEyeRoad.innerHTML = '';
-  let matrix = [[]];
-  let row = 0;
-
-  for (let i = 1; i < history.length; i++) {
-    if (i >= 2 && history[i] === history[i - 2]) {
-      matrix[row].push(history[i]);
-    } else {
-      row++;
-      matrix[row] = [history[i]];
-    }
-  }
-
-  renderRoad(matrix, bigEyeRoad);
+  const cols = buildBigRoadColumns(AppState.history);
+  const dcols = computeDerivedRoad(cols, 0);
+  renderRoad(columnsToMatrix(dcols), bigEyeRoad);
 }
 
+
 // تحديث Small Road
+
 function updateSmallRoad(history) {
   const smallRoad = document.getElementById('smallRoad');
   smallRoad.innerHTML = '';
-  let matrix = [[]];
-  let row = 0;
-
-  for (let i = 2; i < history.length; i++) {
-    if (i >= 3 && history[i] === history[i - 3]) {
-      matrix[row].push(history[i]);
-    } else {
-      row++;
-      matrix[row] = [history[i]];
-    }
-  }
-
-  renderRoad(matrix, smallRoad);
+  const cols = buildBigRoadColumns(AppState.history);
+  const dcols = computeDerivedRoad(cols, 1);
+  renderRoad(columnsToMatrix(dcols), smallRoad);
 }
+
 
 // عرض الطريق
 function renderRoad(matrix, container) {
   matrix.forEach((row, rowIndex) => {
     row.forEach((result, colIndex) => {
       const cell = document.createElement('div');
-      cell.className = `road-cell road-${result}`;
+      if (!result) return; cell.className = `road-cell road-${result}`;
       cell.style.gridColumn = colIndex + 1;
       cell.style.gridRow = rowIndex + 1;
       container.appendChild(cell);
@@ -1131,7 +1191,7 @@ function updateUI() {
   document.title = isArabic ? 'BACCARAT PRO ANALYZER' : 'BACCARAT PRO ANALYZER';
   document.querySelector('h1').innerHTML = 
     '<span class="logo-b">BACCARAT</span> <span class="logo-s">PRO</span> <span class="logo-rest">ANALYZER</span>';
-  document.querySelector('p').textContent = isArabic ? '📲 اختر نتيجة الجولة:' : '📲 Select round result:';
+  document.getElementById('introText').textContent = isArabic ? '📲 اختر نتيجة الجولة:' : '📲 Select round result:';
   document.querySelector('.player').innerHTML = isArabic ? '🔵 اللاعب' : '🔵 Player';
   document.querySelector('.banker').innerHTML = isArabic ? '🔴 المصرفي' : '🔴 Banker';
   document.querySelector('.tie').innerHTML = isArabic ? '🟢 تعادل' : '🟢 Tie';
@@ -1264,7 +1324,7 @@ function showNotification(type, message) {
 function showEffect(type) {
   const effect = document.createElement('div');
   effect.className = `${type}-effect`;
-  document.body.appendChild(effect);
+  getEffectsHost().appendChild(effect);
   
   setTimeout(() => {
     effect.remove();
@@ -1275,7 +1335,7 @@ function showEffect(type) {
 function showHighProbabilityEffect(type) {
   const effect = document.createElement('div');
   effect.className = `high-prob-effect high-prob-${type.toLowerCase()}`;
-  document.body.appendChild(effect);
+  getEffectsHost().appendChild(effect);
   
   setTimeout(() => {
     effect.remove();
@@ -1356,38 +1416,136 @@ function updateLast5Analysis() {
 }
 
 // تحديث Big Road
+
 function updateBigRoad() {
   const bigRoadElement = document.getElementById('bigRoad');
   bigRoadElement.innerHTML = '';
-  
-  let row = 0;
-  let col = 0;
-  const maxRows = 6;
-
-  const filteredHistory = AppState.history.filter(result => result !== 'T');
-
-  for (let i = 0; i < filteredHistory.length; i++) {
-    const result = filteredHistory[i];
-    
-    if (i > 0 && result === filteredHistory[i - 1]) {
-      row++;
-      if (row >= maxRows) {
-        row = 0;
-        col++;
-      }
-    } else {
-      row = 0;
-      if (i > 0) col++;
+  const cols = buildBigRoadColumns(AppState.history);
+  for (let c=0;c<cols.length;c++){
+    for (let r=0;r<Math.min(cols[c].length,6); r++){
+      const val = cols[c][r];
+      const cell = document.createElement('div');
+      cell.className = `big-road-cell big-road-${val}`;
+      cell.textContent = val;
+      cell.style.gridColumn = c + 1;
+      cell.style.gridRow = r + 1;
+      bigRoadElement.appendChild(cell);
     }
-
-    const cell = document.createElement('div');
-    cell.className = `big-road-cell big-road-${result}`;
-    cell.textContent = result === 'P' ? 'P' : 'B';
-    cell.style.gridColumn = col + 1;
-    cell.style.gridRow = row + 1;
-    bigRoadElement.appendChild(cell);
   }
 }
 
+
 // تهيئة التطبيق عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', initializeApp);
+
+
+function updateAllUI() {
+  try { if (typeof updateUI === 'function') updateUI(); } catch (e) {}
+  try { if (typeof updatePredictions === 'function') updatePredictions(); } catch (e) {}
+  try { if (typeof updateChart === 'function') updateChart(); } catch (e) {}
+  try { if (typeof updateLast5Analysis === 'function') updateLast5Analysis(); } catch (e) {}
+  try { if (typeof updateAdvancedPredictionDisplay === 'function') updateAdvancedPredictionDisplay(); } catch (e) {}
+  try { if (typeof updateDiamondAnalysis === 'function') updateDiamondAnalysis(); } catch (e) {}
+  try { if (typeof renderRoads === 'function') renderRoads(); } catch (e) {}
+}
+
+
+// --- Utilities: persistence & helpers ---
+function saveState() {
+  try { localStorage.setItem('history', JSON.stringify(AppState.history)); } catch(e) {}
+  try { localStorage.setItem('lang', AppState.lang); } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('history');
+    if (saved) {
+      const arr = JSON.parse(saved);
+      if (Array.isArray(arr)) AppState.history = arr.filter(x => ['P','B','T'].includes(x));
+    }
+  } catch(e) {}
+}
+
+function confirmReset() {
+  const msg = AppState.lang === 'ar-MA' ? 'متأكد بغيت تصفر الكل؟' : 'Are you sure you want to reset everything?';
+  if (window.confirm(msg)) { resetData(); }
+}
+
+function undoLast() {
+  if (AppState.history.length === 0) return;
+  AppState.history.pop();
+  saveState();
+  try { updateUI(); } catch(e){}
+  try { updatePredictions(); } catch(e){}
+  try { updateChart(); } catch(e){}
+  try { updateLast5Analysis(); } catch(e){}
+  try { updateAdvancedPredictionDisplay(); } catch(e){}
+  try { updateDiamondAnalysis(); } catch(e){}
+  try { updateBigRoad(); } catch(e){}
+  try { updateDerivativeRoads(); } catch(e){}
+}
+
+function exportHistory() {
+  const data = { history: AppState.history, exportedAt: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'baccarat_history.json';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 0);
+}
+
+function importHistory(evt) {
+  const file = evt.target.files && evt.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const obj = JSON.parse(reader.result);
+      const arr = Array.isArray(obj) ? obj : obj.history;
+      if (!arr || !Array.isArray(arr)) throw new Error('bad file');
+      AppState.history = arr.filter(x => ['P','B','T'].includes(x));
+      saveState();
+      updateAllUI();
+      updateBigRoad();
+      updateDerivativeRoads();
+    } catch (e) {
+      console.error(e);
+      notify('error', AppState.lang === 'ar-MA' ? 'فشل الاستيراد' : 'Import failed');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  const k = e.key.toLowerCase();
+  if (k === 'p') addResult('P');
+  else if (k === 'b') addResult('B');
+  else if (k === 't') addResult('T');
+  else if (k === 'z' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); undoLast(); }
+  else if (k === 'backspace') { e.preventDefault(); undoLast(); }
+  else if (k === 'r' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); confirmReset(); }
+});
+
+// Improved Big Road with collision handling
+
+function updateBigRoad() {
+  const bigRoadElement = document.getElementById('bigRoad');
+  bigRoadElement.innerHTML = '';
+  const cols = buildBigRoadColumns(AppState.history);
+  for (let c=0;c<cols.length;c++){
+    for (let r=0;r<Math.min(cols[c].length,6); r++){
+      const val = cols[c][r];
+      const cell = document.createElement('div');
+      cell.className = `big-road-cell big-road-${val}`;
+      cell.textContent = val;
+      cell.style.gridColumn = c + 1;
+      cell.style.gridRow = r + 1;
+      bigRoadElement.appendChild(cell);
+    }
+  }
+}
+

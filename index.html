@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BACCARAT PRO</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js" defer></script>
     <script src="logic.js" defer></script>
 </head>
 <body>
@@ -20,13 +20,16 @@
 
     <div class="container">
         <h1><span class="logo-b">BACCARAT</span> <span class="logo-s">PRO</span> </h1>
-        <p>📲 اختر نتيجة الجولة:</p>
+        <p id="introText">📲 اختر نتيجة الجولة:</p>
         
         <div class="buttons">
             <button class="player" onclick="addResult('P')">🔵 اللاعب</button>
             <button class="banker" onclick="addResult('B')">🔴 المصرفي</button>
             <button class="tie" onclick="addResult('T')">🟢 تعادل</button>
-            <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
+            <button class="reset" onclick="confirmReset()">🔄 إعادة تعيين</button>
+<button class="undo" onclick="undoLast()">↩️ تراجع</button>
+<button class="export" onclick="exportHistory()">💾 تصدير</button>
+<label class="import-label">⬆️ استيراد <input type="file" id="importFile" accept=".json" onchange="importHistory(event)" style="display:none"></label>
         </div>
 
         <div class="prediction-section">

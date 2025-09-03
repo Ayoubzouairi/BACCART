@@ -739,3 +739,21 @@ body.light-mode .results-table td {
     margin-bottom: 15px;
   }
 }
+
+.undo { background-color: #6f42c1; color: white; border-bottom: 4px solid #4b2a99; }
+.undo:hover { background-color: #5a32a8; transform: translateY(-2px); }
+.export { background-color: #17a2b8; color: white; border-bottom: 4px solid #117a8b; }
+.export:hover { background-color: #138496; transform: translateY(-2px); }
+.import-label {
+  background: #ffc107;
+  color: #333;
+  padding: 1em 1.8em;
+  margin: 0.5em;
+  border-radius: 12px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  cursor: pointer;
+  display: inline-block;
+  border-bottom: 4px solid #b38800;
+}
+.import-label:hover { background-color: #e0a800; transform: translateY(-2px); }
