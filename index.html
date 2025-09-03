@@ -1,140 +1,105 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BACCARAT PRO</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js" defer></script>
-    <script src="logic.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Baccarat Predictor</title>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-    <div class="language-container">
-        <select id="langSelect" class="language">
-            <option value="ar-MA">العربية</option>
-            <option value="en-US">English</option>
+  <div class="app">
+    <header class="header">
+      <div class="title">
+        <span id="appTitle">Baccarat Predictor</span>
+        <small id="appSubtitle">Simple stats-based suggestion</small>
+      </div>
+      <div class="controls">
+        <label for="lang" id="langLabel">Language</label>
+        <select id="lang" aria-label="Language toggle">
+          <option value="ar">العربية</option>
+          <option value="en" selected>English</option>
         </select>
-        <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
-    </div>
+      </div>
+    </header>
 
-    <div class="container">
-        <h1><span class="logo-b">BACCARAT</span> <span class="logo-s">PRO</span> </h1>
-        <p id="introText">📲 اختر نتيجة الجولة:</p>
-        
-        <div class="buttons">
-            <button class="player" onclick="addResult('P')">🔵 اللاعب</button>
-            <button class="banker" onclick="addResult('B')">🔴 المصرفي</button>
-            <button class="tie" onclick="addResult('T')">🟢 تعادل</button>
-            <button class="reset" onclick="confirmReset()">🔄 إعادة تعيين</button>
-<button class="undo" onclick="undoLast()">↩️ تراجع</button>
-<button class="export" onclick="exportHistory()">💾 تصدير</button>
-<label class="import-label">⬆️ استيراد <input type="file" id="importFile" accept=".json" onchange="importHistory(event)" style="display:none"></label>
+    <main class="main">
+      <section class="prediction card">
+        <h2 id="predTitle">Next Suggestion</h2>
+        <div class="pred-row">
+          <div class="pred-label" id="predLabel">—</div>
+          <div class="pred-percent" id="predPercent">0%</div>
         </div>
-
-        <div class="prediction-section">
-            <div id="predictionResult">
-                <div class="prediction-title">📊 تنبؤات متقدمة</div>
-                <div id="predictionBars" class="prediction-bars">
-                    <div class="prediction-bar player-bar" style="width:33%">P</div>
-                    <div class="prediction-bar banker-bar" style="width:34%">B</div>
-                    <div class="prediction-bar tie-bar" style="width:33%">T</div>
-                </div>
-                <div class="probability-display">
-                    <div class="probability-item">
-                        <span class="player-text">لاعب</span>
-                        <span id="playerProb" class="probability-value player-text">33%</span>
-                    </div>
-                    <div class="probability-item">
-                        <span class="banker-text">مصرفي</span>
-                        <span id="bankerProb" class="probability-value banker-text">34%</span>
-                    </div>
-                    <div class="probability-item">
-                        <span class="tie-text">تعادل</span>
-                        <span id="tieProb" class="probability-value tie-text">33%</span>
-                    </div>
-                </div>
-            </div>
+        <div class="bars">
+          <div class="bar">
+            <span class="bar-label" id="barPLabel">Player</span>
+            <div class="bar-track"><div id="barP" class="bar-fill" style="width:0%"></div></div>
+            <span class="bar-val" id="barPVal">0%</span>
+          </div>
+          <div class="bar">
+            <span class="bar-label" id="barBLabel">Banker</span>
+            <div class="bar-track"><div id="barB" class="bar-fill" style="width:0%"></div></div>
+            <span class="bar-val" id="barBVal">0%</span>
+          </div>
+          <div class="bar">
+            <span class="bar-label" id="barTLabel">Tie</span>
+            <div class="bar-track"><div id="barT" class="bar-fill" style="width:0%"></div></div>
+            <span class="bar-val" id="barTVal">0%</span>
+          </div>
         </div>
+        <p class="hint" id="predHint">
+          Based on a blend of last 5 rounds and overall stats. This is not financial or gambling advice.
+        </p>
+      </section>
 
-        <div class="advanced-prediction">
-            <h3>🛠 التنبؤات المتقدمة</h3>
-            <div id="advancedPredictionResults"></div>
-            <div class="model-controls">
-                <button onclick="toggleAdvancedModel()">تبديل النموذج المتقدم</button>
-                <span id="modelStatus">النموذج الأساسي (ماركوف)</span>
-            </div>
+      <section class="actions card">
+        <h2 id="addResTitle">Add Round Result</h2>
+        <div class="btns">
+          <button id="btnP" class="btn player">Player</button>
+          <button id="btnB" class="btn banker">Banker</button>
+          <button id="btnT" class="btn tie">Tie</button>
         </div>
-
-        <div class="diamond-pattern">
-            <h3>💎 تحليل نمط الدايموند</h3>
-            <div id="diamondAnalysis"></div>
+        <div class="btns secondary">
+          <button id="btnUndo" class="btn ghost">Undo</button>
+          <button id="btnReset" class="btn danger">Reset</button>
         </div>
+      </section>
 
-        <div class="result">
-            <div id="statsResult"></div>
+      <section class="stats card">
+        <h2 id="statsTitle">Statistics</h2>
+        <div class="stats-grid">
+          <div class="stat">
+            <div class="stat-name" id="totalRoundsLabel">Total rounds</div>
+            <div class="stat-value" id="totalRounds">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-name" id="playerWinsLabel">Player wins</div>
+            <div class="stat-value" id="playerWins">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-name" id="bankerWinsLabel">Banker wins</div>
+            <div class="stat-value" id="bankerWins">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-name" id="tieCountLabel">Ties</div>
+            <div class="stat-value" id="tieCount">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-name" id="accLabel">Prediction accuracy</div>
+            <div class="stat-value" id="accValue">0/0 (0%)</div>
+          </div>
         </div>
-
-        <div class="stats ai-stats">
-            <div id="aiStats"></div>
+        <div class="recent">
+          <div class="recent-title" id="recentTitle">Last 5 rounds</div>
+          <div class="recent-list" id="recentList"></div>
         </div>
+      </section>
+    </main>
 
-        <div class="history">
-            <div id="historyDisplay"></div>
-        </div>
+    <footer class="footer">
+      <span id="footNote">All data is stored locally in your browser (no server).</span>
+    </footer>
+  </div>
 
-        <div class="ai-advice">
-            <div id="aiAdvice"></div>
-        </div>
-
-        <div class="trends-container">
-            <div id="trendsContent"></div>
-        </div>
-
-        <div class="recommendation-container">
-            <div id="recommendation"></div>
-        </div>
-
-        <div class="big-road-container">
-            <h2>Big Road (الميجورك)</h2>
-            <div class="big-road" id="bigRoad"></div>
-        </div>
-
-        <div class="derivative-roads">
-            <div class="road-container">
-                <h3>Big Eye Road</h3>
-                <div class="road" id="bigEyeRoad"></div>
-            </div>
-            <div class="road-container">
-                <h3>Small Road</h3>
-                <div class="road" id="smallRoad"></div>
-            </div>
-            <div class="road-container">
-                <h3>Cockroach Road</h3>
-                <div class="road" id="cockroachRoad"></div>
-            </div>
-        </div>
-
-        <div class="chart-container">
-            <canvas id="statsChart"></canvas>
-        </div>
-
-        <div class="last5-analysis">
-            <h3>تحليل آخر 5 جولات</h3>
-            <div id="last5Results"></div>
-        </div>
-
-        <div class="common-patterns">
-            <h3>الأنماط الشائعة في الكازينو</h3>
-            <div id="casinoPatterns"></div>
-        </div>
-
-        <div class="performance-analysis">
-            <h3>تحليل أداء النماذج</h3>
-            <div id="modelPerformance"></div>
-        </div>
-    </div>
-
-    <div id="effects-container"></div>
+  <script src="script.js"></script>
 </body>
-                        </html>
+</html>
