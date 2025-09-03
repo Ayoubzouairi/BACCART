@@ -1,192 +1,137 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BACCARAT PRO – تخمين ذكي</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
-  <script defer src="logic.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BACCARAT PRO</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
+    <script src="logic.js" defer></script>
 </head>
 <body>
-  <div class="language-container">
-    <select id="langSelect" class="language" title="اللغة">
-      <option value="ar-MA">العربية (Darija)</option>
-      <option value="en-US">English</option>
-    </select>
-    <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الثيم">🌓</button>
-  </div>
-
-  <div class="container">
-    <h1><span class="logo-b">BACCARAT</span> <span class="logo-s">PRO</span></h1>
-    <p>📲 اختار شكون ربح فهاذ الراوند:</p>
-
-    <div class="buttons">
-      <button class="player" onclick="addResult('P')">🔵 اللاعب</button>
-      <button class="banker" onclick="addResult('B')">🔴 البانكر</button>
-      <button class="tie"    onclick="addResult('T')">🟢 تعادل</button>
-      <button class="reset"  onclick="resetData()">🔄 نعاود من الأول</button>
-      <button class="reset"  onclick="undoLast()">↩️ تراجع آخر نتيجة</button>
+    <div class="language-container">
+        <select id="langSelect" class="language">
+            <option value="ar-MA">العربية</option>
+            <option value="en-US">English</option>
+        </select>
+        <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
     </div>
 
-    <div class="controls">
-      <div class="threshold">
-        <label for="gapThreshold"><strong>🔧 عتبة الثقة (الفرق بين النِّسب):</strong>
-          <span id="gapValue">15%</span></label>
-        <input type="range" id="gapThreshold" min="0" max="40" value="15">
-        <small>كنحسبو الرهانات غير إلا كان الفرق بين أعلى نسبة والثانية مساوي/يفوق هاد القيمة.</small>
-      </div>
-      
-      <div class="threshold">
-        <label for="windowSize"><strong>📏 حجم النافذة (آخر جولات للتردد):</strong>
-          <span id="windowSizeValue">30</span></label>
-        <input type="range" id="windowSize" min="5" max="60" value="30">
-        <small>نستعمل هاد العدد من آخر الجولات لحساب تردد P/B/T.</small>
-      </div>
-      <div class="threshold">
-        <label><input type="checkbox" id="bankerCommission" checked> تفعيل عمولة البانكر 5% (0.95)</label>
-      </div>
+    <div class="container">
+        <h1><span class="logo-b">BACCARAT</span> <span class="logo-s">PRO</span> </h1>
+        <p>📲 اختر نتيجة الجولة:</p>
         
-      <div class="io-buttons">
-        <button onclick="exportJSON()">💾 صدّر JSON</button>
-        <button onclick="exportCSV()">📄 صدّر CSV</button>
-        <label class="import-btn">📥 استورد
-          <input type="file" id="importFile" accept=".json,.csv" onchange="importHistory(event)">
-        </label>
-        <button onclick="clearStorage()">🗑️ مسح التخزين</button>
-      </div>
-    </div>
-
-    <div class="prediction-section">
-      <div id="predictionResult">
-        <div class="prediction-title">📊 التوقعات دابا</div>
-        <div id="predictionBars" class="prediction-bars">
-          <div class="prediction-bar player-bar" id="barP">P</div>
-          <div class="prediction-bar banker-bar" id="barB">B</div>
-          <div class="prediction-bar tie-bar"    id="barT">T</div>
+        <div class="buttons">
+            <button class="player" onclick="addResult('P')">🔵 اللاعب</button>
+            <button class="banker" onclick="addResult('B')">🔴 المصرفي</button>
+            <button class="tie" onclick="addResult('T')">🟢 تعادل</button>
+            <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
         </div>
-        <div class="probability-display">
-          <div class="probability-item">
-            <span class="player-text">نسبة اللاعب</span>
-            <span id="playerProb" class="probability-value player-text">33%</span>
-          </div>
-          <div class="probability-item">
-            <span class="banker-text">نسبة البانكر</span>
-            <span id="bankerProb" class="probability-value banker-text">34%</span>
-          </div>
-          <div class="probability-item">
-            <span class="tie-text">نسبة التعادل</span>
-            <span id="tieProb" class="probability-value tie-text">33%</span>
-          </div>
+
+        <div class="prediction-section">
+            <div id="predictionResult">
+                <div class="prediction-title">📊 تنبؤات متقدمة</div>
+                <div id="predictionBars" class="prediction-bars">
+                    <div class="prediction-bar player-bar" style="width:33%">P</div>
+                    <div class="prediction-bar banker-bar" style="width:34%">B</div>
+                    <div class="prediction-bar tie-bar" style="width:33%">T</div>
+                </div>
+                <div class="probability-display">
+                    <div class="probability-item">
+                        <span class="player-text">لاعب</span>
+                        <span id="playerProb" class="probability-value player-text">33%</span>
+                    </div>
+                    <div class="probability-item">
+                        <span class="banker-text">مصرفي</span>
+                        <span id="bankerProb" class="probability-value banker-text">34%</span>
+                    </div>
+                    <div class="probability-item">
+                        <span class="tie-text">تعادل</span>
+                        <span id="tieProb" class="probability-value tie-text">33%</span>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <div class="advanced-prediction">
-      <h3>🛠 التوقعات المتقدمة</h3>
-      <div id="advancedPredictionResults"></div>
-
-      <style id="wlInlineStyles">
-        #wlBox{ all: initial; display:block; font-family: inherit; }
-        #wlBox, #wlBox *{ box-sizing:border-box; font-family: inherit; }
-        #wlContainer{ margin-top:20px; padding:20px; border-radius:18px;
-          background: linear-gradient(135deg, rgba(30,30,30,0.95), rgba(0,0,0,0.7));
-          box-shadow: 0 4px 18px rgba(0,0,0,0.4); text-align:center; direction: rtl; }
-        #wlTitle{ font-size:1.4rem; font-weight:800; margin-bottom:15px; color:gold; }
-        #wlStats{ display:flex; gap:20px; justify-content:center; flex-wrap:wrap; }
-        .wlItem{ flex:1; max-width:260px; padding:18px 20px; border-radius:14px;
-          font-weight:700; font-size:1.3rem; display:flex; justify-content:center; align-items:center;
-          border:1px solid rgba(255,255,255,0.1); }
-        #wlWinsItem{ background: rgba(0,180,0,0.15); color:#00ff00; border-color:rgba(0,180,0,0.35); }
-        #wlLossesItem{ background: rgba(200,0,0,0.15); color:#ff4d4d; border-color:rgba(200,0,0,0.35); }
-        #wlRateItem{ background: rgba(212,175,55,0.15); color:#ffd700; border-color:rgba(212,175,55,0.35); }
-        #wlWins, #wlLosses, #wlRate{ font-size:2rem; margin-inline-start:8px; }
-      </style>
-
-      <div id="wlBox">
-        <div id="wlContainer">
-          <div id="wlTitle">📈 الربح/الخسارة (من غير التعادل ومن غير ملي تكون النِّسب بحال بحال)</div>
-          <div id="wlStats">
-            <div class="wlItem" id="wlWinsItem"><span id="wlWinsLabel">انتصارات:</span> <span id="wlWins">0</span></div>
-            <div class="wlItem" id="wlLossesItem"><span id="wlLossesLabel">خسائر:</span> <span id="wlLosses">0</span></div>
-            <div class="wlItem" id="wlRateItem"><span id="wlRateLabel">نسبة الفوز:</span> <span id="wlRate">0%</span></div>
-          </div>
+        <div class="advanced-prediction">
+            <h3>🛠 التنبؤات المتقدمة</h3>
+            <div id="advancedPredictionResults"></div>
+            <div class="model-controls">
+                <button onclick="toggleAdvancedModel()">تبديل النموذج المتقدم</button>
+                <span id="modelStatus">النموذج الأساسي (ماركوف)</span>
+            </div>
         </div>
-      </div>
 
-      <div class="model-controls">
-        <button onclick="toggleAdvancedModel()">بدّل الموديل المتقدم</button>
-        <span id="modelStatus">الموديل الأساسي (ماركوف)</span>
-      </div>
-    </div>
-
-    
-    <div class="derivative-roads">
-      <div class="road-container"><h3>Big Eye Road</h3><div id="bigEyeRoad" class="road"></div></div>
-      <div class="road-container"><h3>Small Road</h3><div id="smallRoad" class="road"></div></div>
-      <div class="road-container"><h3>Baby Road</h3><div id="babyRoad" class="road"></div></div>
-    </div>
-    
-    <div class="big-road-container">
-      <h2>Big Road (الميجورك)</h2>
-      <div class="big-road" id="bigRoad"></div>
-    </div>
-
-    <div class="result">
-      <div id="statsResult"></div>
-    </div>
-
-    <div class="stats">
-      <div id="aiStats"></div>
-    </div>
-
-    <div class="history">
-      <div id="historyDisplay"></div>
-    </div>
-
-    <div class="ai-advice">
-      <div id="aiAdvice"></div>
-    </div>
-
-    <div class="trends-container">
-      <div id="trendsContent"></div>
-    </div>
-
-    <div class="recommendation-container">
-      <div id="recommendation"></div>
-    </div>
-
-    <div class="chart-container">
-      <canvas id="statsChart"></canvas>
-    </div>
-
-    <div class="last5-analysis">
-      <h3>🔍 آخر 5 جولات</h3>
-      <div id="last5Results"></div>
-    </div>
-
-    <div class="common-patterns">
-      <h3>الأنماط الشائعة فالكازينو</h3>
-      <div id="casinoPatterns"></div>
-    </div>
-
-    <div class="performance-analysis">
-      <button onclick="runBacktest()">🔁 Backtest على التاريخ</button>
-      <div id="backtestResults" style="margin-top:10px"></div>
-      <div class="chart-container" style="margin-top:10px"><canvas id="roiBacktestChart"></canvas></div>
-      <h3>🧪 تحليل أداء الموديلات</h3>
-      <div id="modelPerformance"></div>
-      <div id="roiBox" class="recommendation-box">
-        <div><strong>📉 العائد (ROI) المجرب:</strong> <span id="roiValue">0</span></div>
-        <div class="confidence-meter" style="margin-top:10px;">
-          <div class="confidence-bar" id="roiBar" style="width:0%"></div>
-          <span id="roiLabel">0%</span>
+        <div class="diamond-pattern">
+            <h3>💎 تحليل نمط الدايموند</h3>
+            <div id="diamondAnalysis"></div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <div id="effects-container"></div>
+        <div class="result">
+            <div id="statsResult"></div>
+        </div>
+
+        <div class="stats ai-stats">
+            <div id="aiStats"></div>
+        </div>
+
+        <div class="history">
+            <div id="historyDisplay"></div>
+        </div>
+
+        <div class="ai-advice">
+            <div id="aiAdvice"></div>
+        </div>
+
+        <div class="trends-container">
+            <div id="trendsContent"></div>
+        </div>
+
+        <div class="recommendation-container">
+            <div id="recommendation"></div>
+        </div>
+
+        <div class="big-road-container">
+            <h2>Big Road (الميجورك)</h2>
+            <div class="big-road" id="bigRoad"></div>
+        </div>
+
+        <div class="derivative-roads">
+            <div class="road-container">
+                <h3>Big Eye Road</h3>
+                <div class="road" id="bigEyeRoad"></div>
+            </div>
+            <div class="road-container">
+                <h3>Small Road</h3>
+                <div class="road" id="smallRoad"></div>
+            </div>
+            <div class="road-container">
+                <h3>Cockroach Road</h3>
+                <div class="road" id="cockroachRoad"></div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="statsChart"></canvas>
+        </div>
+
+        <div class="last5-analysis">
+            <h3>تحليل آخر 5 جولات</h3>
+            <div id="last5Results"></div>
+        </div>
+
+        <div class="common-patterns">
+            <h3>الأنماط الشائعة في الكازينو</h3>
+            <div id="casinoPatterns"></div>
+        </div>
+
+        <div class="performance-analysis">
+            <h3>تحليل أداء النماذج</h3>
+            <div id="modelPerformance"></div>
+        </div>
+    </div>
+
+    <div id="effects-container"></div>
 </body>
-</html>
+                        </html>
