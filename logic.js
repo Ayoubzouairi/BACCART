@@ -1,3 +1,20 @@
+
+// ===== Runtime Error Overlay (helps on phones without console) =====
+window.addEventListener('error', function(e) {
+  try {
+    const msg = "JS Error: " + (e.message || e.error || e);
+    console.log(msg);
+    let el = document.getElementById('debugStatus');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'debugStatus';
+      el.style.cssText = 'background:rgba(220,53,69,.15);color:#dc3545;padding:8px;border-radius:8px;margin:10px 0';
+      document.body.prepend(el);
+    }
+    el.innerText = msg;
+  } catch (_) {}
+});
+// ===================================================================
 // حالة التطبيق الموسعة
 const AppState = {
   history: [],
@@ -114,10 +131,11 @@ function initializeApp() {
   loadTheme();
   loadLanguage();
   loadHistory();
+  var dbg=document.getElementById('debugStatus'); if(dbg){dbg.innerText='✅ JS loaded & buttons bound';}
   updateCommonPatterns();
   
   if (AppState.history.length > 30) {
-    await initializeModels();
+    if (window.tf) { await initializeModels(); }
   }
 }
 
@@ -204,6 +222,7 @@ async function initializeModels() {
 
 // تدريب نموذج LSTM
 async function trainLSTMModel(history) {
+  if (!window.tf) { return null; }
   if (history.length < 50) {
     console.log("Not enough data for LSTM training");
     return null;
@@ -532,7 +551,7 @@ async function advancedPredict(history) {
   
   // الحصول على تنبؤات من النموذج المتقدم إذا كان مفعل
   let advancedPrediction = null;
-  if (AppState.useAdvancedModel && AppState.advancedModel) {
+  if (AppState.useAdvancedModel && AppState.advancedModel && window.tf) {
     advancedPrediction = await predictWithAdvancedModel(history);
   }
   
@@ -739,7 +758,7 @@ async function addResult(result) {
   
   // تدريب النماذج عند وجود بيانات كافية
   if (AppState.history.length === 30 || (AppState.history.length % 50 === 0 && !AppState.advancedModel)) {
-    await initializeModels();
+    if (window.tf) { await initializeModels(); }
   }
   
   // حفظ التنبؤات السابقة لتقييم الأداء
@@ -1128,7 +1147,7 @@ function updateChart() {
     AppState.statsChart.destroy();
   }
 
-  AppState.statsChart = new Chart(ctx, {
+  AppState.statsChart = window.Chart ? new Chart(ctx, {
     type: 'bar',
     data: {
       labels: [AppState.lang === 'ar-MA' ? 'لاعب' : 'Player', 
