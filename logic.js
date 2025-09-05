@@ -90,9 +90,26 @@ const COMMON_CASINO_PATTERNS = [
 ];
 
 // تهيئة التطبيق
-async function initializeApp() {
+async 
+// ربط الأزرار بالأحداث مباشرة (حلّ لمشكل onclick)
+function bindButtons() {
+  const playerBtn = document.querySelector('.player');
+  const bankerBtn = document.querySelector('.banker');
+  const tieBtn = document.querySelector('.tie');
+  const resetBtn = document.querySelector('.reset');
+  const themeBtn = document.querySelector('.theme-toggle');
+
+  if (playerBtn) playerBtn.addEventListener('click', () => addResult('P'));
+  if (bankerBtn) bankerBtn.addEventListener('click', () => addResult('B'));
+  if (tieBtn) tieBtn.addEventListener('click', () => addResult('T'));
+  if (resetBtn) resetBtn.addEventListener('click', resetData);
+  if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+}
+
+function initializeApp() {
   createNotificationContainer();
   setupEventListeners();
+  bindButtons();
   checkTimeForTheme();
   loadTheme();
   loadLanguage();
@@ -1401,3 +1418,10 @@ function updateBigRoad() {
 
 // تهيئة التطبيق عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', initializeApp);
+
+
+// ضمان توفّر الدوال في النطاق العام للواجهة (لتعمل أزرار onclick)
+window.addResult = addResult;
+window.resetData = resetData;
+window.toggleAdvancedModel = toggleAdvancedModel;
+window.toggleTheme = toggleTheme;
