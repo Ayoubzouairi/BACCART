@@ -3,59 +3,56 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BACCARAT — FULL OFFLINE</title>
+  <title>Baccarat Analyzer — Offline</title>
   <link rel="stylesheet" href="style.css" />
   <script defer src="logic.js"></script>
 </head>
 <body>
-  <header class="topbar">
-    <h1><span class="logo-b">BACCARAT</span> <span class="logo-o">OFFLINE</span> <span class="logo-rest">PRO</span></h1>
-    <div class="actions">
-      <button id="toggleTheme" class="btn ghost">🌓</button>
-      <button id="btnR" class="btn ghost">🔄 إعادة تعيين</button>
-    </div>
-  </header>
+  <div class="topbar">
+    <h1><span class="b">BACCARAT</span> <span class="p">OFFLINE</span></h1>
+    <button id="toggleTheme" class="theme">🌓</button>
+  </div>
 
-  <section class="controls">
-    <p>📲 اختر نتيجة الجولة:</p>
-    <div class="buttons">
-      <button id="btnP" class="btn player">🔵 اللاعب</button>
-      <button id="btnB" class="btn banker">🔴 المصرفي</button>
-      <button id="btnT" class="btn tie">🟢 تعادل</button>
-    </div>
-    <div id="debug" class="debug"></div>
-  </section>
+  <p>📲 اختر نتيجة الجولة:</p>
+  <div class="buttons">
+    <button id="btnP" class="player">🔵 اللاعب</button>
+    <button id="btnB" class="banker">🔴 المصرفي</button>
+    <button id="btnT" class="tie">🟢 تعادل</button>
+    <button id="btnR" class="reset">🔄 إعادة تعيين</button>
+  </div>
 
-  <section class="prediction card">
-    <h3>📊 التنبؤ</h3>
+  <div id="debug" class="debug"></div>
+
+  <div class="prediction-section">
+    <div class="prediction-title">📊 التنبؤ</div>
     <div class="bars">
       <div class="bar player"><span>P</span><div id="barP" class="fill"></div><span id="txtP">33%</span></div>
       <div class="bar banker"><span>B</span><div id="barB" class="fill"></div><span id="txtB">33%</span></div>
       <div class="bar tie"><span>T</span><div id="barT" class="fill"></div><span id="txtT">33%</span></div>
     </div>
     <div id="recBox" class="rec"></div>
-  </section>
+  </div>
 
-  <section class="grid">
+  <div class="cards">
     <div class="card">
       <h3>🧭 التاريخ</h3>
       <div id="history" class="history"></div>
     </div>
     <div class="card">
-      <h3>🔎 آخر 5</h3>
+      <h3>🔎 تحليل آخر 5</h3>
       <div id="last5"></div>
     </div>
     <div class="card">
       <h3>💡 الأنماط المكتشفة</h3>
       <div id="patterns"></div>
     </div>
-  </section>
+  </div>
 
-  <section class="card">
+  <div class="card">
     <h3>🟦 Big Road</h3>
     <div id="bigRoad" class="big-road"></div>
-  </section>
+  </div>
 
-  <footer>✅ إصدار كامل Offline (بدون مكتبات خارجية) — حفظ تلقائي للتاريخ</footer>
+  <footer>✅ إصدار Offline بسيط بدون مكتبات خارجية</footer>
 </body>
 </html>
