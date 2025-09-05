@@ -1,79 +1,0 @@
-
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>BazarX • Market Template</title>
-<link rel="stylesheet" href="assets/css/style.css"/>
-<script defer src="assets/js/main.js"></script>
-</head>
-<body>
-  <nav class="nav">
-    <div class="brand"><span class="logo"></span> <span>BazarX</span></div>
-    <div class="links">
-      <a class="badge" href="cart.html">🛒 <span id="cart-badge">0</span></a>
-      <div class="lang">
-        <button onclick="Lang.set('ar')" class="ar">AR</button>
-        <button onclick="Lang.set('en')" class="en">EN</button>
-      </div>
-    </div>
-  </nav>
-
-  <div class="container">
-    <section class="hero">
-      <div class="panel">
-        <h1>متجرك الإلكتروني الجاهز</h1>
-        <p>قالب بسيط وأنيق شبيه بـ Jumia: منتجات، سلة، وصفحات جاهزة. كلشي محلي بلا سيرفر.</p>
-        <div class="search">
-          <input id="q" class="input" placeholder="ابحث عن المنتجات...">
-          <a class="btn" href="#featured">تسوّق الآن</a>
-        </div>
-        <p class="small">ثمن العرض بالدرهم المغربي، الترجمة عربية/إنجليزية، وتخزين السلة محليًا.</p>
-      </div>
-      <div class="panel">
-        <img src="assets/img/p4.svg" alt="Hero" style="width:100%;border-radius:16px;border:1px solid #1b2440">
-      </div>
-    </section>
-
-    <h3 id="featured" style="margin:10px 0 12px">منتجات مميّزة</h3>
-    <div id="grid" class="grid"></div>
-  </div>
-
-  <footer class="footer">© 2025 BazarX. Static template.</footer>
-
-<script>
-(async () => {
-  const lang = Lang.get();
-  const dict = i18n[lang];
-  document.documentElement.lang = lang;
-  document.getElementById('q').placeholder = dict.search_placeholder;
-
-  const products = await getProducts();
-  const grid = document.getElementById('grid');
-  function render(list){
-    grid.innerHTML = list.map(p => `
-      <a class="card" href="product.html?id=${p.id}">
-        <img src="assets/img/${p.id}.svg" alt="${p.name_ar}"/>
-        <div class="p">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <strong>${lang==='ar'? p.name_ar : p.name_en}</strong>
-            <span class="price">${p.price} MAD</span>
-          </div>
-          <div class="small">توصيل سريع • دفع عند الاستلام (نموذج)</div>
-        </div>
-      </a>
-    `).join('');
-  }
-  render(products);
-
-  const q = document.getElementById('q');
-  q.addEventListener('input', e => {
-    const term = e.target.value.toLowerCase();
-    const filtered = products.filter(p => (p.name_en + p.name_ar).toLowerCase().includes(term));
-    render(filtered);
-  });
-})();
-</script>
-</body>
-</html>
