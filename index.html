@@ -3,22 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Baccarat Analyzer — Offline</title>
+  <title>Baccarat Analyzer — Offline Plus</title>
   <link rel="stylesheet" href="style.css" />
   <script defer src="logic.js"></script>
 </head>
 <body>
   <div class="topbar">
-    <h1><span class="b">BACCARAT</span> <span class="p">OFFLINE</span></h1>
-    <button id="toggleTheme" class="theme">🌓</button>
+    <h1><span class="b">BACCARAT</span> <span class="p">OFFLINE</span> <span class="plus">PLUS</span></h1>
+    <button id="toggleTheme" class="theme" title="تغيير الثيم (فاتح/غامق)">🌓</button>
   </div>
 
   <p>📲 اختر نتيجة الجولة:</p>
   <div class="buttons">
-    <button id="btnP" class="player">🔵 اللاعب</button>
-    <button id="btnB" class="banker">🔴 المصرفي</button>
-    <button id="btnT" class="tie">🟢 تعادل</button>
-    <button id="btnR" class="reset">🔄 إعادة تعيين</button>
+    <button id="btnP" class="player" title="P (اختصار من الكيبورد: P)">🔵 اللاعب</button>
+    <button id="btnB" class="banker" title="B (اختصار من الكيبورد: B)">🔴 المصرفي</button>
+    <button id="btnT" class="tie"    title="T (اختصار من الكيبورد: T)">🟢 تعادل</button>
+    <button id="btnU" class="reset"  title="Ctrl+Z للتراجع">↩️ تراجع</button>
+    <button id="btnX" class="reset"  title="تصدير CSV">⬇️ تصدير CSV</button>
+    <button id="btnR" class="reset"  title="R (اختصار من الكيبورد: R)">🔄 إعادة تعيين</button>
   </div>
 
   <div id="debug" class="debug"></div>
@@ -53,6 +55,24 @@
     <div id="bigRoad" class="big-road"></div>
   </div>
 
-  <footer>✅ إصدار Offline بسيط بدون مكتبات خارجية</footer>
+  <div class="card">
+    <h3>🧭 الطرق المشتقة: 👁️ Big Eye / 🟡 Small / 🪳 Cockroach</h3>
+    <div class="derived-roads">
+      <div class="derived-block">
+        <h4>👁️ Big Eye</h4>
+        <div id="bigEye" class="derived"></div>
+      </div>
+      <div class="derived-block">
+        <h4>🟡 Small</h4>
+        <div id="smallRoad" class="derived"></div>
+      </div>
+      <div class="derived-block">
+        <h4>🪳 Cockroach</h4>
+        <div id="cockroach" class="derived"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>✅ إصدار Offline Plus بدون مكتبات خارجية — يدعم الحفظ التلقائي، التراجع، التصدير، وطرق Big Eye/Small/Cockroach</footer>
 </body>
 </html>
