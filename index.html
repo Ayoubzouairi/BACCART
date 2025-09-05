@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Real Baccarat Predictor Pro</title>
+  <style>
+    :root{
+      --bg:#0b0f12; --panel:#12171c; --muted:#1b2229;
+      --text:#e6edf3; --sub:#9aa7b2; --primary:#00a3ff;
+      --banker:#e74c3c; --player:#2e86de; --tie:#2ecc71;
+      --ok:#29cc7a; --err:#ff5c5c; --amber:#ffb020;
+      --chip:#2b333c;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;background:var(--bg);color:var(--text);
+      font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, "Noto Kufi Arabic", Arial, sans-serif;
+      line-height:1.45;
+    }
+    .wrap{max-width:1100px;margin:32px auto;padding:0 16px}
+    header{
+      background:linear-gradient(180deg,#0e141a,transparent);
+      border:1px solid #233040;border-radius:18px;padding:18px 20px;margin-bottom:16px
+    }
+    h1{margin:0 0 6px;font-size:22px;display:flex;align-items:center;gap:10px}
+    .badge{font-size:12px;padding:3px 8px;border-radius:999px;background:#143954;color:#79c8ff;border:1px solid #204b69}
+    .sub{color:var(--sub);font-size:13px}
+    .panel{background:var(--panel);border:1px solid #233040;border-radius:16px;padding:14px;margin:10px 0}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      padding:10px 14px;border-radius:10px;border:1px solid #2b3a46;background:#162029;
+      color:#cfe8ff;cursor:pointer;font-weight:600;min-width:96px;transition:.15s;outline:none
+    }
+    .btn:hover{filter:brightness(1.15)}
+    .btn:active{transform:translateY(1px)}
+    .b-bank{background:rgba(231,76,60,.16);border-color:rgba(231,76,60,.35);color:#ffb2aa}
+    .b-play{background:rgba(46,134,222,.16);border-color:rgba(46,134,222,.35);color:#b9d8ff}
+    .b-tie{background:rgba(46, 204, 113,.16);border-color:rgba(46, 204, 113,.35);color:#b5f2c9}
+    .b-ghost{background:#121922;color:#b5c1cb}
+    .box{
+      background:var(--muted);border:1px solid #2a3a47;
+      border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;min-width:130px;flex:1
+    }
+    .box h3{margin:0;font-size:13px;color:#a9b3bd}
+    .stat{font-weight:800;font-size:20px}
+    .progress{
+      height:10px;border-radius:999px;background:#0c1217;border:1px solid #24323f;overflow:hidden;position:relative
+    }
+    .progress .bar{position:absolute;height:100%;left:0;top:0;background:linear-gradient(90deg,#0af,#09f);width:30%;
+      animation: load 2s infinite;box-shadow:0 0 10px #0af}
+    @keyframes load{
+      0%{left:-30%;width:25%}50%{left:50%;width:40%}100%{left:110%;width:25%}
+    }
+    .grid-title{display:flex;align-items:center;gap:8px;font-size:14px;margin:0 0 6px}
+    .grid{
+      --cols:30; --cell:16px; --gap:6px; --rows:6;
+      display:grid; grid-auto-flow:column; grid-template-rows: repeat(var(--rows), var(--cell));
+      grid-template-columns: repeat(var(--cols), var(--cell));
+      gap: var(--gap); padding:10px;background:#0d141a;border-radius:12px;border:1px solid #233040;overflow:auto;
+      min-height:calc(var(--rows)*var(--cell) + 20px);
+    }
+    .dot{
+      width:var(--cell);height:var(--cell);border-radius:50%;
+      border:2px solid rgba(255,255,255,.08);background:#182028; display:block;
+      box-shadow: inset 0 0 0 2px rgba(0,0,0,.35);
+    }
+    .dot.b{background:radial-gradient(circle at 30% 30%, #ffb4ac, #e74c3c 65%)}
+    .dot.p{background:radial-gradient(circle at 30% 30%, #c8dcff, #2e86de 65%)}
+    .dot.t{background:radial-gradient(circle at 30% 30%, #c4f5d7, #2ecc71 65%)}
+    .mini{
+      --cell:12px; --gap:4px; --cols:40; --rows:6;
+    }
+    .mini .dot.r{background:radial-gradient(circle at 30% 30%, #ffc6b9, #ff6b5a 65%)}
+    .mini .dot.bl{background:radial-gradient(circle at 30% 30%, #c7d9ff, #4d8dff 65%)}
+    .flex{display:flex;gap:12px;flex-wrap:wrap;align-items:stretch}
+    .pred{
+      display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800
+    }
+    .tag{font-size:12px;padding:4px 10px;border-radius:999px;background:#0f151b;border:1px solid #263340;color:#b2bec8}
+    .tag.ok{background:rgba(41,204,122,.08);border-color:rgba(41,204,122,.35);color:#8ef0ba}
+    .tag.fail{background:rgba(255,92,92,.08);border-color:rgba(255,92,92,.35);color:#ffc6c6}
+    .results{display:flex;gap:6px;flex-wrap:wrap}
+    .res-box{
+      width:14px;height:14px;border-radius:3px;border:1px solid #2b3a46;background:#0f161d
+    }
+    .res-box.ok{background:var(--ok);border-color:#35e39a}
+    .res-box.fail{background:var(--err);border-color:#ff8f8f}
+    .kv{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:#b4c0cb}
+    .footer{color:#8092a0;font-size:12px;margin-top:10px}
+    .legend{display:flex;gap:8px;font-size:12px;color:#9fb0bd}
+    .legend span{display:flex;align-items:center;gap:6px}
+    .legend .chip{width:10px;height:10px;border-radius:50%}
+    .chip.b{background:var(--banker)} .chip.p{background:var(--player)} .chip.t{background:var(--tie)}
+    .lang{margin-inline-start:auto}
+    .pill{padding:6px 10px;border:1px solid #294255;background:#112332;border-radius:10px;color:#99b6cc;cursor:pointer}
+    .pill.active{background:#17364f;border-color:#2c5575;color:#cfe8ff}
+    a.inline{color:#79c8ff;text-decoration:none}
+    .votes{display:flex;gap:6px;flex-wrap:wrap}
+    .votes .tag{font-size:11px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="panel">
+      <div style="display:flex;align-items:center;gap:10px">
+        <h1>ADVANCE AI PREDICTION SYSTEM <span class="badge">Real Baccarat Predictor Pro</span></h1>
+        <div class="lang">
+          <button class="pill active" id="lang-ar">العربية</button>
+          <button class="pill" id="lang-en">English</button>
+        </div>
+      </div>
+      <div class="sub" id="subtitle">حلّـل الأنماط الشائعة و تنبّـأ بالجولة القادمة (Player/Banker/Tie).</div>
+    </header>
+
+    <section class="panel">
+      <div class="row">
+        <button class="btn b-play" id="btn-player">PLAYER (P)</button>
+        <button class="btn b-bank" id="btn-banker">BANKER (B)</button>
+        <button class="btn b-tie" id="btn-tie">TIE (T)</button>
+        <button class="btn b-ghost" id="btn-back">⌫ Backspace</button>
+        <button class="btn b-ghost" id="btn-reset">Reset</button>
+      </div>
+
+      <div class="row">
+        <div class="box">
+          <h3 id="lbl-wins">الإنتصارات</h3>
+          <div class="stat" id="wins">0</div>
+        </div>
+        <div class="box">
+          <h3 id="lbl-losses">الخسائر</h3>
+          <div class="stat" id="losses">0</div>
+        </div>
+        <div class="box">
+          <h3 id="lbl-streak">الستريك الحالي</h3>
+          <div class="stat" id="streak">0</div>
+        </div>
+        <div class="box">
+          <h3 id="lbl-winrate">نسبة الفوز</h3>
+          <div class="stat"><span id="winrate">0%</span></div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin:12px 0">
+        <div class="grid-title" id="analyzing">تحليل الأنماط…</div>
+        <div class="progress"><div class="bar"></div></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div class="grid-title">
+          <strong id="lbl-history">Game History — Big Road</strong>
+        </div>
+        <div class="legend">
+          <span><i class="chip b"></i> Banker</span>
+          <span><i class="chip p"></i> Player</span>
+          <span><i class="chip t"></i> Tie</span>
+        </div>
+      </div>
+      <div id="big-road" class="grid" style="--cols:40"></div>
+
+      <div class="flex" style="margin-top:14px">
+        <div class="box" style="flex:1;min-width:270px">
+          <div class="grid-title"><strong id="lbl-bead">Bead Plate</strong></div>
+          <div id="bead-plate" class="grid mini" style="--cols:20"></div>
+        </div>
+
+        <div class="box" style="flex:1;min-width:270px">
+          <div class="grid-title"><strong>Big Eye Boy</strong></div>
+          <div id="big-eye" class="grid mini" style="--cols:40"></div>
+        </div>
+        <div class="box" style="flex:1;min-width:270px">
+          <div class="grid-title"><strong>Small Road</strong></div>
+          <div id="small-road" class="grid mini" style="--cols:40"></div>
+        </div>
+        <div class="box" style="flex:1;min-width:270px">
+          <div class="grid-title"><strong>Cockroach Pig</strong></div>
+          <div id="cockroach" class="grid mini" style="--cols:40"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="grid-title"><strong id="lbl-pred">Prediction</strong></div>
+      <div class="pred">
+        <span id="pred-main">—</span>
+        <span class="tag" id="pred-conf">0%</span>
+      </div>
+      <div class="votes" id="vote-tags"></div>
+      <div class="footer" id="hint">أدخل النتائج (Player/Banker/Tie) واحدة تلو الأخرى وشاهد الذكاء الاصطناعي يتعلم النمط.</div>
+    </section>
+
+    <section class="panel">
+      <div class="grid-title"><strong id="lbl-results">Prediction Results</strong></div>
+      <div class="results" id="pred-results"></div>
+    </section>
+
+    <section class="panel">
+      <div class="footer">
+        ♠️ هذا مشروع تعليمي لتحليل الأنماط في لعبة باكارات. لا يضمن الربح ولا يُعتبر نصيحة قمار.
+        — <a class="inline" href="#" id="export-json">تصدير البيانات (JSON)</a>
+      </div>
+    </section>
+  </div>
+
+<script>
+// --- State ---
+const state = {
+  history: [],          // Array of 'B','P','T'
+  lastPrediction: null, // { choice:'B'|'P'|'T', conf:0..1, votes:{} }
+  results: [],          // [{pred, actual, ok}]
+  stats: { wins:0, losses:0, streak:0 }
+};
+
+// --- Utils ---
+const $ = (sel)=>document.querySelector(sel);
+const create = (tag, cls)=>{ const e=document.createElement(tag); if(cls) e.className=cls; return e; };
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+
+// Localized labels
+const i18n = {
+  ar: {
+    subtitle: "حلّـل الأنماط الشائعة و تنبّـأ بالجولة القادمة (Player/Banker/Tie).",
+    wins:"الإنتصارات", losses:"الخسائر", streak:"الستريك الحالي", winrate:"نسبة الفوز",
+    analyzing:"تحليل الأنماط…", history:"Game History — Big Road", bead:"Bead Plate",
+    pred:"التنبؤ", results:"نتائج التنبؤ", hint:"أدخل النتائج (Player/Banker/Tie) واحدة تلو الأخرى وشاهد الذكاء الاصطناعي يتعلم النمط."
+  },
+  en: {
+    subtitle: "Analyze casino road maps & predict the next round (Player/Banker/Tie).",
+    wins:"Wins", losses:"Losses", streak:"Current streak", winrate:"Win rate",
+    analyzing:"Analyzing patterns…", history:"Game History — Big Road", bead:"Bead Plate",
+    pred:"Prediction", results:"Prediction Results", hint:"Enter outcomes (Player/Banker/Tie) one by one, and the AI will adapt."
+  }
+};
+let LANG = "ar";
+function applyLang(){
+  $("#subtitle").textContent = i18n[LANG].subtitle;
+  $("#lbl-wins").textContent = i18n[LANG].wins;
+  $("#lbl-losses").textContent = i18n[LANG].losses;
+  $("#lbl-streak").textContent = i18n[LANG].streak;
+  $("#lbl-winrate").textContent = i18n[LANG].winrate;
+  $("#analyzing").textContent = i18n[LANG].analyzing;
+  $("#lbl-history").textContent = i18n[LANG].history;
+  $("#lbl-bead").textContent = i18n[LANG].bead;
+  $("#lbl-pred").textContent = i18n[LANG].pred;
+  $("#lbl-results").textContent = i18n[LANG].results;
+  $("#hint").textContent = i18n[LANG].hint;
+  $("#lang-ar").classList.toggle("active", LANG==="ar");
+  $("#lang-en").classList.toggle("active", LANG==="en");
+}
+
+// --- Core Big Road builder ---
+// Simplified but faithful Big Road placement ignoring ties.
+function buildBigRoad(history){
+  const cols=[]; // array of arrays, each bead: {c:'B'|'P', ties:n}
+  let lastNonTie = null;
+  let lastBeadCol = -1;
+
+  for(let i=0;i<history.length;i++){
+    const r = history[i];
+    if(r==='T'){ // attach tie to last bead if exists
+      if(lastBeadCol>=0){
+        const lastCol = cols[lastBeadCol];
+        lastCol[lastCol.length-1].ties = (lastCol[lastCol.length-1].ties||0)+1;
+      }
+      continue;
+    }
+    if(lastNonTie===null){
+      cols.push([{c:r, ties:0}]);
+      lastNonTie = r;
+      lastBeadCol = 0;
+      continue;
+    }
+    const same = (r===lastNonTie);
+    const currCol = cols[lastBeadCol];
+    const leftCol = (lastBeadCol>0) ? cols[lastBeadCol-1] : null;
+
+    if(same){
+      // Try to go down if possible per occupancy rule
+      const canGoDown = currCol.length < 6 && (!leftCol || leftCol.length < currCol.length+1);
+      if(canGoDown){
+        currCol.push({c:r, ties:0});
+      }else{
+        // move to right at same row
+        cols.push([{c:r, ties:0}]);
+        lastBeadCol++;
+      }
+    }else{
+      // new column to the right
+      cols.push([{c:r, ties:0}]);
+      lastBeadCol++;
+      lastNonTie = r;
+    }
+  }
+  return cols;
+}
+
+// Derived road (Big Eye / Small / Cockroach) using column-height comparisons (common practical heuristic).
+function buildDerivedFromBigRoad(cols, offset){
+  const signs=[]; // 'R'|'B' => red/blue meaning "consistent"/"inconsistent"
+  function colHeight(idx){ return idx>=0 && idx<cols.length ? cols[idx].length : 0; }
+  for(let j=1;j<cols.length;j++){
+    const curr = cols[j];
+    for(let r=0;r<curr.length;r++){
+      const leftIdx = j-1;
+      const refIdx = j-1-offset;
+      // When continuing in same column (r>0), compare (left col height >= r ? ... ) vs ref col height >= r ? ...
+      let leftOk = colHeight(leftIdx) >= (r+1);
+      let refOk  = colHeight(refIdx) >= (r+1);
+      let color = (leftOk===refOk) ? 'R' : 'B';
+      // When new column (r==0), compare heights of (leftIdx) and (refIdx)
+      if(r===0){
+        color = (colHeight(leftIdx) === colHeight(refIdx)) ? 'R' : 'B';
+      }
+      signs.push(color);
+    }
+  }
+  return signs;
+}
+
+// Bead plate placement: fill columns top->bottom then left->right
+function buildBeadPlate(history, maxCols=20, rows=6){
+  const beads=[];
+  for(const r of history){
+    beads.push(r);
+  }
+  return {beads, cols:maxCols, rows};
+}
+
+// --- Prediction Logic ---
+function analyzeAndPredict(history){
+  const votes = {B:0, P:0, T:0};
+  const notes = [];
+  const h = history.filter(x=>x!=='T');
+
+  if(h.length===0){
+    return {choice:null, conf:0, votes, notes};
+  }
+  const last = h[h.length-1];
+
+  // 1) Streak detection
+  let streak=1;
+  for(let i=h.length-2;i>=0;i--){
+    if(h[i]===last) streak++; else break;
+  }
+  if(streak>=2){
+    votes[last]+=2; // stronger weight for streak
+    notes.push(`Streak x${streak} → stay ${last}`);
+  }
+
+  // 2) Ping-Pong detection (…BPBP or PBPB)
+  if(h.length>=4){
+    const a=h.slice(-4).join('');
+    if(a==='BPBP' || a==='PBPB'){
+      const next = (last==='B'?'P':'B');
+      votes[next]+=2;
+      notes.push(`Ping-Pong → ${next}`);
+    }
+  }
+
+  // 3) Double pattern (pairs like BB PP BB)
+  if(h.length>=6){
+    const s=h.slice(-6);
+    const pairs = [s[0]===s[1], s[2]===s[3], s[4]===s[5]];
+    if(pairs.every(x=>x) && (s[1]!==s[3])){
+      const next = (last===s[5]) ? (last==='B'?'P':'B') : last;
+      votes[next]+=1.5;
+      notes.push(`Double Pattern signal → ${next}`);
+    }
+  }
+
+  // 4) Road-based trend (Big Eye Boy last sign: R -> keep, B -> switch)
+  const cols = buildBigRoad(history);
+  const bigEye = buildDerivedFromBigRoad(cols, 1);
+  if(bigEye.length>0){
+    const lastEye = bigEye[bigEye.length-1];
+    const vote = (lastEye==='R') ? last : (last==='B'?'P':'B');
+    votes[vote]+=1.5;
+    notes.push(`Big Eye trend (${lastEye==='R'?'Regular':'Irregular'}) → ${vote}`);
+  }
+  // 5) Small road
+  const small = buildDerivedFromBigRoad(cols, 2);
+  if(small.length>0){
+    const lastS = small[small.length-1];
+    const vote = (lastS==='R') ? last : (last==='B'?'P':'B');
+    votes[vote]+=1.0;
+    notes.push(`Small Road (${lastS==='R'?'Regular':'Irregular'}) → ${vote}`);
+  }
+  // 6) Majority in last N
+  const N=10;
+  const recent = h.slice(-N);
+  const cntB = recent.filter(x=>x==='B').length;
+  const cntP = recent.filter(x=>x==='P').length;
+  if(cntB!==cntP){
+    const maj = cntB>cntP?'B':'P';
+    votes[maj]+=1.0;
+    notes.push(`Majority last ${recent.length}: ${maj}`);
+  }
+
+  // 7) Slight Banker bias (house edge)
+  votes['B'] += 0.2;
+
+  // Normalize and pick
+  const sum = votes.B + votes.P + votes.T;
+  if(sum===0) return {choice:null, conf:0, votes, notes};
+  const probs = {B: votes.B/sum, P: votes.P/sum, T: votes.T/sum};
+  const choice = probs.B>probs.P ? 'B':'P';
+  const conf = Math.max(probs.B, probs.P);
+
+  return {choice, conf, votes, notes};
+}
+
+// --- Rendering ---
+function renderStats(){
+  $("#wins").textContent = state.stats.wins;
+  $("#losses").textContent = state.stats.losses;
+  $("#streak").textContent = state.stats.streak;
+  const total = state.stats.wins + state.stats.losses;
+  const wr = total ? Math.round((state.stats.wins/total)*100) : 0;
+  $("#winrate").textContent = wr + "%";
+}
+function clearGrid(el){
+  while(el.firstChild) el.removeChild(el.firstChild);
+}
+// Big Road grid
+function renderBigRoad(){
+  const grid = $("#big-road");
+  clearGrid(grid);
+  const cols = buildBigRoad(state.history);
+  grid.style.setProperty("--cols", Math.max(40, cols.length+2));
+
+  for(let c=0;c<cols.length;c++){
+    for(let r=0;r<cols[c].length;r++){
+      const bead = cols[c][r];
+      const d = create("div","dot " + (bead.c==='B'?'b':'p'));
+      d.style.gridColumn = (c+1);
+      d.style.gridRow = (r+1);
+      grid.appendChild(d);
+    }
+  }
+  // Derived roads
+  renderDerived("#big-eye", cols, 1);
+  renderDerived("#small-road", cols, 2);
+  renderDerived("#cockroach", cols, 3);
+  // Bead plate
+  renderBead();
+}
+function renderDerived(sel, cols, offset){
+  const grid = $(sel);
+  clearGrid(grid);
+  const signs = buildDerivedFromBigRoad(cols, offset);
+  grid.style.setProperty("--cols", Math.max(40, Math.ceil(signs.length/6)+2));
+  // Place top->bottom then left->right
+  let col=0,row=0;
+  for(let i=0;i<signs.length;i++){
+    const d = create("div","dot " + (signs[i]==='R' ? "r" : "bl"));
+    d.style.gridColumn = (col+1);
+    d.style.gridRow = (row+1);
+    grid.appendChild(d);
+    row++;
+    if(row>=6){ row=0; col++; }
+  }
+}
+function renderBead(){
+  const grid = $("#bead-plate");
+  clearGrid(grid);
+  const bp = buildBeadPlate(state.history, 20, 6);
+  let col=0,row=0;
+  for(const s of bp.beads){
+    const c = s==='B'?'b':(s==='P'?'p':'t');
+    const d = create("div","dot "+c);
+    d.style.gridColumn = (col+1);
+    d.style.gridRow = (row+1);
+    grid.appendChild(d);
+    row++;
+    if(row>=bp.rows){ row=0; col++; }
+  }
+}
+function renderPred(){
+  const p = state.lastPrediction;
+  if(!p || !p.choice){
+    $("#pred-main").textContent = "—";
+    $("#pred-conf").textContent = "0%";
+    $("#vote-tags").innerHTML = "";
+    return;
+  }
+  $("#pred-main").textContent = (p.choice==='B'?"BANKER":"PLAYER");
+  $("#pred-conf").textContent = Math.round(p.conf*100) + "%";
+
+  const vt = $("#vote-tags");
+  vt.innerHTML = "";
+  const order = Object.entries(p.votes).sort((a,b)=>b[1]-a[1]);
+  for(const [k,v] of order){
+    if(v<=0) continue;
+    const tag = create("span","tag");
+    tag.textContent = `${k}: ${v.toFixed(2)}`;
+    vt.appendChild(tag);
+  }
+}
+function renderResults(){
+  const cont = $("#pred-results");
+  clearGrid(cont);
+  for(const r of state.results.slice(-30)){
+    const b = create("div","res-box " + (r.ok?"ok":"fail"));
+    cont.appendChild(b);
+  }
+}
+
+function recalc(){
+  renderBigRoad();
+  // compute prediction for next round based on current history
+  state.lastPrediction = analyzeAndPredict(state.history);
+  renderPred();
+  renderStats();
+  renderResults();
+}
+
+// --- Interaction ---
+function recordResult(symbol){
+  // Before updating history, check if we had a pending prediction and score it with the new actual
+  if(state.lastPrediction && state.lastPrediction.choice){
+    const pred = state.lastPrediction.choice;
+    const actual = (symbol==='T') ? pred /* don't count ties as loss; ignore by mirroring */ : symbol;
+    const ok = (pred===actual);
+    // We only score when actual is B or P
+    if(symbol!=='T'){
+      if(ok){ state.stats.wins++; state.stats.streak++; }
+      else{ state.stats.losses++; state.stats.streak=0; }
+      state.results.push({pred, actual:symbol, ok});
+    }
+  }
+  state.history.push(symbol);
+  recalc();
+}
+function backspace(){
+  // Undo last entry and also undo last scored result if it was based on non-tie
+  if(state.history.length===0) return;
+  const last = state.history.pop();
+  if(last!=='T' && state.results.length>0){
+    const popped = state.results.pop();
+    if(popped.ok){ state.stats.wins--; } else { state.stats.losses--; }
+    // streak recompute
+    let s=0;
+    for(let i=state.results.length-1;i>=0;i--){
+      if(state.results[i].ok) s++; else break;
+    }
+    state.stats.streak = s;
+  }
+  recalc();
+}
+function resetAll(){
+  state.history=[]; state.lastPrediction=null; state.results=[];
+  state.stats={wins:0, losses:0, streak:0};
+  recalc();
+}
+
+// Export JSON
+$("#export-json").addEventListener("click",(e)=>{
+  e.preventDefault();
+  const data = {
+    history: state.history,
+    results: state.results,
+    stats: state.stats
+  };
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "baccarat-session.json"; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+});
+
+// Buttons
+$("#btn-player").onclick = ()=>recordResult('P');
+$("#btn-banker").onclick = ()=>recordResult('B');
+$("#btn-tie").onclick    = ()=>recordResult('T');
+$("#btn-back").onclick   = backspace;
+$("#btn-reset").onclick  = resetAll;
+
+// Lang toggles
+$("#lang-ar").onclick = ()=>{LANG="ar";applyLang();};
+$("#lang-en").onclick = ()=>{LANG="en";applyLang();};
+
+// Init
+applyLang();
+recalc();
+
+</script>
+</body>
+</html>
