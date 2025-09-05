@@ -1,78 +1,79 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Baccarat Analyzer — Offline Plus</title>
-  <link rel="stylesheet" href="style.css" />
-  <script defer src="logic.js"></script>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BazarX • Market Template</title>
+<link rel="stylesheet" href="assets/css/style.css"/>
+<script defer src="assets/js/main.js"></script>
 </head>
 <body>
-  <div class="topbar">
-    <h1><span class="b">BACCARAT</span> <span class="p">OFFLINE</span> <span class="plus">PLUS</span></h1>
-    <button id="toggleTheme" class="theme" title="تغيير الثيم (فاتح/غامق)">🌓</button>
-  </div>
-
-  <p>📲 اختر نتيجة الجولة:</p>
-  <div class="buttons">
-    <button id="btnP" class="player" title="P (اختصار من الكيبورد: P)">🔵 اللاعب</button>
-    <button id="btnB" class="banker" title="B (اختصار من الكيبورد: B)">🔴 المصرفي</button>
-    <button id="btnT" class="tie"    title="T (اختصار من الكيبورد: T)">🟢 تعادل</button>
-    <button id="btnU" class="reset"  title="Ctrl+Z للتراجع">↩️ تراجع</button>
-    <button id="btnX" class="reset"  title="تصدير CSV">⬇️ تصدير CSV</button>
-    <button id="btnR" class="reset"  title="R (اختصار من الكيبورد: R)">🔄 إعادة تعيين</button>
-  </div>
-
-  <div id="debug" class="debug"></div>
-
-  <div class="prediction-section">
-    <div class="prediction-title">📊 التنبؤ</div>
-    <div class="bars">
-      <div class="bar player"><span>P</span><div id="barP" class="fill"></div><span id="txtP">33%</span></div>
-      <div class="bar banker"><span>B</span><div id="barB" class="fill"></div><span id="txtB">33%</span></div>
-      <div class="bar tie"><span>T</span><div id="barT" class="fill"></div><span id="txtT">33%</span></div>
-    </div>
-    <div id="recBox" class="rec"></div>
-  </div>
-
-  <div class="cards">
-    <div class="card">
-      <h3>🧭 التاريخ</h3>
-      <div id="history" class="history"></div>
-    </div>
-    <div class="card">
-      <h3>🔎 تحليل آخر 5</h3>
-      <div id="last5"></div>
-    </div>
-    <div class="card">
-      <h3>💡 الأنماط المكتشفة</h3>
-      <div id="patterns"></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>🟦 Big Road</h3>
-    <div id="bigRoad" class="big-road"></div>
-  </div>
-
-  <div class="card">
-    <h3>🧭 الطرق المشتقة: 👁️ Big Eye / 🟡 Small / 🪳 Cockroach</h3>
-    <div class="derived-roads">
-      <div class="derived-block">
-        <h4>👁️ Big Eye</h4>
-        <div id="bigEye" class="derived"></div>
-      </div>
-      <div class="derived-block">
-        <h4>🟡 Small</h4>
-        <div id="smallRoad" class="derived"></div>
-      </div>
-      <div class="derived-block">
-        <h4>🪳 Cockroach</h4>
-        <div id="cockroach" class="derived"></div>
+  <nav class="nav">
+    <div class="brand"><span class="logo"></span> <span>BazarX</span></div>
+    <div class="links">
+      <a class="badge" href="cart.html">🛒 <span id="cart-badge">0</span></a>
+      <div class="lang">
+        <button onclick="Lang.set('ar')" class="ar">AR</button>
+        <button onclick="Lang.set('en')" class="en">EN</button>
       </div>
     </div>
+  </nav>
+
+  <div class="container">
+    <section class="hero">
+      <div class="panel">
+        <h1>متجرك الإلكتروني الجاهز</h1>
+        <p>قالب بسيط وأنيق شبيه بـ Jumia: منتجات، سلة، وصفحات جاهزة. كلشي محلي بلا سيرفر.</p>
+        <div class="search">
+          <input id="q" class="input" placeholder="ابحث عن المنتجات...">
+          <a class="btn" href="#featured">تسوّق الآن</a>
+        </div>
+        <p class="small">ثمن العرض بالدرهم المغربي، الترجمة عربية/إنجليزية، وتخزين السلة محليًا.</p>
+      </div>
+      <div class="panel">
+        <img src="assets/img/p4.svg" alt="Hero" style="width:100%;border-radius:16px;border:1px solid #1b2440">
+      </div>
+    </section>
+
+    <h3 id="featured" style="margin:10px 0 12px">منتجات مميّزة</h3>
+    <div id="grid" class="grid"></div>
   </div>
 
-  <footer>✅ إصدار Offline Plus بدون مكتبات خارجية — يدعم الحفظ التلقائي، التراجع، التصدير، وطرق Big Eye/Small/Cockroach</footer>
+  <footer class="footer">© 2025 BazarX. Static template.</footer>
+
+<script>
+(async () => {
+  const lang = Lang.get();
+  const dict = i18n[lang];
+  document.documentElement.lang = lang;
+  document.getElementById('q').placeholder = dict.search_placeholder;
+
+  const products = await getProducts();
+  const grid = document.getElementById('grid');
+  function render(list){
+    grid.innerHTML = list.map(p => `
+      <a class="card" href="product.html?id=${p.id}">
+        <img src="assets/img/${p.id}.svg" alt="${p.name_ar}"/>
+        <div class="p">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <strong>${lang==='ar'? p.name_ar : p.name_en}</strong>
+            <span class="price">${p.price} MAD</span>
+          </div>
+          <div class="small">توصيل سريع • دفع عند الاستلام (نموذج)</div>
+        </div>
+      </a>
+    `).join('');
+  }
+  render(products);
+
+  const q = document.getElementById('q');
+  q.addEventListener('input', e => {
+    const term = e.target.value.toLowerCase();
+    const filtered = products.filter(p => (p.name_en + p.name_ar).toLowerCase().includes(term));
+    render(filtered);
+  });
+})();
+</script>
 </body>
 </html>

@@ -1,0 +1,77 @@
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>صفحة المنتج • BazarX</title>
+<link rel="stylesheet" href="assets/css/style.css"/>
+<script defer src="assets/js/main.js"></script>
+</head>
+<body>
+  <nav class="nav">
+    <div class="brand"><a href="index.html"><span class="logo"></span> <span>BazarX</span></a></div>
+    <div class="links">
+      <a class="badge" href="cart.html">🛒 <span id="cart-badge">0</span></a>
+      <div class="lang">
+        <button onclick="Lang.set('ar')" class="ar">AR</button>
+        <button onclick="Lang.set('en')" class="en">EN</button>
+      </div>
+    </div>
+  </nav>
+  <div class="container" id="container">
+    <div id="product" class="grid"></div>
+  </div>
+  <footer class="footer">© 2025 BazarX.</footer>
+
+<script>
+(async () => {
+  const lang = Lang.get();
+  const dict = i18n[lang];
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  const products = await getProducts();
+  const p = products.find(x => x.id===id) || products[0];
+
+  const el = document.getElementById('product');
+  el.innerHTML = `
+    <div class="card" style="grid-column: span 2; max-width:720px">
+      <img src="assets/img/${p.id}.svg" alt=""/>
+      <div class="p">
+        <h2 style="margin:0 0 6px">${lang==='ar'? p.name_ar : p.name_en}</h2>
+        <div class="line"></div>
+        <p class="small">وصف قصير للمنتج. هذا نص تجريبي يمكنك تغييره لاحقًا بما يناسب متجرك.</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+          <strong class="price">${p.price} MAD</strong>
+          <button class="btn" id="add">${dict.add_to_cart}</button>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="max-width:360px">
+      <div class="p">
+        <div class="badge">⭐ 4.8 • 120 تقييم</div>
+        <div class="line"></div>
+        <div class="small">شحن خلال 24-48 ساعة • إرجاع خلال 7 أيام (نموذج)</div>
+        <div class="line"></div>
+        <h4>مواصفات</h4>
+        <ul class="small">
+          <li>ضمان سنة</li>
+          <li>دفع عند الاستلام (نموذج)</li>
+          <li>خدمة زبناء 24/7</li>
+        </ul>
+      </div>
+    </div>
+  `;
+
+  $("#add").addEventListener("click", () => {
+    Cart.add(p.id, 1);
+    const n = document.createElement('div');
+    n.className = 'alert';
+    n.textContent = '✔ أُضيف إلى السلة';
+    $("#container").prepend(n);
+    setTimeout(()=>n.remove(), 1600);
+  });
+})();
+</script>
+</body>
+</html>
