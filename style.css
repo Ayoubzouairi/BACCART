@@ -74,7 +74,6 @@ canvas { background: #0b101d; border: 1px solid #1c2436; border-radius: 10px; di
   .roads-wrap { grid-template-columns: 1fr; }
 }
 
-
 .road-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px; }
 .btn.sm { padding: 6px 10px; border-radius: 10px; font-size: 12px; }
 .legend { font-size: 12px; color:#a9b7cd; margin: 6px 0 8px; }
@@ -82,3 +81,6 @@ canvas { background: #0b101d; border: 1px solid #1c2436; border-radius: 10px; di
 .legend .banker, .legend .red { background:#ff4b5c; }
 .legend .player, .legend .blue { background:#3aa8ff; }
 .legend .tie { background:#29cc6a; }
+
+.muted { color: #93a6be; }
+.small { font-size: 12px; }
