@@ -557,4 +557,4 @@ function drawAllRoads() {
 // Styles for toast (injected via JS if needed)
 const style = document.createElement('style');
 style.textContent = `.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#121826;border:1px solid #2e3f62;color:#e8eef7;padding:10px 14px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.35);opacity:0;transition:opacity .2s;font-size:14px;z-index:1000}`;
-document.head.appendChild(style);
+document.head.appendChild(style); 
