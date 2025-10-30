@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>BACCARAT — Clean</title>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body dir="rtl">
+<header class="topbar">
+<h1 class="title">BACCARAT — النسخة النظيفة</h1>
+<label>عدد الجولات:
+<select id="roundCount"><option>5</option><option>10</option><option>20</option></select>
+</label>
+<button id="resetBtn">مسح الكل</button>
+</header>
+<main class="container">
+<div class="history card">
+<h2>تاريخ الجولات</h2><div id="historyList" class="historyList"></div>
+<button id="addPlayer">Player</button>
+<button id="addBanker">Banker</button>
+<button id="addTie">Tie</button>
+</div>
+<div class="prediction card">
+<h2>توقّعات AI مبسّطة</h2>
+<div id="columns" class="columns">
+<div class="col"><div class="bar" id="barPlayer"></div><div class="label">Player <img src="assets/k_card.svg" class="cardIcon"></div><div class="pct" id="pctPlayer">--%</div></div>
+<div class="col"><div class="bar" id="barBanker"></div><div class="label">Banker <img src="assets/9_card.svg" class="cardIcon"></div><div class="pct" id="pctBanker">--%</div></div>
+<div class="col"><div class="bar" id="barTie"></div><div class="label">Tie</div><div class="pct" id="pctTie">--%</div></div>
+</div>
+<div class="patterns card">
+<h2>كشف الأنماط</h2><ul id="patternsList"></ul>
+</div>
+</div>
+<div id="logBox" class="logBox"></div>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
