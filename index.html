@@ -3,70 +3,111 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Baccarat AI Predictor — BACCARAT SPEED</title>
+  <title>Baccarat — Full Predictor</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <img src="logo.svg" alt="SPEED BACCARAT" class="logo"/>
-      <h1 data-i18n="title">BACCARAT SPEED — Baccarat AI Predictor</h1>
-    </div>
-    <div class="controls-top">
-      <div class="lang-switch">
-        <button id="lang-ar" class="active">AR</button>
-        <button id="lang-en">EN</button>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <img class="logo" src="logo.svg" alt="BACCARAT"/>
+        <div>
+          <h1 data-i18n="title">BACCARAT SPEED — تحليل باكارات</h1>
+          <small data-i18n="subtitle">يدوي • تحليل الأنماط • تصدير/استيراد</small>
+        </div>
       </div>
-    </div>
-  </header>
-
-  <main>
-    <section class="input-section">
-      <h2 data-i18n="enter_last5">دخل نتائج آخر 5 جولات</h2>
-      <p class="hint" data-i18n="hint">استعمل الحروف: <strong>P</strong> = Player, <strong>B</strong> = Banker, <strong>T</strong> = Tie</p>
-
-      <div class="manual-buttons">
-        <button id="btn-player" class="btn player" data-i18n="player">Player</button>
-        <button id="btn-banker" class="btn banker" data-i18n="banker">Banker</button>
-        <button id="btn-tie" class="btn tie" data-i18n="tie">Tie</button>
-        <button id="btn-reset" class="btn reset" data-i18n="reset">Reset</button>
+      <div class="top-controls">
+        <div class="lang-toggle">
+          <button id="lang-ar" class="active">AR</button>
+          <button id="lang-en">EN</button>
+        </div>
+        <div class="audio-toggle">
+          <label><input type="checkbox" id="audio-toggle" checked/> صوت</label>
+        </div>
       </div>
+    </header>
 
-      <div class="history">
-        <h3 data-i18n="history">سجل آخر الجولات</h3>
-        <div id="history-list" class="history-list">—</div>
-      </div>
+    <main>
+      <section class="controls-panel">
+        <div class="buttons-row">
+          <div class="card-btn">
+            <button id="btn-player" class="btn player" data-i18n="player">PLAYER</button>
+            <div id="pct-player" class="pct">—</div>
+          </div>
+          <div class="card-btn">
+            <button id="btn-tie" class="btn tie" data-i18n="tie">TIE</button>
+            <div id="pct-tie" class="pct">—</div>
+          </div>
+          <div class="card-btn">
+            <button id="btn-banker" class="btn banker" data-i18n="banker">BANKER</button>
+            <div id="pct-banker" class="pct">—</div>
+          </div>
+        </div>
 
-      <div class="controls">
-        <button id="analyze" class="primary" data-i18n="analyze">حلّل و تنبأ</button>
-        <button id="fill-sample" class="secondary" data-i18n="sample">عطيني مثال</button>
-      </div>
-    </section>
+        <div class="actions-row">
+          <button id="undo" class="small">Undo</button>
+          <button id="reset" class="small">Reset</button>
+          <button id="analyze" class="small primary" data-i18n="analyze">تحليل الآن</button>
+          <button id="fill-sample" class="small" data-i18n="sample">مثال</button>
+        </div>
 
-    <section class="result-section" aria-live="polite">
-      <h2 data-i18n="result">النتيجة</h2>
-      <div id="analysis" class="card">
-        <p class="small" data-i18n="no_analysis">مازال ما تم التحليل</p>
-      </div>
-      <div id="prediction" class="card">
-        <h3 data-i18n="prediction">التنبؤ (نسب مئوية)</h3>
-        <ul id="pred-list">
-          <li data-key="p">Player: —</li>
-          <li data-key="b">Banker: —</li>
-          <li data-key="t">Tie: —</li>
-        </ul>
-      </div>
-    </section>
+        <div class="io-row">
+          <div>
+            <label data-i18n="import_label">استيراد CSV / لصق:</label>
+            <textarea id="import-text" placeholder="P,B,B,P,T,..." rows="2"></textarea>
+            <div class="io-actions">
+              <button id="do-import" class="small">Import</button>
+              <button id="clear-import" class="small">Clear</button>
+            </div>
+          </div>
+          <div class="export">
+            <label data-i18n="export_label">تصدير السجل:</label>
+            <div class="io-actions">
+              <button id="export-csv" class="small">Export CSV</button>
+              <button id="download-json" class="small">JSON</button>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section class="explain">
-      <h3 data-i18n="what">شنو كيدير هاد الموديل؟</h3>
-      <p data-i18n="explain">هاد التطبيق كيستعمل قواعد بسيطة: تكرار الفائزين، الستريك (streak), نمط ping-pong، وتعديل طفيف على Banker (لأنو فالباكارات عندو ميزة 5% فالدفع). هادشي ماشي «ذكاء اصطناعي حقيقي» متعلّم — هو موديل تحليلي بسيط يعطي نسب مفهومة وسريعة.</p>
-    </section>
-  </main>
+      <section class="display-panel">
+        <div class="left-panel">
+          <div class="panel">
+            <h3 data-i18n="history">سجل الجولات</h3>
+            <div id="history" class="history">—</div>
+          </div>
 
-  <footer>
-    <p data-i18n="footer">مبني من طرف BACCARAT SPEED — نسخة تجريبية</p>
-  </footer>
+          <div class="panel">
+            <h3 data-i18n="beadroad">Beadroad (Mini)</h3>
+            <div id="beadroad" class="beadroad"></div>
+            <small class="muted">صفوف عمودية تمثل التتابعات الأساسية</small>
+          </div>
+        </div>
+
+        <div class="right-panel">
+          <div class="panel">
+            <h3 data-i18n="analysis">التحليل و الاكتشاف</h3>
+            <div id="analysis" class="analysis"><p class="muted" data-i18n="no_analysis">مازال ما تم التحليل</p></div>
+          </div>
+
+          <div class="panel stats">
+            <h3 data-i18n="stats">إحصائيات</h3>
+            <div id="stats" class="stats-grid">
+              <div>Player: <span id="stat-p">0</span></div>
+              <div>Banker: <span id="stat-b">0</span></div>
+              <div>Tie: <span id="stat-t">0</span></div>
+              <div>Total: <span id="stat-total">0</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      <small data-i18n="footer">نسخة متقدمة — BACCARAT SPEED</small>
+    </footer>
+  </div>
 
   <script src="logic.js"></script>
 </body>
