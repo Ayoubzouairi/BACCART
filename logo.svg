@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
-  <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#d4af37"/><stop offset="1" stop-color="#ffd966"/></linearGradient></defs>
-  <rect width="100%" height="100%" fill="transparent"/>
-  <text x="50%" y="45%" font-family="Segoe UI, Roboto, Noto Naskh Arabic, sans-serif" font-weight="700" font-size="48" text-anchor="middle" fill="url(#g)">SPEED</text>
-  <text x="50%" y="65%" font-family="Segoe UI, Roboto, Noto Naskh Arabic, sans-serif" font-weight="800" font-size="56" text-anchor="middle" fill="url(#g)">BACCARAT</text>
-</svg>
