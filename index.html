@@ -1,143 +1,57 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BACCARAT Strategy – دليل اللعب الذكي</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Baccarat AI Predictor — BACCARAT SPEED</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="container header">
-    <h1>🎴 BACCARAT Strategy</h1>
-    <p>دليل عملي يعتمد على الأنماط (Streak / Ping-Pong / Double) + إدارة رأس المال</p>
+  <header>
+    <img src="logo.svg" alt="SPEED BACCARAT" class="logo"/>
+    <h1>BACCARAT SPEED — Baccarat AI Predictor</h1>
   </header>
 
-  <main class="container grid">
-    <!-- Controls / Settings -->
-    <section class="card">
-      <h2>⚙️ الإعدادات</h2>
-      <div class="row">
-        <label>رصيد البدء (درهم)</label>
-        <input id="bankrollInput" type="number" min="0" step="1" value="2000">
+  <main>
+    <section class="input-section">
+      <h2>دخل نتائج آخر 5 جولات</h2>
+      <p class="hint">استعمل الحروف: <strong>P</strong> = Player, <strong>B</strong> = Banker, <strong>T</strong> = Tie</p>
+      <div class="inputs">
+        <input id="r1" maxlength="1" placeholder="جولة 1 (الأقدم)" />
+        <input id="r2" maxlength="1" placeholder="جولة 2" />
+        <input id="r3" maxlength="1" placeholder="جولة 3" />
+        <input id="r4" maxlength="1" placeholder="جولة 4" />
+        <input id="r5" maxlength="1" placeholder="جولة 5 (الأحدث)" />
       </div>
-      <div class="row">
-        <label>قيمة الرهان الأساسي (Flat)</label>
-        <input id="baseBetInput" type="number" min="1" step="1" value="50">
-      </div>
-      <div class="row">
-        <label class="switch">
-          <input id="antiMartingaleToggle" type="checkbox" checked>
-          <span class="slider"></span>
-        </label>
-        <span>تفعيل Anti‑Martingale (مضاعفة خفيفة بعد الربح)</span>
-      </div>
-      <div class="row">
-        <label>حد أقصى للمضاعفة (x)</label>
-        <input id="antiMartingaleCap" type="number" min="1" step="1" value="2">
-      </div>
-      <div class="row">
-        <label>هدف الربح اليومي</label>
-        <input id="takeProfitInput" type="number" min="0" step="1" value="500">
-      </div>
-      <div class="row">
-        <label>حد الخسارة اليومي</label>
-        <input id="stopLossInput" type="number" min="0" step="1" value="500">
-      </div>
-      <div class="row">
-        <button id="saveSettings" class="btn">حفظ الإعدادات</button>
-        <button id="resetAll" class="btn btn-ghost">إعادة الضبط</button>
-      </div>
-      <p class="hint">ملاحظة: Tie (تعادل) لا ننصح بالمراهنة عليه. إذا حدث تعادل، الرهان على Player/Banker يُعاد (Push).</p>
-    </section>
-
-    <!-- Recommendation / Next Bet -->
-    <section class="card">
-      <h2>🎯 التوصية للجولة القادمة</h2>
-      <div id="recBox" class="rec-box">
-        <div class="rec-side" id="recSide">—</div>
-        <div class="rec-bet" id="recBet">—</div>
-        <div class="rec-why" id="recWhy">—</div>
-      </div>
-
-      <div class="row">
-        <button class="btn btn-primary" id="betPlayer">الرهان على Player</button>
-        <button class="btn btn-primary" id="betBanker">الرهان على Banker</button>
-        <button class="btn btn-outline" id="betFollow">اتباع التوصية</button>
-      </div>
-
-      <div class="row muted">
-        <span>الرهان الحالي:</span>
-        <span id="currentBetLabel">—</span>
+      <div class="controls">
+        <button id="analyze">حلّل و تنبأ</button>
+        <button id="fill-sample">عطيني مثال</button>
       </div>
     </section>
 
-    <!-- Record Outcome -->
-    <section class="card">
-      <h2>🔄 تسجيل نتيجة الجولة</h2>
-      <div class="row">
-        <button class="btn win" id="outcomePlayer">نتيجة: Player</button>
-        <button class="btn win" id="outcomeBanker">نتيجة: Banker</button>
-        <button class="btn neutral" id="outcomeTie">نتيجة: Tie</button>
+    <section class="result-section" aria-live="polite">
+      <h2>النتيجة</h2>
+      <div id="analysis" class="card">
+        <p class="small">مازال ما تم التحليل</p>
       </div>
-      <div class="row muted">
-        <span>الرصيد الحالي:</span>
-        <strong id="bankrollLabel">—</strong>
-      </div>
-    </section>
-
-    <!-- History -->
-    <section class="card wide">
-      <h2>📜 السجل</h2>
-      <div class="history">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>النتيجة</th>
-              <th>الرهان</th>
-              <th>المبلغ</th>
-              <th>P/L</th>
-              <th>الرصيد</th>
-            </tr>
-          </thead>
-          <tbody id="historyBody"></tbody>
-        </table>
-      </div>
-      <div class="row">
-        <button class="btn btn-ghost" id="undoLast">تراجع آخر جولة</button>
-        <button class="btn btn-ghost" id="clearHistory">مسح السجل</button>
+      <div id="prediction" class="card">
+        <h3>التنبؤ (نسب مئوية)</h3>
+        <ul id="pred-list">
+          <li>Player: —</li>
+          <li>Banker: —</li>
+          <li>Tie: —</li>
+        </ul>
       </div>
     </section>
 
-    <!-- Pattern Insight -->
-    <section class="card">
-      <h2>🧠 تحليل الأنماط</h2>
-      <ul id="patternList" class="pattern-list">
-        <li>Streak: —</li>
-        <li>Ping-Pong: —</li>
-        <li>Double Pattern: —</li>
-      </ul>
-      <p class="muted small">القواعد: اتبع الستريك، أو تابع التناوب في Ping‑Pong، أو أكمل الزوج في Double Pattern. عند كسر النمط ارجع لرهان ثابت صغير.</p>
+    <section class="explain">
+      <h3>شنو كيدير هاد الموديل؟</h3>
+      <p>هاد التطبيق كيستعمل قواعد بسيطة: تكرار الفائزين، الستريك (streak), نمط ping-pong، وتعديل طفيف على Banker (لأنو فالباكارات عندو ميزة 5% فالدفع). هادشي ماشي «ذكاء اصطناعي حقيقي» متعلّم — هو موديل تحليلي بسيط يعطي نسب مفهومة وسريعة.</p>
     </section>
-
-  
-    <!-- Roads Boards -->
-    <section class="card wide">
-      <h2>🧭 لوحات الأنماط (Roads)</h2>
-      <div class="roads-wrap">
-        <div class="road"><div class="road-head"><h3>Bead Plate (اللؤلؤ)</h3><button class="btn btn-ghost sm" data-export="beadCanvas">تصدير PNG</button></div><div class="legend"><span class="dot banker"></span>Banker | <span class="dot player"></span>Player | <span class="dot tie"></span>Tie</div><canvas id="beadCanvas" width="420" height="240" aria-label="Bead Plate"></canvas></div>
-        <div class="road"><div class="road-head"><h3>Big Road (الطريق الكبير)</h3><button class="btn btn-ghost sm" data-export="bigRoadCanvas">تصدير PNG</button></div><div class="legend"><span class="dot banker"></span>Banker | <span class="dot player"></span>Player</div><canvas id="bigRoadCanvas" width="700" height="240" aria-label="Big Road"></canvas></div>
-        <div class="road"><div class="road-head"><h3>Big Eye Boy (الولد ذو العين الكبيرة)</h3><button class="btn btn-ghost sm" data-export="bigEyeCanvas">تصدير PNG</button></div><div class="legend"><span class="dot red"></span>أحمر | <span class="dot blue"></span>أزرق</div><canvas id="bigEyeCanvas" width="420" height="160" aria-label="Big Eye Boy"></canvas></div>
-        <div class="road"><div class="road-head"><h3>Small Road (الطريق الصغير)</h3><button class="btn btn-ghost sm" data-export="smallRoadCanvas">تصدير PNG</button></div><div class="legend"><span class="dot red"></span>أحمر | <span class="dot blue"></span>أزرق</div><canvas id="smallRoadCanvas" width="420" height="160" aria-label="Small Road"></canvas></div>
-        <div class="road"><div class="road-head"><h3>Cockroach Road (الصراصير)</h3><button class="btn btn-ghost sm" data-export="cockroachCanvas">تصدير PNG</button></div><div class="legend"><span class="dot red"></span>أحمر | <span class="dot blue"></span>أزرق</div><canvas id="cockroachCanvas" width="420" height="160" aria-label="Cockroach Road"></canvas></div>
-      </div>
-      <p class="muted small">مفتاح الألوان: أحمر = Banker، أزرق = Player، أخضر = Tie (على Bead فقط). المشتقات (Big Eye/Small/Cockroach) تُعرض كنقاط حمراء/زرقاء.</p>
-    <div class="row" style="margin-top:10px"><button id="exportAllRoads" class="btn btn-outline">تصدير جميع اللوحات PNG</button></div></section>
-    
   </main>
 
-  <footer class="container footer">
-    <p>Made for Ayoub • احترم حدودك اليومية وخليك منظم ✌️</p>
+  <footer>
+    <p>مبني من طرف BACCARAT SPEED — نسخة تجريبية</p>
   </footer>
 
   <script src="logic.js"></script>
