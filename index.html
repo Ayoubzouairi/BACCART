@@ -8,50 +8,64 @@
 </head>
 <body>
   <header>
-    <img src="logo.svg" alt="SPEED BACCARAT" class="logo"/>
-    <h1>BACCARAT SPEED — Baccarat AI Predictor</h1>
+    <div class="brand">
+      <img src="logo.svg" alt="SPEED BACCARAT" class="logo"/>
+      <h1 data-i18n="title">BACCARAT SPEED — Baccarat AI Predictor</h1>
+    </div>
+    <div class="controls-top">
+      <div class="lang-switch">
+        <button id="lang-ar" class="active">AR</button>
+        <button id="lang-en">EN</button>
+      </div>
+    </div>
   </header>
 
   <main>
     <section class="input-section">
-      <h2>دخل نتائج آخر 5 جولات</h2>
-      <p class="hint">استعمل الحروف: <strong>P</strong> = Player, <strong>B</strong> = Banker, <strong>T</strong> = Tie</p>
-      <div class="inputs">
-        <input id="r1" maxlength="1" placeholder="جولة 1 (الأقدم)" />
-        <input id="r2" maxlength="1" placeholder="جولة 2" />
-        <input id="r3" maxlength="1" placeholder="جولة 3" />
-        <input id="r4" maxlength="1" placeholder="جولة 4" />
-        <input id="r5" maxlength="1" placeholder="جولة 5 (الأحدث)" />
+      <h2 data-i18n="enter_last5">دخل نتائج آخر 5 جولات</h2>
+      <p class="hint" data-i18n="hint">استعمل الحروف: <strong>P</strong> = Player, <strong>B</strong> = Banker, <strong>T</strong> = Tie</p>
+
+      <div class="manual-buttons">
+        <button id="btn-player" class="btn player" data-i18n="player">Player</button>
+        <button id="btn-banker" class="btn banker" data-i18n="banker">Banker</button>
+        <button id="btn-tie" class="btn tie" data-i18n="tie">Tie</button>
+        <button id="btn-reset" class="btn reset" data-i18n="reset">Reset</button>
       </div>
+
+      <div class="history">
+        <h3 data-i18n="history">سجل آخر الجولات</h3>
+        <div id="history-list" class="history-list">—</div>
+      </div>
+
       <div class="controls">
-        <button id="analyze">حلّل و تنبأ</button>
-        <button id="fill-sample">عطيني مثال</button>
+        <button id="analyze" class="primary" data-i18n="analyze">حلّل و تنبأ</button>
+        <button id="fill-sample" class="secondary" data-i18n="sample">عطيني مثال</button>
       </div>
     </section>
 
     <section class="result-section" aria-live="polite">
-      <h2>النتيجة</h2>
+      <h2 data-i18n="result">النتيجة</h2>
       <div id="analysis" class="card">
-        <p class="small">مازال ما تم التحليل</p>
+        <p class="small" data-i18n="no_analysis">مازال ما تم التحليل</p>
       </div>
       <div id="prediction" class="card">
-        <h3>التنبؤ (نسب مئوية)</h3>
+        <h3 data-i18n="prediction">التنبؤ (نسب مئوية)</h3>
         <ul id="pred-list">
-          <li>Player: —</li>
-          <li>Banker: —</li>
-          <li>Tie: —</li>
+          <li data-key="p">Player: —</li>
+          <li data-key="b">Banker: —</li>
+          <li data-key="t">Tie: —</li>
         </ul>
       </div>
     </section>
 
     <section class="explain">
-      <h3>شنو كيدير هاد الموديل؟</h3>
-      <p>هاد التطبيق كيستعمل قواعد بسيطة: تكرار الفائزين، الستريك (streak), نمط ping-pong، وتعديل طفيف على Banker (لأنو فالباكارات عندو ميزة 5% فالدفع). هادشي ماشي «ذكاء اصطناعي حقيقي» متعلّم — هو موديل تحليلي بسيط يعطي نسب مفهومة وسريعة.</p>
+      <h3 data-i18n="what">شنو كيدير هاد الموديل؟</h3>
+      <p data-i18n="explain">هاد التطبيق كيستعمل قواعد بسيطة: تكرار الفائزين، الستريك (streak), نمط ping-pong، وتعديل طفيف على Banker (لأنو فالباكارات عندو ميزة 5% فالدفع). هادشي ماشي «ذكاء اصطناعي حقيقي» متعلّم — هو موديل تحليلي بسيط يعطي نسب مفهومة وسريعة.</p>
     </section>
   </main>
 
   <footer>
-    <p>مبني من طرف BACCARAT SPEED — نسخة تجريبية</p>
+    <p data-i18n="footer">مبني من طرف BACCARAT SPEED — نسخة تجريبية</p>
   </footer>
 
   <script src="logic.js"></script>
