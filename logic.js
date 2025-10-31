@@ -294,6 +294,97 @@ function detectAdvancedPatterns(fullHistory) {
         en: '3 consecutive ties'
       },
       baseConfidence: 0.75
+    },
+    // الأنماط الجديدة المضافة
+    {
+      name: 'DoubleAlternate',
+      regex: /(PPBB){2,}$|(BBPP){2,}$/,
+      description: {
+        ar: 'نمط مزدوج متناوب',
+        en: 'Double alternate pattern'
+      },
+      baseConfidence: 0.75
+    },
+    {
+      name: 'TriplePattern',
+      regex: /(PPPBBB){2,}$|(BBBPPP){2,}$/,
+      description: {
+        ar: 'نمط ثلاثي التكرار',
+        en: 'Triple repetition pattern'
+      },
+      baseConfidence: 0.8
+    },
+    {
+      name: 'SingleBreak',
+      regex: /(PBPBP)$|(BPBPB)$/,
+      description: {
+        ar: 'نمط انقطاع فردي',
+        en: 'Single break pattern'
+      },
+      baseConfidence: 0.7
+    },
+    {
+      name: 'TieCluster',
+      regex: /T{2,}$/,
+      description: {
+        ar: 'مجموعة تعادلات متتالية',
+        en: 'Consecutive tie cluster'
+      },
+      baseConfidence: 0.65
+    },
+    {
+      name: 'FourTwoPattern',
+      regex: /(PPPPBB){2,}$|(BBBBPP){2,}$/,
+      description: {
+        ar: 'نمط 4-2 متكرر',
+        en: '4-2 repeated pattern'
+      },
+      baseConfidence: 0.78
+    },
+    {
+      name: 'ThreeOnePattern',
+      regex: /(PPPB){2,}$|(BBBP){2,}$/,
+      description: {
+        ar: 'نمط 3-1 متكرر',
+        en: '3-1 repeated pattern'
+      },
+      baseConfidence: 0.72
+    },
+    {
+      name: 'PerfectAlternate',
+      regex: /(PBPB){3,}$|(BPBP){3,}$/,
+      description: {
+        ar: 'تبادل مثالي',
+        en: 'Perfect alternation'
+      },
+      baseConfidence: 0.85
+    },
+    {
+      name: 'DoubleDragon',
+      regex: /(P{8,}|B{8,})$/,
+      description: {
+        ar: 'سلسلة طويلة جداً',
+        en: 'Very long streak'
+      },
+      baseConfidence: 0.95
+    },
+    {
+      name: 'MixedPattern',
+      regex: /(PPBPPB)$|(BBPBBP)$/,
+      description: {
+        ar: 'نمط مختلط متكرر',
+        en: 'Mixed repetition pattern'
+      },
+      baseConfidence: 0.68
+    },
+    {
+      name: 'QuickSwitch',
+      regex: /(PTBT|BTPT)$/,
+      description: {
+        ar: 'تبادل سريع مع تعادلات',
+        en: 'Quick switch with ties'
+      },
+      baseConfidence: 0.6
     }
   ];
 
@@ -333,7 +424,69 @@ function detectAdvancedPatterns(fullHistory) {
     });
   }
 
+  // اكتشاف أنماط الميجورك
+  const bigRoadPatterns = detectBigRoadPatterns();
+  patterns.push(...bigRoadPatterns);
+
   return patterns.sort((a, b) => b.confidence - a.confidence);
+}
+
+// وظيفة جديدة لاكتشاف أنماط الميجورك
+function detectBigRoadPatterns() {
+  const patterns = [];
+  const filteredHistory = history.filter(result => result !== 'T');
+  
+  if (filteredHistory.length < 6) return patterns;
+
+  // نمط الميجورك - صفوف طويلة
+  const lastTen = filteredHistory.slice(-10);
+  let currentType = lastTen[0];
+  let currentCount = 1;
+  let maxCount = 1;
+
+  for (let i = 1; i < lastTen.length; i++) {
+    if (lastTen[i] === currentType) {
+      currentCount++;
+      maxCount = Math.max(maxCount, currentCount);
+    } else {
+      currentType = lastTen[i];
+      currentCount = 1;
+    }
+  }
+
+  if (maxCount >= 4) {
+    patterns.push({
+      pattern: 'BigRoad_Streak',
+      description: {
+        ar: `صف طويل في الميجورك (${maxCount} نتائج)`,
+        en: `Long Big Road row (${maxCount} results)`
+      },
+      confidence: Math.min(0.9, 0.7 + (maxCount * 0.05)),
+      length: maxCount
+    });
+  }
+
+  // نمط الميجورك - تناوب منتظم
+  let alternateCount = 0;
+  for (let i = 1; i < lastTen.length; i++) {
+    if (lastTen[i] !== lastTen[i - 1]) {
+      alternateCount++;
+    }
+  }
+
+  if (alternateCount >= 7) {
+    patterns.push({
+      pattern: 'BigRoad_Alternate',
+      description: {
+        ar: 'تناوب منتظم في الميجورك',
+        en: 'Regular alternation in Big Road'
+      },
+      confidence: 0.75,
+      length: alternateCount
+    });
+  }
+
+  return patterns;
 }
 
 function advancedPredict(history) {
@@ -393,15 +546,15 @@ function advancedPredict(history) {
   // تطبيق تصحيح الأنماط
   const patterns = detectAdvancedPatterns(history);
   patterns.forEach(p => {
-    if (p.pattern.includes('P')) {
+    if (p.pattern.includes('P') || p.pattern.includes('Player')) {
       weightedAvg.P += 10 * p.confidence;
       weightedAvg.B -= 5 * p.confidence;
       weightedAvg.T -= 5 * p.confidence;
-    } else if (p.pattern.includes('B')) {
+    } else if (p.pattern.includes('B') || p.pattern.includes('Banker')) {
       weightedAvg.B += 10 * p.confidence;
       weightedAvg.P -= 5 * p.confidence;
       weightedAvg.T -= 5 * p.confidence;
-    } else if (p.pattern.includes('T')) {
+    } else if (p.pattern.includes('T') || p.pattern.includes('Tie')) {
       weightedAvg.T += 15 * p.confidence;
       weightedAvg.P -= 7 * p.confidence;
       weightedAvg.B -= 8 * p.confidence;
@@ -558,10 +711,21 @@ function generateAdvice() {
   if (patterns.length > 0) {
     const strongestPattern = patterns[0];
     patternAdvice = isArabic ?
-      `🔍 النمط الأقوى: ${strongestPattern.pattern} (ثقة ${Math.round(strongestPattern.confidence * 100)}%)` :
-      `🔍 Strongest pattern: ${strongestPattern.pattern} (${Math.round(strongestPattern.confidence * 100)}% confidence)`;
+      `🔍 النمط الأقوى: ${strongestPattern.description.ar} (ثقة ${Math.round(strongestPattern.confidence * 100)}%)` :
+      `🔍 Strongest pattern: ${strongestPattern.description.en} (${Math.round(strongestPattern.confidence * 100)}% confidence)`;
+    
+    // إضافة أنماط إضافية إذا كانت عالية الثقة
+    if (patterns.length > 1 && patterns[1].confidence >= 0.7) {
+      patternAdvice += isArabic ? 
+        `<br>📊 نمط ثانوي: ${patterns[1].description.ar}` : 
+        `<br>📊 Secondary pattern: ${patterns[1].description.en}`;
+    }
+  } else {
+    patternAdvice = isArabic ? 
+      "📊 لا توجد أنماط قوية حالياً" : 
+      "📊 No strong patterns detected currently";
   }
-
+  
   document.getElementById('aiAdvice').innerHTML = patternAdvice;
 }
 
@@ -598,9 +762,42 @@ function updateTrendsAndStreaks() {
         <span class="trend-value">${counts.T}/${lastSeven.length} (${Math.round(counts.T/lastSeven.length*100)}%)</span>
       </div>
     </div>
+    
+    <div style="margin-top: 15px; padding: 10px; background: rgba(255,215,0,0.1); border-radius: 8px;">
+      <h4 style="margin-bottom: 10px;color:gold;">${isArabic ? 'الأنماط المكتشفة' : 'Detected Patterns'}</h4>
+      <div id="patternsList" style="text-align: right; font-size: 0.9em;">
+        ${generatePatternsList()}
+      </div>
+    </div>
   `;
   
   document.getElementById('trendsContent').innerHTML = trendsHTML;
+}
+
+function generatePatternsList() {
+  const patterns = detectAdvancedPatterns(history);
+  const isArabic = lang === 'ar-MA';
+  
+  if (patterns.length === 0) {
+    return isArabic ? 
+      '<div style="text-align:center;color:#888;">لا توجد أنماط قوية</div>' : 
+      '<div style="text-align:center;color:#888;">No strong patterns</div>';
+  }
+  
+  let patternsHTML = '';
+  patterns.slice(0, 3).forEach((pattern, index) => {
+    const desc = isArabic ? pattern.description.ar : pattern.description.en;
+    const confidence = Math.round(pattern.confidence * 100);
+    
+    patternsHTML += `
+      <div style="margin: 5px 0; padding: 5px; background: rgba(255,255,255,0.05); border-radius: 5px;">
+        <strong>${pattern.pattern}</strong>: ${desc} 
+        <span style="color:gold; float: left;">${confidence}%</span>
+      </div>
+    `;
+  });
+  
+  return patternsHTML;
 }
 
 function updateUI() {
@@ -678,4 +875,4 @@ function resetData() {
     document.getElementById('trendsContent').innerHTML = '';
     document.getElementById('recommendation').innerHTML = '';
   }
-      }
+}
