@@ -1,6 +1,3 @@
-هاهي النسخة النهائية الكاملة مع جميع التحسينات:
-
-```javascript
 let history = [];
 let currentStreak = { type: null, count: 0 };
 let lang = 'ar-MA';
