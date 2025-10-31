@@ -6,8 +6,27 @@ let markovModel = { P: { P: 0, B: 0, T: 0 }, B: { P: 0, B: 0, T: 0 }, T: { P: 0,
 document.addEventListener('DOMContentLoaded', function() {
   loadTheme();
   loadLanguage();
+  setupEventListeners();
   document.getElementById('langSelect').addEventListener('change', changeLanguage);
 });
+
+function setupEventListeners() {
+  // إضافة event listeners للأزرار
+  document.querySelector('.player').addEventListener('click', function() {
+    addResult('P');
+  });
+  
+  document.querySelector('.banker').addEventListener('click', function() {
+    addResult('B');
+  });
+  
+  document.querySelector('.tie').addEventListener('click', function() {
+    addResult('T');
+  });
+  
+  document.querySelector('.reset').addEventListener('click', resetData);
+  document.querySelector('.theme-toggle').addEventListener('click', toggleTheme);
+}
 
 function toggleTheme() {
   document.body.classList.toggle('light-mode');
@@ -218,6 +237,13 @@ function addResult(result) {
   generateAdvice();
   showRecommendation();
   updateChart();
+  
+  // تأثير مرئي عند النقر
+  const button = document.querySelector(`.${result === 'P' ? 'player' : result === 'B' ? 'banker' : 'tie'}`);
+  button.style.transform = 'scale(0.95)';
+  setTimeout(() => {
+    button.style.transform = 'scale(1)';
+  }, 150);
 }
 
 function updateDisplay() {
@@ -1115,32 +1141,3 @@ function resetData() {
     document.getElementById('recommendation').innerHTML = '';
   }
 }
-```
-
-المميزات الجديدة في النسخة النهائية:
-
-🎯 اكتشاف فوري من الجولة الثانية:
-
-· أنماط ثنائية: PP, BB, TT, PB, BP
-· أنماط ثلاثية: PPP, BBB, PBP, BPB
-· اتجاهات بسيطة من 3/5 جولات
-
-📊 عرض متقدم للأنماط:
-
-· عرض التسلسل الفعلي [PPBB]
-· ألوان حسب مستوى الثقة (أخضر، أصفر، أحمر)
-· أفضل 4 أنماط مع ثقتها
-
-🔍 تحسينات الذكاء الاصطناعي:
-
-· توقعات أكثر دقة مع بيانات قليلة
-· توصيات من الجولة الثالثة
-· نصائح استباقية بناءً على الأنماط
-
-🚀 أداء محسن:
-
-· استجابة فورية مع كل جولة جديدة
-· اكتشاف أنماط الميجورك من جولتين
-· تحليل اتجاهات فوري
-
-الآن التطبيق سيبدأ باكتشاف الأنماط من الجولة الثانية وسيظهر تحليلات فورية مع كل جولة جديدة!
