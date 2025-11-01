@@ -76,6 +76,8 @@ function updateDerivativeRoads() {
   const filteredHistory = history.filter(r => r !== 'T');
   updateBigEyeRoad(filteredHistory);
   updateSmallRoad(filteredHistory);
+  updateCockroachPig();
+  updateConfidenceMeters();
 }
 
 function updateBigEyeRoad(history) {
@@ -114,6 +116,30 @@ function updateSmallRoad(history) {
   renderRoad(matrix, smallRoad);
 }
 
+function updateCockroachPig() {
+  const cockroachPigElement = document.getElementById('cockroachPig');
+  if (!cockroachPigElement) return;
+  
+  cockroachPigElement.innerHTML = '';
+  const filteredHistory = history.filter(r => r !== 'T');
+  
+  if (filteredHistory.length < 4) return;
+  
+  let matrix = [[]];
+  let row = 0;
+  
+  for (let i = 3; i < filteredHistory.length; i++) {
+    if (i >= 4 && filteredHistory[i] === filteredHistory[i - 4]) {
+      matrix[row].push(filteredHistory[i]);
+    } else {
+      row++;
+      matrix[row] = [filteredHistory[i]];
+    }
+  }
+  
+  renderRoad(matrix, cockroachPigElement);
+}
+
 function renderRoad(matrix, container) {
   matrix.forEach((row, rowIndex) => {
     row.forEach((result, colIndex) => {
@@ -142,6 +168,224 @@ function updateMarkovModel() {
       markovModel[from][to] = total > 0 ? (markovModel[from][to] / total) * 100 : 33.3;
     }
   }
+}
+
+// نظام التنبؤ الذكي المتكامل
+function smartPrediction() {
+    const beadPlate = history;
+    const bigRoad = getBigRoadData();
+    const bigEye = getBigEyeData();
+    const smallRoad = getSmallRoadData();
+    const cockroachPig = getCockroachPigData();
+    
+    // وزن كل طريق حسب موثوقيته
+    const weights = {
+        'big_road': 0.30,
+        'big_eye': 0.25,
+        'small_road': 0.20,
+        'cockroach_pig': 0.15,
+        'current_trend': 0.10
+    };
+    
+    // تحليل كل طريق وإعطاء درجة
+    const scores = analyzeAllRoads(beadPlate, bigRoad, bigEye, smallRoad, cockroachPig);
+    
+    // حساب النتيجة النهائية المرجحة
+    const finalScore = calculateWeightedScore(scores, weights);
+    
+    return finalScore;
+}
+
+function getBigRoadData() {
+    const filteredHistory = history.filter(r => r !== 'T');
+    if (filteredHistory.length < 2) return { pattern: 'none', stability: 0 };
+    
+    let streakCount = 1;
+    let maxStreak = 1;
+    let changes = 0;
+    
+    for (let i = 1; i < filteredHistory.length; i++) {
+        if (filteredHistory[i] === filteredHistory[i - 1]) {
+            streakCount++;
+            maxStreak = Math.max(maxStreak, streakCount);
+        } else {
+            streakCount = 1;
+            changes++;
+        }
+    }
+    
+    return {
+        pattern: maxStreak >= 3 ? 'streak' : changes > filteredHistory.length / 2 ? 'pingpong' : 'mixed',
+        stability: maxStreak,
+        changes: changes
+    };
+}
+
+function getBigEyeData() {
+    const filteredHistory = history.filter(r => r !== 'T');
+    if (filteredHistory.length < 3) return { stability: 0, changes: 0 };
+    
+    let stability = 0;
+    let changes = 0;
+    
+    for (let i = 2; i < filteredHistory.length; i++) {
+        if (filteredHistory[i] === filteredHistory[i - 2]) {
+            stability++;
+        } else {
+            changes++;
+        }
+    }
+    
+    return { stability, changes };
+}
+
+function getSmallRoadData() {
+    const filteredHistory = history.filter(r => r !== 'T');
+    if (filteredHistory.length < 4) return { stability: 0, changes: 0 };
+    
+    let stability = 0;
+    let changes = 0;
+    
+    for (let i = 3; i < filteredHistory.length; i++) {
+        if (filteredHistory[i] === filteredHistory[i - 3]) {
+            stability++;
+        } else {
+            changes++;
+        }
+    }
+    
+    return { stability, changes };
+}
+
+function getCockroachPigData() {
+    const filteredHistory = history.filter(r => r !== 'T');
+    if (filteredHistory.length < 5) return { stability: 0, changes: 0 };
+    
+    let stability = 0;
+    let changes = 0;
+    
+    for (let i = 4; i < filteredHistory.length; i++) {
+        if (filteredHistory[i] === filteredHistory[i - 4]) {
+            stability++;
+        } else {
+            changes++;
+        }
+    }
+    
+    return { stability, changes };
+}
+
+function analyzeAllRoads(beadPlate, bigRoad, bigEye, smallRoad, cockroachPig) {
+    const scores = { P: 0, B: 0, T: 0 };
+    
+    // تحليل Big Road
+    if (bigRoad.pattern === 'streak') {
+        const lastResult = beadPlate.filter(r => r !== 'T').slice(-1)[0];
+        if (lastResult) scores[lastResult] += bigRoad.stability * 2;
+    } else if (bigRoad.pattern === 'pingpong') {
+        const lastResult = beadPlate.filter(r => r !== 'T').slice(-1)[0];
+        const opposite = lastResult === 'P' ? 'B' : 'P';
+        scores[opposite] += bigRoad.changes * 1.5;
+    }
+    
+    // تحليل Big Eye Boy (الاستقرار)
+    const bigEyeTotal = bigEye.stability + bigEye.changes;
+    if (bigEyeTotal > 0) {
+        const bigEyeStabilityRate = bigEye.stability / bigEyeTotal;
+        if (bigEyeStabilityRate > 0.6) {
+            const lastResult = beadPlate.filter(r => r !== 'T').slice(-1)[0];
+            if (lastResult) scores[lastResult] += bigEyeStabilityRate * 20;
+        }
+    }
+    
+    // تحليل Small Road
+    const smallRoadTotal = smallRoad.stability + smallRoad.changes;
+    if (smallRoadTotal > 0) {
+        const smallRoadStabilityRate = smallRoad.stability / smallRoadTotal;
+        if (smallRoadStabilityRate > 0.5) {
+            const lastResult = beadPlate.filter(r => r !== 'T').slice(-1)[0];
+            if (lastResult) scores[lastResult] += smallRoadStabilityRate * 15;
+        }
+    }
+    
+    // تحليل Cockroach Pig (التغيرات الدقيقة)
+    const cockroachTotal = cockroachPig.stability + cockroachPig.changes;
+    if (cockroachTotal > 0) {
+        const cockroachChangeRate = cockroachPig.changes / cockroachTotal;
+        if (cockroachChangeRate > 0.7) {
+            // تغيير متوقع
+            const lastResult = beadPlate.filter(r => r !== 'T').slice(-1)[0];
+            const opposite = lastResult === 'P' ? 'B' : 'P';
+            scores[opposite] += cockroachChangeRate * 25;
+        }
+    }
+    
+    return scores;
+}
+
+function calculateWeightedScore(scores, weights) {
+    const final = { P: 0, B: 0, T: 0 };
+    
+    final.P = scores.P;
+    final.B = scores.B;
+    
+    // إضافة وزن الاتجاه الحالي
+    if (history.length > 0) {
+        const lastResults = history.slice(-5);
+        const lastCount = { P: 0, B: 0, T: 0 };
+        lastResults.forEach(r => lastCount[r]++);
+        
+        final.P += (lastCount.P / 5) * 30 * weights.current_trend;
+        final.B += (lastCount.B / 5) * 30 * weights.current_trend;
+        final.T += (lastCount.T / 5) * 30 * weights.current_trend;
+    }
+    
+    // تطبيع النتائج
+    const total = final.P + final.B + final.T;
+    if (total > 0) {
+        final.P = (final.P / total) * 100;
+        final.B = (final.B / total) * 100;
+        final.T = (final.T / total) * 100;
+    } else {
+        final.P = final.B = final.T = 33.3;
+    }
+    
+    return final;
+}
+
+function updateConfidenceMeters() {
+    if (history.length < 5) return;
+    
+    const confidences = calculateRoadConfidences();
+    
+    document.getElementById('bigRoadConfidence').style.width = confidences.bigRoad + '%';
+    document.getElementById('bigEyeConfidence').style.width = confidences.bigEye + '%';
+    document.getElementById('smallRoadConfidence').style.width = confidences.smallRoad + '%';
+    document.getElementById('cockroachConfidence').style.width = confidences.cockroach + '%';
+    
+    document.getElementById('bigRoadPercent').textContent = Math.round(confidences.bigRoad) + '%';
+    document.getElementById('bigEyePercent').textContent = Math.round(confidences.bigEye) + '%';
+    document.getElementById('smallRoadPercent').textContent = Math.round(confidences.smallRoad) + '%';
+    document.getElementById('cockroachPercent').textContent = Math.round(confidences.cockroach) + '%';
+}
+
+function calculateRoadConfidences() {
+    const bigRoadData = getBigRoadData();
+    const bigEyeData = getBigEyeData();
+    const smallRoadData = getSmallRoadData();
+    const cockroachData = getCockroachPigData();
+    
+    const bigRoadTotal = bigRoadData.stability + bigRoadData.changes;
+    const bigEyeTotal = bigEyeData.stability + bigEyeData.changes;
+    const smallRoadTotal = smallRoadData.stability + smallRoadData.changes;
+    const cockroachTotal = cockroachData.stability + cockroachData.changes;
+    
+    return {
+        bigRoad: bigRoadTotal > 0 ? (bigRoadData.stability / bigRoadTotal) * 100 : 0,
+        bigEye: bigEyeTotal > 0 ? (bigEyeData.stability / bigEyeTotal) * 100 : 0,
+        smallRoad: smallRoadTotal > 0 ? (smallRoadData.stability / smallRoadTotal) * 100 : 0,
+        cockroach: cockroachTotal > 0 ? (cockroachData.stability / cockroachTotal) * 100 : 0
+    };
 }
 
 function detectDragon(history) {
@@ -336,97 +580,120 @@ function detectAdvancedPatterns(fullHistory) {
   return patterns.sort((a, b) => b.confidence - a.confidence);
 }
 
-function advancedPredict(history) {
-  if (history.length < 3) {
-    return {
-      P: 33.3,
-      B: 33.3,
-      T: 33.3
-    };
-  }
-
-  const lastFive = history.slice(-5);
-  const lastTen = history.length >= 10 ? history.slice(-10) : lastFive;
-  const lastTwenty = history.length >= 20 ? history.slice(-20) : lastTen;
-  
-  const freq5 = { P: 0, B: 0, T: 0 };
-  const freq10 = { P: 0, B: 0, T: 0 };
-  const freq20 = { P: 0, B: 0, T: 0 };
-  
-  lastFive.forEach(r => freq5[r]++);
-  lastTen.forEach(r => freq10[r]++);
-  lastTwenty.forEach(r => freq20[r]++);
-  
-  const percent5 = {
-    P: (freq5.P / 5) * 100,
-    B: (freq5.B / 5) * 100,
-    T: (freq5.T / 5) * 100
-  };
-  
-  const percent10 = {
-    P: (freq10.P / lastTen.length) * 100,
-    B: (freq10.B / lastTen.length) * 100,
-    T: (freq10.T / lastTen.length) * 100
-  };
-  
-  const percent20 = {
-    P: (freq20.P / lastTwenty.length) * 100,
-    B: (freq20.B / lastTwenty.length) * 100,
-    T: (freq20.T / lastTwenty.length) * 100
-  };
-  
-  // حساب المتوسط المرجح
-  let weightedAvg = {
-    P: (percent5.P * 0.6 + percent10.P * 0.3 + percent20.P * 0.1),
-    B: (percent5.B * 0.6 + percent10.B * 0.3 + percent20.B * 0.1),
-    T: (percent5.T * 0.6 + percent10.T * 0.3 + percent20.T * 0.1)
-  };
-  
-  // تطبيق Markov Chain
-  const lastResult = history[history.length - 1];
-  if (lastResult) {
-    weightedAvg.P = (weightedAvg.P + markovModel[lastResult].P) / 2;
-    weightedAvg.B = (weightedAvg.B + markovModel[lastResult].B) / 2;
-    weightedAvg.T = (weightedAvg.T + markovModel[lastResult].T) / 2;
-  }
-  
-  // تطبيق تصحيح الأنماط
-  const patterns = detectAdvancedPatterns(history);
-  patterns.forEach(p => {
-    if (p.pattern.includes('P')) {
-      weightedAvg.P += 10 * p.confidence;
-      weightedAvg.B -= 5 * p.confidence;
-      weightedAvg.T -= 5 * p.confidence;
-    } else if (p.pattern.includes('B')) {
-      weightedAvg.B += 10 * p.confidence;
-      weightedAvg.P -= 5 * p.confidence;
-      weightedAvg.T -= 5 * p.confidence;
-    } else if (p.pattern.includes('T')) {
-      weightedAvg.T += 15 * p.confidence;
-      weightedAvg.P -= 7 * p.confidence;
-      weightedAvg.B -= 8 * p.confidence;
+function getOldPrediction(history) {
+    if (history.length < 3) {
+        return { P: 33.3, B: 33.3, T: 33.3 };
     }
-  });
-  
-  // اكتشاف Dragon وتعديل الاحتمالات
-  const dragon = detectDragon(history);
-  if (dragon.dragon) {
-    weightedAvg[dragon.dragon] += 15 * (dragon.length / 10);
-    weightedAvg[dragon.dragon === 'P' ? 'B' : 'P'] -= 10 * (dragon.length / 10);
-    weightedAvg.T -= 5 * (dragon.length / 10);
-  }
-  
-  // ضمان عدم وجود قيم سلبية
-  weightedAvg.P = Math.max(5, weightedAvg.P);
-  weightedAvg.B = Math.max(5, weightedAvg.B);
-  weightedAvg.T = Math.max(5, weightedAvg.T);
-  
-  const total = weightedAvg.P + weightedAvg.B + weightedAvg.T;
-  return {
-    P: (weightedAvg.P / total * 100),
-    B: (weightedAvg.B / total * 100),
-    T: (weightedAvg.T / total * 100)
-  };
+
+    const lastFive = history.slice(-5);
+    const lastTen = history.length >= 10 ? history.slice(-10) : lastFive;
+    const lastTwenty = history.length >= 20 ? history.slice(-20) : lastTen;
+    
+    const freq5 = { P: 0, B: 0, T: 0 };
+    const freq10 = { P: 0, B: 0, T: 0 };
+    const freq20 = { P: 0, B: 0, T: 0 };
+    
+    lastFive.forEach(r => freq5[r]++);
+    lastTen.forEach(r => freq10[r]++);
+    lastTwenty.forEach(r => freq20[r]++);
+    
+    const percent5 = {
+        P: (freq5.P / 5) * 100,
+        B: (freq5.B / 5) * 100,
+        T: (freq5.T / 5) * 100
+    };
+    
+    const percent10 = {
+        P: (freq10.P / lastTen.length) * 100,
+        B: (freq10.B / lastTen.length) * 100,
+        T: (freq10.T / lastTen.length) * 100
+    };
+    
+    const percent20 = {
+        P: (freq20.P / lastTwenty.length) * 100,
+        B: (freq20.B / lastTwenty.length) * 100,
+        T: (freq20.T / lastTwenty.length) * 100
+    };
+    
+    // حساب المتوسط المرجح
+    let weightedAvg = {
+        P: (percent5.P * 0.6 + percent10.P * 0.3 + percent20.P * 0.1),
+        B: (percent5.B * 0.6 + percent10.B * 0.3 + percent20.B * 0.1),
+        T: (percent5.T * 0.6 + percent10.T * 0.3 + percent20.T * 0.1)
+    };
+    
+    // تطبيق Markov Chain
+    const lastResult = history[history.length - 1];
+    if (lastResult) {
+        weightedAvg.P = (weightedAvg.P + markovModel[lastResult].P) / 2;
+        weightedAvg.B = (weightedAvg.B + markovModel[lastResult].B) / 2;
+        weightedAvg.T = (weightedAvg.T + markovModel[lastResult].T) / 2;
+    }
+    
+    // تطبيق تصحيح الأنماط
+    const patterns = detectAdvancedPatterns(history);
+    patterns.forEach(p => {
+        if (p.pattern.includes('P')) {
+            weightedAvg.P += 10 * p.confidence;
+            weightedAvg.B -= 5 * p.confidence;
+            weightedAvg.T -= 5 * p.confidence;
+        } else if (p.pattern.includes('B')) {
+            weightedAvg.B += 10 * p.confidence;
+            weightedAvg.P -= 5 * p.confidence;
+            weightedAvg.T -= 5 * p.confidence;
+        } else if (p.pattern.includes('T')) {
+            weightedAvg.T += 15 * p.confidence;
+            weightedAvg.P -= 7 * p.confidence;
+            weightedAvg.B -= 8 * p.confidence;
+        }
+    });
+    
+    // اكتشاف Dragon وتعديل الاحتمالات
+    const dragon = detectDragon(history);
+    if (dragon.dragon) {
+        weightedAvg[dragon.dragon] += 15 * (dragon.length / 10);
+        weightedAvg[dragon.dragon === 'P' ? 'B' : 'P'] -= 10 * (dragon.length / 10);
+        weightedAvg.T -= 5 * (dragon.length / 10);
+    }
+    
+    // ضمان عدم وجود قيم سلبية
+    weightedAvg.P = Math.max(5, weightedAvg.P);
+    weightedAvg.B = Math.max(5, weightedAvg.B);
+    weightedAvg.T = Math.max(5, weightedAvg.T);
+    
+    const total = weightedAvg.P + weightedAvg.B + weightedAvg.T;
+    return {
+        P: (weightedAvg.P / total * 100),
+        B: (weightedAvg.B / total * 100),
+        T: (weightedAvg.T / total * 100)
+    };
+}
+
+function advancedPredict(history) {
+    if (history.length < 3) {
+        return { P: 33.3, B: 33.3, T: 33.3 };
+    }
+
+    // الحصول على تنبؤ النظام الذكي الجديد
+    const smartPred = smartPrediction();
+    
+    // الدمج مع الخوارزمية القديمة
+    const oldPred = getOldPrediction(history);
+    
+    // دمج التنبؤات (70% للنظام الجديد، 30% للقديم)
+    const finalPred = {
+        P: (smartPred.P * 0.7 + oldPred.P * 0.3),
+        B: (smartPred.B * 0.7 + oldPred.B * 0.3),
+        T: (smartPred.T * 0.7 + oldPred.T * 0.3)
+    };
+    
+    // تطبيع النتائج
+    const total = finalPred.P + finalPred.B + finalPred.T;
+    return {
+        P: (finalPred.P / total) * 100,
+        B: (finalPred.B / total) * 100,
+        T: (finalPred.T / total) * 100
+    };
 }
 
 function generateBetRecommendation() {
@@ -622,6 +889,7 @@ function updateUI() {
   document.querySelector('.big-road-container h2').textContent = isArabic ? 'Big Road (الميجورك)' : 'Big Road';
   document.querySelectorAll('.road-container h3')[0].textContent = isArabic ? 'Big Eye Road' : 'Big Eye Road';
   document.querySelectorAll('.road-container h3')[1].textContent = isArabic ? 'Small Road' : 'Small Road';
+  document.querySelectorAll('.road-container h3')[2].textContent = isArabic ? 'Cockroach Pig' : 'Cockroach Pig';
   
   if (history.length > 0) {
     updateDisplay();
@@ -646,6 +914,7 @@ function resetData() {
     updateBigRoad();
     document.getElementById('bigEyeRoad').innerHTML = '';
     document.getElementById('smallRoad').innerHTML = '';
+    document.getElementById('cockroachPig').innerHTML = '';
     if (window.statsChart) {
       window.statsChart.destroy();
     }
@@ -677,5 +946,16 @@ function resetData() {
     document.getElementById('historyDisplay').innerText = '';
     document.getElementById('trendsContent').innerHTML = '';
     document.getElementById('recommendation').innerHTML = '';
+    
+    // إعادة تعيين مؤشرات الثقة
+    document.getElementById('bigRoadConfidence').style.width = '0%';
+    document.getElementById('bigEyeConfidence').style.width = '0%';
+    document.getElementById('smallRoadConfidence').style.width = '0%';
+    document.getElementById('cockroachConfidence').style.width = '0%';
+    
+    document.getElementById('bigRoadPercent').textContent = '0%';
+    document.getElementById('bigEyePercent').textContent = '0%';
+    document.getElementById('smallRoadPercent').textContent = '0%';
+    document.getElementById('cockroachPercent').textContent = '0%';
   }
-      }
+}
