@@ -343,12 +343,14 @@ body.light-mode .results-table td {
 /* أنماط الطرق المشتقة */
 .derivative-roads {
   display: flex;
-  gap: 20px;
+  gap: 15px;
   margin-top: 20px;
+  flex-wrap: wrap;
 }
 
 .road-container {
   flex: 1;
+  min-width: 200px;
   padding: 15px;
   background: rgba(0, 0, 0, 0.3);
   border-radius: 10px;
@@ -357,19 +359,60 @@ body.light-mode .results-table td {
 .road {
   display: grid;
   grid-auto-flow: column;
-  grid-template-rows: repeat(6, 20px);
-  gap: 3px;
+  grid-template-rows: repeat(6, 18px);
+  gap: 2px;
   margin-top: 10px;
 }
 
 .road-cell {
-  width: 20px;
-  height: 20px;
-  border-radius: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  transition: all 0.3s ease;
 }
 
 .road-P { background-color: #007BFF; }
 .road-B { background-color: #DC3545; }
+
+.road-cell:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 5px rgba(255,255,255,0.5);
+}
+
+/* أنماط لوحة الثقة */
+.confidence-panel {
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.confidence-meters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.confidence-meter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.meter-bar {
+  flex: 1;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745, #ffd700, #dc3545);
+  transition: width 0.5s ease;
+}
 
 /* أنماط الرسم البياني */
 .chart-container {
@@ -398,4 +441,12 @@ body.light-mode .results-table td {
   .derivative-roads {
     flex-direction: column;
   }
+  .confidence-meters {
+    gap: 8px;
   }
+  .confidence-meter {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 5px;
+  }
+}
