@@ -56,6 +56,41 @@
 
   <div id="recommendation" class="recommendation-container"></div>
   
+  <!-- لوحة مؤشرات الثقة -->
+  <div class="confidence-panel">
+    <h3>📊 مؤشرات الثقة في الطرق</h3>
+    <div class="confidence-meters">
+      <div class="confidence-meter">
+        <span>Big Road</span>
+        <div class="meter-bar">
+          <div class="meter-fill" id="bigRoadConfidence" style="width: 0%"></div>
+        </div>
+        <span id="bigRoadPercent">0%</span>
+      </div>
+      <div class="confidence-meter">
+        <span>Big Eye Boy</span>
+        <div class="meter-bar">
+          <div class="meter-fill" id="bigEyeConfidence" style="width: 0%"></div>
+        </div>
+        <span id="bigEyePercent">0%</span>
+      </div>
+      <div class="confidence-meter">
+        <span>Small Road</span>
+        <div class="meter-bar">
+          <div class="meter-fill" id="smallRoadConfidence" style="width: 0%"></div>
+        </div>
+        <span id="smallRoadPercent">0%</span>
+      </div>
+      <div class="confidence-meter">
+        <span>Cockroach Pig</span>
+        <div class="meter-bar">
+          <div class="meter-fill" id="cockroachConfidence" style="width: 0%"></div>
+        </div>
+        <span id="cockroachPercent">0%</span>
+      </div>
+    </div>
+  </div>
+  
   <div class="stats" id="statsResult"></div>
   <div class="ai-stats" id="aiStats"></div>
   
@@ -85,6 +120,10 @@
       <h3>Small Road</h3>
       <div id="smallRoad" class="road"></div>
     </div>
+    <div class="road-container">
+      <h3>Cockroach Pig</h3>
+      <div id="cockroachPig" class="road"></div>
+    </div>
   </div>
 
   <div class="chart-container">
@@ -93,4 +132,4 @@
 
   <script src="logic.js"></script>
 </body>
-  </html>
+</html>
