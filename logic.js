@@ -33,6 +33,12 @@ function loadLanguage() {
   lang = savedLang;
 }
 
+function speak(text, lang) {
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = lang;
+  speechSynthesis.speak(utter);
+}
+
 function updateBigRoad() {
   const bigRoadElement = document.getElementById('bigRoad');
   bigRoadElement.innerHTML = '';
@@ -129,6 +135,7 @@ function updateMarkovModel() {
     markovModel[from][to]++;
   }
 
+  // حساب الاحتمالات
   for (const from in markovModel) {
     const total = Object.values(markovModel[from]).reduce((a, b) => a + b, 0);
     for (const to in markovModel[from]) {
@@ -245,412 +252,92 @@ function updateDisplay() {
 }
 
 function detectAdvancedPatterns(fullHistory) {
+  if (fullHistory.length < 5) return [];
+  
   const patterns = [];
-  if (fullHistory.length < 2) return patterns;
-
-  const recentHistory = fullHistory.slice(-10).join('');
+  const recentHistory = fullHistory.slice(-15).join('');
   const fullHistoryStr = fullHistory.join('');
 
   const patternDefinitions = [
     {
       name: 'Dragon',
-      regex: /(P{3,}|B{3,})$/,
+      regex: /(P{6,}|B{6,})$/,
       description: {
-        ar: 'سلسلة من نفس النتيجة',
-        en: 'Streak of same result'
+        ar: 'سلسلة طويلة من نفس النتيجة',
+        en: 'Long streak of same result'
       },
-      baseConfidence: 0.7,
-      minLength: 3
+      baseConfidence: 0.9
     },
     {
       name: 'ZigZag',
-      regex: /(PB){2,}$|(BP){2,}$/,
+      regex: /(PB){3,}$|(BP){3,}$/,
       description: {
-        ar: 'نمط متعرج',
-        en: 'Zigzag pattern'
+        ar: 'نمط متعرج متكرر',
+        en: 'Repeated zigzag pattern'
       },
-      baseConfidence: 0.65,
-      minLength: 4
+      baseConfidence: 0.8
     },
     {
-      name: '3P/3B',
-      regex: /PPP$|BBB$/,
+      name: '5P/5B',
+      regex: /PPPPP$|BBBBB$/,
       description: {
-        ar: '3 نتائج متتالية',
-        en: '3 consecutive results'
+        ar: '5 نتائج متتالية متشابهة',
+        en: '5 consecutive same results'
       },
-      baseConfidence: 0.6,
-      minLength: 3
+      baseConfidence: 0.85
     },
     {
-      name: '2T+',
-      regex: /TT$/,
+      name: '3T+',
+      regex: /TTT$/,
       description: {
-        ar: 'تعادلان متتاليان',
-        en: '2 consecutive ties'
+        ar: '3 تعادلات متتالية',
+        en: '3 consecutive ties'
       },
-      baseConfidence: 0.55,
-      minLength: 2
-    },
-    {
-      name: 'DoubleAlternate',
-      regex: /(PPBB)$|(BBPP)$/,
-      description: {
-        ar: 'نمط مزدوج متناوب',
-        en: 'Double alternate pattern'
-      },
-      baseConfidence: 0.7,
-      minLength: 4
-    },
-    {
-      name: 'SingleBreak',
-      regex: /(PBP)$|(BPB)$/,
-      description: {
-        ar: 'نمط انقطاع فردي',
-        en: 'Single break pattern'
-      },
-      baseConfidence: 0.6,
-      minLength: 3
-    },
-    {
-      name: 'TieCluster',
-      regex: /T{2,}$/,
-      description: {
-        ar: 'مجموعة تعادلات',
-        en: 'Tie cluster'
-      },
-      baseConfidence: 0.65,
-      minLength: 2
-    },
-    {
-      name: 'ThreeOnePattern',
-      regex: /(PPPB)$|(BBBP)$/,
-      description: {
-        ar: 'نمط 3-1',
-        en: '3-1 pattern'
-      },
-      baseConfidence: 0.75,
-      minLength: 4
-    },
-    {
-      name: 'PerfectAlternate',
-      regex: /(PBPB)$|(BPBP)$/,
-      description: {
-        ar: 'تبادل مثالي',
-        en: 'Perfect alternation'
-      },
-      baseConfidence: 0.8,
-      minLength: 4
-    },
-    {
-      name: 'MixedPattern',
-      regex: /(PPB)$|(BBP)$/,
-      description: {
-        ar: 'نمط مختلط',
-        en: 'Mixed pattern'
-      },
-      baseConfidence: 0.6,
-      minLength: 3
-    },
-    {
-      name: 'QuickSwitch',
-      regex: /(PTB|BTP)$/,
-      description: {
-        ar: 'تبادل مع تعادلات',
-        en: 'Switch with ties'
-      },
-      baseConfidence: 0.55,
-      minLength: 3
-    },
-    {
-      name: 'FourTwoPattern',
-      regex: /(PPPPBB)$|(BBBBPP)$/,
-      description: {
-        ar: 'نمط 4-2',
-        en: '4-2 pattern'
-      },
-      baseConfidence: 0.78,
-      minLength: 6
-    },
-    {
-      name: 'DoubleDragon',
-      regex: /(P{5,}|B{5,})$/,
-      description: {
-        ar: 'سلسلة طويلة جداً',
-        en: 'Very long streak'
-      },
-      baseConfidence: 0.85,
-      minLength: 5
+      baseConfidence: 0.75
     }
   ];
 
   patternDefinitions.forEach(p => {
-    if (fullHistory.length >= p.minLength) {
-      const matches = recentHistory.match(p.regex);
-      if (matches) {
-        const lengthFactor = matches[0].length / p.minLength;
-        const confidence = Math.min(0.95, p.baseConfidence * lengthFactor);
-        
-        patterns.push({
-          pattern: p.name,
-          description: p.description,
-          confidence: confidence,
-          length: matches[0].length,
-          sequence: matches[0]
-        });
-      }
+    const matches = recentHistory.match(p.regex);
+    if (matches) {
+      const lengthFactor = matches[0].length / 5;
+      const confidence = Math.min(0.99, p.baseConfidence * lengthFactor);
+      
+      patterns.push({
+        pattern: p.name,
+        description: p.description,
+        confidence: confidence,
+        length: matches[0].length
+      });
     }
   });
 
-  detectSimplePatterns(fullHistory, patterns);
-  
-  const bigRoadPatterns = detectBigRoadPatterns();
-  patterns.push(...bigRoadPatterns);
-
-  if (fullHistory.length >= 5) {
-    const last5 = fullHistory.slice(-5).join('');
-    let historicalMatches = 0;
-    for (let i = 0; i < fullHistoryStr.length - 5; i++) {
-      if (fullHistoryStr.substr(i, 5) === last5) {
-        historicalMatches++;
-      }
+  // تحليل التكرار التاريخي
+  const last5 = fullHistory.slice(-5).join('');
+  let historicalMatches = 0;
+  for (let i = 0; i < fullHistoryStr.length - 5; i++) {
+    if (fullHistoryStr.substr(i, 5) === last5) {
+      historicalMatches++;
     }
+  }
 
-    if (historicalMatches > 1) {
-      patterns.push({
-        pattern: 'Historic',
-        description: {
-          ar: `تكرر النمط ${historicalMatches} مرات سابقاً`,
-          en: `Pattern occurred ${historicalMatches} times before`
-        },
-        confidence: Math.min(0.9, 0.6 + (historicalMatches * 0.1)),
-        frequency: historicalMatches,
-        sequence: last5
-      });
-    }
+  if (historicalMatches > 1) {
+    patterns.push({
+      pattern: 'Historic',
+      description: {
+        ar: `تكرر النمط ${historicalMatches} مرات سابقاً`,
+        en: `Pattern occurred ${historicalMatches} times before`
+      },
+      confidence: Math.min(0.9, 0.6 + (historicalMatches * 0.1)),
+      frequency: historicalMatches
+    });
   }
 
   return patterns.sort((a, b) => b.confidence - a.confidence);
 }
 
-function detectSimplePatterns(history, patterns) {
-  if (history.length < 2) return;
-
-  const lastThree = history.slice(-3).join('');
-  const lastFour = history.length >= 4 ? history.slice(-4).join('') : '';
-  const lastFive = history.length >= 5 ? history.slice(-5).join('') : '';
-
-  const twoRoundPatterns = {
-    'PP': { name: 'TwoPlayer', confidence: 0.5 },
-    'BB': { name: 'TwoBanker', confidence: 0.5 },
-    'TT': { name: 'TwoTie', confidence: 0.45 },
-    'PB': { name: 'PlayerBanker', confidence: 0.4 },
-    'BP': { name: 'BankerPlayer', confidence: 0.4 }
-  };
-
-  if (history.length >= 2) {
-    const lastTwo = history.slice(-2).join('');
-    if (twoRoundPatterns[lastTwo]) {
-      const pattern = twoRoundPatterns[lastTwo];
-      patterns.push({
-        pattern: pattern.name,
-        description: {
-          ar: `بداية نمط ${lastTwo}`,
-          en: `${lastTwo} pattern start`
-        },
-        confidence: pattern.confidence,
-        length: 2,
-        sequence: lastTwo
-      });
-    }
-  }
-
-  if (history.length >= 3) {
-    const threeRoundPatterns = {
-      'PPP': { name: 'ThreePlayer', confidence: 0.7 },
-      'BBB': { name: 'ThreeBanker', confidence: 0.7 },
-      'TTT': { name: 'ThreeTie', confidence: 0.6 },
-      'PBP': { name: 'PlayerBreak', confidence: 0.65 },
-      'BPB': { name: 'BankerBreak', confidence: 0.65 },
-      'PPT': { name: 'PlayerTie', confidence: 0.55 },
-      'BBT': { name: 'BankerTie', confidence: 0.55 },
-      'PBB': { name: 'PlayerBankerBanker', confidence: 0.6 },
-      'BPP': { name: 'BankerPlayerPlayer', confidence: 0.6 }
-    };
-
-    if (threeRoundPatterns[lastThree]) {
-      const pattern = threeRoundPatterns[lastThree];
-      patterns.push({
-        pattern: pattern.name,
-        description: {
-          ar: `نمط ${lastThree}`,
-          en: `${lastThree} pattern`
-        },
-        confidence: pattern.confidence,
-        length: 3,
-        sequence: lastThree
-      });
-    }
-  }
-
-  if (lastFour) {
-    const fourRoundPatterns = {
-      'PPBB': { name: 'DoubleAlternate', confidence: 0.75 },
-      'BBPP': { name: 'DoubleAlternate', confidence: 0.75 },
-      'PBPB': { name: 'PerfectAlternate', confidence: 0.8 },
-      'BPBP': { name: 'PerfectAlternate', confidence: 0.8 },
-      'PPPB': { name: 'ThreeOne', confidence: 0.7 },
-      'BBBP': { name: 'ThreeOne', confidence: 0.7 },
-      'PPTP': { name: 'PlayerTiePlayer', confidence: 0.6 },
-      'BBTB': { name: 'BankerTieBanker', confidence: 0.6 }
-    };
-
-    if (fourRoundPatterns[lastFour]) {
-      const pattern = fourRoundPatterns[lastFour];
-      patterns.push({
-        pattern: pattern.name,
-        description: {
-          ar: `نمط ${lastFour}`,
-          en: `${lastFour} pattern`
-        },
-        confidence: pattern.confidence,
-        length: 4,
-        sequence: lastFour
-      });
-    }
-  }
-
-  detectSimpleTrends(history, patterns);
-}
-
-function detectSimpleTrends(history, patterns) {
-  if (history.length < 3) return;
-
-  const lastFive = history.slice(-5);
-  const counts = { P: 0, B: 0, T: 0 };
-  lastFive.forEach(r => counts[r]++);
-
-  if (counts.P >= 3) {
-    patterns.push({
-      pattern: 'PlayerTrend',
-      description: {
-        ar: `اتجاه للاعب (${counts.P}/5)`,
-        en: `Player trend (${counts.P}/5)`
-      },
-      confidence: 0.6 + (counts.P * 0.08),
-      length: counts.P,
-      sequence: lastFive.join('')
-    });
-  }
-
-  if (counts.B >= 3) {
-    patterns.push({
-      pattern: 'BankerTrend',
-      description: {
-        ar: `اتجاه للمصرفي (${counts.B}/5)`,
-        en: `Banker trend (${counts.B}/5)`
-      },
-      confidence: 0.6 + (counts.B * 0.08),
-      length: counts.B,
-      sequence: lastFive.join('')
-    });
-  }
-
-  let alternateCount = 0;
-  for (let i = 1; i < lastFive.length; i++) {
-    if (lastFive[i] !== lastFive[i - 1] && lastFive[i] !== 'T' && lastFive[i - 1] !== 'T') {
-      alternateCount++;
-    }
-  }
-
-  if (alternateCount >= 2) {
-    patterns.push({
-      pattern: 'AlternatingTrend',
-      description: {
-        ar: `نمط تناوب (${alternateCount} تبديلات)`,
-        en: `Alternating pattern (${alternateCount} switches)`
-      },
-      confidence: 0.55 + (alternateCount * 0.1),
-      length: alternateCount,
-      sequence: lastFive.join('')
-    });
-  }
-
-  if (counts.T >= 2) {
-    patterns.push({
-      pattern: 'TieFrequency',
-      description: {
-        ar: `تكرار التعادل (${counts.T}/5)`,
-        en: `Tie frequency (${counts.T}/5)`
-      },
-      confidence: 0.5 + (counts.T * 0.1),
-      length: counts.T,
-      sequence: lastFive.join('')
-    });
-  }
-}
-
-function detectBigRoadPatterns() {
-  const patterns = [];
-  const filteredHistory = history.filter(result => result !== 'T');
-  
-  if (filteredHistory.length < 2) return patterns;
-
-  const lastSix = filteredHistory.slice(-6);
-  let currentType = lastSix[0];
-  let currentCount = 1;
-  let maxCount = 1;
-
-  for (let i = 1; i < lastSix.length; i++) {
-    if (lastSix[i] === currentType) {
-      currentCount++;
-      maxCount = Math.max(maxCount, currentCount);
-    } else {
-      if (currentCount >= 2) {
-        patterns.push({
-          pattern: 'BigRoad_MiniStreak',
-          description: {
-            ar: `صف قصير ${currentType} (${currentCount})`,
-            en: `${currentType} mini streak (${currentCount})`
-          },
-          confidence: 0.5 + (currentCount * 0.15),
-          length: currentCount
-        });
-      }
-      currentType = lastSix[i];
-      currentCount = 1;
-    }
-  }
-
-  if (currentCount >= 2) {
-    patterns.push({
-      pattern: 'BigRoad_CurrentStreak',
-      description: {
-        ar: `الصف الحالي ${currentType} (${currentCount})`,
-        en: `Current ${currentType} streak (${currentCount})`
-      },
-      confidence: 0.55 + (currentCount * 0.15),
-      length: currentCount
-    });
-  }
-
-  if (maxCount >= 3) {
-    patterns.push({
-      pattern: 'BigRoad_LongStreak',
-      description: {
-        ar: `أطول سلسلة (${maxCount} نتائج)`,
-        en: `Longest streak (${maxCount} results)`
-      },
-      confidence: 0.65 + (maxCount * 0.1),
-      length: maxCount
-    });
-  }
-
-  return patterns;
-}
-
 function advancedPredict(history) {
-  if (history.length < 2) {
+  if (history.length < 3) {
     return {
       P: 33.3,
       B: 33.3,
@@ -688,12 +375,14 @@ function advancedPredict(history) {
     T: (freq20.T / lastTwenty.length) * 100
   };
   
+  // حساب المتوسط المرجح
   let weightedAvg = {
     P: (percent5.P * 0.6 + percent10.P * 0.3 + percent20.P * 0.1),
     B: (percent5.B * 0.6 + percent10.B * 0.3 + percent20.B * 0.1),
     T: (percent5.T * 0.6 + percent10.T * 0.3 + percent20.T * 0.1)
   };
   
+  // تطبيق Markov Chain
   const lastResult = history[history.length - 1];
   if (lastResult) {
     weightedAvg.P = (weightedAvg.P + markovModel[lastResult].P) / 2;
@@ -701,30 +390,33 @@ function advancedPredict(history) {
     weightedAvg.T = (weightedAvg.T + markovModel[lastResult].T) / 2;
   }
   
+  // تطبيق تصحيح الأنماط
   const patterns = detectAdvancedPatterns(history);
   patterns.forEach(p => {
-    if (p.pattern.includes('Player') || p.pattern.includes('P') || (p.sequence && p.sequence.includes('P'))) {
-      weightedAvg.P += 8 * p.confidence;
-      weightedAvg.B -= 4 * p.confidence;
-      weightedAvg.T -= 4 * p.confidence;
-    } else if (p.pattern.includes('Banker') || p.pattern.includes('B') || (p.sequence && p.sequence.includes('B'))) {
-      weightedAvg.B += 8 * p.confidence;
-      weightedAvg.P -= 4 * p.confidence;
-      weightedAvg.T -= 4 * p.confidence;
-    } else if (p.pattern.includes('Tie') || p.pattern.includes('T') || (p.sequence && p.sequence.includes('T'))) {
-      weightedAvg.T += 12 * p.confidence;
-      weightedAvg.P -= 6 * p.confidence;
-      weightedAvg.B -= 6 * p.confidence;
+    if (p.pattern.includes('P')) {
+      weightedAvg.P += 10 * p.confidence;
+      weightedAvg.B -= 5 * p.confidence;
+      weightedAvg.T -= 5 * p.confidence;
+    } else if (p.pattern.includes('B')) {
+      weightedAvg.B += 10 * p.confidence;
+      weightedAvg.P -= 5 * p.confidence;
+      weightedAvg.T -= 5 * p.confidence;
+    } else if (p.pattern.includes('T')) {
+      weightedAvg.T += 15 * p.confidence;
+      weightedAvg.P -= 7 * p.confidence;
+      weightedAvg.B -= 8 * p.confidence;
     }
   });
   
+  // اكتشاف Dragon وتعديل الاحتمالات
   const dragon = detectDragon(history);
   if (dragon.dragon) {
-    weightedAvg[dragon.dragon] += 12 * (dragon.length / 10);
-    weightedAvg[dragon.dragon === 'P' ? 'B' : 'P'] -= 8 * (dragon.length / 10);
-    weightedAvg.T -= 4 * (dragon.length / 10);
+    weightedAvg[dragon.dragon] += 15 * (dragon.length / 10);
+    weightedAvg[dragon.dragon === 'P' ? 'B' : 'P'] -= 10 * (dragon.length / 10);
+    weightedAvg.T -= 5 * (dragon.length / 10);
   }
   
+  // ضمان عدم وجود قيم سلبية
   weightedAvg.P = Math.max(5, weightedAvg.P);
   weightedAvg.B = Math.max(5, weightedAvg.B);
   weightedAvg.T = Math.max(5, weightedAvg.T);
@@ -738,13 +430,13 @@ function advancedPredict(history) {
 }
 
 function generateBetRecommendation() {
-  if (history.length < 3) {
+  if (history.length < 5) {
     return {
       recommendation: "none",
       confidence: 0,
       message: lang === 'ar-MA' ? 
-        "أدخل 3 جولات على الأقل للتوصية" : 
-        "Enter at least 3 rounds for recommendation"
+        "غير كافي من البيانات للتوصية" : 
+        "Not enough data for recommendation"
     };
   }
 
@@ -754,34 +446,25 @@ function generateBetRecommendation() {
     a[1] > b[1] ? a : b
   );
 
-  if (strongestPrediction[1] >= 55) {
+  if (strongestPrediction[1] >= 65) {
     const recType = strongestPrediction[0];
-    const confidence = Math.min(90, strongestPrediction[1] * 1.1);
+    const confidence = Math.min(95, strongestPrediction[1] * 1.1);
     
     return {
       recommendation: recType,
       confidence: confidence,
       message: buildRecommendationMessage(recType, confidence, patterns)
     };
-  } else if (patterns.length > 0 && patterns[0].confidence >= 0.6) {
+  } else if (patterns.length > 0 && patterns[0].confidence >= 0.75) {
     const pattern = patterns[0];
-    let recType = 'none';
+    const recType = pattern.pattern.includes('P') ? 'P' : 
+                   pattern.pattern.includes('B') ? 'B' : 'T';
     
-    if (pattern.pattern.includes('Player') || pattern.pattern.includes('P') || (pattern.sequence && pattern.sequence.includes('P'))) {
-      recType = 'P';
-    } else if (pattern.pattern.includes('Banker') || pattern.pattern.includes('B') || (pattern.sequence && pattern.sequence.includes('B'))) {
-      recType = 'B';
-    } else if (pattern.pattern.includes('Tie') || pattern.pattern.includes('T') || (pattern.sequence && pattern.sequence.includes('T'))) {
-      recType = 'T';
-    }
-    
-    if (recType !== 'none') {
-      return {
-        recommendation: recType,
-        confidence: pattern.confidence * 100,
-        message: buildRecommendationMessage(recType, pattern.confidence * 100, patterns)
-      };
-    }
+    return {
+      recommendation: recType,
+      confidence: pattern.confidence * 100,
+      message: buildRecommendationMessage(recType, pattern.confidence * 100, patterns)
+    };
   }
 
   return {
@@ -862,10 +545,10 @@ function displayPrediction(prediction) {
 function generateAdvice() {
   const isArabic = lang === 'ar-MA';
   
-  if (history.length < 2) {
+  if (history.length < 3) {
     document.getElementById('aiAdvice').innerHTML = isArabic ? 
-      "⏳ أدخل جولتين على الأقل لتحليل الأنماط..." : 
-      "⏳ Enter at least 2 rounds to analyze patterns...";
+      "⏳ انتظر المزيد من الجولات لتحليل الأنماط..." : 
+      "⏳ Wait for more rounds to analyze patterns...";
     return;
   }
 
@@ -873,67 +556,22 @@ function generateAdvice() {
   let patternAdvice = "";
   
   if (patterns.length > 0) {
-    const topPatterns = patterns.slice(0, 3);
-    
-    topPatterns.forEach((pattern, index) => {
-      const desc = isArabic ? pattern.description.ar : pattern.description.en;
-      const confidence = Math.round(pattern.confidence * 100);
-      const sequence = pattern.sequence || '';
-      
-      const icon = index === 0 ? '🎯' : index === 1 ? '📊' : '🔍';
-      const patternText = isArabic ? 
-        `${icon} ${desc} (${confidence}% ثقة) ${sequence}` : 
-        `${icon} ${desc} (${confidence}% confidence) ${sequence}`;
-      
-      patternAdvice += patternText + '<br>';
-    });
-
-    if (patterns[0].confidence >= 0.6) {
-      const strongestPattern = patterns[0];
-      if (strongestPattern.pattern.includes('Player') || strongestPattern.sequence.includes('P')) {
-        patternAdvice += isArabic ? 
-          '<br>💡 توقع استمرار اتجاه اللاعب' : 
-          '<br>💡 Expect Player trend to continue';
-      } else if (strongestPattern.pattern.includes('Banker') || strongestPattern.sequence.includes('B')) {
-        patternAdvice += isArabic ? 
-          '<br>💡 توقع استمرار اتجاه المصرفي' : 
-          '<br>💡 Expect Banker trend to continue';
-      } else if (strongestPattern.pattern.includes('Tie') || strongestPattern.sequence.includes('T')) {
-        patternAdvice += isArabic ? 
-          '<br>💡 انتبه لاحتمال التعادل' : 
-          '<br>💡 Watch out for possible tie';
-      }
-    }
-  } else {
-    const lastThree = history.slice(-3);
-    const counts = { P: 0, B: 0, T: 0 };
-    lastThree.forEach(r => counts[r]++);
-    
-    if (counts.P >= 2) {
-      patternAdvice = isArabic ? 
-        '📈 اتجاه بسيط نحو اللاعب' : 
-        '📈 Simple trend toward Player';
-    } else if (counts.B >= 2) {
-      patternAdvice = isArabic ? 
-        '📈 اتجاه بسيط نحو المصرفي' : 
-        '📈 Simple trend toward Banker';
-    } else {
-      patternAdvice = isArabic ? 
-        '📊 لا توجد أنماط واضحة بعد' : 
-        '📊 No clear patterns yet';
-    }
+    const strongestPattern = patterns[0];
+    patternAdvice = isArabic ?
+      `🔍 النمط الأقوى: ${strongestPattern.pattern} (ثقة ${Math.round(strongestPattern.confidence * 100)}%)` :
+      `🔍 Strongest pattern: ${strongestPattern.pattern} (${Math.round(strongestPattern.confidence * 100)}% confidence)`;
   }
-  
+
   document.getElementById('aiAdvice').innerHTML = patternAdvice;
 }
 
 function updateTrendsAndStreaks() {
   const isArabic = lang === 'ar-MA';
   
-  if (history.length < 2) {
+  if (history.length < 3) {
     document.getElementById('trendsContent').innerHTML = isArabic ? 
-      `<div style="text-align:center;padding:10px;">⏳ أدخل جولتين على الأقل لتحليل الاتجاهات...</div>` : 
-      `<div style="text-align:center;padding:10px;">⏳ Enter at least 2 rounds to analyze trends...</div>`;
+      `<div style="text-align:center;padding:10px;">⏳ انتظر المزيد من الجولات لتحليل الاتجاهات...</div>` : 
+      `<div style="text-align:center;padding:10px;">⏳ Wait for more rounds to analyze trends...</div>`;
     return;
   }
 
@@ -960,45 +598,9 @@ function updateTrendsAndStreaks() {
         <span class="trend-value">${counts.T}/${lastSeven.length} (${Math.round(counts.T/lastSeven.length*100)}%)</span>
       </div>
     </div>
-    
-    <div style="margin-top: 15px; padding: 10px; background: rgba(255,215,0,0.1); border-radius: 8px;">
-      <h4 style="margin-bottom: 10px;color:gold;">${isArabic ? 'الأنماط المكتشفة' : 'Detected Patterns'}</h4>
-      <div id="patternsList" style="text-align: right; font-size: 0.9em;">
-        ${generatePatternsList()}
-      </div>
-    </div>
   `;
   
   document.getElementById('trendsContent').innerHTML = trendsHTML;
-}
-
-function generatePatternsList() {
-  const patterns = detectAdvancedPatterns(history);
-  const isArabic = lang === 'ar-MA';
-  
-  if (patterns.length === 0) {
-    return isArabic ? 
-      '<div style="text-align:center;color:#888;">لا توجد أنماط قوية</div>' : 
-      '<div style="text-align:center;color:#888;">No strong patterns</div>';
-  }
-  
-  let patternsHTML = '';
-  patterns.slice(0, 4).forEach((pattern, index) => {
-    const desc = isArabic ? pattern.description.ar : pattern.description.en;
-    const confidence = Math.round(pattern.confidence * 100);
-    const sequence = pattern.sequence ? ` [${pattern.sequence}]` : '';
-    
-    const confidenceColor = confidence >= 70 ? '#28a745' : confidence >= 50 ? '#ffc107' : '#dc3545';
-    
-    patternsHTML += `
-      <div style="margin: 8px 0; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 5px; border-right: 3px solid ${confidenceColor};">
-        <strong>${pattern.pattern}</strong>: ${desc}${sequence}
-        <span style="color:${confidenceColor}; float: left; font-weight: bold;">${confidence}%</span>
-      </div>
-    `;
-  });
-  
-  return patternsHTML;
 }
 
 function updateUI() {
@@ -1076,21 +678,4 @@ function resetData() {
     document.getElementById('trendsContent').innerHTML = '';
     document.getElementById('recommendation').innerHTML = '';
   }
-}
-```
-
-الإصلاحات:
-
-✅ حل مشكلة التسجيل المزدوج:
-
-· إزالة جميع الـ onclick من الـ HTML
-· استخدام الـ addEventListener فقط في JavaScript
-· لا توجد تكرار في الـ event listeners
-
-✅ المميزات:
-
-· كل زر يسجل نتيجة واحدة فقط
-· اكتشاف الأنماط من الجولة الثانية
-· واجهة نظيفة بدون أخطاء
-
-الآن الأزرار ستعمل بشكل صحيح وتسجل نتيجة واحدة فقط عند النقر! 🎯
+      }
