@@ -1,113 +1,124 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <title>تحليل المباريات التفاعلي مع أهداف</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            text-align: center;
-            padding: 20px;
-        }
-        table {
-            margin: 20px auto;
-            border-collapse: collapse;
-            width: 95%;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        th, td {
-            padding: 12px;
-            border: 1px solid #ddd;
-        }
-        th {
-            background-color: #f1c40f;
-            color: #000;
-        }
-        .team {
-            font-weight: bold;
-        }
-        input {
-            width: 60px;
-            text-align: center;
-        }
-        button {
-            padding: 10px 20px;
-            margin-top: 10px;
-            background-color: #f1c40f;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #e0b90f;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>تحليل المباريات المتعدد</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        text-align: center;
+        padding: 20px;
+    }
+    table {
+        margin: 20px auto;
+        border-collapse: collapse;
+        width: 95%;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+    }
+    th {
+        background-color: #f1c40f;
+        color: #000;
+    }
+    input {
+        width: 80px;
+        text-align: center;
+    }
+    button {
+        padding: 10px 20px;
+        margin-top: 10px;
+        background-color: #f1c40f;
+        border: none;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #e0b90f;
+    }
+</style>
 </head>
 <body>
-    <h1>تحليل المباريات التفاعلي مع أهداف</h1>
+<h1>تحليل المباريات التفاعلي</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>الفريق الأول</th>
-                <th>الفريق الثاني</th>
-                <th>آخر 5 مباريات الفريق الأول (W/D/L)</th>
-                <th>آخر 5 مباريات الفريق الثاني</th>
-                <th>نسبة الفوز للفريق الأول</th>
-                <th>نسبة الفوز للفريق الثاني</th>
-                <th>نسبة التعادل</th>
-                <th>عدد الأهداف المتوقع</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="team">ريال مدريد</td>
-                <td class="team">مانشستر سيتي</td>
-                <td><input type="text" id="team1" placeholder="مثال: WWLDW"></td>
-                <td><input type="text" id="team2" placeholder="مثال: WLDDW"></td>
-                <td id="team1Percent">-</td>
-                <td id="team2Percent">-</td>
-                <td id="drawPercent">-</td>
-                <td id="goals">-</td>
-            </tr>
-        </tbody>
-    </table>
+<table id="matchesTable">
+    <thead>
+        <tr>
+            <th>الفريق الأول</th>
+            <th>الفريق الثاني</th>
+            <th>آخر 5 مباريات الفريق الأول (W/D/L)</th>
+            <th>آخر 5 مباريات الفريق الثاني</th>
+            <th>نسبة الفوز للفريق الأول</th>
+            <th>نسبة الفوز للفريق الثاني</th>
+            <th>نسبة التعادل</th>
+            <th>عدد الأهداف المتوقع</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- الصفوف ديال المباريات تتزاد هنا -->
+    </tbody>
+</table>
 
-    <button onclick="calculatePercent()">احسب النسب و الأهداف</button>
+<button onclick="addMatch()">زد مباراة</button>
+<button onclick="calculateAll()">احسب النسب و الأهداف لكل المباريات</button>
 
-    <script>
-        function calculatePercent() {
-            const t1Results = document.getElementById('team1').value.toUpperCase();
-            const t2Results = document.getElementById('team2').value.toUpperCase();
+<script>
+function addMatch() {
+    const tbody = document.querySelector('#matchesTable tbody');
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td><input type="text" placeholder="الفريق الأول"></td>
+        <td><input type="text" placeholder="الفريق الثاني"></td>
+        <td><input type="text" placeholder="مثال: WWLDW"></td>
+        <td><input type="text" placeholder="مثال: WLDDW"></td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+    `;
+    tbody.appendChild(row);
+}
 
-            function getPercentAndGoals(results) {
-                let wins = 0, draws = 0, losses = 0;
-                let goalsScored = 0;
-                for (let r of results) {
-                    if (r === 'W') { wins++; goalsScored += Math.floor(Math.random()*3)+2; } // 2-4 goals
-                    else if (r === 'D') { draws++; goalsScored += Math.floor(Math.random()*2)+1; } // 1-2 goals
-                    else if (r === 'L') { losses++; goalsScored += Math.floor(Math.random()*2); } // 0-1 goals
-                }
-                return {
-                    win: (wins / results.length * 100).toFixed(0),
-                    draw: (draws / results.length * 100).toFixed(0),
-                    loss: (losses / results.length * 100).toFixed(0),
-                    avgGoals: (goalsScored / results.length).toFixed(1)
-                };
-            }
+function calculatePercent(results) {
+    let wins = 0, draws = 0, losses = 0, goalsScored = 0;
+    for (let r of results) {
+        if (r === 'W') { wins++; goalsScored += Math.floor(Math.random()*3)+2; }
+        else if (r === 'D') { draws++; goalsScored += Math.floor(Math.random()*2)+1; }
+        else if (r === 'L') { losses++; goalsScored += Math.floor(Math.random()*2); }
+    }
+    return {
+        win: (wins / results.length * 100).toFixed(0),
+        draw: (draws / results.length * 100).toFixed(0),
+        loss: (losses / results.length * 100).toFixed(0),
+        avgGoals: (goalsScored / results.length).toFixed(1)
+    };
+}
 
-            const t1Data = getPercentAndGoals(t1Results);
-            const t2Data = getPercentAndGoals(t2Results);
+function calculateAll() {
+    const rows = document.querySelectorAll('#matchesTable tbody tr');
+    rows.forEach(row => {
+        const team1Name = row.cells[0].querySelector('input').value || 'الفريق الأول';
+        const team2Name = row.cells[1].querySelector('input').value || 'الفريق الثاني';
+        const t1Results = row.cells[2].querySelector('input').value.toUpperCase();
+        const t2Results = row.cells[3].querySelector('input').value.toUpperCase();
 
-            const drawPercent = ((parseInt(t1Data.draw) + parseInt(t2Data.draw)) / 2).toFixed(0);
-            const avgGoalsMatch = ((parseFloat(t1Data.avgGoals) + parseFloat(t2Data.avgGoals))).toFixed(1);
+        const t1Data = calculatePercent(t1Results);
+        const t2Data = calculatePercent(t2Results);
 
-            document.getElementById('team1Percent').innerText = t1Data.win + '%';
-            document.getElementById('team2Percent').innerText = t2Data.win + '%';
-            document.getElementById('drawPercent').innerText = drawPercent + '%';
-            document.getElementById('goals').innerText = avgGoalsMatch + ' أهداف';
-        }
-    </script>
+        const drawPercent = ((parseInt(t1Data.draw) + parseInt(t2Data.draw))/2).toFixed(0);
+        const avgGoalsMatch = ((parseFloat(t1Data.avgGoals) + parseFloat(t2Data.avgGoals))).toFixed(1);
+
+        row.cells[0].innerText = team1Name;
+        row.cells[1].innerText = team2Name;
+        row.cells[4].innerText = t1Data.win + '%';
+        row.cells[5].innerText = t2Data.win + '%';
+        row.cells[6].innerText = drawPercent + '%';
+        row.cells[7].innerText = avgGoalsMatch + ' أهداف';
+    });
+}
+</script>
 </body>
 </html>
