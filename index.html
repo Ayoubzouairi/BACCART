@@ -1,135 +1,113 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <title>Baccarat Analyzer Pro</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <title>تحليل المباريات التفاعلي مع أهداف</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            text-align: center;
+            padding: 20px;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 95%;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f1c40f;
+            color: #000;
+        }
+        .team {
+            font-weight: bold;
+        }
+        input {
+            width: 60px;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            background-color: #f1c40f;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #e0b90f;
+        }
+    </style>
 </head>
 <body>
-  <div class="language-container">
-    <select id="langSelect" class="language">
-      <option value="ar-MA">🇲🇦 العربية</option>
-      <option value="en-US">🇺🇸 English</option>
-    </select>
-    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
-  </div>
+    <h1>تحليل المباريات التفاعلي مع أهداف</h1>
 
-  <h1><span class="logo-b">B</span><span class="logo-rest">ACCARAT</span> <span class="logo-rest">ANALYZER PRO</span></h1>
-  
-  <p>📲 اختر نتيجة الجولة:</p>
-  <div class="buttons">
-    <button class="player" onclick="addResult('P')">
-      🔵 اللاعب
-    </button>
-    <button class="banker" onclick="addResult('B')">
-      🔴 المصرفي
-    </button>
-    <button class="tie" onclick="addResult('T')">
-      🟢 تعادل
-    </button>
-  </div>
+    <table>
+        <thead>
+            <tr>
+                <th>الفريق الأول</th>
+                <th>الفريق الثاني</th>
+                <th>آخر 5 مباريات الفريق الأول (W/D/L)</th>
+                <th>آخر 5 مباريات الفريق الثاني</th>
+                <th>نسبة الفوز للفريق الأول</th>
+                <th>نسبة الفوز للفريق الثاني</th>
+                <th>نسبة التعادل</th>
+                <th>عدد الأهداف المتوقع</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="team">ريال مدريد</td>
+                <td class="team">مانشستر سيتي</td>
+                <td><input type="text" id="team1" placeholder="مثال: WWLDW"></td>
+                <td><input type="text" id="team2" placeholder="مثال: WLDDW"></td>
+                <td id="team1Percent">-</td>
+                <td id="team2Percent">-</td>
+                <td id="drawPercent">-</td>
+                <td id="goals">-</td>
+            </tr>
+        </tbody>
+    </table>
 
-  <div class="prediction-section" id="predictionResult">
-    <div class="prediction-title">📊 تنبؤات متقدمة</div>
-    <div id="predictionBars" class="prediction-bars">
-      <div class="prediction-bar player-bar" style="width:33%">P</div>
-      <div class="prediction-bar banker-bar" style="width:34%">B</div>
-      <div class="prediction-bar tie-bar" style="width:33%">T</div>
-    </div>
-    <div class="probability-display">
-      <div class="probability-item">
-        <span class="player-text">لاعب</span>
-        <span id="playerProb" class="probability-value player-text">33%</span>
-      </div>
-      <div class="probability-item">
-        <span class="banker-text">مصرفي</span>
-        <span id="bankerProb" class="probability-value banker-text">34%</span>
-      </div>
-      <div class="probability-item">
-        <span class="tie-text">تعادل</span>
-        <span id="tieProb" class="probability-value tie-text">33%</span>
-      </div>
-    </div>
-  </div>
+    <button onclick="calculatePercent()">احسب النسب و الأهداف</button>
 
-  <div id="recommendation" class="recommendation-container"></div>
-  
-  <!-- لوحة مؤشرات الثقة -->
-  <div class="confidence-panel">
-    <h3>📊 مؤشرات الثقة في الطرق</h3>
-    <div class="confidence-meters">
-      <div class="confidence-meter">
-        <span>Big Road</span>
-        <div class="meter-bar">
-          <div class="meter-fill" id="bigRoadConfidence" style="width: 0%"></div>
-        </div>
-        <span id="bigRoadPercent">0%</span>
-      </div>
-      <div class="confidence-meter">
-        <span>Big Eye Boy</span>
-        <div class="meter-bar">
-          <div class="meter-fill" id="bigEyeConfidence" style="width: 0%"></div>
-        </div>
-        <span id="bigEyePercent">0%</span>
-      </div>
-      <div class="confidence-meter">
-        <span>Small Road</span>
-        <div class="meter-bar">
-          <div class="meter-fill" id="smallRoadConfidence" style="width: 0%"></div>
-        </div>
-        <span id="smallRoadPercent">0%</span>
-      </div>
-      <div class="confidence-meter">
-        <span>Cockroach Pig</span>
-        <div class="meter-bar">
-          <div class="meter-fill" id="cockroachConfidence" style="width: 0%"></div>
-        </div>
-        <span id="cockroachPercent">0%</span>
-      </div>
-    </div>
-  </div>
-  
-  <div class="stats" id="statsResult"></div>
-  <div class="ai-stats" id="aiStats"></div>
-  
-  <div class="trends-container" id="trendsContainer">
-    <h3>📈 تحليل الاتجاهات والأنماط</h3>
-    <div id="trendsContent"></div>
-  </div>
-  
-  <div class="ai-advice" id="aiAdvice"></div>
-  <div class="history" id="historyDisplay"></div>
-  
-  <div style="margin-top: 20px;">
-    <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
-  </div>
+    <script>
+        function calculatePercent() {
+            const t1Results = document.getElementById('team1').value.toUpperCase();
+            const t2Results = document.getElementById('team2').value.toUpperCase();
 
-  <div class="big-road-container">
-    <h2>Big Road (الميجورك)</h2>
-    <div id="bigRoad" class="big-road"></div>
-  </div>
+            function getPercentAndGoals(results) {
+                let wins = 0, draws = 0, losses = 0;
+                let goalsScored = 0;
+                for (let r of results) {
+                    if (r === 'W') { wins++; goalsScored += Math.floor(Math.random()*3)+2; } // 2-4 goals
+                    else if (r === 'D') { draws++; goalsScored += Math.floor(Math.random()*2)+1; } // 1-2 goals
+                    else if (r === 'L') { losses++; goalsScored += Math.floor(Math.random()*2); } // 0-1 goals
+                }
+                return {
+                    win: (wins / results.length * 100).toFixed(0),
+                    draw: (draws / results.length * 100).toFixed(0),
+                    loss: (losses / results.length * 100).toFixed(0),
+                    avgGoals: (goalsScored / results.length).toFixed(1)
+                };
+            }
 
-  <div class="derivative-roads">
-    <div class="road-container">
-      <h3>Big Eye Road</h3>
-      <div id="bigEyeRoad" class="road"></div>
-    </div>
-    <div class="road-container">
-      <h3>Small Road</h3>
-      <div id="smallRoad" class="road"></div>
-    </div>
-    <div class="road-container">
-      <h3>Cockroach Pig</h3>
-      <div id="cockroachPig" class="road"></div>
-    </div>
-  </div>
+            const t1Data = getPercentAndGoals(t1Results);
+            const t2Data = getPercentAndGoals(t2Results);
 
-  <div class="chart-container">
-    <canvas id="statsChart"></canvas>
-  </div>
+            const drawPercent = ((parseInt(t1Data.draw) + parseInt(t2Data.draw)) / 2).toFixed(0);
+            const avgGoalsMatch = ((parseFloat(t1Data.avgGoals) + parseFloat(t2Data.avgGoals))).toFixed(1);
 
-  <script src="logic.js"></script>
+            document.getElementById('team1Percent').innerText = t1Data.win + '%';
+            document.getElementById('team2Percent').innerText = t2Data.win + '%';
+            document.getElementById('drawPercent').innerText = drawPercent + '%';
+            document.getElementById('goals').innerText = avgGoalsMatch + ' أهداف';
+        }
+    </script>
 </body>
 </html>
