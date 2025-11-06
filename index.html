@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>تحليل المباريات - WDL + أهداف</title>
+<title>تحليل المباريات - أهداف متوقعة</title>
 <style>
 body { font-family: Arial; text-align: center; background: #f5f5f5; padding: 20px; }
 input { width: 140px; padding: 6px; margin: 5px; }
@@ -14,7 +14,7 @@ th { background: #f39c12; color: #000; }
 </head>
 <body>
 
-<h1>تحليل المباريات - نتائج + أهداف</h1>
+<h1>تحليل المباريات - أهداف متوقعة لكل فريق</h1>
 
 <div>
 <input id="team1Name" placeholder="اسم الفريق الأول">
@@ -40,7 +40,7 @@ th { background: #f39c12; color: #000; }
 <th>% فوز الفريق الأول</th>
 <th>% فوز الفريق الثاني</th>
 <th>% التعادل</th>
-<th>معدل الأهداف المتوقع</th>
+<th>أهداف متوقعة لكل فريق</th>
 </tr>
 </thead>
 <tbody>
@@ -91,8 +91,11 @@ function analyzeMatch(){
   const data2 = calcPercent(r2);
   const drawPercent = Math.round((data1.draw + data2.draw)/2);
 
-  // معدل الأهداف المتوقع بناءً على مجموع الأهداف /5 مباريات
-  const expectedGoals = ((g1 + g2)/5).toFixed(1);
+  // معدل الأهداف المتوقع
+  const totalGoals = g1 + g2;
+  // تقسيم معدل الأهداف على الفريقين حسب نسب الفوز
+  const goalsTeam1 = Math.round(totalGoals * data1.win / (data1.win + data2.win || 1));
+  const goalsTeam2 = Math.round(totalGoals * data2.win / (data1.win + data2.win || 1));
 
   // عرض النتائج
   document.getElementById('resTeam1').innerText = t1;
@@ -100,7 +103,7 @@ function analyzeMatch(){
   document.getElementById('resTeam1Percent').innerText = data1.win + '%';
   document.getElementById('resTeam2Percent').innerText = data2.win + '%';
   document.getElementById('resDraw').innerText = drawPercent + '%';
-  document.getElementById('resGoals').innerText = expectedGoals + ' أهداف';
+  document.getElementById('resGoals').innerText = `${goalsTeam1} - ${goalsTeam2}`;
 }
 </script>
 
