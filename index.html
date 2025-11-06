@@ -2,35 +2,34 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>تحليل المباريات - نسخة نهائية</title>
+<title>تحليل المباريات - نهائي</title>
 <style>
-body { font-family: Arial; background-color: #f5f5f5; text-align: center; padding: 20px; }
-input { width: 150px; padding: 6px; margin: 4px; }
+body { font-family: Arial; text-align: center; background: #f5f5f5; padding: 20px; }
+input { width: 120px; padding: 6px; margin: 3px; }
 button { padding: 8px 15px; margin-left: 5px; cursor: pointer; background-color: #f1c40f; border: none; }
-table { margin: 20px auto; border-collapse: collapse; width: 95%; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+table { margin: 20px auto; border-collapse: collapse; width: 95%; background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
 th, td { padding: 10px; border: 1px solid #ddd; text-align: center; }
-th { background-color: #f39c12; color: #000; }
-ul { list-style: none; padding: 0; }
-li { margin: 3px 0; }
+th { background: #f39c12; color: #000; }
 </style>
 </head>
 <body>
 
-<h1>تحليل المباريات - نسخة نهائية</h1>
+<h1>تحليل المباريات - نهائي</h1>
 
 <div>
-<input id="team1Name" placeholder="اسم الفريق الأول">
-<input id="team2Name" placeholder="اسم الفريق الثاني">
-<button onclick="analyzeMatch()">احسب التحليل</button>
+<input id="team1Name" placeholder="الفريق الأول">
+<input id="team2Name" placeholder="الفريق الثاني">
 </div>
 
-<h3>إصابات الفريقين (أدخل كل لاعب مفصول بفاصلة)</h3>
-<input id="injuries1Input" placeholder="إصابات الفريق الأول (مثال: لاعب1 - إصابة, لاعب2 - إصابة)">
-<input id="injuries2Input" placeholder="إصابات الفريق الثاني">
+<h3>آخر 5 نتائج لكل فريق (W/D/L)</h3>
+<input id="team1Results" placeholder="مثال: W D L W W">
+<input id="team2Results" placeholder="مثال: L D W L D">
 
-<p>آخر 5 مباريات لكل فريق (W=فوز / D=تعادل / L=خسارة)</p>
-<input id="team1Results" placeholder="مثال: WWLDW">
-<input id="team2Results" placeholder="مثال: WLDDW">
+<h3>عدد الأهداف لكل مباراة لكل فريق</h3>
+<input id="team1Goals" placeholder="مثال: 2 1 0 3 1">
+<input id="team2Goals" placeholder="مثال: 1 1 2 0 0">
+
+<button onclick="analyzeMatch()">احسب التحليل</button>
 
 <h2>النتائج</h2>
 <table>
@@ -56,45 +55,43 @@ li { margin: 3px 0; }
 </tbody>
 </table>
 
-<h3>قائمة الإصابات</h3>
-<ul id="injuries1List">---</ul>
-<ul id="injuries2List">---</ul>
-
 <script>
-function calcPercent(results){
-  let w=0,d=0,l=0,g=0;
-  for(let r of (results||'').toUpperCase()){
-    if(r==='W'){ w++; g+=Math.floor(Math.random()*3)+1; }
-    else if(r==='D'){ d++; g+=Math.floor(Math.random()*2)+1; }
-    else if(r==='L'){ l++; g+=Math.floor(Math.random()*2); }
-  }
-  let total = (results||'').length || 1;
-  return { win: Math.round(w/total*100), draw: Math.round(d/total*100), avgGoals: (g/total).toFixed(1) };
-}
-
 function analyzeMatch(){
   const t1 = document.getElementById('team1Name').value || 'الفريق الأول';
   const t2 = document.getElementById('team2Name').value || 'الفريق الثاني';
-  const r1 = document.getElementById('team1Results').value;
-  const r2 = document.getElementById('team2Results').value;
-  const inj1 = document.getElementById('injuries1Input').value;
-  const inj2 = document.getElementById('injuries2Input').value;
+  const r1 = (document.getElementById('team1Results').value || '').toUpperCase().split(' ');
+  const r2 = (document.getElementById('team2Results').value || '').toUpperCase().split(' ');
+  const g1 = (document.getElementById('team1Goals').value || '').split(' ').map(Number);
+  const g2 = (document.getElementById('team2Goals').value || '').split(' ').map(Number);
 
-  // إصابات
-  document.getElementById('injuries1List').innerHTML = inj1 ? inj1.split(',').map(i=>'• '+i.trim()).join('<br>') : 'لا توجد إصابات';
-  document.getElementById('injuries2List').innerHTML = inj2 ? inj2.split(',').map(i=>'• '+i.trim()).join('<br>') : 'لا توجد إصابات';
+  if(r1.length!==5 || r2.length!==5 || g1.length!==5 || g2.length!==5){
+    alert('خاص تدخل 5 نتائج و5 أعداد أهداف لكل فريق');
+    return;
+  }
+
+  function calcPercent(results){
+    let w=0,d=0,l=0;
+    for(let r of results){
+      if(r==='W') w++;
+      else if(r==='D') d++;
+      else if(r==='L') l++;
+    }
+    return {win: Math.round(w/5*100), draw: Math.round(d/5*100)};
+  }
+
+  function avgGoals(goals){ return (goals.reduce((a,b)=>a+b,0)/5).toFixed(1); }
 
   const data1 = calcPercent(r1);
   const data2 = calcPercent(r2);
   const drawPercent = Math.round((data1.draw + data2.draw)/2);
-  const avgGoals = (parseFloat(data1.avgGoals)+parseFloat(data2.avgGoals)).toFixed(1);
+  const goalsExpected = (parseFloat(avgGoals(g1)) + parseFloat(avgGoals(g2))).toFixed(1);
 
   document.getElementById('resTeam1').innerText = t1;
   document.getElementById('resTeam2').innerText = t2;
   document.getElementById('resTeam1Percent').innerText = data1.win + '%';
   document.getElementById('resTeam2Percent').innerText = data2.win + '%';
   document.getElementById('resDraw').innerText = drawPercent + '%';
-  document.getElementById('resGoals').innerText = avgGoals + ' أهداف';
+  document.getElementById('resGoals').innerText = goalsExpected + ' أهداف';
 }
 </script>
 
