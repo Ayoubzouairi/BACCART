@@ -2,32 +2,28 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>تحليل المباريات - نهائي</title>
+<title>تحليل المباريات - مجموع الأهداف</title>
 <style>
 body { font-family: Arial; text-align: center; background: #f5f5f5; padding: 20px; }
-input { width: 120px; padding: 6px; margin: 3px; }
+input { width: 150px; padding: 6px; margin: 5px; }
 button { padding: 8px 15px; margin-left: 5px; cursor: pointer; background-color: #f1c40f; border: none; }
-table { margin: 20px auto; border-collapse: collapse; width: 95%; background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+table { margin: 20px auto; border-collapse: collapse; width: 90%; background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
 th, td { padding: 10px; border: 1px solid #ddd; text-align: center; }
 th { background: #f39c12; color: #000; }
 </style>
 </head>
 <body>
 
-<h1>تحليل المباريات - نهائي</h1>
+<h1>تحليل المباريات - مجموع الأهداف</h1>
 
 <div>
-<input id="team1Name" placeholder="الفريق الأول">
-<input id="team2Name" placeholder="الفريق الثاني">
+<input id="team1Name" placeholder="اسم الفريق الأول">
+<input id="team2Name" placeholder="اسم الفريق الثاني">
 </div>
 
-<h3>آخر 5 نتائج لكل فريق (W/D/L)</h3>
-<input id="team1Results" placeholder="مثال: W D L W W">
-<input id="team2Results" placeholder="مثال: L D W L D">
-
-<h3>عدد الأهداف لكل مباراة لكل فريق</h3>
-<input id="team1Goals" placeholder="مثال: 2 1 0 3 1">
-<input id="team2Goals" placeholder="مثال: 1 1 2 0 0">
+<h3>مجموع أهداف آخر 5 مباريات لكل فريق</h3>
+<input id="team1Goals" placeholder="مثال: 7">
+<input id="team2Goals" placeholder="مثال: 5">
 
 <button onclick="analyzeMatch()">احسب التحليل</button>
 
@@ -59,41 +55,60 @@ th { background: #f39c12; color: #000; }
 function analyzeMatch(){
   const t1 = document.getElementById('team1Name').value || 'الفريق الأول';
   const t2 = document.getElementById('team2Name').value || 'الفريق الثاني';
-  const r1 = (document.getElementById('team1Results').value || '').toUpperCase().split(' ');
-  const r2 = (document.getElementById('team2Results').value || '').toUpperCase().split(' ');
-  const g1 = (document.getElementById('team1Goals').value || '').split(' ').map(Number);
-  const g2 = (document.getElementById('team2Goals').value || '').split(' ').map(Number);
+  const g1 = parseFloat(document.getElementById('team1Goals').value || '0');
+  const g2 = parseFloat(document.getElementById('team2Goals').value || '0');
 
-  if(r1.length!==5 || r2.length!==5 || g1.length!==5 || g2.length!==5){
-    alert('خاص تدخل 5 نتائج و5 أعداد أهداف لكل فريق');
+  if(isNaN(g1) || isNaN(g2)){
+    alert('دخل رقم صحيح لمجموع الأهداف');
     return;
   }
 
-  function calcPercent(results){
-    let w=0,d=0,l=0;
-    for(let r of results){
-      if(r==='W') w++;
-      else if(r==='D') d++;
-      else if(r==='L') l++;
-    }
-    return {win: Math.round(w/5*100), draw: Math.round(d/5*100)};
-  }
+  // حساب نسب الفوز والتعادل بناءً على مجموع الأهداف
+  const totalGoals = g1 + g2 || 1;
+  const win1Percent = Math.round((g1/totalGoals)*100);
+  const win2Percent = Math.round((g2/totalGoals)*100);
+  const drawPercent = 100 - win1Percent - win2Percent;
 
-  function avgGoals(goals){ return (goals.reduce((a,b)=>a+b,0)/5).toFixed(1); }
-
-  const data1 = calcPercent(r1);
-  const data2 = calcPercent(r2);
-  const drawPercent = Math.round((data1.draw + data2.draw)/2);
-  const goalsExpected = (parseFloat(avgGoals(g1)) + parseFloat(avgGoals(g2))).toFixed(1);
+  // عدد الأهداف المتوقع = متوسط مجموع الأهداف
+  const expectedGoals = ((g1 + g2)/5).toFixed(1);
 
   document.getElementById('resTeam1').innerText = t1;
   document.getElementById('resTeam2').innerText = t2;
-  document.getElementById('resTeam1Percent').innerText = data1.win + '%';
-  document.getElementById('resTeam2Percent').innerText = data2.win + '%';
+  document.getElementById('resTeam1Percent').innerText = win1Percent + '%';
+  document.getElementById('resTeam2Percent').innerText = win2Percent + '%';
   document.getElementById('resDraw').innerText = drawPercent + '%';
-  document.getElementById('resGoals').innerText = goalsExpected + ' أهداف';
+  document.getElementById('resGoals').innerText = expectedGoals + ' أهداف';
 }
 </script>
 
 </body>
 </html>
+
+
+---
+
+✅ طريقة العمل:
+
+1. تدخل اسم الفريقين.
+
+
+2. تدخل مجموع أهداف آخر 5 مباريات لكل فريق.
+
+
+3. تضغط احسب التحليل → يعطيك:
+
+نسبة الفوز لكل فريق
+
+نسبة التعادل
+
+معدل الأهداف المتوقع للمباراة القادمة
+
+
+
+
+
+---
+
+إيلا بغيت، نقدر نوريك كيفاش ترفع هاد النسخة على GitHub Pages مباشرة من الهاتف باش يكون عندك رابط ويب مباشر وتشوف التطبيق على أي جهاز 🔥
+
+بغيت نديرها لك دابا؟
