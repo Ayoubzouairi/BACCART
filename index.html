@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>تحليل المباريات - أهداف متوقعة</title>
+<title>تحليل المباريات - WDL + أهداف + Under/Over</title>
 <style>
 body { font-family: Arial; text-align: center; background: #f5f5f5; padding: 20px; }
 input { width: 140px; padding: 6px; margin: 5px; }
@@ -14,7 +14,7 @@ th { background: #f39c12; color: #000; }
 </head>
 <body>
 
-<h1>تحليل المباريات - أهداف متوقعة لكل فريق</h1>
+<h1>تحليل المباريات - WDL + أهداف + Under/Over</h1>
 
 <div>
 <input id="team1Name" placeholder="اسم الفريق الأول">
@@ -25,9 +25,9 @@ th { background: #f39c12; color: #000; }
 <input id="team1Results" placeholder="مثال: W D L W W">
 <input id="team2Results" placeholder="مثال: L D W L D">
 
-<h3>مجموع أهداف آخر 5 مباريات لكل فريق</h3>
-<input id="team1Goals" placeholder="مثال: 7">
-<input id="team2Goals" placeholder="مثال: 5">
+<h3>عدد أهداف كل مباراة لكل فريق (5 مباريات)</h3>
+<input id="team1Goals" placeholder="مثال: 2 1 0 3 1">
+<input id="team2Goals" placeholder="مثال: 1 1 2 0 0">
 
 <button onclick="analyzeMatch()">احسب التحليل</button>
 
@@ -40,7 +40,8 @@ th { background: #f39c12; color: #000; }
 <th>% فوز الفريق الأول</th>
 <th>% فوز الفريق الثاني</th>
 <th>% التعادل</th>
-<th>أهداف متوقعة لكل فريق</th>
+<th>معدل الأهداف</th>
+<th>Under/Over 2.5</th>
 </tr>
 </thead>
 <tbody>
@@ -51,6 +52,7 @@ th { background: #f39c12; color: #000; }
 <td id="resTeam2Percent">-</td>
 <td id="resDraw">-</td>
 <td id="resGoals">-</td>
+<td id="resOverUnder">-</td>
 </tr>
 </tbody>
 </table>
@@ -64,16 +66,16 @@ function analyzeMatch(){
   const r1 = (document.getElementById('team1Results').value || '').toUpperCase().split(' ');
   const r2 = (document.getElementById('team2Results').value || '').toUpperCase().split(' ');
 
-  // مجموع الأهداف
-  const g1 = parseFloat(document.getElementById('team1Goals').value || '0');
-  const g2 = parseFloat(document.getElementById('team2Goals').value || '0');
+  // أهداف كل مباراة
+  const g1 = (document.getElementById('team1Goals').value || '').split(' ').map(Number);
+  const g2 = (document.getElementById('team2Goals').value || '').split(' ').map(Number);
 
-  if(r1.length!==5 || r2.length!==5){
-    alert('خاص تدخل 5 نتائج لكل فريق');
+  if(r1.length!==5 || r2.length!==5 || g1.length!==5 || g2.length!==5){
+    alert('خاص تدخل 5 نتائج و5 أعداد أهداف لكل فريق');
     return;
   }
-  if(isNaN(g1) || isNaN(g2)){
-    alert('دخل رقم صحيح لمجموع الأهداف');
+  if(g1.some(isNaN) || g2.some(isNaN)){
+    alert('دخل أرقام صحيحة لأهداف كل مباراة');
     return;
   }
 
@@ -91,11 +93,13 @@ function analyzeMatch(){
   const data2 = calcPercent(r2);
   const drawPercent = Math.round((data1.draw + data2.draw)/2);
 
-  // معدل الأهداف المتوقع
-  const totalGoals = g1 + g2;
-  // تقسيم معدل الأهداف على الفريقين حسب نسب الفوز
-  const goalsTeam1 = Math.round(totalGoals * data1.win / (data1.win + data2.win || 1));
-  const goalsTeam2 = Math.round(totalGoals * data2.win / (data1.win + data2.win || 1));
+  // معدل الأهداف لكل الفريقين
+  const avgGoals1 = g1.reduce((a,b)=>a+b,0)/5;
+  const avgGoals2 = g2.reduce((a,b)=>a+b,0)/5;
+  const totalAvg = avgGoals1 + avgGoals2;
+
+  // Under/Over 2.5
+  const overUnder = totalAvg >= 2.5 ? 'Over 2.5' : 'Under 2.5';
 
   // عرض النتائج
   document.getElementById('resTeam1').innerText = t1;
@@ -103,7 +107,8 @@ function analyzeMatch(){
   document.getElementById('resTeam1Percent').innerText = data1.win + '%';
   document.getElementById('resTeam2Percent').innerText = data2.win + '%';
   document.getElementById('resDraw').innerText = drawPercent + '%';
-  document.getElementById('resGoals').innerText = `${goalsTeam1} - ${goalsTeam2}`;
+  document.getElementById('resGoals').innerText = totalAvg.toFixed(1);
+  document.getElementById('resOverUnder').innerText = overUnder;
 }
 </script>
 
