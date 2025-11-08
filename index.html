@@ -85,6 +85,19 @@ canvas{border-radius:10px;background:#0f0e10}
 .pred-card.player {background: linear-gradient(135deg, #3a86ff, #2667cc); color: white;}
 .pred-card.banker {background: linear-gradient(135deg, #ff006e, #cc0058); color: white;}
 .pred-card.tie {background: linear-gradient(135deg, #38b000, #2c8a00); color: white;}
+
+/* أنماط لمنحنى التوقعات */
+.accuracy-panel {margin-top: 12px;}
+.accuracy-stats {display: flex; justify-content: space-between; margin-bottom: 8px;}
+.accuracy-value {font-weight: 700; font-size: 18px;}
+.accuracy-label {font-size: 12px; color: var(--muted);}
+.accuracy-chart-container {position: relative; height: 80px; margin-top: 8px;}
+.accuracy-line {stroke: var(--gold); stroke-width: 2; fill: none;}
+.accuracy-point {fill: var(--gold); r: 3; transition: r 0.2s;}
+.accuracy-point:hover {r: 5;}
+.accuracy-grid {stroke: rgba(255,255,255,0.1); stroke-width: 1;}
+:root[data-theme="light"] .accuracy-grid {stroke: rgba(0,0,0,0.1);}
+.accuracy-tooltip {position: absolute; background: rgba(0,0,0,0.8); color: white; padding: 5px 8px; border-radius: 4px; font-size: 12px; pointer-events: none; opacity: 0; transition: opacity 0.2s;}
 </style>
 </head>
 <body>
@@ -180,12 +193,36 @@ canvas{border-radius:10px;background:#0f0e10}
     <div class="muted">التوقع الحالي:</div>
     <div class="final" id="finalCard">—</div>
   </div>
+
+  <!-- منحنى التوقعات المضاف -->
+  <div class="panel card accuracy-panel">
+    <div class="section-title">منحنى دقة التوقعات</div>
+    <div class="accuracy-stats">
+      <div>
+        <div class="accuracy-label">الدقة الحالية</div>
+        <div class="accuracy-value" id="currentAccuracy">0%</div>
+      </div>
+      <div>
+        <div class="accuracy-label">أفضل دقة</div>
+        <div class="accuracy-value" id="bestAccuracy">0%</div>
+      </div>
+      <div>
+        <div class="accuracy-label">متوسط الدقة</div>
+        <div class="accuracy-value" id="averageAccuracy">0%</div>
+      </div>
+    </div>
+    <div class="accuracy-chart-container">
+      <svg id="accuracyChart" width="100%" height="100%"></svg>
+      <div id="accuracyTooltip" class="accuracy-tooltip"></div>
+    </div>
+    <div class="muted small">تتبع دقة توقعاتك مع مرور الوقت</div>
+  </div>
 </section>
 </main>
 
 <footer class="foot card">
 <div>تصميم: Ayoub • تيمة ذهبية داكنة</div>
-<div class="credits small">نافذة 5-10 • خوارزميات وزن الأنماط • واجهة عربية</div>
+<div class="credits small">نافذة 5-10 • خوارزميات وزن الأنماط • واجهة عربية • منحنى التوقعات</div>
 </footer>
 
 <script>
@@ -204,7 +241,10 @@ const state = {
     ثلاثي: 0,
     قفزة: 0,
     تجمع: 0
-  }
+  },
+  // بيانات منحنى التوقعات
+  accuracyHistory: [], // تخزين دقة التوقع بعد كل جولة
+  predictionsHistory: [] // تخزين التوقعات والنتائج الفعلية
 };
 
 const el = id => document.getElementById(id);
@@ -241,6 +281,7 @@ function toggleTheme() {
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', newTheme);
   el('themeToggle').textContent = newTheme === 'dark' ? '🌚' : '🌕';
+  updateAccuracyChart(); // إعادة رسم المخطط عند تغيير السمة
 }
 
 function pushRound(r) {
@@ -263,6 +304,9 @@ function pushRound(r) {
       state.loss[state.lastPrediction]++;
     }
   }
+  
+  // تحديث بيانات منحنى التوقعات
+  updateAccuracyData(r);
   
   // تحديث التوقع الجديد
   const newPred = predict();
@@ -287,6 +331,12 @@ function undoRound() {
     }
   }
   
+  // إزالة آخر بيانات الدقة
+  if (state.accuracyHistory.length > 0) {
+    state.accuracyHistory.pop();
+    state.predictionsHistory.pop();
+  }
+  
   state.lastPrediction = null;
   updateAll();
 }
@@ -298,6 +348,8 @@ function resetAll() {
   state.loss = { P: 0, B: 0, T: 0 };
   state.lastPrediction = null;
   state.patterns = { تتابع: 0, تبادل: 0, ازدواج: 0, ثلاثي: 0, قفزة: 0, تجمع: 0 };
+  state.accuracyHistory = [];
+  state.predictionsHistory = [];
   
   updateAll();
 }
@@ -428,6 +480,8 @@ function updateAll() {
   renderBigRoad();
   renderPatterns();
   updatePredictionCounts();
+  updateAccuracyStats();
+  updateAccuracyChart();
 }
 
 function renderStats() {
@@ -500,6 +554,117 @@ function renderPatterns() {
 function updatePredictionCounts() {
   const pred = predict();
   updatePredictionDisplay(pred);
+}
+
+// وظائف منحنى التوقعات الجديدة
+function updateAccuracyData(actualResult) {
+  if (state.lastPrediction && state.lastPrediction !== '—') {
+    const isCorrect = state.lastPrediction === actualResult;
+    state.predictionsHistory.push({
+      prediction: state.lastPrediction,
+      actual: actualResult,
+      correct: isCorrect
+    });
+    
+    // حساب الدقة الحالية
+    const correctPredictions = state.predictionsHistory.filter(p => p.correct).length;
+    const totalPredictions = state.predictionsHistory.length;
+    const accuracy = totalPredictions > 0 ? (correctPredictions / totalPredictions) * 100 : 0;
+    
+    state.accuracyHistory.push(accuracy);
+  }
+}
+
+function updateAccuracyStats() {
+  if (state.accuracyHistory.length === 0) {
+    el('currentAccuracy').textContent = '0%';
+    el('bestAccuracy').textContent = '0%';
+    el('averageAccuracy').textContent = '0%';
+    return;
+  }
+  
+  const currentAccuracy = state.accuracyHistory[state.accuracyHistory.length - 1];
+  const bestAccuracy = Math.max(...state.accuracyHistory);
+  const averageAccuracy = state.accuracyHistory.reduce((a, b) => a + b, 0) / state.accuracyHistory.length;
+  
+  el('currentAccuracy').textContent = currentAccuracy.toFixed(1) + '%';
+  el('bestAccuracy').textContent = bestAccuracy.toFixed(1) + '%';
+  el('averageAccuracy').textContent = averageAccuracy.toFixed(1) + '%';
+}
+
+function updateAccuracyChart() {
+  const svg = el('accuracyChart');
+  const tooltip = el('accuracyTooltip');
+  svg.innerHTML = '';
+  
+  if (state.accuracyHistory.length < 2) return;
+  
+  const width = svg.clientWidth;
+  const height = svg.clientHeight;
+  const padding = 20;
+  
+  // رسم الشبكة
+  for (let i = 0; i <= 100; i += 20) {
+    const y = height - padding - (i / 100) * (height - 2 * padding);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('class', 'accuracy-grid');
+    line.setAttribute('x1', padding);
+    line.setAttribute('y1', y);
+    line.setAttribute('x2', width - padding);
+    line.setAttribute('y2', y);
+    svg.appendChild(line);
+    
+    // إضافة النسب المئوية
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', padding - 5);
+    text.setAttribute('y', y + 4);
+    text.setAttribute('text-anchor', 'end');
+    text.setAttribute('fill', 'var(--muted)');
+    text.setAttribute('font-size', '10px');
+    text.textContent = i + '%';
+    svg.appendChild(text);
+  }
+  
+  // رسم الخط
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  let pathData = '';
+  
+  state.accuracyHistory.forEach((accuracy, index) => {
+    const x = padding + (index / (state.accuracyHistory.length - 1)) * (width - 2 * padding);
+    const y = height - padding - (accuracy / 100) * (height - 2 * padding);
+    
+    if (index === 0) {
+      pathData = `M ${x} ${y}`;
+    } else {
+      pathData += ` L ${x} ${y}`;
+    }
+    
+    // إضافة النقاط
+    const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    point.setAttribute('class', 'accuracy-point');
+    point.setAttribute('cx', x);
+    point.setAttribute('cy', y);
+    point.setAttribute('data-index', index);
+    
+    // إضافة تفاعل عند المرور على النقاط
+    point.addEventListener('mouseover', (e) => {
+      const rect = svg.getBoundingClientRect();
+      tooltip.style.left = (e.clientX - rect.left + 10) + 'px';
+      tooltip.style.top = (e.clientY - rect.top - 30) + 'px';
+      tooltip.textContent = `الجولة ${index + 1}: ${accuracy.toFixed(1)}%`;
+      tooltip.style.opacity = '1';
+    });
+    
+    point.addEventListener('mouseout', () => {
+      tooltip.style.opacity = '0';
+    });
+    
+    svg.appendChild(point);
+  });
+  
+  path.setAttribute('d', pathData);
+  path.setAttribute('class', 'accuracy-line');
+  svg.appendChild(path);
 }
 
 // التهيئة عند تحميل الصفحة
