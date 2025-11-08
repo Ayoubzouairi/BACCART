@@ -1,101 +1,96 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BACCARAT PREDICTOR — Dark Gold</title>
+  <meta charset="UTF-8" />
+  <title>Baccarat Analyzer Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="dark">
-  <div class="app">
-    <header class="top card">
-      <div class="brand">
-        <div class="logo">BACCARAT <span>SPEED</span></div>
-        <div class="subtitle" id="subtitle">Predictor — توقع ذكي بالقوة ديال الأنماط</div>
+<body>
+  <div class="language-container">
+    <select id="langSelect" class="language">
+      <option value="ar-MA">🇲🇦 العربية</option>
+      <option value="en-US">🇺🇸 English</option>
+    </select>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+  </div>
+
+  <h1><span class="logo-b">B</span><span class="logo-rest">ACCARAT</span> <span class="logo-rest">ANALYZER PRO</span></h1>
+  
+  <p>📲 اختر نتيجة الجولة:</p>
+  <div class="buttons">
+    <button class="player" onclick="addResult('P')">
+      🔵 اللاعب
+    </button>
+    <button class="banker" onclick="addResult('B')">
+      🔴 المصرفي
+    </button>
+    <button class="tie" onclick="addResult('T')">
+      🟢 تعادل
+    </button>
+  </div>
+
+  <div class="prediction-section" id="predictionResult">
+    <div class="prediction-title">📊 تنبؤات متقدمة</div>
+    <div id="predictionBars" class="prediction-bars">
+      <div class="prediction-bar player-bar" style="width:33%">P</div>
+      <div class="prediction-bar banker-bar" style="width:34%">B</div>
+      <div class="prediction-bar tie-bar" style="width:33%">T</div>
+    </div>
+    <div class="probability-display">
+      <div class="probability-item">
+        <span class="player-text">لاعب</span>
+        <span id="playerProb" class="probability-value player-text">33%</span>
       </div>
-      <div class="controls">
-        <select id="langToggle" title="Language">
-          <option value="ar" selected>العربية</option>
-          <option value="en">English</option>
-        </select>
-        <button id="modeToggle" title="Day / Night">نهار</button>
+      <div class="probability-item">
+        <span class="banker-text">مصرفي</span>
+        <span id="bankerProb" class="probability-value banker-text">34%</span>
       </div>
-    </header>
+      <div class="probability-item">
+        <span class="tie-text">تعادل</span>
+        <span id="tieProb" class="probability-value tie-text">33%</span>
+      </div>
+    </div>
+  </div>
 
-    <main class="card layout">
-      <aside class="left">
-        <div class="panel card">
-          <label id="windowLabelText">نافذة التحليل (5 - 10)</label>
-          <div class="row">
-            <input id="windowSize" type="number" min="5" max="10" value="5">
-            <button id="applyWindow" class="btn gold">تطبيق</button>
-          </div>
-          <div class="muted small">المجموع تقريبا: 74 - 76 جولة</div>
-        </div>
+  <div id="recommendation" class="recommendation-container"></div>
+  
+  <div class="stats" id="statsResult"></div>
+  <div class="ai-stats" id="aiStats"></div>
+  
+  <div class="trends-container" id="trendsContainer">
+    <h3>📈 تحليل الاتجاهات والأنماط</h3>
+    <div id="trendsContent"></div>
+  </div>
+  
+  <div class="ai-advice" id="aiAdvice"></div>
+  <div class="history" id="historyDisplay"></div>
+  
+  <div style="margin-top: 20px;">
+    <button class="reset" onclick="resetData()">🔄 إعادة تعيين</button>
+  </div>
 
-        <div class="panel card">
-          <div class="row">
-            <button class="btn player" id="btnP">Player</button>
-            <button class="btn banker" id="btnB">Banker</button>
-            <button class="btn tie" id="btnT">Tie</button>
-            <button class="btn ghost" id="btnUndo">Undo</button>
-          </div>
-        </div>
+  <div class="big-road-container">
+    <h2>Big Road (الميجورك)</h2>
+    <div id="bigRoad" class="big-road"></div>
+  </div>
 
-        <div class="panel card patterns">
-          <div class="section-title" id="patternsTitle">مكتشفات الأنماط</div>
-          <ul id="patternList" class="pattern-list"></ul>
-        </div>
+  <div class="derivative-roads">
+    <div class="road-container">
+      <h3>Big Eye Road</h3>
+      <div id="bigEyeRoad" class="road"></div>
+    </div>
+    <div class="road-container">
+      <h3>Small Road</h3>
+      <div id="smallRoad" class="road"></div>
+    </div>
+  </div>
 
-        <div class="panel card stats">
-          <div class="section-title">الإحصاءات</div>
-          <div class="stat-row"><span id="lblP">Player Count</span><span id="pCount">0</span></div>
-          <div class="stat-row"><span id="lblB">Banker Count</span><span id="bCount">0</span></div>
-          <div class="stat-row"><span id="lblT">Tie Count</span><span id="tCount">0</span></div>
-        </div>
-
-        <div class="panel card io">
-          <button id="exportJSON" class="btn">Export JSON</button>
-          <button id="importJSON" class="btn">Import JSON</button>
-        </div>
-      </aside>
-
-      <section class="right card prediction">
-        <div class="pred-head">
-          <div class="pred-title" id="predTitle">توقع الجولة القادمة</div>
-          <div class="pred-sub" id="predSub">نسبة الثقة معتمدة على الأنماط</div>
-        </div>
-
-        <div class="bars">
-          <div class="bar-row">
-            <div class="bar-label">Player</div>
-            <div class="bar-meter"><i id="pBar" style="width:33%"></i></div>
-            <div class="bar-pct" id="pPct">33.0%</div>
-          </div>
-          <div class="bar-row">
-            <div class="bar-label">Banker</div>
-            <div class="bar-meter"><i id="bBar" style="width:33%"></i></div>
-            <div class="bar-pct" id="bPct">33.0%</div>
-          </div>
-          <div class="bar-row">
-            <div class="bar-label">Tie</div>
-            <div class="bar-meter"><i id="tBar" style="width:34%"></i></div>
-            <div class="bar-pct" id="tPct">34.0%</div>
-          </div>
-        </div>
-
-        <div class="final card" id="finalCard">—</div>
-
-        <div class="log card" id="log"></div>
-      </section>
-    </main>
-
-    <footer class="foot card">
-      <div id="footerText">تصميم: Ayoub • Dark Gold Theme</div>
-      <div class="credits small">Window 5–10 • Heuristic + pattern weights • Arabic/English</div>
-    </footer>
+  <div class="chart-container">
+    <canvas id="statsChart"></canvas>
   </div>
 
   <script src="logic.js"></script>
 </body>
-</html>
+  </html>
