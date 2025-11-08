@@ -138,7 +138,7 @@ canvas{border-radius:10px;background:#0f0e10}
     <span class="tie">🟢 تعادل</span>
   </div>
   
-  <canvas id="bigRoad" width="500" height="400"></canvas>
+  <canvas id="bigRoad" width="600" height="450"></canvas>
 
   <div class="prediction-cards">
     <div class="pred-card player" id="predP">
@@ -175,6 +175,7 @@ const state = {
   count: { P: 0, B: 0, T: 0 },
   win: { P: 0, B: 0, T: 0 },
   loss: { P: 0, B: 0, T: 0 },
+  lastPrediction: null, // لتخزين التوقع الأخير
   patterns: {
     تتابع: 0,
     تبادل: 0,
@@ -222,18 +223,30 @@ function toggleTheme() {
 }
 
 function pushRound(r) {
+  // تخزين التوقع قبل إضافة الجولة الجديدة
+  const pred = predict();
+  state.lastPrediction = pred.final;
+  
+  // إضافة الجولة الجديدة
   state.rounds.push(r);
   state.count[r]++;
   updatePatterns();
   
-  const pred = predict();
-  const didWin = (r === pred.final);
+  // حساب الفوز/الخسارة بناءً على التوقع السابق
+  if (state.lastPrediction !== '—' && state.lastPrediction !== null) {
+    const didWin = (r === state.lastPrediction);
+    
+    if (didWin) {
+      state.win[state.lastPrediction]++;
+    } else {
+      state.loss[state.lastPrediction]++;
+    }
+  }
   
-  if (didWin) state.win[r]++;
-  else state.loss[r]++;
-  
-  updatePredictionDisplay(pred);
-  showResult(r, pred, didWin);
+  // تحديث التوقع الجديد
+  const newPred = predict();
+  updatePredictionDisplay(newPred);
+  showResult(r, newPred, state.lastPrediction === r);
   updateAll();
 }
 
@@ -244,13 +257,16 @@ function undoRound() {
   state.count[lastRound]--;
   
   // إزالة الفوز/الخسارة الأخيرة
-  const pred = predict();
-  if (lastRound === pred.final) {
-    state.win[lastRound] = Math.max(0, state.win[lastRound] - 1);
-  } else {
-    state.loss[lastRound] = Math.max(0, state.loss[lastRound] - 1);
+  if (state.rounds.length > 0) {
+    const previousPrediction = predict();
+    if (lastRound === previousPrediction.final) {
+      state.win[previousPrediction.final] = Math.max(0, state.win[previousPrediction.final] - 1);
+    } else {
+      state.loss[previousPrediction.final] = Math.max(0, state.loss[previousPrediction.final] - 1);
+    }
   }
   
+  state.lastPrediction = null;
   updateAll();
 }
 
@@ -259,6 +275,7 @@ function resetAll() {
   state.count = { P: 0, B: 0, T: 0 };
   state.win = { P: 0, B: 0, T: 0 };
   state.loss = { P: 0, B: 0, T: 0 };
+  state.lastPrediction = null;
   state.patterns = { تتابع: 0, تبادل: 0, ازدواج: 0, ثلاثي: 0, قفزة: 0, تجمع: 0 };
   
   updateAll();
@@ -420,14 +437,24 @@ function renderBigRoad() {
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
-  const size = 25;
+  // تكبير حجم المربعات
+  const size = 35;
   let x = 0, y = 0;
   const maxCols = Math.floor(canvas.width / size);
   
   for (let i = 0; i < state.rounds.length; i++) {
     const r = state.rounds[i];
+    
+    // رسم المربع
     ctx.fillStyle = r === 'P' ? '#2d7ef7' : r === 'B' ? '#e03b3b' : '#28a745';
     ctx.fillRect(x * size, y * size, size - 2, size - 2);
+    
+    // إضافة رقم الجولة داخل المربع
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 14px Inter';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText((i+1).toString(), x * size + size/2, y * size + size/2);
     
     y++;
     if (y * size >= canvas.height) {
