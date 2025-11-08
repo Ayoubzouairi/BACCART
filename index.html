@@ -21,9 +21,10 @@ body{font-family:Inter,sans-serif;margin:0;background:linear-gradient(180deg,#05
 .panel{padding:10px}
 .row{display:flex;gap:8px;align-items:center;margin-top:8px}
 input[type=number], select{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;color:#fff}
-.btn{padding:8px 10px;border-radius:8px;border:0;background:rgba(255,255,255,0.04);color:#fff;cursor:pointer;font-weight:600}
-.btn.gold{background:linear-gradient(90deg,var(--gold),var(--gold-2));color:#000;font-weight:700;box-shadow:0 6px 20px rgba(212,175,55,0.12)}
+.btn{padding:8px 10px;border-radius:8px;border:0;color:#000;cursor:pointer;font-weight:700;font-size:14px}
+.btn.gold{background:linear-gradient(90deg,var(--gold),var(--gold-2));box-shadow:0 6px 20px rgba(212,175,55,0.12)}
 .btn.player{background:var(--player)}.btn.banker{background:var(--banker)}.btn.tie{background:var(--tie)}
+.btn.ghost{background:rgba(255,255,255,0.1);color:#fff}
 .small{font-size:13px;color:var(--muted)}
 .muted{color:var(--muted);font-size:12px}
 .pattern-list{list-style:none;padding:6px;margin:6px 0 0 0;max-height:200px;overflow:auto}
@@ -37,20 +38,23 @@ input[type=number], select{background:transparent;border:1px solid rgba(255,255,
 .tie{color:var(--tie);font-weight:700}
 .pred-head{display:flex;justify-content:space-between;align-items:center}
 .final{font-size:22px;font-weight:800;text-align:center;padding:12px;background:linear-gradient(90deg,rgba(212,175,55,0.06),transparent);border-radius:10px}
-.log{max-height:280px;overflow:auto;padding:8px}
+.log{max-height:280px;overflow:auto;padding:8px;background:var(--card);border-radius:8px;margin-top:10px}
 .foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
 .credits{opacity:0.85}
 canvas{border-radius:10px;background:#0f0e10}
 .color-legend{display:flex;gap:15px;justify-content:center;margin-bottom:10px;font-size:14px}
 .color-legend span{padding:4px 8px;border-radius:6px}
 .prediction-cards{display:flex;gap:10px;justify-content:center;margin:10px 0}
-.pred-card{padding:10px;border-radius:8px;text-align:center;min-width:80px}
+.pred-card{padding:10px;border-radius:8px;text-align:center;min-width:80px;background:rgba(255,255,255,0.05)}
 .pred-card.active{transform:scale(1.1);border:2px solid var(--gold)}
 .win-effect{animation:winPulse 0.5s ease-in-out}
 .loss-effect{animation:lossShake 0.5s ease-in-out}
 @keyframes winPulse{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
 @keyframes lossShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 .analysis-result{margin-top:10px;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;text-align:center}
+.log-title{font-weight:600;margin-bottom:8px;color:var(--gold)}
+.log-entry{padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px}
+.log-entry:last-child{border-bottom:none}
 </style>
 </head>
 <body>
@@ -79,21 +83,21 @@ canvas{border-radius:10px;background:#0f0e10}
   <div class="panel card">
     <div class="section-title">إدخال النتائج</div>
     <div class="row">
-      <button class="btn player" id="btnP">لاعب 🔵</button>
-      <button class="btn banker" id="btnB">مصرفي 🔴</button>
-      <button class="btn tie" id="btnT">تعادل 🟢</button>
+      <button class="btn player" id="btnP">لاعب</button>
+      <button class="btn banker" id="btnB">مصرفي</button>
+      <button class="btn tie" id="btnT">تعادل</button>
     </div>
     <div class="row">
-      <button class="btn" id="btnUndo" style="flex:1">تراجع</button>
+      <button class="btn ghost" id="btnUndo" style="flex:1">تراجع عن آخر جولة</button>
     </div>
   </div>
 
   <div class="panel card patterns">
     <div class="section-title">الأنماط المكتشفة</div>
     <ul id="patternList" class="pattern-list">
-      <li>تتابع: 0</li>
-      <li>تبادل: 0</li>
-      <li>ازدواج: 0</li>
+      <li><span>تتابع</span><span>0</span></li>
+      <li><span>تبادل</span><span>0</span></li>
+      <li><span>ازدواج</span><span>0</span></li>
     </ul>
   </div>
 
@@ -114,8 +118,8 @@ canvas{border-radius:10px;background:#0f0e10}
 
 <section class="right card prediction">
   <div class="pred-head">
-    <div class="pred-title">توقع الجولة القادمة</div>
-    <div class="pred-sub">نسبة الثقة معتمدة على الأنماط</div>
+    <div style="font-weight:700;color:var(--gold)">توقع الجولة القادمة</div>
+    <div class="muted">نسبة الثقة معتمدة على الأنماط</div>
   </div>
 
   <div class="color-legend">
@@ -128,26 +132,27 @@ canvas{border-radius:10px;background:#0f0e10}
 
   <div class="prediction-cards">
     <div class="pred-card player" id="predP">
-      <div>لاعب</div>
-      <div id="predPctP">0%</div>
+      <div style="font-weight:600;margin-bottom:5px;">لاعب</div>
+      <div id="predPctP" style="font-size:18px;font-weight:700;">0%</div>
     </div>
     <div class="pred-card banker" id="predB">
-      <div>مصرفي</div>
-      <div id="predPctB">0%</div>
+      <div style="font-weight:600;margin-bottom:5px;">مصرفي</div>
+      <div id="predPctB" style="font-size:18px;font-weight:700;">0%</div>
     </div>
     <div class="pred-card tie" id="predT">
-      <div>تعادل</div>
-      <div id="predPctT">0%</div>
+      <div style="font-weight:600;margin-bottom:5px;">تعادل</div>
+      <div id="predPctT" style="font-size:18px;font-weight:700;">0%</div>
     </div>
   </div>
 
   <div class="analysis-result">
-    <div class="muted">التوقع الحالي:</div>
+    <div class="muted" style="margin-bottom:8px;">التوقع الحالي:</div>
     <div class="final" id="finalCard">—</div>
   </div>
 
-  <div class="log card" id="log">
-    <div class="muted">سجل الأحداث:</div>
+  <div class="log">
+    <div class="log-title">📝 سجل الأحداث</div>
+    <div id="logEntries"></div>
   </div>
 </section>
 </main>
@@ -172,7 +177,8 @@ const state = {
     ثلاثي: 0,
     قفزة: 0,
     تجمع: 0
-  }
+  },
+  lastPrediction: { P: 0, B: 0, T: 0, final: '—' }
 };
 
 const el = id => document.getElementById(id);
@@ -187,7 +193,7 @@ function init() {
     }
     state.windowSize = v;
     updateAll();
-    log('تم تغيير نافذة التحليل إلى ' + v);
+    addLogEntry('تم تغيير نافذة التحليل إلى ' + v);
   };
 
   el('btnP').onclick = () => pushRound('P');
@@ -197,21 +203,36 @@ function init() {
   el('btnReset').onclick = resetAll;
 
   updateAll();
+  addLogEntry('تم بدء التطبيق - جاهز للإدخال');
 }
 
 function pushRound(r) {
+  // حفظ التوقع الحالي قبل إضافة الجولة الجديدة
+  const currentPrediction = state.lastPrediction;
+  
+  // إضافة الجولة الجديدة
   state.rounds.push(r);
   state.count[r]++;
   updatePatterns();
   
-  const pred = predict();
-  const didWin = (r === pred.final);
+  // حساب إذا كان التوقع صحيحاً بناءً على التوقع السابق
+  const didWin = (r === currentPrediction.final && currentPrediction.final !== '—');
   
-  if (didWin) state.win[r]++;
-  else state.loss[r]++;
+  // تحديث إحصائيات الفوز/الخسارة
+  if (didWin) {
+    state.win[r]++;
+    // خصم الخسارة إذا كانت مسجلة خطأ سابقاً
+    if (state.loss[r] > 0) state.loss[r]--;
+  } else if (currentPrediction.final !== '—') {
+    // فقط سجل خسارة إذا كان هناك توقع فعلي
+    state.loss[currentPrediction.final]++;
+  }
   
-  updatePredictionDisplay(pred);
-  showResult(r, pred, didWin);
+  // تحديث التوقع الجديد
+  state.lastPrediction = predict();
+  
+  updatePredictionDisplay(state.lastPrediction);
+  showResult(r, currentPrediction, didWin);
   updateAll();
 }
 
@@ -221,15 +242,13 @@ function undoRound() {
   const lastRound = state.rounds.pop();
   state.count[lastRound]--;
   
-  // إزالة الفوز/الخسارة الأخيرة
-  const pred = predict();
-  if (lastRound === pred.final) {
-    state.win[lastRound] = Math.max(0, state.win[lastRound] - 1);
-  } else {
-    state.loss[lastRound] = Math.max(0, state.loss[lastRound] - 1);
-  }
+  // إعادة حساب الأنماط
+  updatePatterns();
   
-  log('تراجع عن آخر جولة');
+  // إعادة تعيين التوقع
+  state.lastPrediction = predict();
+  
+  addLogEntry('تم التراجع عن آخر جولة (' + getResultText(lastRound) + ')');
   updateAll();
 }
 
@@ -239,18 +258,22 @@ function resetAll() {
   state.win = { P: 0, B: 0, T: 0 };
   state.loss = { P: 0, B: 0, T: 0 };
   state.patterns = { تتابع: 0, تبادل: 0, ازدواج: 0, ثلاثي: 0, قفزة: 0, تجمع: 0 };
+  state.lastPrediction = { P: 33.3, B: 33.3, T: 33.3, final: '—' };
   
-  log('تم إعادة تعيين كل البيانات');
+  addLogEntry('تم إعادة تعيين كل البيانات');
   updateAll();
 }
 
 function updatePatterns() {
   const recent = state.rounds.slice(-state.windowSize);
-  if (recent.length < 2) return;
+  if (recent.length < 2) {
+    state.patterns = { تتابع: 0, تبادل: 0, ازدواج: 0, ثلاثي: 0, قفزة: 0, تجمع: 0 };
+    return;
+  }
 
   // حساب التتابع
   let streak = 1;
-  for (let i = 1; i < recent.length; i++) {
+  for (let i = recent.length - 1; i > 0; i--) {
     if (recent[i] === recent[i - 1]) streak++;
     else break;
   }
@@ -304,7 +327,9 @@ function predict() {
   };
 
   let final = Object.entries(normalized).sort((a, b) => b[1] - a[1])[0][0];
-  if (normalized[final] < 40) final = '—'; // عدم التوقع إذا كانت الثقة ضعيفة
+  
+  // فقط توقع إذا كانت النسبة أعلى من 35%
+  if (normalized[final] < 35) final = '—';
 
   return {
     P: normalized.P.toFixed(1),
@@ -318,16 +343,17 @@ function calculatePatternWeights() {
   const weights = { P: 1, B: 1, T: 1 };
   const lastRound = state.rounds[state.rounds.length - 1];
   
-  // وزن التتابع
-  if (state.patterns.تتابع >= 2) {
-    weights[lastRound] *= 0.7; // تقليل احتمال تكرار التتابع الطويل
+  if (!lastRound) return weights;
+  
+  // وزن التتابع - تقليل احتمال التكرار الطويل
+  if (state.patterns.تتابع >= 3) {
+    weights[lastRound] *= 0.6;
   }
   
-  // وزن التبادل
-  if (state.patterns.تبادل >= 3) {
-    weights[lastRound] *= 0.8; // تقليل احتمال استمرار التبادل
+  // وزن التبادل - زيادة احتمال تغيير النمط
+  if (state.patterns.تبادل >= 4) {
     const other = lastRound === 'P' ? 'B' : 'P';
-    weights[other] *= 1.2;
+    weights[other] *= 1.3;
   }
   
   return weights;
@@ -360,17 +386,26 @@ function showResult(r, pred, didWin) {
   const resultText = getResultText(r);
   const predText = getResultText(pred.final);
   
-  const message = (didWin ? '🎉 فوز: ' : '❌ خسارة: ') + resultText + 
-                  ' | متوقع: ' + predText + 
-                  ' (ن: ' + pred.P + '%, م: ' + pred.B + '%, ت: ' + pred.T + '%)';
+  let message = '';
+  if (pred.final === '—') {
+    message = `🔸 جولة جديدة: ${resultText} | لا يوجد توقع سابق`;
+  } else if (didWin) {
+    message = `🎉 فوز! ${resultText} | التوقع كان: ${predText}`;
+  } else {
+    message = `❌ خسارة! ${resultText} | التوقع كان: ${predText}`;
+  }
   
-  log(message);
+  addLogEntry(message);
   
   // تأثير مرئي
   const finalCard = el('finalCard');
   finalCard.classList.remove('win-effect', 'loss-effect');
   setTimeout(() => {
-    finalCard.classList.add(didWin ? 'win-effect' : 'loss-effect');
+    if (didWin) {
+      finalCard.classList.add('win-effect');
+    } else if (pred.final !== '—') {
+      finalCard.classList.add('loss-effect');
+    }
   }, 10);
 }
 
@@ -381,21 +416,20 @@ function getResultText(r) {
   return '—';
 }
 
-function log(msg) {
-  const lg = el('log');
-  const d = document.createElement('div');
-  d.textContent = '• ' + msg;
-  d.style.padding = '4px 0';
-  d.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
-  lg.appendChild(d);
-  lg.scrollTop = lg.scrollHeight;
+function addLogEntry(msg) {
+  const logEntries = el('logEntries');
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.textContent = msg;
+  logEntries.appendChild(entry);
+  logEntries.scrollTop = logEntries.scrollHeight;
 }
 
 function updateAll() {
   renderStats();
   renderBigRoad();
   renderPatterns();
-  updatePredictionCounts();
+  updatePredictionDisplay(state.lastPrediction);
 }
 
 function renderStats() {
@@ -453,11 +487,6 @@ function renderPatterns() {
     li.innerHTML = `<span>${pattern}</span><span>${value}</span>`;
     ul.appendChild(li);
   }
-}
-
-function updatePredictionCounts() {
-  const pred = predict();
-  updatePredictionDisplay(pred);
 }
 
 // التهيئة عند تحميل الصفحة
