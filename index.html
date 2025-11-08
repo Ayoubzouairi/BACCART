@@ -4,49 +4,104 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AYOUB BACCARAT PRO FULL</title>
-<link rel="stylesheet" href="style.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+:root{--gold:#d4af37;--gold-2:#b8871d;--bg-dark:#070606;--card:#0f0e10;--muted:#bfb7a6;--player:#2d7ef7;--banker:#e03b3b;--tie:#28a745;}
+*{box-sizing:border-box}
+body{font-family:Inter,sans-serif;margin:0;background:linear-gradient(180deg,#050404,#0b0b0b);color:#fff;padding:18px}
+.app{max-width:1200px;margin:0 auto}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.logo{font-weight:800;background:linear-gradient(90deg,var(--gold),#fff3b0);color:#000;padding:8px 12px;border-radius:12px;display:inline-block}
+.subtitle{font-size:14px;color:var(--muted);margin-top:4px}
+.controls{display:flex;gap:8px;align-items:center}
+.card{background:linear-gradient(180deg,var(--card),#0b0b0b);border-radius:12px;padding:12px;box-shadow:0 8px 30px rgba(0,0,0,0.6);border:1px solid rgba(212,175,55,0.08)}
+.layout{display:flex;gap:12px}
+.left{width:360px;display:flex;flex-direction:column;gap:10px}
+.right{flex:1;display:flex;flex-direction:column;gap:12px}
+.panel{padding:10px}
+.row{display:flex;gap:8px;align-items:center;margin-top:8px}
+input[type=number], select{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;color:#fff}
+.btn{padding:8px 10px;border-radius:8px;border:0;background:rgba(255,255,255,0.04);color:#fff;cursor:pointer;font-weight:600}
+.btn.gold{background:linear-gradient(90deg,var(--gold),var(--gold-2));color:#000;font-weight:700;box-shadow:0 6px 20px rgba(212,175,55,0.12)}
+.btn.player{background:var(--player)}.btn.banker{background:var(--banker)}.btn.tie{background:var(--tie)}
+.small{font-size:13px;color:var(--muted)}
+.muted{color:var(--muted);font-size:12px}
+.pattern-list{list-style:none;padding:6px;margin:6px 0 0 0;max-height:200px;overflow:auto}
+.pattern-list li{padding:8px;border-radius:8px;margin-bottom:6px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);display:flex;justify-content:space-between;align-items:center}
+.section-title{font-weight:700;margin-bottom:6px;color:var(--gold)}
+.stat-table{width:100%;border-collapse:collapse}
+.stat-table th,.stat-table td{border:1px solid rgba(255,255,255,0.05);padding:6px;text-align:center}
+.stat-table th{background:rgba(212,175,55,0.1);font-weight:600}
+.player{color:var(--player);font-weight:700}
+.banker{color:var(--banker);font-weight:700}
+.tie{color:var(--tie);font-weight:700}
+.pred-head{display:flex;justify-content:space-between;align-items:center}
+.final{font-size:22px;font-weight:800;text-align:center;padding:12px;background:linear-gradient(90deg,rgba(212,175,55,0.06),transparent);border-radius:10px}
+.log{max-height:280px;overflow:auto;padding:8px}
+.foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.credits{opacity:0.85}
+canvas{border-radius:10px;background:#0f0e10}
+.color-legend{display:flex;gap:15px;justify-content:center;margin-bottom:10px;font-size:14px}
+.color-legend span{padding:4px 8px;border-radius:6px}
+.prediction-cards{display:flex;gap:10px;justify-content:center;margin:10px 0}
+.pred-card{padding:10px;border-radius:8px;text-align:center;min-width:80px}
+.pred-card.active{transform:scale(1.1);border:2px solid var(--gold)}
+.win-effect{animation:winPulse 0.5s ease-in-out}
+.loss-effect{animation:lossShake 0.5s ease-in-out}
+@keyframes winPulse{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+@keyframes lossShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.analysis-result{margin-top:10px;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;text-align:center}
+</style>
 </head>
-<body class="dark">
+<body>
 <div class="app">
 <header class="top card">
   <div class="brand">
     <div class="logo">AYOUB BACCARAT PRO</div>
-    <div class="subtitle" id="subtitle">متنبئ ذكي يعتمد على قوة الأنماط 🎰🌙</div>
+    <div class="subtitle">متنبئ ذكي يعتمد على قوة الأنماط 🎰🌙</div>
   </div>
   <div class="controls">
     <button id="btnReset" class="btn gold">إعادة تعيين</button>
   </div>
 </header>
+
 <main class="card layout">
 <aside class="left">
   <div class="panel card">
-    <label id="windowLabelText">نافذة التحليل (5 - 10)</label>
+    <label>نافذة التحليل (5 - 10)</label>
     <div class="row">
       <input id="windowSize" type="number" min="5" max="10" value="5">
       <button id="applyWindow" class="btn gold">تطبيق</button>
     </div>
-    <div class="muted small">المجموع تقريباً: 74 - 76 جولة</div>
+    <div class="muted small">يحلل آخر 5-10 جولات للتنبؤ</div>
   </div>
 
   <div class="panel card">
+    <div class="section-title">إدخال النتائج</div>
     <div class="row">
       <button class="btn player" id="btnP">لاعب 🔵</button>
       <button class="btn banker" id="btnB">مصرفي 🔴</button>
       <button class="btn tie" id="btnT">تعادل 🟢</button>
-      <button class="btn ghost" id="btnUndo">تراجع</button>
+    </div>
+    <div class="row">
+      <button class="btn" id="btnUndo" style="flex:1">تراجع</button>
     </div>
   </div>
 
   <div class="panel card patterns">
-    <div class="section-title" id="patternsTitle">مكتشفات الأنماط</div>
-    <ul id="patternList" class="pattern-list"></ul>
+    <div class="section-title">الأنماط المكتشفة</div>
+    <ul id="patternList" class="pattern-list">
+      <li>تتابع: 0</li>
+      <li>تبادل: 0</li>
+      <li>ازدواج: 0</li>
+    </ul>
   </div>
 
   <div class="panel card stats">
     <div class="section-title">الإحصاءات</div>
     <table class="stat-table">
       <thead>
-        <tr><th>الجهة</th><th>عدد الجولات</th><th>توقع صحيح</th><th>توقع خاطئ</th><th>نسبة توقع (%)</th></tr>
+        <tr><th>الجهة</th><th>المجموع</th><th>فوز</th><th>خسارة</th><th>نسبة %</th></tr>
       </thead>
       <tbody>
         <tr><td class="player">لاعب</td><td id="pTotal">0</td><td id="pWin">0</td><td id="pLoss">0</td><td id="pPct">0%</td></tr>
@@ -59,8 +114,8 @@
 
 <section class="right card prediction">
   <div class="pred-head">
-    <div class="pred-title" id="predTitle">توقع الجولة القادمة</div>
-    <div class="pred-sub" id="predSub">نسبة الثقة معتمدة على الأنماط</div>
+    <div class="pred-title">توقع الجولة القادمة</div>
+    <div class="pred-sub">نسبة الثقة معتمدة على الأنماط</div>
   </div>
 
   <div class="color-legend">
@@ -68,16 +123,345 @@
     <span class="banker">🔴 مصرفي</span>
     <span class="tie">🟢 تعادل</span>
   </div>
+  
   <canvas id="bigRoad" width="500" height="400"></canvas>
 
-  <div class="final card" id="finalCard">—</div>
-  <div class="log card" id="log"></div>
+  <div class="prediction-cards">
+    <div class="pred-card player" id="predP">
+      <div>لاعب</div>
+      <div id="predPctP">0%</div>
+    </div>
+    <div class="pred-card banker" id="predB">
+      <div>مصرفي</div>
+      <div id="predPctB">0%</div>
+    </div>
+    <div class="pred-card tie" id="predT">
+      <div>تعادل</div>
+      <div id="predPctT">0%</div>
+    </div>
+  </div>
+
+  <div class="analysis-result">
+    <div class="muted">التوقع الحالي:</div>
+    <div class="final" id="finalCard">—</div>
+  </div>
+
+  <div class="log card" id="log">
+    <div class="muted">سجل الأحداث:</div>
+  </div>
 </section>
 </main>
+
 <footer class="foot card">
-<div id="footerText">تصميم: Ayoub • تيمة ذهبية داكنة</div>
+<div>تصميم: Ayoub • تيمة ذهبية داكنة</div>
 <div class="credits small">نافذة 5-10 • خوارزميات وزن الأنماط • واجهة عربية</div>
 </footer>
-<script src="logic.js"></script>
+
+<script>
+// Logic.js for AYBOUB BACCARAT PRO FULL
+const state = {
+  rounds: [],
+  windowSize: 5,
+  count: { P: 0, B: 0, T: 0 },
+  win: { P: 0, B: 0, T: 0 },
+  loss: { P: 0, B: 0, T: 0 },
+  patterns: {
+    تتابع: 0,
+    تبادل: 0,
+    ازدواج: 0,
+    ثلاثي: 0,
+    قفزة: 0,
+    تجمع: 0
+  }
+};
+
+const el = id => document.getElementById(id);
+
+function init() {
+  el('windowSize').value = state.windowSize;
+  el('applyWindow').onclick = () => {
+    const v = Number(el('windowSize').value);
+    if (v < 5 || v > 10) {
+      alert('النافذة يجب أن تكون بين 5 و 10');
+      return;
+    }
+    state.windowSize = v;
+    updateAll();
+    log('تم تغيير نافذة التحليل إلى ' + v);
+  };
+
+  el('btnP').onclick = () => pushRound('P');
+  el('btnB').onclick = () => pushRound('B');
+  el('btnT').onclick = () => pushRound('T');
+  el('btnUndo').onclick = undoRound;
+  el('btnReset').onclick = resetAll;
+
+  updateAll();
+}
+
+function pushRound(r) {
+  state.rounds.push(r);
+  state.count[r]++;
+  updatePatterns();
+  
+  const pred = predict();
+  const didWin = (r === pred.final);
+  
+  if (didWin) state.win[r]++;
+  else state.loss[r]++;
+  
+  updatePredictionDisplay(pred);
+  showResult(r, pred, didWin);
+  updateAll();
+}
+
+function undoRound() {
+  if (state.rounds.length === 0) return;
+  
+  const lastRound = state.rounds.pop();
+  state.count[lastRound]--;
+  
+  // إزالة الفوز/الخسارة الأخيرة
+  const pred = predict();
+  if (lastRound === pred.final) {
+    state.win[lastRound] = Math.max(0, state.win[lastRound] - 1);
+  } else {
+    state.loss[lastRound] = Math.max(0, state.loss[lastRound] - 1);
+  }
+  
+  log('تراجع عن آخر جولة');
+  updateAll();
+}
+
+function resetAll() {
+  state.rounds = [];
+  state.count = { P: 0, B: 0, T: 0 };
+  state.win = { P: 0, B: 0, T: 0 };
+  state.loss = { P: 0, B: 0, T: 0 };
+  state.patterns = { تتابع: 0, تبادل: 0, ازدواج: 0, ثلاثي: 0, قفزة: 0, تجمع: 0 };
+  
+  log('تم إعادة تعيين كل البيانات');
+  updateAll();
+}
+
+function updatePatterns() {
+  const recent = state.rounds.slice(-state.windowSize);
+  if (recent.length < 2) return;
+
+  // حساب التتابع
+  let streak = 1;
+  for (let i = 1; i < recent.length; i++) {
+    if (recent[i] === recent[i - 1]) streak++;
+    else break;
+  }
+  state.patterns.تتابع = streak;
+
+  // حساب التبادل (PingPong)
+  let pingpong = 0;
+  for (let i = 1; i < recent.length; i++) {
+    if (recent[i] !== recent[i - 1]) pingpong++;
+  }
+  state.patterns.تبادل = pingpong;
+
+  // حساب الازدواج
+  let doubles = 0;
+  for (let i = 1; i < recent.length; i++) {
+    if (recent[i] === recent[i - 1]) doubles++;
+  }
+  state.patterns.ازدواج = doubles;
+}
+
+function predict() {
+  const n = Math.min(state.windowSize, state.rounds.length);
+  const recent = state.rounds.slice(-n);
+  
+  if (recent.length === 0) {
+    return { P: 33.3, B: 33.3, T: 33.3, final: '—' };
+  }
+
+  const counts = { P: 0, B: 0, T: 0 };
+  recent.forEach(x => counts[x]++);
+  
+  const total = recent.length;
+  const baseFreq = {
+    P: (counts.P / total) * 100,
+    B: (counts.B / total) * 100,
+    T: (counts.T / total) * 100
+  };
+
+  // تطبيق وزن الأنماط
+  const weights = calculatePatternWeights();
+  baseFreq.P *= weights.P;
+  baseFreq.B *= weights.B;
+  baseFreq.T *= weights.T;
+
+  // تطبيع النسب
+  const sum = baseFreq.P + baseFreq.B + baseFreq.T;
+  const normalized = {
+    P: (baseFreq.P / sum) * 100,
+    B: (baseFreq.B / sum) * 100,
+    T: (baseFreq.T / sum) * 100
+  };
+
+  let final = Object.entries(normalized).sort((a, b) => b[1] - a[1])[0][0];
+  if (normalized[final] < 40) final = '—'; // عدم التوقع إذا كانت الثقة ضعيفة
+
+  return {
+    P: normalized.P.toFixed(1),
+    B: normalized.B.toFixed(1),
+    T: normalized.T.toFixed(1),
+    final
+  };
+}
+
+function calculatePatternWeights() {
+  const weights = { P: 1, B: 1, T: 1 };
+  const lastRound = state.rounds[state.rounds.length - 1];
+  
+  // وزن التتابع
+  if (state.patterns.تتابع >= 2) {
+    weights[lastRound] *= 0.7; // تقليل احتمال تكرار التتابع الطويل
+  }
+  
+  // وزن التبادل
+  if (state.patterns.تبادل >= 3) {
+    weights[lastRound] *= 0.8; // تقليل احتمال استمرار التبادل
+    const other = lastRound === 'P' ? 'B' : 'P';
+    weights[other] *= 1.2;
+  }
+  
+  return weights;
+}
+
+function updatePredictionDisplay(pred) {
+  el('predPctP').textContent = pred.P + '%';
+  el('predPctB').textContent = pred.B + '%';
+  el('predPctT').textContent = pred.T + '%';
+  
+  // إزالة التنشيط من جميع البطاقات
+  ['predP', 'predB', 'predT'].forEach(id => {
+    el(id).classList.remove('active');
+  });
+  
+  // تفعيل البطاقة المتوقعة
+  if (pred.final !== '—') {
+    el('pred' + pred.final).classList.add('active');
+  }
+  
+  let finalText = '—';
+  if (pred.final === 'P') finalText = 'لاعب';
+  else if (pred.final === 'B') finalText = 'مصرفي';
+  else if (pred.final === 'T') finalText = 'تعادل';
+  
+  el('finalCard').textContent = finalText;
+}
+
+function showResult(r, pred, didWin) {
+  const resultText = getResultText(r);
+  const predText = getResultText(pred.final);
+  
+  const message = (didWin ? '🎉 فوز: ' : '❌ خسارة: ') + resultText + 
+                  ' | متوقع: ' + predText + 
+                  ' (ن: ' + pred.P + '%, م: ' + pred.B + '%, ت: ' + pred.T + '%)';
+  
+  log(message);
+  
+  // تأثير مرئي
+  const finalCard = el('finalCard');
+  finalCard.classList.remove('win-effect', 'loss-effect');
+  setTimeout(() => {
+    finalCard.classList.add(didWin ? 'win-effect' : 'loss-effect');
+  }, 10);
+}
+
+function getResultText(r) {
+  if (r === 'P') return 'لاعب';
+  if (r === 'B') return 'مصرفي';
+  if (r === 'T') return 'تعادل';
+  return '—';
+}
+
+function log(msg) {
+  const lg = el('log');
+  const d = document.createElement('div');
+  d.textContent = '• ' + msg;
+  d.style.padding = '4px 0';
+  d.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+  lg.appendChild(d);
+  lg.scrollTop = lg.scrollHeight;
+}
+
+function updateAll() {
+  renderStats();
+  renderBigRoad();
+  renderPatterns();
+  updatePredictionCounts();
+}
+
+function renderStats() {
+  el('pTotal').textContent = state.count.P;
+  el('bTotal').textContent = state.count.B;
+  el('tTotal').textContent = state.count.T;
+  
+  el('pWin').textContent = state.win.P;
+  el('bWin').textContent = state.win.B;
+  el('tWin').textContent = state.win.T;
+  
+  el('pLoss').textContent = state.loss.P;
+  el('bLoss').textContent = state.loss.B;
+  el('tLoss').textContent = state.loss.T;
+  
+  el('pPct').textContent = calculatePercentage(state.win.P, state.loss.P);
+  el('bPct').textContent = calculatePercentage(state.win.B, state.loss.B);
+  el('tPct').textContent = calculatePercentage(state.win.T, state.loss.T);
+}
+
+function calculatePercentage(win, loss) {
+  const total = win + loss;
+  return total > 0 ? ((win / total) * 100).toFixed(1) + '%' : '0%';
+}
+
+function renderBigRoad() {
+  const canvas = el('bigRoad');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  const size = 25;
+  let x = 0, y = 0;
+  const maxCols = Math.floor(canvas.width / size);
+  
+  for (let i = 0; i < state.rounds.length; i++) {
+    const r = state.rounds[i];
+    ctx.fillStyle = r === 'P' ? '#2d7ef7' : r === 'B' ? '#e03b3b' : '#28a745';
+    ctx.fillRect(x * size, y * size, size - 2, size - 2);
+    
+    y++;
+    if (y * size >= canvas.height) {
+      y = 0;
+      x++;
+      if (x >= maxCols) break;
+    }
+  }
+}
+
+function renderPatterns() {
+  const ul = el('patternList');
+  ul.innerHTML = '';
+  
+  for (const [pattern, value] of Object.entries(state.patterns)) {
+    const li = document.createElement('li');
+    li.innerHTML = `<span>${pattern}</span><span>${value}</span>`;
+    ul.appendChild(li);
+  }
+}
+
+function updatePredictionCounts() {
+  const pred = predict();
+  updatePredictionDisplay(pred);
+}
+
+// التهيئة عند تحميل الصفحة
+window.onload = init;
+</script>
 </body>
 </html>
