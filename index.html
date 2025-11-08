@@ -98,21 +98,6 @@ canvas{border-radius:10px;background:#0f0e10}
 .accuracy-grid {stroke: rgba(255,255,255,0.1); stroke-width: 1;}
 :root[data-theme="light"] .accuracy-grid {stroke: rgba(0,0,0,0.1);}
 .accuracy-tooltip {position: absolute; background: rgba(0,0,0,0.8); color: white; padding: 5px 8px; border-radius: 4px; font-size: 12px; pointer-events: none; opacity: 0; transition: opacity 0.2s;}
-
-/* مؤشرات الذكاء الجديدة */
-.intelligence-panel {margin-top: 12px;}
-.intelligence-stats {display: grid; grid-template-columns: 1fr 1fr; gap: 10px;}
-.intelligence-card {background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; text-align: center;}
-:root[data-theme="light"] .intelligence-card {background: rgba(0,0,0,0.03);}
-.intelligence-value {font-size: 20px; font-weight: 800; margin: 5px 0;}
-.intelligence-label {font-size: 11px; color: var(--muted);}
-.quality-badge {display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; margin-top: 4px;}
-.quality-good {background: #28a745; color: white;}
-.quality-medium {background: #ffc107; color: black;}
-.quality-weak {background: #dc3545; color: white;}
-.confidence-meter {height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin: 8px 0; overflow: hidden;}
-:root[data-theme="light"] .confidence-meter {background: rgba(0,0,0,0.1);}
-.confidence-fill {height: 100%; background: linear-gradient(90deg, #28a745, #ffc107, #dc3545); border-radius: 3px; transition: width 0.3s;}
 </style>
 </head>
 <body>
@@ -209,45 +194,6 @@ canvas{border-radius:10px;background:#0f0e10}
     <div class="final" id="finalCard">—</div>
   </div>
 
-  <!-- مؤشرات الذكاء الجديدة -->
-  <div class="panel card intelligence-panel">
-    <div class="section-title">مؤشرات ذكاء التوقع</div>
-    <div class="intelligence-stats">
-      <div class="intelligence-card">
-        <div class="intelligence-label">مؤشر الذكاء</div>
-        <div class="intelligence-value" id="iqScore">0</div>
-        <div class="confidence-meter">
-          <div class="confidence-fill" id="iqMeter" style="width: 0%"></div>
-        </div>
-        <div id="iqBadge" class="quality-badge quality-weak">ضعيف</div>
-      </div>
-      <div class="intelligence-card">
-        <div class="intelligence-label">جودة التوقعات</div>
-        <div class="intelligence-value" id="qualityScore">0%</div>
-        <div class="confidence-meter">
-          <div class="confidence-fill" id="qualityMeter" style="width: 0%"></div>
-        </div>
-        <div id="qualityBadge" class="quality-badge quality-weak">ضعيف</div>
-      </div>
-      <div class="intelligence-card">
-        <div class="intelligence-label">فوق العشوائية</div>
-        <div class="intelligence-value" id="randomBeat">+0%</div>
-        <div class="confidence-meter">
-          <div class="confidence-fill" id="randomMeter" style="width: 0%"></div>
-        </div>
-        <div id="randomBadge" class="quality-badge quality-weak">ضعيف</div>
-      </div>
-      <div class="intelligence-card">
-        <div class="intelligence-label">ثقة الأنماط</div>
-        <div class="intelligence-value" id="patternConfidence">0%</div>
-        <div class="confidence-meter">
-          <div class="confidence-fill" id="patternMeter" style="width: 0%"></div>
-        </div>
-        <div id="patternBadge" class="quality-badge quality-weak">ضعيف</div>
-      </div>
-    </div>
-  </div>
-
   <!-- منحنى التوقعات المضاف -->
   <div class="panel card accuracy-panel">
     <div class="section-title">منحنى دقة التوقعات</div>
@@ -276,18 +222,18 @@ canvas{border-radius:10px;background:#0f0e10}
 
 <footer class="foot card">
 <div>تصميم: Ayoub • تيمة ذهبية داكنة</div>
-<div class="credits small">نافذة 5-10 • خوارزميات وزن الأنماط • واجهة عربية • منحنى التوقعات • مؤشرات الذكاء</div>
+<div class="credits small">نافذة 5-10 • خوارزميات وزن الأنماط • واجهة عربية • منحنى التوقعات</div>
 </footer>
 
 <script>
-// Logic.js for AYBOUB BACCARAT PRO FULL - النسخة المحسنة
+// Logic.js for AYBOUB BACCARAT PRO FULL
 const state = {
   rounds: [],
   windowSize: 5,
   count: { P: 0, B: 0, T: 0 },
   win: { P: 0, B: 0, T: 0 },
   loss: { P: 0, B: 0, T: 0 },
-  lastPrediction: null,
+  lastPrediction: null, // لتخزين التوقع الأخير
   patterns: {
     تتابع: 0,
     تبادل: 0,
@@ -297,17 +243,8 @@ const state = {
     تجمع: 0
   },
   // بيانات منحنى التوقعات
-  accuracyHistory: [],
-  predictionsHistory: [],
-  // بيانات مؤشرات الذكاء الجديدة
-  intelligence: {
-    iqScore: 0,
-    qualityScore: 0,
-    randomBeat: 0,
-    patternConfidence: 0,
-    highConfidencePredictions: 0,
-    highConfidenceWins: 0
-  }
+  accuracyHistory: [], // تخزين دقة التوقع بعد كل جولة
+  predictionsHistory: [] // تخزين التوقعات والنتائج الفعلية
 };
 
 const el = id => document.getElementById(id);
@@ -344,7 +281,7 @@ function toggleTheme() {
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', newTheme);
   el('themeToggle').textContent = newTheme === 'dark' ? '🌚' : '🌕';
-  updateAccuracyChart();
+  updateAccuracyChart(); // إعادة رسم المخطط عند تغيير السمة
 }
 
 function pushRound(r) {
@@ -368,9 +305,8 @@ function pushRound(r) {
     }
   }
   
-  // تحديث بيانات منحنى التوقعات ومؤشرات الذكاء
+  // تحديث بيانات منحنى التوقعات
   updateAccuracyData(r);
-  updateIntelligenceData(r, pred);
   
   // تحديث التوقع الجديد
   const newPred = predict();
@@ -395,7 +331,7 @@ function undoRound() {
     }
   }
   
-  // إزالة آخر بيانات الدقة والذكاء
+  // إزالة آخر بيانات الدقة
   if (state.accuracyHistory.length > 0) {
     state.accuracyHistory.pop();
     state.predictionsHistory.pop();
@@ -414,14 +350,6 @@ function resetAll() {
   state.patterns = { تتابع: 0, تبادل: 0, ازدواج: 0, ثلاثي: 0, قفزة: 0, تجمع: 0 };
   state.accuracyHistory = [];
   state.predictionsHistory = [];
-  state.intelligence = {
-    iqScore: 0,
-    qualityScore: 0,
-    randomBeat: 0,
-    patternConfidence: 0,
-    highConfidencePredictions: 0,
-    highConfidenceWins: 0
-  };
   
   updateAll();
 }
@@ -486,7 +414,7 @@ function predict() {
   };
 
   let final = Object.entries(normalized).sort((a, b) => b[1] - a[1])[0][0];
-  if (normalized[final] < 40) final = '—';
+  if (normalized[final] < 40) final = '—'; // عدم التوقع إذا كانت الثقة ضعيفة
 
   return {
     P: normalized.P.toFixed(1),
@@ -502,12 +430,12 @@ function calculatePatternWeights() {
   
   // وزن التتابع
   if (state.patterns.تتابع >= 2) {
-    weights[lastRound] *= 0.7;
+    weights[lastRound] *= 0.7; // تقليل احتمال تكرار التتابع الطويل
   }
   
   // وزن التبادل
   if (state.patterns.تبادل >= 3) {
-    weights[lastRound] *= 0.8;
+    weights[lastRound] *= 0.8; // تقليل احتمال استمرار التبادل
     const other = lastRound === 'P' ? 'B' : 'P';
     weights[other] *= 1.2;
   }
@@ -539,6 +467,7 @@ function updatePredictionDisplay(pred) {
 }
 
 function showResult(r, pred, didWin) {
+  // تأثير مرئي
   const finalCard = el('finalCard');
   finalCard.classList.remove('win-effect', 'loss-effect');
   setTimeout(() => {
@@ -553,7 +482,6 @@ function updateAll() {
   updatePredictionCounts();
   updateAccuracyStats();
   updateAccuracyChart();
-  updateIntelligenceDisplay();
 }
 
 function renderStats() {
@@ -584,6 +512,7 @@ function renderBigRoad() {
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
+  // تكبير حجم المربعات
   const size = 35;
   let x = 0, y = 0;
   const maxCols = Math.floor(canvas.width / size);
@@ -591,9 +520,11 @@ function renderBigRoad() {
   for (let i = 0; i < state.rounds.length; i++) {
     const r = state.rounds[i];
     
+    // رسم المربع
     ctx.fillStyle = r === 'P' ? '#3a86ff' : r === 'B' ? '#ff006e' : '#38b000';
     ctx.fillRect(x * size, y * size, size - 2, size - 2);
     
+    // إضافة رقم الجولة داخل المربع
     ctx.fillStyle = '#ffffff';
     ctx.font = 'bold 14px Inter';
     ctx.textAlign = 'center';
@@ -625,7 +556,7 @@ function updatePredictionCounts() {
   updatePredictionDisplay(pred);
 }
 
-// وظائف منحنى التوقعات
+// وظائف منحنى التوقعات الجديدة
 function updateAccuracyData(actualResult) {
   if (state.lastPrediction && state.lastPrediction !== '—') {
     const isCorrect = state.lastPrediction === actualResult;
@@ -635,6 +566,7 @@ function updateAccuracyData(actualResult) {
       correct: isCorrect
     });
     
+    // حساب الدقة الحالية
     const correctPredictions = state.predictionsHistory.filter(p => p.correct).length;
     const totalPredictions = state.predictionsHistory.length;
     const accuracy = totalPredictions > 0 ? (correctPredictions / totalPredictions) * 100 : 0;
@@ -682,6 +614,7 @@ function updateAccuracyChart() {
     line.setAttribute('y2', y);
     svg.appendChild(line);
     
+    // إضافة النسب المئوية
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     text.setAttribute('x', padding - 5);
     text.setAttribute('y', y + 4);
@@ -713,6 +646,7 @@ function updateAccuracyChart() {
     point.setAttribute('cy', y);
     point.setAttribute('data-index', index);
     
+    // إضافة تفاعل عند المرور على النقاط
     point.addEventListener('mouseover', (e) => {
       const rect = svg.getBoundingClientRect();
       tooltip.style.left = (e.clientX - rect.left + 10) + 'px';
@@ -731,85 +665,6 @@ function updateAccuracyChart() {
   path.setAttribute('d', pathData);
   path.setAttribute('class', 'accuracy-line');
   svg.appendChild(path);
-}
-
-// وظائف مؤشرات الذكاء الجديدة
-function updateIntelligenceData(actualResult, prediction) {
-  if (state.lastPrediction && state.lastPrediction !== '—') {
-    const isCorrect = state.lastPrediction === actualResult;
-    
-    // حساب مؤشر الذكاء (0-100)
-    const totalPredictions = state.predictionsHistory.length + 1;
-    const correctPredictions = state.predictionsHistory.filter(p => p.correct).length + (isCorrect ? 1 : 0);
-    const randomAccuracy = 33.3; // العشوائية
-    const actualAccuracy = (correctPredictions / totalPredictions) * 100;
-    
-    state.intelligence.iqScore = Math.max(0, ((actualAccuracy - randomAccuracy) / (100 - randomAccuracy)) * 100);
-    
-    // حساب جودة التوقعات
-    const highConfidenceThreshold = 60;
-    const currentConfidence = Math.max(prediction.P, prediction.B, prediction.T);
-    
-    if (currentConfidence >= highConfidenceThreshold) {
-      state.intelligence.highConfidencePredictions++;
-      if (isCorrect) {
-        state.intelligence.highConfidenceWins++;
-      }
-    }
-    
-    state.intelligence.qualityScore = state.intelligence.highConfidencePredictions > 0 ?
-      (state.intelligence.highConfidenceWins / state.intelligence.highConfidencePredictions) * 100 : 0;
-    
-    // حساب فوق العشوائية
-    state.intelligence.randomBeat = actualAccuracy - randomAccuracy;
-    
-    // حساب ثقة الأنماط
-    const patternStrength = (state.patterns.تتابع + state.patterns.تبادل) / 2;
-    state.intelligence.patternConfidence = Math.min(100, patternStrength * 15);
-  }
-}
-
-function updateIntelligenceDisplay() {
-  // مؤشر الذكاء
-  const iqScore = Math.round(state.intelligence.iqScore);
-  el('iqScore').textContent = iqScore;
-  el('iqMeter').style.width = iqScore + '%';
-  updateBadge('iqBadge', iqScore, [30, 60]);
-  
-  // جودة التوقعات
-  const qualityScore = Math.round(state.intelligence.qualityScore);
-  el('qualityScore').textContent = qualityScore + '%';
-  el('qualityMeter').style.width = qualityScore + '%';
-  updateBadge('qualityBadge', qualityScore, [50, 70]);
-  
-  // فوق العشوائية
-  const randomBeat = state.intelligence.randomBeat.toFixed(1);
-  el('randomBeat').textContent = (randomBeat >= 0 ? '+' : '') + randomBeat + '%';
-  const randomMeter = Math.max(0, Math.min(100, (parseFloat(randomBeat) + 33.3) * 1.5));
-  el('randomMeter').style.width = randomMeter + '%';
-  updateBadge('randomBadge', parseFloat(randomBeat), [10, 20]);
-  
-  // ثقة الأنماط
-  const patternConfidence = Math.round(state.intelligence.patternConfidence);
-  el('patternConfidence').textContent = patternConfidence + '%';
-  el('patternMeter').style.width = patternConfidence + '%';
-  updateBadge('patternBadge', patternConfidence, [40, 70]);
-}
-
-function updateBadge(elementId, value, thresholds) {
-  const [medium, good] = thresholds;
-  const badge = el(elementId);
-  
-  if (value >= good) {
-    badge.textContent = 'ممتاز';
-    badge.className = 'quality-badge quality-good';
-  } else if (value >= medium) {
-    badge.textContent = 'جيد';
-    badge.className = 'quality-badge quality-medium';
-  } else {
-    badge.textContent = 'ضعيف';
-    badge.className = 'quality-badge quality-weak';
-  }
 }
 
 // التهيئة عند تحميل الصفحة
