@@ -11,14 +11,9 @@
 <header class="top card">
   <div class="brand">
     <div class="logo">AYOUB BACCARAT PRO</div>
-    <div class="subtitle" id="subtitle">Predictor ذكي بالقوة ديال الأنماط 🎰🌙</div>
+    <div class="subtitle" id="subtitle">متنبئ ذكي يعتمد على قوة الأنماط 🎰🌙</div>
   </div>
   <div class="controls">
-    <select id="langToggle" title="Language">
-      <option value="ar" selected>العربية</option>
-      <option value="en">English</option>
-    </select>
-    <button id="modeToggle" title="Day / Night">نهار</button>
     <button id="btnReset" class="btn gold">إعادة تعيين</button>
   </div>
 </header>
@@ -30,15 +25,15 @@
       <input id="windowSize" type="number" min="5" max="10" value="5">
       <button id="applyWindow" class="btn gold">تطبيق</button>
     </div>
-    <div class="muted small">المجموع تقريبا: 74 - 76 جولة</div>
+    <div class="muted small">المجموع تقريباً: 74 - 76 جولة</div>
   </div>
 
   <div class="panel card">
     <div class="row">
-      <button class="btn player" id="btnP">Player 🔵</button>
-      <button class="btn banker" id="btnB">Banker 🔴</button>
-      <button class="btn tie" id="btnT">Tie 🟢</button>
-      <button class="btn ghost" id="btnUndo">Undo</button>
+      <button class="btn player" id="btnP">لاعب 🔵</button>
+      <button class="btn banker" id="btnB">مصرفي 🔴</button>
+      <button class="btn tie" id="btnT">تعادل 🟢</button>
+      <button class="btn ghost" id="btnUndo">تراجع</button>
     </div>
   </div>
 
@@ -54,9 +49,9 @@
         <tr><th>الجهة</th><th>عدد الجولات</th><th>توقع صحيح</th><th>توقع خاطئ</th><th>نسبة توقع (%)</th></tr>
       </thead>
       <tbody>
-        <tr><td class="player">Player</td><td id="pTotal">0</td><td id="pWin">0</td><td id="pLoss">0</td><td id="pPct">0%</td></tr>
-        <tr><td class="banker">Banker</td><td id="bTotal">0</td><td id="bWin">0</td><td id="bLoss">0</td><td id="bPct">0%</td></tr>
-        <tr><td class="tie">Tie</td><td id="tTotal">0</td><td id="tWin">0</td><td id="tLoss">0</td><td id="tPct">0%</td></tr>
+        <tr><td class="player">لاعب</td><td id="pTotal">0</td><td id="pWin">0</td><td id="pLoss">0</td><td id="pPct">0%</td></tr>
+        <tr><td class="banker">مصرفي</td><td id="bTotal">0</td><td id="bWin">0</td><td id="bLoss">0</td><td id="bPct">0%</td></tr>
+        <tr><td class="tie">تعادل</td><td id="tTotal">0</td><td id="tWin">0</td><td id="tLoss">0</td><td id="tPct">0%</td></tr>
       </tbody>
     </table>
   </div>
@@ -68,15 +63,20 @@
     <div class="pred-sub" id="predSub">نسبة الثقة معتمدة على الأنماط</div>
   </div>
 
-  <canvas id="bigRoad" width="500" height="400" style="background:#0f0e10;border-radius:10px;"></canvas>
+  <div class="color-legend">
+    <span class="player">🔵 لاعب</span>
+    <span class="banker">🔴 مصرفي</span>
+    <span class="tie">🟢 تعادل</span>
+  </div>
+  <canvas id="bigRoad" width="500" height="400"></canvas>
 
   <div class="final card" id="finalCard">—</div>
   <div class="log card" id="log"></div>
 </section>
 </main>
 <footer class="foot card">
-<div id="footerText">تصميم: Ayoub • Dark Gold Theme</div>
-<div class="credits small">Window 5–10 • Heuristic + pattern weights • Arabic/English</div>
+<div id="footerText">تصميم: Ayoub • تيمة ذهبية داكنة</div>
+<div class="credits small">نافذة 5-10 • خوارزميات وزن الأنماط • واجهة عربية</div>
 </footer>
 <script src="logic.js"></script>
 </body>
