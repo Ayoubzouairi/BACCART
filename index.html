@@ -1,4 +1,3 @@
-```html
 <!doctype html>
 <html lang="ar">
 <head>
@@ -8,50 +7,63 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
 :root{--gold:#d4af37;--gold-2:#b8871d;--bg-dark:#070606;--card:#0f0e10;--muted:#bfb7a6;--player:#2d7ef7;--banker:#e03b3b;--tie:#28a745;}
+:root[data-theme="light"]{--gold:#d4af37;--gold-2:#b8871d;--bg-dark:#f5f5f5;--card:#ffffff;--muted:#666666;--player:#2d7ef7;--banker:#e03b3b;--tie:#28a745;}
 *{box-sizing:border-box}
-body{font-family:Inter,sans-serif;margin:0;background:linear-gradient(180deg,#050404,#0b0b0b);color:#fff;padding:18px}
+body{font-family:Inter,sans-serif;margin:0;background:linear-gradient(180deg,var(--bg-dark),#0b0b0b);color:#fff;padding:18px;transition:background 0.3s, color 0.3s;}
+:root[data-theme="light"] body{color:#333;}
 .app{max-width:1200px;margin:0 auto}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
 .logo{font-weight:800;background:linear-gradient(90deg,var(--gold),#fff3b0);color:#000;padding:8px 12px;border-radius:12px;display:inline-block}
 .subtitle{font-size:14px;color:var(--muted);margin-top:4px}
 .controls{display:flex;gap:8px;align-items:center}
 .card{background:linear-gradient(180deg,var(--card),#0b0b0b);border-radius:12px;padding:12px;box-shadow:0 8px 30px rgba(0,0,0,0.6);border:1px solid rgba(212,175,55,0.08)}
+:root[data-theme="light"] .card{background:linear-gradient(180deg,var(--card),#f0f0f0);box-shadow:0 8px 30px rgba(0,0,0,0.1);border:1px solid rgba(0,0,0,0.05)}
 .layout{display:flex;gap:12px}
 .left{width:360px;display:flex;flex-direction:column;gap:10px}
 .right{flex:1;display:flex;flex-direction:column;gap:12px}
 .panel{padding:10px}
 .row{display:flex;gap:8px;align-items:center;margin-top:8px}
 input[type=number], select{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;color:#fff}
-.btn{padding:8px 10px;border-radius:8px;border:0;color:#000;cursor:pointer;font-weight:700;font-size:14px}
-.btn.gold{background:linear-gradient(90deg,var(--gold),var(--gold-2));box-shadow:0 6px 20px rgba(212,175,55,0.12)}
+:root[data-theme="light"] input[type=number], :root[data-theme="light"] select{border:1px solid rgba(0,0,0,0.1);color:#333}
+.btn{padding:12px 16px;border-radius:8px;border:0;background:rgba(255,255,255,0.04);color:#fff;cursor:pointer;font-weight:600;font-size:16px;transition:transform 0.2s}
+:root[data-theme="light"] .btn{background:rgba(0,0,0,0.04);color:#333}
+.btn:hover{transform:translateY(-2px)}
+.btn.gold{background:linear-gradient(90deg,var(--gold),var(--gold-2));color:#000;font-weight:700;box-shadow:0 6px 20px rgba(212,175,55,0.12)}
 .btn.player{background:var(--player)}.btn.banker{background:var(--banker)}.btn.tie{background:var(--tie)}
-.btn.ghost{background:rgba(255,255,255,0.1);color:#fff}
 .small{font-size:13px;color:var(--muted)}
 .muted{color:var(--muted);font-size:12px}
 .pattern-list{list-style:none;padding:6px;margin:6px 0 0 0;max-height:200px;overflow:auto}
 .pattern-list li{padding:8px;border-radius:8px;margin-bottom:6px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);display:flex;justify-content:space-between;align-items:center}
+:root[data-theme="light"] .pattern-list li{background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent)}
 .section-title{font-weight:700;margin-bottom:6px;color:var(--gold)}
 .stat-table{width:100%;border-collapse:collapse}
 .stat-table th,.stat-table td{border:1px solid rgba(255,255,255,0.05);padding:6px;text-align:center}
+:root[data-theme="light"] .stat-table th, :root[data-theme="light"] .stat-table td{border:1px solid rgba(0,0,0,0.05)}
 .stat-table th{background:rgba(212,175,55,0.1);font-weight:600}
 .player{color:var(--player);font-weight:700}
 .banker{color:var(--banker);font-weight:700}
 .tie{color:var(--tie);font-weight:700}
 .pred-head{display:flex;justify-content:space-between;align-items:center}
 .final{font-size:22px;font-weight:800;text-align:center;padding:12px;background:linear-gradient(90deg,rgba(212,175,55,0.06),transparent);border-radius:10px}
+:root[data-theme="light"] .final{background:linear-gradient(90deg,rgba(212,175,55,0.1),transparent)}
 .foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
 .credits{opacity:0.85}
 canvas{border-radius:10px;background:#0f0e10}
+:root[data-theme="light"] canvas{background:#f0f0f0}
 .color-legend{display:flex;gap:15px;justify-content:center;margin-bottom:10px;font-size:14px}
 .color-legend span{padding:4px 8px;border-radius:6px}
 .prediction-cards{display:flex;gap:10px;justify-content:center;margin:10px 0}
-.pred-card{padding:10px;border-radius:8px;text-align:center;min-width:80px;background:rgba(255,255,255,0.05)}
+.pred-card{padding:10px;border-radius:8px;text-align:center;min-width:80px}
 .pred-card.active{transform:scale(1.1);border:2px solid var(--gold)}
 .win-effect{animation:winPulse 0.5s ease-in-out}
 .loss-effect{animation:lossShake 0.5s ease-in-out}
 @keyframes winPulse{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
 @keyframes lossShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 .analysis-result{margin-top:10px;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;text-align:center}
+:root[data-theme="light"] .analysis-result{background:rgba(0,0,0,0.03)}
+.theme-toggle{background:transparent;border:none;font-size:24px;cursor:pointer;padding:5px;border-radius:50%;transition:background 0.3s}
+.theme-toggle:hover{background:rgba(255,255,255,0.1)}
+:root[data-theme="light"] .theme-toggle:hover{background:rgba(0,0,0,0.05)}
 </style>
 </head>
 <body>
@@ -62,6 +74,7 @@ canvas{border-radius:10px;background:#0f0e10}
     <div class="subtitle">متنبئ ذكي يعتمد على قوة الأنماط 🎰🌙</div>
   </div>
   <div class="controls">
+    <button id="themeToggle" class="theme-toggle">🌚</button>
     <button id="btnReset" class="btn gold">إعادة تعيين</button>
   </div>
 </header>
@@ -80,21 +93,21 @@ canvas{border-radius:10px;background:#0f0e10}
   <div class="panel card">
     <div class="section-title">إدخال النتائج</div>
     <div class="row">
-      <button class="btn player" id="btnP">P</button>
-      <button class="btn banker" id="btnB">B</button>
-      <button class="btn tie" id="btnT">T</button>
+      <button class="btn player" id="btnP">لاعب 🔵</button>
+      <button class="btn banker" id="btnB">مصرفي 🔴</button>
+      <button class="btn tie" id="btnT">تعادل 🟢</button>
     </div>
     <div class="row">
-      <button class="btn ghost" id="btnUndo" style="flex:1">تراجع</button>
+      <button class="btn" id="btnUndo" style="flex:1">تراجع</button>
     </div>
   </div>
 
   <div class="panel card patterns">
     <div class="section-title">الأنماط المكتشفة</div>
     <ul id="patternList" class="pattern-list">
-      <li><span>تتابع</span><span>0</span></li>
-      <li><span>تبادل</span><span>0</span></li>
-      <li><span>ازدواج</span><span>0</span></li>
+      <li>تتابع: 0</li>
+      <li>تبادل: 0</li>
+      <li>ازدواج: 0</li>
     </ul>
   </div>
 
@@ -105,9 +118,9 @@ canvas{border-radius:10px;background:#0f0e10}
         <tr><th>الجهة</th><th>المجموع</th><th>فوز</th><th>خسارة</th><th>نسبة %</th></tr>
       </thead>
       <tbody>
-        <tr><td class="player">P</td><td id="pTotal">0</td><td id="pWin">0</td><td id="pLoss">0</td><td id="pPct">0%</td></tr>
-        <tr><td class="banker">B</td><td id="bTotal">0</td><td id="bWin">0</td><td id="bLoss">0</td><td id="bPct">0%</td></tr>
-        <tr><td class="tie">T</td><td id="tTotal">0</td><td id="tWin">0</td><td id="tLoss">0</td><td id="tPct">0%</td></tr>
+        <tr><td class="player">لاعب</td><td id="pTotal">0</td><td id="pWin">0</td><td id="pLoss">0</td><td id="pPct">0%</td></tr>
+        <tr><td class="banker">مصرفي</td><td id="bTotal">0</td><td id="bWin">0</td><td id="bLoss">0</td><td id="bPct">0%</td></tr>
+        <tr><td class="tie">تعادل</td><td id="tTotal">0</td><td id="tWin">0</td><td id="tLoss">0</td><td id="tPct">0%</td></tr>
       </tbody>
     </table>
   </div>
@@ -115,35 +128,35 @@ canvas{border-radius:10px;background:#0f0e10}
 
 <section class="right card prediction">
   <div class="pred-head">
-    <div style="font-weight:700;color:var(--gold)">توقع الجولة القادمة</div>
-    <div class="muted">نسبة الثقة معتمدة على الأنماط</div>
+    <div class="pred-title">توقع الجولة القادمة</div>
+    <div class="pred-sub">نسبة الثقة معتمدة على الأنماط</div>
   </div>
 
   <div class="color-legend">
-    <span class="player">🔵 P</span>
-    <span class="banker">🔴 B</span>
-    <span class="tie">🟢 T</span>
+    <span class="player">🔵 لاعب</span>
+    <span class="banker">🔴 مصرفي</span>
+    <span class="tie">🟢 تعادل</span>
   </div>
   
   <canvas id="bigRoad" width="500" height="400"></canvas>
 
   <div class="prediction-cards">
     <div class="pred-card player" id="predP">
-      <div style="font-weight:600;margin-bottom:5px;">P</div>
-      <div id="predPctP" style="font-size:18px;font-weight:700;">0%</div>
+      <div>لاعب</div>
+      <div id="predPctP">0%</div>
     </div>
     <div class="pred-card banker" id="predB">
-      <div style="font-weight:600;margin-bottom:5px;">B</div>
-      <div id="predPctB" style="font-size:18px;font-weight:700;">0%</div>
+      <div>مصرفي</div>
+      <div id="predPctB">0%</div>
     </div>
     <div class="pred-card tie" id="predT">
-      <div style="font-weight:600;margin-bottom:5px;">T</div>
-      <div id="predPctT" style="font-size:18px;font-weight:700;">0%</div>
+      <div>تعادل</div>
+      <div id="predPctT">0%</div>
     </div>
   </div>
 
   <div class="analysis-result">
-    <div class="muted" style="margin-bottom:8px;">التوقع الحالي:</div>
+    <div class="muted">التوقع الحالي:</div>
     <div class="final" id="finalCard">—</div>
   </div>
 </section>
@@ -151,7 +164,7 @@ canvas{border-radius:10px;background:#0f0e10}
 
 <footer class="foot card">
 <div>تصميم: Ayoub • تيمة ذهبية داكنة</div>
-<div class="credits small">نافذة 5-10 • خوارزميات وزن الأنماط</div>
+<div class="credits small">نافذة 5-10 • خوارزميات وزن الأنماط • واجهة عربية</div>
 </footer>
 
 <script>
@@ -169,8 +182,7 @@ const state = {
     ثلاثي: 0,
     قفزة: 0,
     تجمع: 0
-  },
-  lastPrediction: { P: 0, B: 0, T: 0, final: '—' }
+  }
 };
 
 const el = id => document.getElementById(id);
@@ -192,35 +204,36 @@ function init() {
   el('btnT').onclick = () => pushRound('T');
   el('btnUndo').onclick = undoRound;
   el('btnReset').onclick = resetAll;
+  
+  // إعداد تبديل الوضع الليلي/النهاري
+  el('themeToggle').onclick = toggleTheme;
+  
+  // تعيين الوضع الافتراضي (ليلي)
+  document.documentElement.setAttribute('data-theme', 'dark');
 
   updateAll();
 }
 
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  el('themeToggle').textContent = newTheme === 'dark' ? '🌚' : '🌕';
+}
+
 function pushRound(r) {
-  // حفظ التوقع الحالي قبل إضافة الجولة الجديدة
-  const currentPrediction = state.lastPrediction;
-  
-  // إضافة الجولة الجديدة
   state.rounds.push(r);
   state.count[r]++;
   updatePatterns();
   
-  // حساب إذا كان التوقع صحيحاً بناءً على التوقع السابق
-  const didWin = (r === currentPrediction.final && currentPrediction.final !== '—');
+  const pred = predict();
+  const didWin = (r === pred.final);
   
-  // تحديث إحصائيات الفوز/الخسارة
-  if (didWin) {
-    state.win[r]++;
-  } else if (currentPrediction.final !== '—') {
-    // فقط سجل خسارة إذا كان هناك توقع فعلي
-    state.loss[currentPrediction.final]++;
-  }
+  if (didWin) state.win[r]++;
+  else state.loss[r]++;
   
-  // تحديث التوقع الجديد
-  state.lastPrediction = predict();
-  
-  updatePredictionDisplay(state.lastPrediction);
-  showResult(r, currentPrediction, didWin);
+  updatePredictionDisplay(pred);
+  showResult(r, pred, didWin);
   updateAll();
 }
 
@@ -230,11 +243,13 @@ function undoRound() {
   const lastRound = state.rounds.pop();
   state.count[lastRound]--;
   
-  // إعادة حساب الأنماط
-  updatePatterns();
-  
-  // إعادة تعيين التوقع
-  state.lastPrediction = predict();
+  // إزالة الفوز/الخسارة الأخيرة
+  const pred = predict();
+  if (lastRound === pred.final) {
+    state.win[lastRound] = Math.max(0, state.win[lastRound] - 1);
+  } else {
+    state.loss[lastRound] = Math.max(0, state.loss[lastRound] - 1);
+  }
   
   updateAll();
 }
@@ -245,21 +260,17 @@ function resetAll() {
   state.win = { P: 0, B: 0, T: 0 };
   state.loss = { P: 0, B: 0, T: 0 };
   state.patterns = { تتابع: 0, تبادل: 0, ازدواج: 0, ثلاثي: 0, قفزة: 0, تجمع: 0 };
-  state.lastPrediction = { P: 33.3, B: 33.3, T: 33.3, final: '—' };
   
   updateAll();
 }
 
 function updatePatterns() {
   const recent = state.rounds.slice(-state.windowSize);
-  if (recent.length < 2) {
-    state.patterns = { تتابع: 0, تبادل: 0, ازدواج: 0, ثلاثي: 0, قفزة: 0, تجمع: 0 };
-    return;
-  }
+  if (recent.length < 2) return;
 
   // حساب التتابع
   let streak = 1;
-  for (let i = recent.length - 1; i > 0; i--) {
+  for (let i = 1; i < recent.length; i++) {
     if (recent[i] === recent[i - 1]) streak++;
     else break;
   }
@@ -313,9 +324,7 @@ function predict() {
   };
 
   let final = Object.entries(normalized).sort((a, b) => b[1] - a[1])[0][0];
-  
-  // فقط توقع إذا كانت النسبة أعلى من 35%
-  if (normalized[final] < 35) final = '—';
+  if (normalized[final] < 40) final = '—'; // عدم التوقع إذا كانت الثقة ضعيفة
 
   return {
     P: normalized.P.toFixed(1),
@@ -329,17 +338,16 @@ function calculatePatternWeights() {
   const weights = { P: 1, B: 1, T: 1 };
   const lastRound = state.rounds[state.rounds.length - 1];
   
-  if (!lastRound) return weights;
-  
-  // وزن التتابع - تقليل احتمال التكرار الطويل
-  if (state.patterns.تتابع >= 3) {
-    weights[lastRound] *= 0.6;
+  // وزن التتابع
+  if (state.patterns.تتابع >= 2) {
+    weights[lastRound] *= 0.7; // تقليل احتمال تكرار التتابع الطويل
   }
   
-  // وزن التبادل - زيادة احتمال تغيير النمط
-  if (state.patterns.تبادل >= 4) {
+  // وزن التبادل
+  if (state.patterns.تبادل >= 3) {
+    weights[lastRound] *= 0.8; // تقليل احتمال استمرار التبادل
     const other = lastRound === 'P' ? 'B' : 'P';
-    weights[other] *= 1.3;
+    weights[other] *= 1.2;
   }
   
   return weights;
@@ -361,9 +369,9 @@ function updatePredictionDisplay(pred) {
   }
   
   let finalText = '—';
-  if (pred.final === 'P') finalText = 'P';
-  else if (pred.final === 'B') finalText = 'B';
-  else if (pred.final === 'T') finalText = 'T';
+  if (pred.final === 'P') finalText = 'لاعب';
+  else if (pred.final === 'B') finalText = 'مصرفي';
+  else if (pred.final === 'T') finalText = 'تعادل';
   
   el('finalCard').textContent = finalText;
 }
@@ -373,11 +381,7 @@ function showResult(r, pred, didWin) {
   const finalCard = el('finalCard');
   finalCard.classList.remove('win-effect', 'loss-effect');
   setTimeout(() => {
-    if (didWin) {
-      finalCard.classList.add('win-effect');
-    } else if (pred.final !== '—') {
-      finalCard.classList.add('loss-effect');
-    }
+    finalCard.classList.add(didWin ? 'win-effect' : 'loss-effect');
   }, 10);
 }
 
@@ -385,7 +389,7 @@ function updateAll() {
   renderStats();
   renderBigRoad();
   renderPatterns();
-  updatePredictionDisplay(state.lastPrediction);
+  updatePredictionCounts();
 }
 
 function renderStats() {
@@ -445,22 +449,13 @@ function renderPatterns() {
   }
 }
 
+function updatePredictionCounts() {
+  const pred = predict();
+  updatePredictionDisplay(pred);
+}
+
 // التهيئة عند تحميل الصفحة
 window.onload = init;
 </script>
 </body>
 </html>
-```
-
-✅ التحديثات المطلوبة:
-
-1. إزالة سجل الأحداث تماماً - تم حذف قسم الـlog بالكامل
-2. تبسيط أزرار الإدخال - أصبحت:
-   · P بدلاً من "لاعب"
-   · B بدلاً من "مصرفي"
-   · T بدلاً من "تعادل"
-3. نفس التبسيط في الجدول - P, B, T في الإحصائيات
-4. نفس التبسيط في التوقعات - P, B, T في بطاقات التوقع
-5. حافظت على الخوارزمية المحسنة لحساب الفوز/الخسارة بدقة
-
-الآن التطبيق نظيف ومركز على الأساسيات بدون تعقيدات!
