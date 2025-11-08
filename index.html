@@ -1,108 +1,31 @@
-<!DOCTYPE html>
-<html lang="ar">
+<!DOCTYPE html><html lang="ar">
 <head>
-<meta charset="UTF-8">
-<title>تحليل المباريات - WDL + أهداف</title>
-<style>
-body { font-family: Arial; text-align: center; background: #f5f5f5; padding: 20px; }
-input { width: 140px; padding: 6px; margin: 5px; }
-button { padding: 8px 15px; margin-left: 5px; cursor: pointer; background-color: #f1c40f; border: none; }
-table { margin: 20px auto; border-collapse: collapse; width: 95%; background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-th, td { padding: 10px; border: 1px solid #ddd; text-align: center; }
-th { background: #f39c12; color: #000; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Baccarat Predictor</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-<h1>تحليل المباريات - نتائج + أهداف</h1>
-
-<div>
-<input id="team1Name" placeholder="اسم الفريق الأول">
-<input id="team2Name" placeholder="اسم الفريق الثاني">
+  <div class="app-container">
+    <h1 class="title">🎴 BACCARAT PREDICTOR</h1><div class="controls">
+  <label>عدد الجولات:</label>
+  <input type="number" id="rounds" min="1" max="74" value="5" />
+  <button id="analyzeBtn">تحليل الأنماط</button>
 </div>
 
-<h3>آخر 5 نتائج لكل فريق (W/D/L)</h3>
-<input id="team1Results" placeholder="مثال: W D L W W">
-<input id="team2Results" placeholder="مثال: L D W L D">
+<div class="input-section">
+  <textarea id="resultsInput" placeholder="أدخل النتائج الأخيرة (Player/Banker/Tie)"></textarea>
+</div>
 
-<h3>مجموع أهداف آخر 5 مباريات لكل فريق</h3>
-<input id="team1Goals" placeholder="مثال: 7">
-<input id="team2Goals" placeholder="مثال: 5">
+<div class="output-section">
+  <h2>التحليل:</h2>
+  <div id="analysis"></div>
 
-<button onclick="analyzeMatch()">احسب التحليل</button>
+  <h2>التخمين القادم:</h2>
+  <div id="prediction"></div>
+</div>
 
-<h2>النتائج</h2>
-<table>
-<thead>
-<tr>
-<th>الفريق الأول</th>
-<th>الفريق الثاني</th>
-<th>% فوز الفريق الأول</th>
-<th>% فوز الفريق الثاني</th>
-<th>% التعادل</th>
-<th>معدل الأهداف المتوقع</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td id="resTeam1">-</td>
-<td id="resTeam2">-</td>
-<td id="resTeam1Percent">-</td>
-<td id="resTeam2Percent">-</td>
-<td id="resDraw">-</td>
-<td id="resGoals">-</td>
-</tr>
-</tbody>
-</table>
+<footer>Made by Ayoub 🧠</footer>
 
-<script>
-function analyzeMatch(){
-  const t1 = document.getElementById('team1Name').value || 'الفريق الأول';
-  const t2 = document.getElementById('team2Name').value || 'الفريق الثاني';
-
-  // نتائج W/D/L
-  const r1 = (document.getElementById('team1Results').value || '').toUpperCase().split(' ');
-  const r2 = (document.getElementById('team2Results').value || '').toUpperCase().split(' ');
-
-  // مجموع الأهداف
-  const g1 = parseFloat(document.getElementById('team1Goals').value || '0');
-  const g2 = parseFloat(document.getElementById('team2Goals').value || '0');
-
-  if(r1.length!==5 || r2.length!==5){
-    alert('خاص تدخل 5 نتائج لكل فريق');
-    return;
-  }
-  if(isNaN(g1) || isNaN(g2)){
-    alert('دخل رقم صحيح لمجموع الأهداف');
-    return;
-  }
-
-  // حساب نسب الفوز والتعادل بناءً على W/D/L
-  function calcPercent(results){
-    let w=0,d=0;
-    for(let r of results){
-      if(r==='W') w++;
-      else if(r==='D') d++;
-    }
-    return {win: Math.round(w/5*100), draw: Math.round(d/5*100)};
-  }
-
-  const data1 = calcPercent(r1);
-  const data2 = calcPercent(r2);
-  const drawPercent = Math.round((data1.draw + data2.draw)/2);
-
-  // معدل الأهداف المتوقع بناءً على مجموع الأهداف /5 مباريات
-  const expectedGoals = ((g1 + g2)/5).toFixed(1);
-
-  // عرض النتائج
-  document.getElementById('resTeam1').innerText = t1;
-  document.getElementById('resTeam2').innerText = t2;
-  document.getElementById('resTeam1Percent').innerText = data1.win + '%';
-  document.getElementById('resTeam2Percent').innerText = data2.win + '%';
-  document.getElementById('resDraw').innerText = drawPercent + '%';
-  document.getElementById('resGoals').innerText = expectedGoals + ' أهداف';
-}
-</script>
-
-</body>
+  </div>  <script src="logic.js"></script></body>
 </html>
