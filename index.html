@@ -23,13 +23,24 @@ body{font-family:Inter,sans-serif;margin:0;background:linear-gradient(180deg,var
 .right{flex:1;display:flex;flex-direction:column;gap:12px}
 .panel{padding:10px}
 .row{display:flex;gap:8px;align-items:center;margin-top:8px}
-input[type=number], select{background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.2);padding:10px;border-radius:8px;color:#fff;font-weight:500;font-size:14px;width:100%}
-:root[data-theme="light"] input[type=number], :root[data-theme="light"] select{background:rgba(255,255,255,0.9);border:2px solid rgba(0,0,0,0.1);color:#333;}
-.btn{padding:12px 16px;border-radius:8px;border:0;background:rgba(255,255,255,0.04);color:#fff;cursor:pointer;font-weight:600;font-size:16px;transition:transform 0.2s}
-:root[data-theme="light"] .btn{background:rgba(0,0,0,0.04);color:#333}
-.btn:hover{transform:translateY(-2px)}
-.btn.gold{background:linear-gradient(90deg,var(--gold),var(--gold-2));color:#000;font-weight:700;box-shadow:0 6px 20px rgba(212,175,55,0.12)}
-.btn.player{background:var(--player)}.btn.banker{background:var(--banker)}.btn.tie{background:var(--tie)}
+input[type=number], select{background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.3);padding:10px;border-radius:8px;color:#fff;font-weight:600;font-size:14px;width:100%}
+:root[data-theme="light"] input[type=number], :root[data-theme="light"] select{background:rgba(255,255,255,0.9);border:2px solid rgba(0,0,0,0.2);color:#333;}
+.btn{padding:12px 16px;border-radius:8px;border:0;color:#fff;cursor:pointer;font-weight:600;font-size:16px;transition:all 0.3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.3)}
+.btn.gold{background:linear-gradient(90deg,var(--gold),var(--gold-2));color:#000;font-weight:700;box-shadow:0 6px 20px rgba(212,175,55,0.3)}
+
+/* ألوان واضحة للوضع الليلي */
+.btn.player{background:linear-gradient(135deg, #3a86ff, #2667cc); color:white; border:2px solid #3a86ff;}
+.btn.banker{background:linear-gradient(135deg, #ff006e, #cc0058); color:white; border:2px solid #ff006e;}
+.btn.tie{background:linear-gradient(135deg, #38b000, #2c8a00); color:white; border:2px solid #38b000;}
+
+/* ألوان الوضع النهاري */
+:root[data-theme="light"] .btn.player{background:linear-gradient(135deg, #2d7ef7, #1a67d8); color:white;}
+:root[data-theme="light"] .btn.banker{background:linear-gradient(135deg, #e03b3b, #c53232); color:white;}
+:root[data-theme="light"] .btn.tie{background:linear-gradient(135deg, #28a745, #218838); color:white;}
+
+:root[data-theme="light"] .btn{background:rgba(0,0,0,0.1);color:#333; border:1px solid rgba(0,0,0,0.1)}
+
 .small{font-size:13px;color:var(--muted)}
 .muted{color:var(--muted);font-size:12px}
 .pattern-list{list-style:none;padding:6px;margin:6px 0 0 0;max-height:200px;overflow:auto}
@@ -40,9 +51,9 @@ input[type=number], select{background:rgba(255,255,255,0.1);border:2px solid rgb
 .stat-table th,.stat-table td{border:1px solid rgba(255,255,255,0.05);padding:6px;text-align:center}
 :root[data-theme="light"] .stat-table th, :root[data-theme="light"] .stat-table td{border:1px solid rgba(0,0,0,0.05)}
 .stat-table th{background:rgba(212,175,55,0.1);font-weight:600}
-.player{color:var(--player);font-weight:700}
-.banker{color:var(--banker);font-weight:700}
-.tie{color:var(--tie);font-weight:700}
+.player{color:#3a86ff;font-weight:700}
+.banker{color:#ff006e;font-weight:700}
+.tie{color:#38b000;font-weight:700}
 .pred-head{display:flex;justify-content:space-between;align-items:center}
 .final{font-size:22px;font-weight:800;text-align:center;padding:12px;background:linear-gradient(90deg,rgba(212,175,55,0.06),transparent);border-radius:10px}
 :root[data-theme="light"] .final{background:linear-gradient(90deg,rgba(212,175,55,0.1),transparent)}
@@ -51,10 +62,10 @@ input[type=number], select{background:rgba(255,255,255,0.1);border:2px solid rgb
 canvas{border-radius:10px;background:#0f0e10}
 :root[data-theme="light"] canvas{background:#f0f0f0}
 .color-legend{display:flex;gap:15px;justify-content:center;margin-bottom:10px;font-size:14px}
-.color-legend span{padding:4px 8px;border-radius:6px}
+.color-legend span{padding:4px 8px;border-radius:6px; font-weight:600;}
 .prediction-cards{display:flex;gap:10px;justify-content:center;margin:10px 0}
-.pred-card{padding:10px;border-radius:8px;text-align:center;min-width:80px}
-.pred-card.active{transform:scale(1.1);border:2px solid var(--gold)}
+.pred-card{padding:10px;border-radius:8px;text-align:center;min-width:80px; font-weight:600;}
+.pred-card.active{transform:scale(1.1);border:2px solid var(--gold); box-shadow:0 4px 15px rgba(212,175,55,0.4);}
 .win-effect{animation:winPulse 0.5s ease-in-out}
 .loss-effect{animation:lossShake 0.5s ease-in-out}
 @keyframes winPulse{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
@@ -69,6 +80,11 @@ canvas{border-radius:10px;background:#0f0e10}
 .input-group {display: flex; gap: 8px; align-items: center;}
 .input-group input {flex: 1;}
 .input-label {font-weight: 600; margin-bottom: 6px; display: block;}
+
+/* ألوان البطاقات في التوقع */
+.pred-card.player {background: linear-gradient(135deg, #3a86ff, #2667cc); color: white;}
+.pred-card.banker {background: linear-gradient(135deg, #ff006e, #cc0058); color: white;}
+.pred-card.tie {background: linear-gradient(135deg, #38b000, #2c8a00); color: white;}
 </style>
 </head>
 <body>
@@ -103,7 +119,7 @@ canvas{border-radius:10px;background:#0f0e10}
       <button class="btn tie" id="btnT">تعادل 🟢</button>
     </div>
     <div class="row">
-      <button class="btn" id="btnUndo" style="flex:1">تراجع</button>
+      <button class="btn" id="btnUndo" style="flex:1; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2)">تراجع</button>
     </div>
   </div>
 
@@ -138,9 +154,9 @@ canvas{border-radius:10px;background:#0f0e10}
   </div>
 
   <div class="color-legend">
-    <span class="player">🔵 لاعب</span>
-    <span class="banker">🔴 مصرفي</span>
-    <span class="tie">🟢 تعادل</span>
+    <span style="background:linear-gradient(135deg, #3a86ff, #2667cc);">🔵 لاعب</span>
+    <span style="background:linear-gradient(135deg, #ff006e, #cc0058);">🔴 مصرفي</span>
+    <span style="background:linear-gradient(135deg, #38b000, #2c8a00);">🟢 تعادل</span>
   </div>
   
   <canvas id="bigRoad" width="600" height="450"></canvas>
@@ -451,7 +467,7 @@ function renderBigRoad() {
     const r = state.rounds[i];
     
     // رسم المربع
-    ctx.fillStyle = r === 'P' ? '#2d7ef7' : r === 'B' ? '#e03b3b' : '#28a745';
+    ctx.fillStyle = r === 'P' ? '#3a86ff' : r === 'B' ? '#ff006e' : '#38b000';
     ctx.fillRect(x * size, y * size, size - 2, size - 2);
     
     // إضافة رقم الجولة داخل المربع
