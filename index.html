@@ -1,31 +1,106 @@
-<!DOCTYPE html><html lang="ar">
+<!doctype html>
+<html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Baccarat Predictor</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BACCARAT PREDICTOR</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div class="app-container">
-    <h1 class="title">🎴 BACCARAT PREDICTOR</h1><div class="controls">
-  <label>عدد الجولات:</label>
-  <input type="number" id="rounds" min="1" max="74" value="5" />
-  <button id="analyzeBtn">تحليل الأنماط</button>
-</div>
+<body class="day">
+  <div class="app">
+    <header class="top">
+      <div class="brand">
+        <div class="logo">BACCARAT<span> SPEED</span></div>
+        <div class="subtitle" id="subtitle">توقعات باكارات — Intelligent Predictor</div>
+      </div>
+      <div class="controls">
+        <select id="langToggle" title="Language">
+          <option value="ar" selected>العربية</option>
+          <option value="en">English</option>
+        </select>
+        <button id="modeToggle" title="Day / Night">ليلي</button>
+      </div>
+    </header>
 
-<div class="input-section">
-  <textarea id="resultsInput" placeholder="أدخل النتائج الأخيرة (Player/Banker/Tie)"></textarea>
-</div>
+    <main class="card">
+      <section class="left">
+        <div class="section card">
+          <label id="windowLabelText">نافذة التحليل (5 - 10)</label>
+          <div class="row">
+            <input id="windowSize" type="number" min="5" max="10" value="5">
+            <button id="applyWindow" class="btn gold">تطبيق</button>
+          </div>
+          <div class="small muted" id="roundInfo">المجموع تقريبا: 74 - 76 جولة</div>
+        </div>
 
-<div class="output-section">
-  <h2>التحليل:</h2>
-  <div id="analysis"></div>
+        <div class="section card">
+          <div class="row">
+            <button class="btn player" id="btnP">Player</button>
+            <button class="btn banker" id="btnB">Banker</button>
+            <button class="btn tie" id="btnT">Tie</button>
+            <button class="btn ghost" id="btnUndo">Undo</button>
+          </div>
+          <div class="row">
+            <input id="betInput" type="number" min="1" value="10">
+            <div class="small muted">ادخل مبلغ الرهان</div>
+          </div>
+        </div>
 
-  <h2>التخمين القادم:</h2>
-  <div id="prediction"></div>
-</div>
+        <div class="section card patterns">
+          <div class="section-title">مكتشفات الأنماط / Pattern Detectors</div>
+          <ul id="patternList" class="pattern-list"></ul>
+        </div>
 
-<footer>Made by Ayoub 🧠</footer>
+        <div class="section card stats">
+          <div class="section-title">الإحصاءات / Stats</div>
+          <div class="stat-row"><span>Player Wins</span><span id="pWins">0</span></div>
+          <div class="stat-row"><span>Banker Wins</span><span id="bWins">0</span></div>
+          <div class="stat-row"><span>Tie</span><span id="tWins">0</span></div>
+        </div>
 
-  </div>  <script src="logic.js"></script></body>
+        <div class="section card export">
+          <button id="exportJSON" class="btn">Export JSON</button>
+          <button id="importJSON" class="btn">Import JSON</button>
+        </div>
+      </section>
+
+      <section class="right">
+        <div class="card prediction">
+          <div class="header-pred">
+            <div class="pred-title" id="predTitle">توقع النتيجة التالية</div>
+            <div class="pred-sub" id="predSub">نسبة الثقة</div>
+          </div>
+
+          <div class="bars">
+            <div class="bar-row">
+              <div class="bar-label">Player</div>
+              <div class="bar-meter"><i id="pBar" style="width:33%"></i></div>
+              <div class="bar-pct" id="pPct">33%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Banker</div>
+              <div class="bar-meter"><i id="bBar" style="width:33%"></i></div>
+              <div class="bar-pct" id="bPct">33%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Tie</div>
+              <div class="bar-meter"><i id="tBar" style="width:34%"></i></div>
+              <div class="bar-pct" id="tPct">34%</div>
+            </div>
+          </div>
+
+          <div class="final card" id="finalCard">—</div>
+          <div class="log card" id="log"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot card">
+      <div id="footerText">تصميم و تطوير — Ayoub</div>
+      <div class="credits">Day / Night • Arabic & English • Heuristic + AI-pattern</div>
+    </footer>
+  </div>
+
+  <script src="logic.js"></script>
+</body>
 </html>
