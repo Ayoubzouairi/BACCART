@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AYOUB BACCARAT PRO FULL - أنماط الناقصين</title>
+<title>AYOUB BACCARAT PRO FULL</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
 :root{--gold:#d4af37;--gold-2:#b8871d;--bg-dark:#070606;--card:#0f0e10;--muted:#bfb7a6;--player:#2d7ef7;--banker:#e03b3b;--tie:#28a745;}
@@ -98,17 +98,6 @@ canvas{border-radius:10px;background:#0f0e10}
 .accuracy-grid {stroke: rgba(255,255,255,0.1); stroke-width: 1;}
 :root[data-theme="light"] .accuracy-grid {stroke: rgba(0,0,0,0.1);}
 .accuracy-tooltip {position: absolute; background: rgba(0,0,0,0.8); color: white; padding: 5px 8px; border-radius: 4px; font-size: 12px; pointer-events: none; opacity: 0; transition: opacity 0.2s;}
-
-/* أنماط الناقصين الجديدة */
-.pattern-badge {display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; margin-left: 5px;}
-.panda-badge {background: linear-gradient(135deg, #ff9a00, #ff6b00); color: white;}
-.dragon-badge {background: linear-gradient(135deg, #9d4edd, #7b2cbf); color: white;}
-.reverse-badge {background: linear-gradient(135deg, #00b4d8, #0077b6); color: white;}
-.blocks-badge {background: linear-gradient(135deg, #f72585, #b5179e); color: white;}
-.target-badge {background: linear-gradient(135deg, #4cc9f0, #4361ee); color: white;}
-.alternating-badge {background: linear-gradient(135deg, #ff5400, #ff0054); color: white;}
-.pattern-indicator {display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap;}
-.pattern-indicator span {padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;}
 </style>
 </head>
 <body>
@@ -116,7 +105,7 @@ canvas{border-radius:10px;background:#0f0e10}
 <header class="top card">
   <div class="brand">
     <div class="logo">AYOUB BACCARAT PRO</div>
-    <div class="subtitle">متنبئ ذكي يعتمد على قوة أنماط الناقصين 🎰🐼🐉🔄</div>
+    <div class="subtitle">متنبئ ذكي يعتمد على التردد الإحصائي 🎰🌙</div>
   </div>
   <div class="controls">
     <button id="themeToggle" class="theme-toggle">🌚</button>
@@ -147,20 +136,6 @@ canvas{border-radius:10px;background:#0f0e10}
     </div>
   </div>
 
-  <div class="panel card patterns">
-    <div class="section-title">الأنماط الأساسية</div>
-    <ul id="patternList" class="pattern-list">
-      <li>تتابع: 0</li>
-      <li>تبادل: 0</li>
-      <li>ازدواج: 0</li>
-    </ul>
-    
-    <div class="section-title" style="margin-top: 12px;">أنماط الناقصين</div>
-    <div class="pattern-indicator" id="bigRoadPatterns">
-      <!-- سيتم ملؤها بالأنماط المكتشفة -->
-    </div>
-  </div>
-
   <div class="panel card stats">
     <div class="section-title">الإحصاءات</div>
     <table class="stat-table">
@@ -179,7 +154,7 @@ canvas{border-radius:10px;background:#0f0e10}
 <section class="right card prediction">
   <div class="pred-head">
     <div class="pred-title">توقع الجولة القادمة</div>
-    <div class="pred-sub">نسبة الثقة معتمدة على أنماط الناقصين</div>
+    <div class="pred-sub">نسبة الثقة معتمدة على التردد الإحصائي</div>
   </div>
 
   <div class="color-legend">
@@ -237,12 +212,12 @@ canvas{border-radius:10px;background:#0f0e10}
 </main>
 
 <footer class="foot card">
-<div>تصميم: Ayoub • تيمة ذهبية داكنة • أنماط الناقصين</div>
-<div class="credits small">نافذة 5-10 • خوارزميات وزن الأنماط • واجهة عربية • منحنى التوقعات</div>
+<div>تصميم: Ayoub • تيمة ذهبية داكنة</div>
+<div class="credits small">نافذة 5-10 • تحليل التردد الإحصائي • واجهة عربية • منحنى التوقعات</div>
 </footer>
 
 <script>
-// Logic.js for AYBOUB BACCARAT PRO FULL - أنماط الناقصين
+// Logic.js for AYBOUB BACCARAT PRO FULL - بدون أنماط
 const state = {
   rounds: [],
   windowSize: 5,
@@ -250,23 +225,7 @@ const state = {
   win: { P: 0, B: 0, T: 0 },
   loss: { P: 0, B: 0, T: 0 },
   lastPrediction: null,
-  patterns: {
-    تتابع: 0,
-    تبادل: 0,
-    ازدواج: 0,
-    ثلاثي: 0,
-    قفزة: 0,
-    تجمع: 0
-  },
-  // أنماط الناقصين الجديدة
-  bigRoadPatterns: {
-    باندا: false,
-    تنين: false,
-    عكس: false,
-    كتل: false,
-    استهداف: false,
-    تناوب: false  // النمط الجديد PPP BBB PPP BBB
-  },
+  // بيانات منحنى التوقعات
   accuracyHistory: [],
   predictionsHistory: []
 };
@@ -291,7 +250,10 @@ function init() {
   el('btnUndo').onclick = undoRound;
   el('btnReset').onclick = resetAll;
   
+  // إعداد تبديل الوضع الليلي/النهاري
   el('themeToggle').onclick = toggleTheme;
+  
+  // تعيين الوضع الافتراضي (ليلي)
   document.documentElement.setAttribute('data-theme', 'dark');
 
   updateAll();
@@ -306,14 +268,15 @@ function toggleTheme() {
 }
 
 function pushRound(r) {
+  // تخزين التوقع قبل إضافة الجولة الجديدة
   const pred = predict();
   state.lastPrediction = pred.final;
   
+  // إضافة الجولة الجديدة
   state.rounds.push(r);
   state.count[r]++;
-  updatePatterns();
-  updateBigRoadPatterns();
   
+  // حساب الفوز/الخسارة بناءً على التوقع السابق
   if (state.lastPrediction !== '—' && state.lastPrediction !== null) {
     const didWin = (r === state.lastPrediction);
     
@@ -324,7 +287,10 @@ function pushRound(r) {
     }
   }
   
+  // تحديث بيانات منحنى التوقعات
   updateAccuracyData(r);
+  
+  // تحديث التوقع الجديد
   const newPred = predict();
   updatePredictionDisplay(newPred);
   showResult(r, newPred, state.lastPrediction === r);
@@ -337,6 +303,7 @@ function undoRound() {
   const lastRound = state.rounds.pop();
   state.count[lastRound]--;
   
+  // إزالة الفوز/الخسارة الأخيرة
   if (state.rounds.length > 0) {
     const previousPrediction = predict();
     if (lastRound === previousPrediction.final) {
@@ -346,6 +313,7 @@ function undoRound() {
     }
   }
   
+  // إزالة آخر بيانات الدقة
   if (state.accuracyHistory.length > 0) {
     state.accuracyHistory.pop();
     state.predictionsHistory.pop();
@@ -361,152 +329,10 @@ function resetAll() {
   state.win = { P: 0, B: 0, T: 0 };
   state.loss = { P: 0, B: 0, T: 0 };
   state.lastPrediction = null;
-  state.patterns = { تتابع: 0, تبادل: 0, ازدواج: 0, ثلاثي: 0, قفزة: 0, تجمع: 0 };
-  state.bigRoadPatterns = { 
-    باندا: false, تنين: false, عكس: false, 
-    كتل: false, استهداف: false, تناوب: false 
-  };
   state.accuracyHistory = [];
   state.predictionsHistory = [];
   
   updateAll();
-}
-
-function updatePatterns() {
-  const recent = state.rounds.slice(-state.windowSize);
-  if (recent.length < 2) return;
-
-  let streak = 1;
-  for (let i = 1; i < recent.length; i++) {
-    if (recent[i] === recent[i - 1]) streak++;
-    else break;
-  }
-  state.patterns.تتابع = streak;
-
-  let pingpong = 0;
-  for (let i = 1; i < recent.length; i++) {
-    if (recent[i] !== recent[i - 1]) pingpong++;
-  }
-  state.patterns.تبادل = pingpong;
-
-  let doubles = 0;
-  for (let i = 1; i < recent.length; i++) {
-    if (recent[i] === recent[i - 1]) doubles++;
-  }
-  state.patterns.ازدواج = doubles;
-}
-
-// وظائف جديدة لأنماط الناقصين
-function updateBigRoadPatterns() {
-  const recent = state.rounds.slice(-12); // زيادة النافذة لاكتشاف نمط التناوب
-  if (recent.length < 4) return;
-
-  // نمط الباندا (Panda) - تبادل منتظم بين لاعب ومصرفي
-  state.bigRoadPatterns.باندا = detectPandaPattern(recent);
-  
-  // نمط التنين (Dragon) - تتابع طويل (4+ جولات متتالية)
-  state.bigRoadPatterns.تنين = detectDragonPattern(recent);
-  
-  // نمط العكس (Reverse) - تغيير مفاجئ في الاتجاه
-  state.bigRoadPatterns.عكس = detectReversePattern(recent);
-  
-  // نمط الكتل (Blocks) - مجموعات من 2-3 جولات متشابهة
-  state.bigRoadPatterns.كتل = detectBlocksPattern(recent);
-  
-  // نمط الاستهداف (Target) - نمط متكرر يمكن التنبؤ به
-  state.bigRoadPatterns.استهداف = detectTargetPattern(recent);
-  
-  // النمط الجديد: تناوب الكتل PPP BBB PPP BBB
-  state.bigRoadPatterns.تناوب = detectAlternatingBlocksPattern(recent);
-}
-
-function detectPandaPattern(recent) {
-  if (recent.length < 4) return false;
-  let pandaCount = 0;
-  for (let i = 1; i < recent.length; i++) {
-    if (recent[i] !== recent[i-1] && recent[i] !== 'T' && recent[i-1] !== 'T') {
-      pandaCount++;
-    }
-  }
-  return pandaCount >= recent.length - 2;
-}
-
-function detectDragonPattern(recent) {
-  let maxStreak = 1;
-  let currentStreak = 1;
-  for (let i = 1; i < recent.length; i++) {
-    if (recent[i] === recent[i-1] && recent[i] !== 'T') {
-      currentStreak++;
-      maxStreak = Math.max(maxStreak, currentStreak);
-    } else {
-      currentStreak = 1;
-    }
-  }
-  return maxStreak >= 4;
-}
-
-function detectReversePattern(recent) {
-  if (recent.length < 5) return false;
-  const lastFive = recent.slice(-5);
-  const changes = [];
-  for (let i = 1; i < lastFive.length; i++) {
-    changes.push(lastFive[i] !== lastFive[i-1]);
-  }
-  return changes.filter(Boolean).length >= 3;
-}
-
-function detectBlocksPattern(recent) {
-  let blockCount = 0;
-  let i = 0;
-  while (i < recent.length - 1) {
-    if (recent[i] === recent[i+1] && recent[i] !== 'T') {
-      blockCount++;
-      i += 2;
-    } else {
-      i++;
-    }
-  }
-  return blockCount >= 2;
-}
-
-function detectTargetPattern(recent) {
-  if (recent.length < 6) return false;
-  const patterns = [
-    ['P','B','P','B','P','B'],
-    ['B','P','B','P','B','P'],
-    ['P','P','B','B','P','P'],
-    ['B','B','P','P','B','B']
-  ];
-  
-  const lastSix = recent.slice(-6);
-  return patterns.some(pattern => 
-    pattern.every((val, idx) => val === lastSix[idx])
-  );
-}
-
-// الدالة الجديدة لاكتشاف نمط تناوب الكتل PPP BBB PPP BBB
-function detectAlternatingBlocksPattern(recent) {
-  if (recent.length < 6) return false;
-  
-  // تحويل السلسلة إلى نمط يمكن تحليله
-  let patternString = '';
-  for (let i = 0; i < recent.length; i++) {
-    if (recent[i] === 'P') patternString += 'P';
-    else if (recent[i] === 'B') patternString += 'B';
-    else patternString += 'T';
-  }
-  
-  // البحث عن أنماط التناوب الشائعة
-  const alternatingPatterns = [
-    /(PPPBBB){2,}/,    // PPP BBB PPP BBB
-    /(BBBPPP){2,}/,    // BBB PPP BBB PPP
-    /(PPBB){3,}/,      // PP BB PP BB PP BB
-    /(BBPP){3,}/,      // BB PP BB PP BB PP
-    /(P{2,3}B{2,3}){3,}/, // كتل من 2-3 تتناوب
-    /(B{2,3}P{2,3}){3,}/  // كتل من 2-3 تتناوب
-  ];
-  
-  return alternatingPatterns.some(pattern => pattern.test(patternString));
 }
 
 function predict() {
@@ -527,12 +353,7 @@ function predict() {
     T: (counts.T / total) * 100
   };
 
-  // تطبيق وزن الأنماط الأساسية وأنماط الناقصين
-  const weights = calculatePatternWeights();
-  baseFreq.P *= weights.P;
-  baseFreq.B *= weights.B;
-  baseFreq.T *= weights.T;
-
+  // تطبيع النسب
   const sum = baseFreq.P + baseFreq.B + baseFreq.T;
   const normalized = {
     P: (baseFreq.P / sum) * 100,
@@ -541,7 +362,7 @@ function predict() {
   };
 
   let final = Object.entries(normalized).sort((a, b) => b[1] - a[1])[0][0];
-  if (normalized[final] < 40) final = '—';
+  if (normalized[final] < 40) final = '—'; // عدم التوقع إذا كانت الثقة ضعيفة
 
   return {
     P: normalized.P.toFixed(1),
@@ -551,113 +372,17 @@ function predict() {
   };
 }
 
-function calculatePatternWeights() {
-  const weights = { P: 1, B: 1, T: 1 };
-  const lastRound = state.rounds[state.rounds.length - 1];
-  
-  // وزن الأنماط الأساسية
-  if (state.patterns.تتابع >= 2) {
-    weights[lastRound] *= 0.7;
-  }
-  
-  if (state.patterns.تبادل >= 3) {
-    weights[lastRound] *= 0.8;
-    const other = lastRound === 'P' ? 'B' : 'P';
-    weights[other] *= 1.2;
-  }
-  
-  // وزن أنماط الناقصين
-  if (state.bigRoadPatterns.باندا) {
-    weights[lastRound] *= 0.6;
-    const other = lastRound === 'P' ? 'B' : 'P';
-    weights[other] *= 1.4;
-  }
-  
-  if (state.bigRoadPatterns.تنين) {
-    weights[lastRound] *= 0.5;
-  }
-  
-  if (state.bigRoadPatterns.عكس) {
-    weights[lastRound] *= 0.7;
-    const options = ['P', 'B'].filter(x => x !== lastRound);
-    options.forEach(opt => weights[opt] *= 1.3);
-  }
-  
-  if (state.bigRoadPatterns.كتل) {
-    weights[lastRound] *= 1.2;
-  }
-  
-  if (state.bigRoadPatterns.استهداف) {
-    const targetPred = predictFromTargetPattern();
-    if (targetPred) {
-      weights[targetPred] *= 1.5;
-    }
-  }
-  
-  // الوزن الجديد لنمط التناوب - قوي جداً!
-  if (state.bigRoadPatterns.تناوب) {
-    const nextPred = predictFromAlternatingPattern();
-    if (nextPred) {
-      weights[nextPred] *= 2.0; // وزن عالي جداً لهذا النمط القوي
-      console.log(`نمط تناوب قوي مكتشف! التوقع: ${nextPred}`);
-    }
-  }
-  
-  return weights;
-}
-
-function predictFromTargetPattern() {
-  const recent = state.rounds.slice(-6);
-  if (recent.length < 6) return null;
-  
-  const patterns = {
-    'P,B,P,B,P,B': 'P',
-    'B,P,B,P,B,P': 'B', 
-    'P,P,B,B,P,P': 'B',
-    'B,B,P,P,B,B': 'P'
-  };
-  
-  const currentPattern = recent.join(',');
-  return patterns[currentPattern] || null;
-}
-
-// الدالة الجديدة للتنبؤ بناءً على نمط التناوب
-function predictFromAlternatingPattern() {
-  const recent = state.rounds.slice(-12);
-  if (recent.length < 6) return null;
-  
-  // تحليل آخر كتلة لتحديد ما سيأتي بعدها
-  let currentBlock = [];
-  let i = recent.length - 1;
-  
-  // تحديد الكتلة الحالية
-  while (i >= 0 && recent[i] === recent[recent.length - 1]) {
-    currentBlock.unshift(recent[i]);
-    i--;
-  }
-  
-  const currentBlockType = recent[recent.length - 1];
-  const currentBlockSize = currentBlock.length;
-  
-  // في نمط PPP BBB PPP BBB، بعد كتلة P تأتي كتلة B والعكس
-  if (currentBlockType === 'P' && currentBlockSize >= 2) {
-    return 'B'; // التوقع: كتلة مصرفي قادمة
-  } else if (currentBlockType === 'B' && currentBlockSize >= 2) {
-    return 'P'; // التوقع: كتلة لاعب قادمة
-  }
-  
-  return null;
-}
-
 function updatePredictionDisplay(pred) {
   el('predPctP').textContent = pred.P + '%';
   el('predPctB').textContent = pred.B + '%';
   el('predPctT').textContent = pred.T + '%';
   
+  // إزالة التنشيط من جميع البطاقات
   ['predP', 'predB', 'predT'].forEach(id => {
     el(id).classList.remove('active');
   });
   
+  // تفعيل البطاقة المتوقعة
   if (pred.final !== '—') {
     el('pred' + pred.final).classList.add('active');
   }
@@ -681,8 +406,6 @@ function showResult(r, pred, didWin) {
 function updateAll() {
   renderStats();
   renderBigRoad();
-  renderPatterns();
-  renderBigRoadPatterns();
   updatePredictionCounts();
   updateAccuracyStats();
   updateAccuracyChart();
@@ -741,67 +464,12 @@ function renderBigRoad() {
   }
 }
 
-function renderPatterns() {
-  const ul = el('patternList');
-  ul.innerHTML = '';
-  
-  for (const [pattern, value] of Object.entries(state.patterns)) {
-    const li = document.createElement('li');
-    li.innerHTML = `<span>${pattern}</span><span>${value}</span>`;
-    ul.appendChild(li);
-  }
-}
-
-function renderBigRoadPatterns() {
-  const container = el('bigRoadPatterns');
-  container.innerHTML = '';
-  
-  const activePatterns = Object.entries(state.bigRoadPatterns)
-    .filter(([_, active]) => active)
-    .map(([pattern, _]) => pattern);
-  
-  if (activePatterns.length === 0) {
-    container.innerHTML = '<span style="color: var(--muted); font-size: 12px;">لا توجد أنماط نشطة</span>';
-    return;
-  }
-  
-  activePatterns.forEach(pattern => {
-    const span = document.createElement('span');
-    span.textContent = getPatternEmoji(pattern) + ' ' + pattern;
-    span.className = getPatternClass(pattern);
-    container.appendChild(span);
-  });
-}
-
-function getPatternEmoji(pattern) {
-  const emojis = {
-    'باندا': '🐼',
-    'تنين': '🐉', 
-    'عكس': '🔄',
-    'كتل': '📊',
-    'استهداف': '🎯',
-    'تناوب': '🔄'  // أيقونة خاصة لنمط التناوب
-  };
-  return emojis[pattern] || '🔍';
-}
-
-function getPatternClass(pattern) {
-  const classes = {
-    'باندا': 'panda-badge',
-    'تنين': 'dragon-badge',
-    'عكس': 'reverse-badge', 
-    'كتل': 'blocks-badge',
-    'استهداف': 'target-badge',
-    'تناوب': 'alternating-badge'  // كلاس جديد لنمط التناوب
-  };
-  return classes[pattern] || '';
-}
-
 function updatePredictionCounts() {
   const pred = predict();
   updatePredictionDisplay(pred);
 }
 
+// وظائف منحنى التوقعات
 function updateAccuracyData(actualResult) {
   if (state.lastPrediction && state.lastPrediction !== '—') {
     const isCorrect = state.lastPrediction === actualResult;
