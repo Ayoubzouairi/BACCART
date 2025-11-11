@@ -105,7 +105,7 @@ canvas{border-radius:10px;background:#0f0e10}
 <header class="top card">
   <div class="brand">
     <div class="logo">AYOUB BACCARAT PRO</div>
-    <div class="subtitle">متنبئ ذكي يعتمد على قوة الأنماط 🎰🌙</div>
+    <div class="subtitle">متنبئ ذكي يعتمد على التردد الإحصائي 🎰🌙</div>
   </div>
   <div class="controls">
     <button id="themeToggle" class="theme-toggle">🌚</button>
@@ -136,15 +136,6 @@ canvas{border-radius:10px;background:#0f0e10}
     </div>
   </div>
 
-  <div class="panel card patterns">
-    <div class="section-title">الأنماط المكتشفة</div>
-    <ul id="patternList" class="pattern-list">
-      <li>تتابع: 0</li>
-      <li>تبادل: 0</li>
-      <li>ازدواج: 0</li>
-    </ul>
-  </div>
-
   <div class="panel card stats">
     <div class="section-title">الإحصاءات</div>
     <table class="stat-table">
@@ -163,7 +154,7 @@ canvas{border-radius:10px;background:#0f0e10}
 <section class="right card prediction">
   <div class="pred-head">
     <div class="pred-title">توقع الجولة القادمة</div>
-    <div class="pred-sub">نسبة الثقة معتمدة على الأنماط</div>
+    <div class="pred-sub">نسبة الثقة معتمدة على التردد الإحصائي</div>
   </div>
 
   <div class="color-legend">
@@ -222,29 +213,21 @@ canvas{border-radius:10px;background:#0f0e10}
 
 <footer class="foot card">
 <div>تصميم: Ayoub • تيمة ذهبية داكنة</div>
-<div class="credits small">نافذة 5-10 • خوارزميات وزن الأنماط • واجهة عربية • منحنى التوقعات</div>
+<div class="credits small">نافذة 5-10 • تحليل التردد الإحصائي • واجهة عربية • منحنى التوقعات</div>
 </footer>
 
 <script>
-// Logic.js for AYBOUB BACCARAT PRO FULL
+// Logic.js for AYBOUB BACCARAT PRO FULL - بدون أنماط
 const state = {
   rounds: [],
   windowSize: 5,
   count: { P: 0, B: 0, T: 0 },
   win: { P: 0, B: 0, T: 0 },
   loss: { P: 0, B: 0, T: 0 },
-  lastPrediction: null, // لتخزين التوقع الأخير
-  patterns: {
-    تتابع: 0,
-    تبادل: 0,
-    ازدواج: 0,
-    ثلاثي: 0,
-    قفزة: 0,
-    تجمع: 0
-  },
+  lastPrediction: null,
   // بيانات منحنى التوقعات
-  accuracyHistory: [], // تخزين دقة التوقع بعد كل جولة
-  predictionsHistory: [] // تخزين التوقعات والنتائج الفعلية
+  accuracyHistory: [],
+  predictionsHistory: []
 };
 
 const el = id => document.getElementById(id);
@@ -281,7 +264,7 @@ function toggleTheme() {
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', newTheme);
   el('themeToggle').textContent = newTheme === 'dark' ? '🌚' : '🌕';
-  updateAccuracyChart(); // إعادة رسم المخطط عند تغيير السمة
+  updateAccuracyChart();
 }
 
 function pushRound(r) {
@@ -292,7 +275,6 @@ function pushRound(r) {
   // إضافة الجولة الجديدة
   state.rounds.push(r);
   state.count[r]++;
-  updatePatterns();
   
   // حساب الفوز/الخسارة بناءً على التوقع السابق
   if (state.lastPrediction !== '—' && state.lastPrediction !== null) {
@@ -347,38 +329,10 @@ function resetAll() {
   state.win = { P: 0, B: 0, T: 0 };
   state.loss = { P: 0, B: 0, T: 0 };
   state.lastPrediction = null;
-  state.patterns = { تتابع: 0, تبادل: 0, ازدواج: 0, ثلاثي: 0, قفزة: 0, تجمع: 0 };
   state.accuracyHistory = [];
   state.predictionsHistory = [];
   
   updateAll();
-}
-
-function updatePatterns() {
-  const recent = state.rounds.slice(-state.windowSize);
-  if (recent.length < 2) return;
-
-  // حساب التتابع
-  let streak = 1;
-  for (let i = 1; i < recent.length; i++) {
-    if (recent[i] === recent[i - 1]) streak++;
-    else break;
-  }
-  state.patterns.تتابع = streak;
-
-  // حساب التبادل (PingPong)
-  let pingpong = 0;
-  for (let i = 1; i < recent.length; i++) {
-    if (recent[i] !== recent[i - 1]) pingpong++;
-  }
-  state.patterns.تبادل = pingpong;
-
-  // حساب الازدواج
-  let doubles = 0;
-  for (let i = 1; i < recent.length; i++) {
-    if (recent[i] === recent[i - 1]) doubles++;
-  }
-  state.patterns.ازدواج = doubles;
 }
 
 function predict() {
@@ -399,12 +353,6 @@ function predict() {
     T: (counts.T / total) * 100
   };
 
-  // تطبيق وزن الأنماط
-  const weights = calculatePatternWeights();
-  baseFreq.P *= weights.P;
-  baseFreq.B *= weights.B;
-  baseFreq.T *= weights.T;
-
   // تطبيع النسب
   const sum = baseFreq.P + baseFreq.B + baseFreq.T;
   const normalized = {
@@ -422,25 +370,6 @@ function predict() {
     T: normalized.T.toFixed(1),
     final
   };
-}
-
-function calculatePatternWeights() {
-  const weights = { P: 1, B: 1, T: 1 };
-  const lastRound = state.rounds[state.rounds.length - 1];
-  
-  // وزن التتابع
-  if (state.patterns.تتابع >= 2) {
-    weights[lastRound] *= 0.7; // تقليل احتمال تكرار التتابع الطويل
-  }
-  
-  // وزن التبادل
-  if (state.patterns.تبادل >= 3) {
-    weights[lastRound] *= 0.8; // تقليل احتمال استمرار التبادل
-    const other = lastRound === 'P' ? 'B' : 'P';
-    weights[other] *= 1.2;
-  }
-  
-  return weights;
 }
 
 function updatePredictionDisplay(pred) {
@@ -467,7 +396,6 @@ function updatePredictionDisplay(pred) {
 }
 
 function showResult(r, pred, didWin) {
-  // تأثير مرئي
   const finalCard = el('finalCard');
   finalCard.classList.remove('win-effect', 'loss-effect');
   setTimeout(() => {
@@ -478,7 +406,6 @@ function showResult(r, pred, didWin) {
 function updateAll() {
   renderStats();
   renderBigRoad();
-  renderPatterns();
   updatePredictionCounts();
   updateAccuracyStats();
   updateAccuracyChart();
@@ -512,7 +439,6 @@ function renderBigRoad() {
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
-  // تكبير حجم المربعات
   const size = 35;
   let x = 0, y = 0;
   const maxCols = Math.floor(canvas.width / size);
@@ -520,11 +446,9 @@ function renderBigRoad() {
   for (let i = 0; i < state.rounds.length; i++) {
     const r = state.rounds[i];
     
-    // رسم المربع
     ctx.fillStyle = r === 'P' ? '#3a86ff' : r === 'B' ? '#ff006e' : '#38b000';
     ctx.fillRect(x * size, y * size, size - 2, size - 2);
     
-    // إضافة رقم الجولة داخل المربع
     ctx.fillStyle = '#ffffff';
     ctx.font = 'bold 14px Inter';
     ctx.textAlign = 'center';
@@ -540,23 +464,12 @@ function renderBigRoad() {
   }
 }
 
-function renderPatterns() {
-  const ul = el('patternList');
-  ul.innerHTML = '';
-  
-  for (const [pattern, value] of Object.entries(state.patterns)) {
-    const li = document.createElement('li');
-    li.innerHTML = `<span>${pattern}</span><span>${value}</span>`;
-    ul.appendChild(li);
-  }
-}
-
 function updatePredictionCounts() {
   const pred = predict();
   updatePredictionDisplay(pred);
 }
 
-// وظائف منحنى التوقعات الجديدة
+// وظائف منحنى التوقعات
 function updateAccuracyData(actualResult) {
   if (state.lastPrediction && state.lastPrediction !== '—') {
     const isCorrect = state.lastPrediction === actualResult;
@@ -566,7 +479,6 @@ function updateAccuracyData(actualResult) {
       correct: isCorrect
     });
     
-    // حساب الدقة الحالية
     const correctPredictions = state.predictionsHistory.filter(p => p.correct).length;
     const totalPredictions = state.predictionsHistory.length;
     const accuracy = totalPredictions > 0 ? (correctPredictions / totalPredictions) * 100 : 0;
@@ -603,7 +515,6 @@ function updateAccuracyChart() {
   const height = svg.clientHeight;
   const padding = 20;
   
-  // رسم الشبكة
   for (let i = 0; i <= 100; i += 20) {
     const y = height - padding - (i / 100) * (height - 2 * padding);
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -614,7 +525,6 @@ function updateAccuracyChart() {
     line.setAttribute('y2', y);
     svg.appendChild(line);
     
-    // إضافة النسب المئوية
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     text.setAttribute('x', padding - 5);
     text.setAttribute('y', y + 4);
@@ -625,7 +535,6 @@ function updateAccuracyChart() {
     svg.appendChild(text);
   }
   
-  // رسم الخط
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   let pathData = '';
   
@@ -639,14 +548,12 @@ function updateAccuracyChart() {
       pathData += ` L ${x} ${y}`;
     }
     
-    // إضافة النقاط
     const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     point.setAttribute('class', 'accuracy-point');
     point.setAttribute('cx', x);
     point.setAttribute('cy', y);
     point.setAttribute('data-index', index);
     
-    // إضافة تفاعل عند المرور على النقاط
     point.addEventListener('mouseover', (e) => {
       const rect = svg.getBoundingClientRect();
       tooltip.style.left = (e.clientX - rect.left + 10) + 'px';
@@ -667,7 +574,6 @@ function updateAccuracyChart() {
   svg.appendChild(path);
 }
 
-// التهيئة عند تحميل الصفحة
 window.onload = init;
 </script>
 </body>
