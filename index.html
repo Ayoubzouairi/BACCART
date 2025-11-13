@@ -925,7 +925,13 @@
             "م. السلمي": { position: "وسط", level: "نجم", importance: 0.8, goals: 8, assists: 10 },
             "ع. الغامدي": { position: "مهاجم", level: "أساسي", importance: 0.6, goals: 10, assists: 4 },
             "ر. الشمراني": { position: "مدافع", level: "أساسي", importance: 0.5, goals: 0, assists: 2 },
-            "ف. الجابر": { position: "وسط", level: "احتياطي", importance: 0.4, goals: 2, assists: 3 }
+            "ف. الجابر": { position: "وسط", level: "احتياطي", importance: 0.4, goals: 2, assists: 3 },
+            
+            // اللاعبين من صورتك
+            "السلمي": { position: "وسط", level: "نجم", importance: 0.8, goals: 8, assists: 10 },
+            "القامدي": { position: "مهاجم", level: "أساسي", importance: 0.6, goals: 10, assists: 4 },
+            "الشعراني": { position: "مدافع", level: "أساسي", importance: 0.5, goals: 0, assists: 2 },
+            "الجابر": { position: "وسط", level: "احتياطي", importance: 0.4, goals: 2, assists: 3 }
         };
 
         // تخزين اللاعبين المصابين والتحليل
@@ -1071,8 +1077,67 @@
         function simulateAIAnalysis(team, photoData) {
             let extractedPlayers = [];
             
-            if (team === 'team1') {
-                // بيانات تجريبية للفريق الأول مع تحليل متقدم
+            // تحديد الفريق واختيار البيانات المناسبة
+            const teamName = document.getElementById(`${team}-name`).value;
+            
+            if (teamName.includes("الهلال") || team === 'team2') {
+                // استخدام بيانات اللاعبين من صورتك للفريق الثاني (الهلال)
+                extractedPlayers = [
+                    { 
+                        name: "السلمي", 
+                        status: "out",
+                        analysis: {
+                            position: "وسط",
+                            level: "نجم",
+                            importance: 0.8,
+                            impact: 0.20,
+                            role: "قائد الفريق",
+                            replacement: "ضعيف",
+                            effectOn: "القيادة"
+                        }
+                    },
+                    { 
+                        name: "القامدي", 
+                        status: "out",
+                        analysis: {
+                            position: "مهاجم",
+                            level: "أساسي",
+                            importance: 0.6,
+                            impact: 0.12,
+                            role: "مهاجم ثانوي",
+                            replacement: "جيد",
+                            effectOn: "الهجوم"
+                        }
+                    },
+                    { 
+                        name: "الشعراني", 
+                        status: "doubtful",
+                        analysis: {
+                            position: "مدافع",
+                            level: "أساسي",
+                            importance: 0.5,
+                            impact: 0.06,
+                            role: "مدافع جناح",
+                            replacement: "متوسط",
+                            effectOn: "الدفاع"
+                        }
+                    },
+                    { 
+                        name: "الجابر", 
+                        status: "doubtful",
+                        analysis: {
+                            position: "وسط",
+                            level: "احتياطي",
+                            importance: 0.4,
+                            impact: 0.04,
+                            role: "وسط دفاعي",
+                            replacement: "ممتاز",
+                            effectOn: "الوسط"
+                        }
+                    }
+                ];
+            } else {
+                // استخدام البيانات الافتراضية للفريق الأول (النصر)
                 extractedPlayers = [
                     { 
                         name: "لا. كبورها", 
@@ -1137,62 +1202,6 @@
                             role: "ظهير أيمن",
                             replacement: "ضعيف",
                             effectOn: "الجناح"
-                        }
-                    }
-                ];
-            } else {
-                // بيانات تجريبية للفريق الثاني مع تحليل متقدم
-                extractedPlayers = [
-                    { 
-                        name: "م. السلمي", 
-                        status: "out",
-                        analysis: {
-                            position: "وسط",
-                            level: "نجم",
-                            importance: 0.8,
-                            impact: 0.20,
-                            role: "قائد الفريق",
-                            replacement: "ضعيف",
-                            effectOn: "القيادة"
-                        }
-                    },
-                    { 
-                        name: "ع. الغامدي", 
-                        status: "out",
-                        analysis: {
-                            position: "مهاجم",
-                            level: "أساسي",
-                            importance: 0.6,
-                            impact: 0.12,
-                            role: "مهاجم ثانوي",
-                            replacement: "جيد",
-                            effectOn: "الهجوم"
-                        }
-                    },
-                    { 
-                        name: "ر. الشمراني", 
-                        status: "doubtful",
-                        analysis: {
-                            position: "مدافع",
-                            level: "أساسي",
-                            importance: 0.5,
-                            impact: 0.06,
-                            role: "مدافع جناح",
-                            replacement: "متوسط",
-                            effectOn: "الدفاع"
-                        }
-                    },
-                    { 
-                        name: "ف. الجابر", 
-                        status: "doubtful",
-                        analysis: {
-                            position: "وسط",
-                            level: "احتياطي",
-                            importance: 0.4,
-                            impact: 0.04,
-                            role: "وسط دفاعي",
-                            replacement: "ممتاز",
-                            effectOn: "الوسط"
                         }
                     }
                 ];
