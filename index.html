@@ -227,6 +227,26 @@
             font-size: 0.8rem;
         }
         
+        .confirm-injuries-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+            margin-top: 15px;
+        }
+        
+        .confirm-injuries-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
         .calculate-btn {
             display: block;
             width: 100%;
@@ -375,6 +395,20 @@
             color: #2a5298;
         }
         
+        .confirmed-players {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-right: 3px solid #4CAF50;
+        }
+        
+        .confirmed-title {
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 5px;
+        }
+        
         footer {
             text-align: center;
             color: white;
@@ -436,6 +470,11 @@
                     <div class="injured-players" id="team1-injured">
                         <!-- سيتم إضافة اللاعبين المصابين هنا بواسطة JavaScript -->
                     </div>
+                    <button class="confirm-injuries-btn" id="team1-confirm-btn">تأكيد اللاعبين المصابين</button>
+                    <div class="confirmed-players" id="team1-confirmed" style="display: none;">
+                        <div class="confirmed-title">اللاعبين المؤكدين:</div>
+                        <div id="team1-confirmed-list"></div>
+                    </div>
                 </div>
                 
                 <div class="team-input">
@@ -463,6 +502,11 @@
                     </div>
                     <div class="injured-players" id="team2-injured">
                         <!-- سيتم إضافة اللاعبين المصابين هنا بواسطة JavaScript -->
+                    </div>
+                    <button class="confirm-injuries-btn" id="team2-confirm-btn">تأكيد اللاعبين المصابين</button>
+                    <div class="confirmed-players" id="team2-confirmed" style="display: none;">
+                        <div class="confirmed-title">اللاعبين المؤكدين:</div>
+                        <div id="team2-confirmed-list"></div>
                     </div>
                 </div>
                 
@@ -522,6 +566,12 @@
             ]
         };
 
+        // تخزين اللاعبين المؤكدين
+        let confirmedPlayers = {
+            team1: [],
+            team2: []
+        };
+
         // تهيئة النتائج للفرق
         document.addEventListener('DOMContentLoaded', function() {
             initializeTeamResults('team1-results', ['W', 'W', 'D', 'W', 'L']);
@@ -540,6 +590,14 @@
             
             document.getElementById('team2-add-player').addEventListener('click', function() {
                 addInjuredPlayer('team2');
+            });
+            
+            document.getElementById('team1-confirm-btn').addEventListener('click', function() {
+                confirmInjuredPlayers('team1');
+            });
+            
+            document.getElementById('team2-confirm-btn').addEventListener('click', function() {
+                confirmInjuredPlayers('team2');
             });
             
             // إضافة حدث النقر لزر الحساب
@@ -673,6 +731,43 @@
             container.appendChild(playerDiv);
         }
         
+        // دالة لتأكيد اللاعبين المصابين
+        function confirmInjuredPlayers(team) {
+            const container = document.getElementById(`${team}-injured`);
+            const confirmedContainer = document.getElementById(`${team}-confirmed`);
+            const confirmedList = document.getElementById(`${team}-confirmed-list`);
+            
+            // جمع اللاعبين من القائمة
+            const players = [];
+            container.querySelectorAll('.player-item').forEach(item => {
+                const name = item.querySelector('.player-name').textContent;
+                const status = item.querySelector('.player-status').classList.contains('status-out') ? 'out' : 'doubtful';
+                players.push({ name, status });
+            });
+            
+            // حفظ اللاعبين المؤكدين
+            confirmedPlayers[team] = players;
+            
+            // عرض اللاعبين المؤكدين
+            let confirmedHTML = '';
+            players.forEach(player => {
+                const statusText = player.status === 'out' ? 'خارج' : 'مشكوك في لعبه';
+                const statusClass = player.status === 'out' ? 'status-out' : 'status-doubtful';
+                confirmedHTML += `
+                    <div class="player-item">
+                        <span class="player-name">${player.name}</span>
+                        <span class="player-status ${statusClass}">${statusText}</span>
+                    </div>
+                `;
+            });
+            
+            confirmedList.innerHTML = confirmedHTML;
+            confirmedContainer.style.display = 'block';
+            
+            // إظهار رسالة تأكيد
+            alert(`تم تأكيد ${players.length} لاعب مصاب للفريق ${team === 'team1' ? 'الأول' : 'الثاني'}`);
+        }
+        
         // دالة لجمع نتائج الفريق
         function getTeamResults(containerId) {
             const container = document.getElementById(containerId);
@@ -702,18 +797,9 @@
             return goals;
         }
         
-        // دالة لجمع اللاعبين المصابين
-        function getInjuredPlayers(containerId) {
-            const container = document.getElementById(containerId);
-            const players = [];
-            
-            container.querySelectorAll('.player-item').forEach(item => {
-                const name = item.querySelector('.player-name').textContent;
-                const status = item.querySelector('.player-status').classList.contains('status-out') ? 'out' : 'doubtful';
-                players.push({ name, status });
-            });
-            
-            return players;
+        // دالة لجمع اللاعبين المصابين (من المؤكدين)
+        function getInjuredPlayers(team) {
+            return confirmedPlayers[team] || [];
         }
         
         // دالة حساب الفرص المزدوجة
@@ -727,8 +813,8 @@
             const team1Goals = getTeamGoals('team1-goals');
             const team2Goals = getTeamGoals('team2-goals');
             
-            const team1Injured = getInjuredPlayers('team1-injured');
-            const team2Injured = getInjuredPlayers('team2-injured');
+            const team1Injured = getInjuredPlayers('team1');
+            const team2Injured = getInjuredPlayers('team2');
             
             // حساب النقاط بناءً على النتائج
             const team1Points = calculatePoints(team1Results);
