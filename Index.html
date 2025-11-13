@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام تحليل التداول المتقدم - Snaptrader.ai</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0f172a;
+            color: var(--light);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .disclaimer {
+            background-color: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--danger);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background-color: #1e293b;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            margin-bottom: 25px;
+        }
+        
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 20px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+        }
+        
+        .upload-area {
+            border: 2px dashed var(--primary);
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .upload-area:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+        }
+        
+        .btn-success:hover {
+            background-color: #0da271;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            background-color: #334155;
+            color: var(--light);
+            font-size: 16px;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
+        }
+        
+        .analysis-results {
+            margin-top: 30px;
+        }
+        
+        .signal {
+            background-color: #1e293b;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--primary);
+        }
+        
+        .signal.buy {
+            border-left-color: var(--success);
+        }
+        
+        .signal.sell {
+            border-left-color: var(--danger);
+        }
+        
+        .signal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .signal-type {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .confidence {
+            background-color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .signal-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .detail-label {
+            color: #94a3b8;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+        }
+        
+        .analysis-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .analysis-card {
+            background-color: #334155;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .analysis-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .analysis-label {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+        
+        .positive {
+            color: var(--success);
+        }
+        
+        .negative {
+            color: var(--danger);
+        }
+        
+        .neutral {
+            color: var(--warning);
+        }
+        
+        .history-item {
+            background-color: #334155;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .history-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .history-pair {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        
+        .history-date {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+        
+        .history-result {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        
+        .profit {
+            color: var(--success);
+        }
+        
+        .loss {
+            color: var(--danger);
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .ai-recommendation {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid var(--primary);
+        }
+        
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .ai-icon {
+            font-size: 24px;
+        }
+        
+        .ai-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .ai-confidence {
+            background-color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: auto;
+        }
+        
+        .ai-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .ai-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .ai-label {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+        
+        .ai-value {
+            font-weight: 600;
+        }
+        
+        .recommendation-buy {
+            border-color: var(--success);
+        }
+        
+        .recommendation-sell {
+            border-color: var(--danger);
+        }
+        
+        .recommendation-neutral {
+            border-color: var(--warning);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #94a3b8;
+            font-size: 14px;
+            border-top: 1px solid #334155;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>Snaptrader.ai - نظام التداول المتقدم</h1>
+            </div>
+            <p>تحليل الرسوم البيانية للتداول قصير المدى باستخدام الذكاء الاصطناعي</p>
+        </header>
+        
+        <div class="disclaimer">
+            <strong>هام: هذا ليس نصيحة مالية</strong>
+            <p>جميع التحليلات المقدمة هي لأغراض تعليمية وإعلامية فقط. التداول ينطوي على مخاطر. قم دائمًا بإجراء البحث الخاص بك وفكر في استشارة مستشار مالي قبل اتخاذ قرارات الاستثمار.</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="left-column">
+                <div class="card">
+                    <h2>تحليل الرسم البياني</h2>
+                    <p>تقنية التعرف على الأنماط الخاصة بنا تحلل رسومك البيانية لتحديد الأنماط الرئيسية وفرص التداول.</p>
+                    
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">📊</div>
+                        <p>اسحب وأفلت لقطة الشاشة للرسم البياني هنا، أو انقر للتصفح</p>
+                        <input type="file" id="chartUpload" accept="image/*" style="display: none;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="timeframe">الإطار الزمني:</label>
+                        <select id="timeframe">
+                            <option value="1m">1 دقيقة (سكالبينج)</option>
+                            <option value="5m">5 دقائق</option>
+                            <option value="15m">15 دقيقة</option>
+                            <option value="1h">1 ساعة</option>
+                            <option value="4h">4 ساعات</option>
+                            <option value="1d">1 يوم</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-block" id="analyzeBtn">تحليل الرسم البياني</button>
+                </div>
+                
+                <div class="card">
+                    <h2>حاسبة ما قبل التداول</h2>
+                    <p>حدد معايير المخاطرة لتحليل التداول</p>
+                    
+                    <div class="form-group">
+                        <label for="accountBalance">رصيد الحساب ($)</label>
+                        <input type="number" id="accountBalance" value="10000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="riskPerTrade">المخاطرة لكل صفقة (%)</label>
+                        <input type="number" id="riskPerTrade" value="0.25" step="0.05">
+                        <small>موصى به: 0.25% للتداول السريع (1 دقيقة)</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="stopLoss">وقف الخسارة (نقاط)</label>
+                        <input type="number" id="stopLoss" value="6">
+                        <small>موصى به: 6 نقاط (0.8*ATR) للتداول السريع (1 دقيقة)</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="takeProfit">جني الأرباح (نقاط)</label>
+                        <input type="number" id="takeProfit" value="7.8" readonly>
+                        <small>محسوب تلقائيًا بنسبة 1.3-1 للمخاطرة/المكافأة (1*ATR)</small>
+                    </div>
+                    
+                    <button class="btn btn-block btn-success" id="calculateBtn">حساب معايير التداول</button>
+                </div>
+            </div>
+            
+            <div class="right-column">
+                <div class="card">
+                    <div class="tabs">
+                        <div class="tab active" data-tab="analysis">التحليل الفني</div>
+                        <div class="tab" data-tab="history">سجل التداول</div>
+                    </div>
+                    
+                    <div class="tab-content active" id="analysis-tab">
+                        <h2>نتائج التحليل</h2>
+                        
+                        <div class="ai-recommendation recommendation-buy">
+                            <div class="ai-header">
+                                <div class="ai-icon">🤖</div>
+                                <div class="ai-title">توصية الذكاء الاصطناعي</div>
+                                <div class="ai-confidence">ثقة 94%</div>
+                            </div>
+                            <div class="ai-details">
+                                <div class="ai-detail">
+                                    <div class="ai-label">الاتجاه:</div>
+                                    <div class="ai-value positive">صاعد</div>
+                                </div>
+                                <div class="ai-detail">
+                                    <div class="ai-label">نوع الصفقة:</div>
+                                    <div class="ai-value">شراء (BUY)</div>
+                                </div>
+                                <div class="ai-detail">
+                                    <div class="ai-label">نقطة الدخول:</div>
+                                    <div class="ai-value">1.3050</div>
+                                </div>
+                                <div class="ai-detail">
+                                    <div class="ai-label">وقف الخسارة:</div>
+                                    <div class="ai-value">1.2990</div>
+                                </div>
+                                <div class="ai-detail">
+                                    <div class="ai-label">جني الأرباح:</div>
+                                    <div class="ai-value">1.3120</div>
+                                </div>
+                                <div class="ai-detail">
+                                    <div class="ai-label">نسبة المخاطرة/المكافأة:</div>
+                                    <div class="ai-value positive">1:1.8</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="analysis-section">
+                            <div class="section-title">
+                                <span>📊 Order Blocks</span>
+                            </div>
+                            <div class="analysis-grid">
+                                <div class="analysis-card">
+                                    <div class="analysis-label">Bullish OB</div>
+                                    <div class="analysis-value positive">3</div>
+                                    <div class="analysis-label">مؤكدة</div>
+                                </div>
+                                <div class="analysis-card">
+                                    <div class="analysis-label">Bearish OB</div>
+                                    <div class="analysis-value">1</div>
+                                    <div class="analysis-label">ضعيفة</div>
+                                </div>
+                                <div class="analysis-card">
+                                    <div class="analysis-label">OB Quality</div>
+                                    <div class="analysis-value positive">92%</div>
+                                    <div class="analysis-label">جودة عالية</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="analysis-section">
+                            <div class="section-title">
+                                <span>🎯 Splay Zones</span>
+                            </div>
+                            <div class="analysis-grid">
+                                <div class="analysis-card">
+                                    <div class="analysis-label">Liquidity Zones</div>
+                                    <div class="analysis-value">4</div>
+                                    <div class="analysis-label">مكتشفة</div>
+                                </div>
+                                <div class="analysis-card">
+                                    <div class="analysis-label">Equal Highs</div>
+                                    <div class="analysis-value">2</div>
+                                    <div class="analysis-label">مؤكدة</div>
+                                </div>
+                                <div class="analysis-card">
+                                    <div class="analysis-label">Equal Lows</div>
+                                    <div class="analysis-value positive">3</div>
+                                    <div class="analysis-label">مؤكدة</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="analysis-section">
+                            <div class="section-title">
+                                <span>📈 المؤشرات الفنية</span>
+                            </div>
+                            <div class="analysis-grid">
+                                <div class="analysis-card">
+                                    <div class="analysis-label">RSI</div>
+                                    <div class="analysis-value neutral">58.2</div>
+                                    <div class="analysis-label">محايد</div>
+                                </div>
+                                <div class="analysis-card">
+                                    <div class="analysis-label">MACD</div>
+                                    <div class="analysis-value positive">إيجابي</div>
+                                    <div class="analysis-label">تقاطع صعودي</div>
+                                </div>
+                                <div class="analysis-card">
+                                    <div class="analysis-label">Volume</div>
+                                    <div class="analysis-value positive">+42%</div>
+                                    <div class="analysis-label">مرتفع</div>
+                                </div>
+                                <div class="analysis-card">
+                                    <div class="analysis-label">ATR</div>
+                                    <div class="analysis-value">7.5</div>
+                                    <div class="analysis-label">متوسط</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="signal buy">
+                            <div class="signal-header">
+                                <div class="signal-type">إشارة شراء قوية</div>
+                                <div class="confidence">ثقة 91%</div>
+                            </div>
+                            <div class="signal-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">الزوج:</span>
+                                    <span class="detail-value">EUR/USD</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">الإطار الزمني:</span>
+                                    <span class="detail-value">1 دقيقة</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">نقطة الدخول:</span>
+                                    <span class="detail-value">1.3050</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">وقف الخسارة:</span>
+                                    <span class="detail-value">1.2990</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">جني الأرباح 1:</span>
+                                    <span class="detail-value">1.3100</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">جني الأرباح 2:</span>
+                                    <span class="detail-value">1.3120</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="history-tab">
+                        <h2>سجل التداول</h2>
+                        
+                        <div class="history-item">
+                            <div class="history-info">
+                                <div class="history-pair">EUR/USD - BUY</div>
+                                <div class="history-date">13 نوفمبر 2025 - 08:45</div>
+                            </div>
+                            <div class="history-result profit">+42 نقطة</div>
+                        </div>
+                        
+                        <div class="history-item">
+                            <div class="history-info">
+                                <div class="history-pair">GBP/USD - SELL</div>
+                                <div class="history-date">13 نوفمبر 2025 - 07:20</div>
+                            </div>
+                            <div class="history-result profit">+28 نقطة</div>
+                        </div>
+                        
+                        <div class="history-item">
+                            <div class="history-info">
+                                <div class="history-pair">USD/JPY - BUY</div>
+                                <div class="history-date">12 نوفمبر 2025 - 15:10</div>
+                            </div>
+                            <div class="history-result loss">-6 نقطة</div>
+                        </div>
+                        
+                        <div class="history-item">
+                            <div class="history-info">
+                                <div class="history-pair">AUD/USD - SELL</div>
+                                <div class="history-date">12 نوفمبر 2025 - 11:35</div>
+                            </div>
+                            <div class="history-result profit">+35 نقطة</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Snaptrader.ai &copy; 2025 - جميع الحقوق محفوظة</p>
+            <p>هذا النظام مخصص للتعليم والتدريب على التحليل الفني وليس نصيحة استثمارية</p>
+        </footer>
+    </div>
+
+    <script>
+        // عناصر DOM
+        const uploadArea = document.getElementById('uploadArea');
+        const chartUpload = document.getElementById('chartUpload');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const riskPerTrade = document.getElementById('riskPerTrade');
+        const stopLoss = document.getElementById('stopLoss');
+        const takeProfit = document.getElementById('takeProfit');
+        
+        // رفع الصورة
+        uploadArea.addEventListener('click', () => {
+            chartUpload.click();
+        });
+        
+        chartUpload.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const fileName = e.target.files[0].name;
+                uploadArea.innerHTML = `
+                    <div class="upload-icon">✅</div>
+                    <p>تم رفع الصورة: ${fileName}</p>
+                    <p>انقر "تحليل الرسم البياني" للمتابعة</p>
+                `;
+            }
+        });
+        
+        // تحليل الرسم البياني
+        analyzeBtn.addEventListener('click', () => {
+            if (!chartUpload.files.length) {
+                alert('يرجى رفع صورة الرسم البياني أولاً');
+                return;
+            }
+            
+            // محاكاة تحميل وتحليل البيانات
+            analyzeBtn.textContent = 'جاري التحليل...';
+            analyzeBtn.disabled = true;
+            
+            setTimeout(() => {
+                analyzeBtn.textContent = 'تحليل الرسم البياني';
+                analyzeBtn.disabled = false;
+                
+                // عرض نتائج محاكاة
+                alert('تم تحليل الرسم البياني بنجاح! تم تحديث نتائج التحليل.');
+                
+                // يمكن هنا إضافة كود حقيقي لتحليل الصورة باستخدام Canvas أو API
+            }, 2000);
+        });
+        
+        // حساب معايير التداول
+        calculateBtn.addEventListener('click', () => {
+            const riskValue = parseFloat(riskPerTrade.value);
+            const stopLossValue = parseFloat(stopLoss.value);
+            
+            if (isNaN(riskValue) || isNaN(stopLossValue)) {
+                alert('يرجى إدخال قيم صحيحة');
+                return;
+            }
+            
+            // حساب جني الأرباح بناءً على نسبة المخاطرة/المكافأة 1.3:1
+            const calculatedTakeProfit = stopLossValue * 1.3;
+            takeProfit.value = calculatedTakeProfit.toFixed(1);
+            
+            alert('تم حساب معايير التداول بنجاح!');
+        });
+        
+        // تبديل التبويبات
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                // إزالة النشاط من جميع التبويبات والمحتويات
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // إضافة النشاط للتبويب والمحتوى المحدد
+                tab.classList.add('active');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+        
+        // حساب تلقائي لجني الأرباح عند تغيير وقف الخسارة
+        stopLoss.addEventListener('input', () => {
+            const stopLossValue = parseFloat(stopLoss.value);
+            if (!isNaN(stopLossValue)) {
+                const calculatedTakeProfit = stopLossValue * 1.3;
+                takeProfit.value = calculatedTakeProfit.toFixed(1);
+            }
+        });
+    </script>
+</body>
+</html>
