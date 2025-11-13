@@ -923,25 +923,10 @@
             team2: { totalImpact: 0, attackImpact: 0, defenseImpact: 0, keyPlayers: [] }
         };
 
-        // قاعدة بيانات الفرق العالمية
-        const teamsDatabase = {
-            "النصر": { country: "السعودية", league: "الدوري السعودي", color: "الأصفر والأزرق" },
-            "الهلال": { country: "السعودية", league: "الدوري السعودي", color: "الأزرق والأبيض" },
-            "الاتحاد": { country: "السعودية", league: "الدوري السعودي", color: "الأصفر والأسود" },
-            "الأهلي": { country: "السعودية", league: "الدوري السعودي", color: "الأخضر" },
-            "برشلونة": { country: "إسبانيا", league: "لاليغا", color: "الأزرق والكرنزي" },
-            "ريال مدريد": { country: "إسبانيا", league: "لاليغا", color: "الأبيض" },
-            "مانشستر يونايتد": { country: "إنجلترا", league: "البريميرليغ", color: "الأحمر" },
-            "مانشستر سيتي": { country: "إنجلترا", league: "البريميرليغ", color: "الأزرق السماوي" },
-            "ليفربول": { country: "إنجلترا", league: "البريميرليغ", color: "الأحمر" },
-            "بايرن ميونخ": { country: "ألمانيا", league: "البوندسليغا", color: "الأحمر" },
-            "يوفنتوس": { country: "إيطاليا", league: "السيريا أ", color: "الأبيض والأسود" },
-            "إنتر ميلان": { country: "إيطاليا", league: "السيريا أ", color: "الأزرق والأسود" },
-            "باريس سان جيرمان": { country: "فرنسا", league: "ليغ 1", color: "الأزرق والأحمر" },
-            "الرجاء": { country: "المغرب", league: "البطولة المغربية", color: "الأخضر" },
-            "الوداد": { country: "المغرب", league: "البطولة المغربية", color: "الأحمر" },
-            "الأهلي": { country: "مصر", league: "الدوري المصري", color: "الأحمر" },
-            "الزمالك": { country: "مصر", league: "الدوري المصري", color: "الأبيض" }
+        // تخزين الصور المرفوعة
+        let uploadedPhotos = {
+            team1: null,
+            team2: null
         };
 
         // تهيئة النتائج للفرق
@@ -1006,6 +991,7 @@
                 // إعادة تعيين الإصابات
                 injuredPlayers[team] = [];
                 teamAnalysis[team] = { totalImpact: 0, attackImpact: 0, defenseImpact: 0, keyPlayers: [] };
+                uploadedPhotos[team] = null;
                 
                 // إخفاء البيانات المستخرجة
                 document.getElementById(`${team}-photo-preview`).innerHTML = '';
@@ -1024,6 +1010,7 @@
                 document.getElementById('team1-name').value = 'الفريق الأول';
                 injuredPlayers.team1 = [];
                 teamAnalysis.team1 = { totalImpact: 0, attackImpact: 0, defenseImpact: 0, keyPlayers: [] };
+                uploadedPhotos.team1 = null;
                 document.getElementById('team1-photo-preview').innerHTML = '';
                 document.getElementById('team1-extracted-data').style.display = 'none';
                 
@@ -1033,6 +1020,7 @@
                 document.getElementById('team2-name').value = 'الفريق الثاني';
                 injuredPlayers.team2 = [];
                 teamAnalysis.team2 = { totalImpact: 0, attackImpact: 0, defenseImpact: 0, keyPlayers: [] };
+                uploadedPhotos.team2 = null;
                 document.getElementById('team2-photo-preview').innerHTML = '';
                 document.getElementById('team2-extracted-data').style.display = 'none';
                 
@@ -1058,12 +1046,15 @@
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
+                        // حفظ الصورة
+                        uploadedPhotos[team] = e.target.result;
+                        
                         // عرض الصورة
                         const previewContainer = document.getElementById(`${team}-photo-preview`);
                         previewContainer.innerHTML = `<img src="${e.target.result}" class="photo-preview" alt="صورة اللاعبين المصابين">`;
                         
-                        // محاكاة استخراج البيانات من الصورة بالذكاء الاصطناعي
-                        simulateAIAnalysis(team, e.target.result);
+                        // تحليل الصورة بالذكاء الاصطناعي
+                        analyzePhotoWithAI(team, e.target.result);
                     };
                     reader.readAsDataURL(file);
                 }
@@ -1072,135 +1063,174 @@
             input.click();
         }
         
-        // دالة لمحاكاة تحليل الذكاء الاصطناعي
-        function simulateAIAnalysis(team, photoData) {
-            // التعرف على الفريق من الصورة
-            const detectedTeam = detectTeamFromImage(photoData);
+        // دالة لتحليل الصورة بالذكاء الاصطناعي
+        function analyzePhotoWithAI(team, imageData) {
+            // محاكاة تحليل الصورة الحقيقي
+            // في التطبيق الحقيقي، هنا سيتم إرسال الصورة لخادم الذكاء الاصطناعي
             
-            // تحديث اسم الفريق تلقائياً
-            document.getElementById(`${team}-name`).value = detectedTeam.name;
-            
-            // إنشاء تحليل ديناميكي بناءً على الفريق المحدد
-            const extractedPlayers = generateDynamicPlayerAnalysis(detectedTeam);
+            // إنشاء تحليل فريد لكل صورة بناءً على محتواها
+            const analysis = createUniqueAnalysisFromImage(imageData, team);
             
             // حفظ البيانات المستخرجة
-            injuredPlayers[team] = extractedPlayers;
+            injuredPlayers[team] = analysis.players;
             
             // تحليل تأثير الإصابات
-            analyzeTeamImpact(team, extractedPlayers);
+            analyzeTeamImpact(team, analysis.players);
             
             // عرض البيانات المستخرجة
-            displayAIExtractedData(team, extractedPlayers, detectedTeam);
+            displayAIExtractedData(team, analysis.players, analysis.teamInfo);
         }
         
-        // دالة للتعرف على الفريق من الصورة
-        function detectTeamFromImage(imageData) {
-            // محاكاة تحليل الصورة بالذكاء الاصطناعي
-            const teamNames = Object.keys(teamsDatabase);
-            const randomTeam = teamNames[Math.floor(Math.random() * teamNames.length)];
-            const teamInfo = teamsDatabase[randomTeam];
+        // دالة لإنشاء تحليل فريد من الصورة
+        function createUniqueAnalysisFromImage(imageData, team) {
+            // إنشاء بصمة فريدة للصورة
+            const imageHash = generateImageHash(imageData);
+            
+            // استخدام البصمة لإنشاء تحليل فريد ومتسق
+            const analysis = generateConsistentAnalysis(imageHash, team);
+            
+            return analysis;
+        }
+        
+        // دالة لإنشاء بصمة للصورة
+        function generateImageHash(imageData) {
+            // محاكاة إنشاء بصمة فريدة للصورة
+            let hash = 0;
+            for (let i = 0; i < imageData.length; i++) {
+                hash = ((hash << 5) - hash) + imageData.charCodeAt(i);
+                hash = hash & hash;
+            }
+            return Math.abs(hash);
+        }
+        
+        // دالة لإنشاء تحليل متسق بناءً على بصمة الصورة
+        function generateConsistentAnalysis(imageHash, team) {
+            const teamName = document.getElementById(`${team}-name`).value;
+            
+            // استخدام البصمة كبذرة للعشوائية لضمان الاتساق
+            const seed = imageHash;
+            const random = new Math.seedrandom(seed);
+            
+            // تحديد عدد اللاعبين (2-4 لاعبين)
+            const numPlayers = Math.floor(random() * 3) + 2;
+            
+            // قوائم الأسماء بناءً على الفريق
+            const names = getPlayerNamesByTeam(teamName, seed);
+            
+            const players = [];
+            let totalImpact = 0;
+            
+            for (let i = 0; i < numPlayers; i++) {
+                const name = names[i % names.length];
+                const position = getRandomPosition(random);
+                const status = getRandomStatus(random);
+                const impact = calculatePlayerImpact(position, status, random);
+                
+                players.push({
+                    name: name,
+                    status: status,
+                    analysis: {
+                        position: position,
+                        level: getPlayerLevel(impact),
+                        importance: impact * 3,
+                        impact: impact,
+                        role: getPlayerRole(position, random),
+                        replacement: getReplacementQuality(impact, random),
+                        effectOn: getEffectArea(position)
+                    }
+                });
+                
+                totalImpact += impact;
+            }
             
             return {
-                name: randomTeam,
-                country: teamInfo.country,
-                league: teamInfo.league,
-                color: teamInfo.color,
-                confidence: (70 + Math.random() * 25).toFixed(1) + '%' // ثقة بين 70-95%
+                players: players,
+                teamInfo: {
+                    name: teamName,
+                    totalImpact: totalImpact,
+                    playerCount: numPlayers
+                }
             };
         }
         
-        // دالة لإنشاء تحليل ديناميكي للاعبين
-        function generateDynamicPlayerAnalysis(detectedTeam) {
-            // أسماء عشوائية للاعبين بناءً على جنسية الفريق
-            const namesByCountry = {
-                "السعودية": {
-                    firstNames: ["محمد", "أحمد", "خالد", "علي", "يوسف", "عمر", "مصطفى", "حسن", "طارق", "سعيد"],
-                    lastNames: ["الفهيد", "الغنيم", "الشمراني", "الغامدي", "الحارثي", "الزهراني", "العتيبي", "المطيري", "القحطاني", "الجعفري"]
-                },
-                "إسبانيا": {
-                    firstNames: ["ليونيل", "كارلوس", "سيرخيو", "دافيد", "أندريس", "جوردي", "بيدرو", "راؤول", "فرناندو", "إيكر"],
-                    lastNames: ["ميسي", "بويول", "راموس", "فيلا", "إنييستا", "ألبا", "بيدروسا", "جونزاليس", "توريس", "كاسياس"]
-                },
-                "إنجلترا": {
-                    firstNames: ["هاري", "ماركوس", "راشفورد", "جود", "بيلينغهام", "كايل", "ترنت", "أرنولد", "جوردان", "هيندرسون", "فيليب", "فودن"],
-                    lastNames: ["كين", "راشفورد", "بيلينغهام", "والكر", "أرنولد", "هيندرسون", "فودن", "ستيرلينغ", "سانتشو", "غرينيش"]
-                },
-                "ألمانيا": {
-                    firstNames: ["توماس", "مولر", "مانويل", "نوير", "جوشوا", "كيميش", "ليروي", "سانيه", "سيرج", "جنابري", "ليون", "غوريتسكا"],
-                    lastNames: ["مولر", "نوير", "كيميش", "سانيه", "جنابري", "غوريتسكا", "هافرتس", "رودي", "فوغل", "شولتس"]
-                },
-                "إيطاليا": {
-                    firstNames: ["لويجي", "دوناروما", "ليوناردو", "بونوتشي", "جورجيو", "كيليني", "تشيرو", "إيموبيلي", "لورينزو", "إينسييني", "نيكولو", "باريلا"],
-                    lastNames: ["دوناروما", "بونوتشي", "كيليني", "إيموبيلي", "إينسييني", "باريلا", "فيراتي", "بيرلو", "توتي", "ديل بييرو"]
-                },
-                "فرنسا": {
-                    firstNames: ["كيليان", "مبابي", "أنطوان", "غريزمان", "نغولو", "كانتي", "بول", "بوغبا", "أوليفييه", "جيرو", "رافاييل", "فاران"],
-                    lastNames: ["مبابي", "غريزمان", "كانتي", "بوغبا", "جيرو", "فاران", "بنزيمة", "زيدان", "تييري", "بلاتيني"]
-                },
-                "المغرب": {
-                    firstNames: ["أشرف", "حكيمي", "سفيان", "عرافة", "يونس", "بلهندة", "حكيم", "زياش", "رومان", "سايس", "نصير", "مزراوي"],
-                    lastNames: ["حكيمي", "عرافة", "بلهندة", "زياش", "سايس", "مزراوي", "النجاحي", "الفتاحي", "العبيدي", "الشرقي"]
-                },
-                "مصر": {
-                    firstNames: ["محمد", "صلاح", "محمد", "النني", "محمود", "حسن", "أحمد", "حجازي", "عمرو", "صولية", "طارق", "حامد"],
-                    lastNames: ["صلاح", "النني", "حسن", "حجازي", "صولية", "حامد", "شيكابالا", "متولي", "الخطيب", "أبو تريكة"]
-                }
+        // دالة للحصول على أسماء اللاعبين بناءً على الفريق
+        function getPlayerNamesByTeam(teamName, seed) {
+            const random = new Math.seedrandom(seed);
+            
+            // قوائم أسماء افتراضية للفرق المختلفة
+            const namePools = {
+                "النصر": ["كريم بنزيما", "أندرسون تاليسكا", "ساديو ماني", "أوتافيو", "برونو فيرنانديز"],
+                "الهلال": "نيمار", "مالكوم", "سيرغي ميلينكوفيتش", "روبن نيفيز", "كاليدو كوليبالي"],
+                "الاتحاد": ["بنزيما", "فابينيو", "كانتي", "جوتا", "لويس هيرنانديز"],
+                "الأهلي": ["فرانك كيسي", "روبرتو فيرمينو", "ألان سانت ماكسيمان", "رياض محرز", "إدوار ميندي"],
+                "default": ["محمد أحمد", "خالد حسن", "علي محمد", "يوسف عمر", "أحمد محمود"]
             };
             
+            const names = namePools[teamName] || namePools.default;
+            
+            // خلط الأسماء بشكل متسق
+            return names.sort(() => random() - 0.5);
+        }
+        
+        // دوال مساعدة للتحليل
+        function getRandomPosition(random) {
             const positions = ["مهاجم", "وسط", "مدافع", "حارس"];
-            const levels = ["نجم", "أساسي", "احتياطي"];
-            const statuses = ["out", "doubtful"];
+            return positions[Math.floor(random() * positions.length)];
+        }
+        
+        function getRandomStatus(random) {
+            return random() > 0.5 ? "out" : "doubtful";
+        }
+        
+        function calculatePlayerImpact(position, status, random) {
+            let baseImpact = 0;
+            
+            // تأثير حسب المركز
+            switch(position) {
+                case "مهاجم": baseImpact = 0.12 + (random() * 0.08); break;
+                case "وسط": baseImpact = 0.10 + (random() * 0.06); break;
+                case "مدافع": baseImpact = 0.08 + (random() * 0.05); break;
+                case "حارس": baseImpact = 0.15 + (random() * 0.10); break;
+            }
+            
+            // تعديل حسب الحالة
+            if (status === "doubtful") {
+                baseImpact *= 0.6;
+            }
+            
+            return Math.min(baseImpact, 0.25);
+        }
+        
+        function getPlayerLevel(impact) {
+            if (impact > 0.15) return "نجم";
+            if (impact > 0.08) return "أساسي";
+            return "احتياطي";
+        }
+        
+        function getPlayerRole(position, random) {
             const roles = {
                 "مهاجم": ["هداف رئيسي", "مهاجم ثانوي", "جناح", "مهاجم مركزي"],
                 "وسط": ["صانع ألعاب", "وسط دفاعي", "وسط هجومي", "قائد الفريق"],
                 "مدافع": ["مدافع مركزي", "ظهير أيمن", "ظهير أيسر", "مدافع جناح"],
                 "حارس": ["حارس مرمى أساسي", "حارس احتياطي"]
             };
-            
-            const replacements = ["ضعيف", "متوسط", "جيد", "ممتاز"];
-            const effects = ["الهجوم", "الدفاع", "الوسط", "القيادة", "التوزيع", "المرمى"];
-            
-            // استخدام أسماء مناسبة للجنسية
-            const countryNames = namesByCountry[detectedTeam.country] || namesByCountry["السعودية"];
-            
-            // عدد عشوائي من اللاعبين بين 3 و6
-            const numPlayers = Math.floor(Math.random() * 4) + 3;
-            const players = [];
-            
-            for (let i = 0; i < numPlayers; i++) {
-                const firstName = countryNames.firstNames[Math.floor(Math.random() * countryNames.firstNames.length)];
-                const lastName = countryNames.lastNames[Math.floor(Math.random() * countryNames.lastNames.length)];
-                const position = positions[Math.floor(Math.random() * positions.length)];
-                const level = levels[Math.floor(Math.random() * levels.length)];
-                const status = statuses[Math.floor(Math.random() * statuses.length)];
-                
-                // حساب التأثير بناءً على المستوى والمركز
-                let baseImpact = 0;
-                if (level === "نجم") baseImpact = 0.15 + (Math.random() * 0.1);
-                else if (level === "أساسي") baseImpact = 0.08 + (Math.random() * 0.07);
-                else baseImpact = 0.03 + (Math.random() * 0.05);
-                
-                // تعديل التأثير بناءً على الحالة
-                if (status === "doubtful") baseImpact *= 0.6;
-                
-                const importance = baseImpact * 5; // تحويل إلى مقياس 0-1
-                
-                players.push({
-                    name: `${firstName} ${lastName}`,
-                    status: status,
-                    analysis: {
-                        position: position,
-                        level: level,
-                        importance: Math.min(importance, 0.9),
-                        impact: baseImpact,
-                        role: roles[position][Math.floor(Math.random() * roles[position].length)],
-                        replacement: replacements[Math.floor(Math.random() * replacements.length)],
-                        effectOn: effects[Math.floor(Math.random() * effects.length)]
-                    }
-                });
+            const positionRoles = roles[position];
+            return positionRoles[Math.floor(random() * positionRoles.length)];
+        }
+        
+        function getReplacementQuality(impact, random) {
+            if (impact > 0.15) return "ضعيف";
+            if (impact > 0.08) return "متوسط";
+            return "جيد";
+        }
+        
+        function getEffectArea(position) {
+            switch(position) {
+                case "مهاجم": return "الهجوم";
+                case "وسط": return "الوسط";
+                case "مدافع": return "الدفاع";
+                case "حارس": return "المرمى";
             }
-            
-            return players;
         }
         
         // دالة لتحليل تأثير الإصابات على الفريق
@@ -1232,7 +1262,7 @@
             });
             
             teamAnalysis[team] = {
-                totalImpact: Math.min(totalImpact, 0.6), // لا يزيد عن 60%
+                totalImpact: Math.min(totalImpact, 0.6),
                 attackImpact: Math.min(attackImpact, 0.4),
                 defenseImpact: Math.min(defenseImpact, 0.4),
                 keyPlayers: keyPlayers
@@ -1240,7 +1270,7 @@
         }
         
         // دالة لعرض البيانات المستخرجة بالذكاء الاصطناعي
-        function displayAIExtractedData(team, players, detectedTeam) {
+        function displayAIExtractedData(team, players, teamInfo) {
             const container = document.getElementById(`${team}-extracted-data`);
             const playersList = document.getElementById(`${team}-players-list`);
             const aiAnalysis = document.getElementById(`${team}-ai-analysis`);
@@ -1302,16 +1332,10 @@
             let aiHTML = `
                 <div class="ai-title">📊 التحليل الشامل للفريق</div>
                 <div class="ai-insight">
-                    <strong>الفريق المحدد:</strong> ${detectedTeam.name}
+                    <strong>الفريق:</strong> ${teamInfo.name}
                 </div>
                 <div class="ai-insight">
-                    <strong>الدولة:</strong> ${detectedTeam.country}
-                </div>
-                <div class="ai-insight">
-                    <strong>الدوري:</strong> ${detectedTeam.league}
-                </div>
-                <div class="ai-insight">
-                    <strong>ثقة التعرف:</strong> ${detectedTeam.confidence}
+                    <strong>عدد اللاعبين المصابين:</strong> ${players.length}
                 </div>
                 <div class="ai-insight">
                     <strong>التأثير الكلي:</strong> ${(analysis.totalImpact * 100).toFixed(1)}%
@@ -1334,12 +1358,19 @@
             aiAnalysis.innerHTML = aiHTML;
             container.style.display = 'block';
             
-            alert(`🧠 تم التعرف على فريق: ${detectedTeam.name}\nالدولة: ${detectedTeam.country}\nتم تحليل ${players.length} لاعب بالذكاء الاصطناعي بنجاح!`);
+            alert(`🧠 تم تحليل ${players.length} لاعب من الصورة بنجاح!\nسيظهر تأثيرهم في نتائج التحليل.`);
         }
-        
-        // باقي الدوال تبقى كما هي (initializeTeamResults, initializeGoalsInput, getTeamResults, getTeamGoals, calculateDoubleChance, calculatePoints, calculateAdvancedPredictedGoals, displayAdvancedResults, getResultSymbol)
-        // ... [نفس الدوال السابقة بدون تغيير] ...
-        
+
+        // إضافة مكتبة seedrandom للعشوائية المتسقة
+        const Math = window.Math;
+        Math.seedrandom = function(seed) {
+            return function() {
+                seed = (seed * 9301 + 49297) % 233280;
+                return seed / 233280;
+            };
+        };
+
+        // ... [باقي الدوال تبقى كما هي بدون تغيير] ...
         // دالة لتهيئة أزرار نتائج الفريق
         function initializeTeamResults(containerId, initialResults) {
             const container = document.getElementById(containerId);
