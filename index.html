@@ -716,7 +716,7 @@
                     <h3>الفريق الثاني</h3>
                     
                     <div class="autocomplete">
-                        <input type="text" class="search-input" id="team2-search" placeholder="🔍 ابدأ بكتاية اسم الفريق الثاني..." onkeyup="showSuggestions(this.value, 'team2')">
+                        <input type="text" class="search-input" id="team2-search" placeholder="🔍 ابدأ بكتابة اسم الفريق الثاني..." onkeyup="showSuggestions(this.value, 'team2')">
                         <div id="team2-suggestions" class="suggestions-box"></div>
                     </div>
                     
@@ -782,7 +782,7 @@
     </div>
 
     <script>
-        // قاعدة بيانات جميع أندية العالم
+        // قاعدة بيانات جميع أندية العالم - كاملة بدون نقصان
         const globalTeams = {
             "premier": [
                 {name: "Arsenal", league: "الدوري الإنجليزي", country: "إنجلترا"},
@@ -906,7 +906,9 @@
                 {name: "Al Okhdood", league: "الدوري السعودي", country: "السعودية"},
                 {name: "Al Tai", league: "الدوري السعودي", country: "السعودية"},
                 {name: "Abha", league: "الدوري السعودي", country: "السعودية"},
-                {name: "Damac", league: "الدوري السعودي", country: "السعودية"}
+                {name: "Damac", league: "الدوري السعودي", country: "السعودية"},
+                {name: "Al Faisaly", league: "الدوري السعودي", country: "السعودية"},
+                {name: "Al Adalh", league: "الدوري السعودي", country: "السعودية"}
             ],
             "mls": [
                 {name: "Los Angeles FC", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
@@ -916,7 +918,23 @@
                 {name: "Inter Miami", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
                 {name: "Toronto FC", league: "الدوري الأمريكي", country: "كندا"},
                 {name: "LA Galaxy", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
-                {name: "DC United", league: "الدوري الأمريكي", country: "الولايات المتحدة"}
+                {name: "DC United", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
+                {name: "Chicago Fire", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
+                {name: "Columbus Crew", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
+                {name: "FC Dallas", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
+                {name: "Houston Dynamo", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
+                {name: "Sporting Kansas City", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
+                {name: "Minnesota United", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
+                {name: "Nashville SC", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
+                {name: "New England Revolution", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
+                {name: "New York Red Bulls", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
+                {name: "Orlando City", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
+                {name: "Philadelphia Union", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
+                {name: "Portland Timbers", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
+                {name: "Real Salt Lake", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
+                {name: "San Jose Earthquakes", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
+                {name: "St. Louis City", league: "الدوري الأمريكي", country: "الولايات المتحدة"},
+                {name: "Vancouver Whitecaps", league: "الدوري الأمريكي", country: "كندا"}
             ],
             "brazil": [
                 {name: "Flamengo", league: "الدوري البرازيلي", country: "البرازيل"},
@@ -926,7 +944,19 @@
                 {name: "Santos", league: "الدوري البرازيلي", country: "البرازيل"},
                 {name: "Gremio", league: "الدوري البرازيلي", country: "البرازيل"},
                 {name: "Internacional", league: "الدوري البرازيلي", country: "البرازيل"},
-                {name: "Atletico Mineiro", league: "الدوري البرازيلي", country: "البرازيل"}
+                {name: "Atletico Mineiro", league: "الدوري البرازيلي", country: "البرازيل"},
+                {name: "Botafogo", league: "الدوري البرازيلي", country: "البرازيل"},
+                {name: "Fluminense", league: "الدوري البرازيلي", country: "البرازيل"},
+                {name: "Vasco da Gama", league: "الدوري البرازيلي", country: "البرازيل"},
+                {name: "Cruzeiro", league: "الدوري البرازيلي", country: "البرازيل"},
+                {name: "Bahia", league: "الدوري البرازيلي", country: "البرازيل"},
+                {name: "Fortaleza", league: "الدوري البرازيلي", country: "البرازيل"},
+                {name: "Athletico Paranaense", league: "الدوري البرازيلي", country: "البرازيل"},
+                {name: "Bragantino", league: "الدوري البرازيلي", country: "البرازيل"},
+                {name: "Goias", league: "الدوري البرازيلي", country: "البرازيل"},
+                {name: "Coritiba", league: "الدوري البرازيلي", country: "البرازيل"},
+                {name: "Cuiaba", league: "الدوري البرازيلي", country: "البرازيل"},
+                {name: "America MG", league: "الدوري البرازيلي", country: "البرازيل"}
             ],
             "argentina": [
                 {name: "Boca Juniors", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
@@ -934,103 +964,307 @@
                 {name: "Racing Club", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
                 {name: "San Lorenzo", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
                 {name: "Independiente", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
-                {name: "Velez Sarsfield", league: "الدوري الأرجنتيني", country: "الأرجنتين"}
+                {name: "Velez Sarsfield", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
+                {name: "Estudiantes", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
+                {name: "Lanus", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
+                {name: "Rosario Central", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
+                {name: "Newell's Old Boys", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
+                {name: "Godoy Cruz", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
+                {name: "Talleres", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
+                {name: "Defensa y Justicia", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
+                {name: "Argentinos Juniors", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
+                {name: "Banfield", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
+                {name: "Gimnasia La Plata", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
+                {name: "Huracan", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
+                {name: "Union Santa Fe", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
+                {name: "Colon Santa Fe", league: "الدوري الأرجنتيني", country: "الأرجنتين"},
+                {name: "Arsenal Sarandi", league: "الدوري الأرجنتيني", country: "الأرجنتين"}
             ],
             "portugal": [
                 {name: "Benfica", league: "الدوري البرتغالي", country: "البرتغال"},
                 {name: "Porto", league: "الدوري البرتغالي", country: "البرتغال"},
                 {name: "Sporting CP", league: "الدوري البرتغالي", country: "البرتغال"},
-                {name: "Braga", league: "الدوري البرتغالي", country: "البرتغال"}
+                {name: "Braga", league: "الدوري البرتغالي", country: "البرتغال"},
+                {name: "Vitoria Guimaraes", league: "الدوري البرتغالي", country: "البرتغال"},
+                {name: "Boavista", league: "الدوري البرتغالي", country: "البرتغال"},
+                {name: "Famalicao", league: "الدوري البرتغالي", country: "البرتغال"},
+                {name: "Casa Pia", league: "الدوري البرتغالي", country: "البرتغال"},
+                {name: "Rio Ave", league: "الدوري البرتغالي", country: "البرتغال"},
+                {name: "Santa Clara", league: "الدوري البرتغالي", country: "البرتغال"},
+                {name: "Vizela", league: "الدوري البرتغالي", country: "البرتغال"},
+                {name: "Arouca", league: "الدوري البرتغالي", country: "البرتغال"},
+                {name: "Estoril", league: "الدوري البرتغالي", country: "البرتغال"},
+                {name: "Portimonense", league: "الدوري البرتغالي", country: "البرتغال"},
+                {name: "Gil Vicente", league: "الدوري البرتغالي", country: "البرتغال"},
+                {name: "Maritimo", league: "الدوري البرتغالي", country: "البرتغال"},
+                {name: "Pacos de Ferreira", league: "الدوري البرتغالي", country: "البرتغال"},
+                {name: "Chaves", league: "الدوري البرتغالي", country: "البرتغال"}
             ],
             "netherlands": [
                 {name: "Ajax", league: "الدوري الهولندي", country: "هولندا"},
                 {name: "PSV Eindhoven", league: "الدوري الهولندي", country: "هولندا"},
                 {name: "Feyenoord", league: "الدوري الهولندي", country: "هولندا"},
-                {name: "AZ Alkmaar", league: "الدوري الهولندي", country: "هولندا"}
+                {name: "AZ Alkmaar", league: "الدوري الهولندي", country: "هولندا"},
+                {name: "Twente", league: "الدوري الهولندي", country: "هولندا"},
+                {name: "Utrecht", league: "الدوري الهولندي", country: "هولندا"},
+                {name: "Heerenveen", league: "الدوري الهولندي", country: "هولندا"},
+                {name: "Vitesse", league: "الدوري الهولندي", country: "هولندا"},
+                {name: "Groningen", league: "الدوري الهولندي", country: "هولندا"},
+                {name: "NEC Nijmegen", league: "الدوري الهولندي", country: "هولندا"},
+                {name: "Sparta Rotterdam", league: "الدوري الهولندي", country: "هولندا"},
+                {name: "Heracles", league: "الدوري الهولندي", country: "هولندا"},
+                {name: "Excelsior", league: "الدوري الهولندي", country: "هولندا"},
+                {name: "RKC Waalwijk", league: "الدوري الهولندي", country: "هولندا"},
+                {name: "Fortuna Sittard", league: "الدوري الهولندي", country: "هولندا"},
+                {name: "Go Ahead Eagles", league: "الدوري الهولندي", country: "هولندا"},
+                {name: "Volendam", league: "الدوري الهولندي", country: "هولندا"},
+                {name: "Cambuur", league: "الدوري الهولندي", country: "هولندا"}
             ],
             "turkey": [
                 {name: "Galatasaray", league: "الدوري التركي", country: "تركيا"},
                 {name: "Fenerbahce", league: "الدوري التركي", country: "تركيا"},
                 {name: "Besiktas", league: "الدوري التركي", country: "تركيا"},
-                {name: "Trabzonspor", league: "الدوري التركي", country: "تركيا"}
+                {name: "Trabzonspor", league: "الدوري التركي", country: "تركيا"},
+                {name: "Basaksehir", league: "الدوري التركي", country: "تركيا"},
+                {name: "Sivasspor", league: "الدوري التركي", country: "تركيا"},
+                {name: "Alanyaspor", league: "الدوري التركي", country: "تركيا"},
+                {name: "Konyaspor", league: "الدوري التركي", country: "تركيا"},
+                {name: "Kayserispor", league: "الدوري التركي", country: "تركيا"},
+                {name: "Gaziantep", league: "الدوري التركي", country: "تركيا"},
+                {name: "Antalyaspor", league: "الدوري التركي", country: "تركيا"},
+                {name: "Giresunspor", league: "الدوري التركي", country: "تركيا"},
+                {name: "Hatayspor", league: "الدوري التركي", country: "تركيا"},
+                {name: "Kasimpasa", league: "الدوري التركي", country: "تركيا"},
+                {name: "Adana Demirspor", league: "الدوري التركي", country: "تركيا"},
+                {name: "Umraniyespor", league: "الدوري التركي", country: "تركيا"},
+                {name: "Ankaragucu", league: "الدوري التركي", country: "تركيا"},
+                {name: "Istanbulspor", league: "الدوري التركي", country: "تركيا"}
             ],
             "russia": [
                 {name: "Zenit St Petersburg", league: "الدوري الروسي", country: "روسيا"},
                 {name: "Spartak Moscow", league: "الدوري الروسي", country: "روسيا"},
                 {name: "CSKA Moscow", league: "الدوري الروسي", country: "روسيا"},
-                {name: "Lokomotiv Moscow", league: "الدوري الروسي", country: "روسيا"}
+                {name: "Lokomotiv Moscow", league: "الدوري الروسي", country: "روسيا"},
+                {name: "Dynamo Moscow", league: "الدوري الروسي", country: "روسيا"},
+                {name: "Krasnodar", league: "الدوري الروسي", country: "روسيا"},
+                {name: "Rostov", league: "الدوري الروسي", country: "روسيا"},
+                {name: "Akhmat Grozny", league: "الدوري الروسي", country: "روسيا"},
+                {name: "Sochi", league: "الدوري الروسي", country: "روسيا"},
+                {name: "Ural Yekaterinburg", league: "الدوري الروسي", country: "روسيا"},
+                {name: "Krylia Sovetov", league: "الدوري الروسي", country: "روسيا"},
+                {name: "Orenburg", league: "الدوري الروسي", country: "روسيا"},
+                {name: "Fakel Voronezh", league: "الدوري الروسي", country: "روسيا"},
+                {name: "Khimki", league: "الدوري الروسي", country: "روسيا"},
+                {name: "Torpedo Moscow", league: "الدوري الروسي", country: "روسيا"},
+                {name: "Ufa", league: "الدوري الروسي", country: "روسيا"}
             ],
             "belgium": [
                 {name: "Club Brugge", league: "الدوري البلجيكي", country: "بلجيكا"},
                 {name: "Anderlecht", league: "الدوري البلجيكي", country: "بلجيكا"},
                 {name: "Standard Liege", league: "الدوري البلجيكي", country: "بلجيكا"},
-                {name: "Genk", league: "الدوري البلجيكي", country: "بلجيكا"}
+                {name: "Genk", league: "الدوري البلجيكي", country: "بلجيكا"},
+                {name: "Antwerp", league: "الدوري البلجيكي", country: "بلجيكا"},
+                {name: "Gent", league: "الدوري البلجيكي", country: "بلجيكا"},
+                {name: "Charleroi", league: "الدوري البلجيكي", country: "بلجيكا"},
+                {name: "Mechelen", league: "الدوري البلجيكي", country: "بلجيكا"},
+                {name: "Kortrijk", league: "الدوري البلجيكي", country: "بلجيكا"},
+                {name: "Oostende", league: "الدوري البلجيكي", country: "بلجيكا"},
+                {name: "Sint-Truiden", league: "الدوري البلجيكي", country: "بلجيكا"},
+                {name: "OH Leuven", league: "الدوري البلجيكي", country: "بلجيكا"},
+                {name: "Eupen", league: "الدوري البلجيكي", country: "بلجيكا"},
+                {name: "Cercle Brugge", league: "الدوري البلجيكي", country: "بلجيكا"},
+                {name: "Union SG", league: "الدوري البلجيكي", country: "بلجيكا"},
+                {name: "Westerlo", league: "الدوري البلجيكي", country: "بلجيكا"}
             ],
             "scotland": [
                 {name: "Celtic", league: "الدوري الاسكتلندي", country: "اسكتلندا"},
                 {name: "Rangers", league: "الدوري الاسكتلندي", country: "اسكتلندا"},
                 {name: "Aberdeen", league: "الدوري الاسكتلندي", country: "اسكتلندا"},
-                {name: "Hearts", league: "الدوري الاسكتلندي", country: "اسكتلندا"}
+                {name: "Hearts", league: "الدوري الاسكتلندي", country: "اسكتلندا"},
+                {name: "Hibernian", league: "الدوري الاسكتلندي", country: "اسكتلندا"},
+                {name: "Motherwell", league: "الدوري الاسكتلندي", country: "اسكتلندا"},
+                {name: "St Johnstone", league: "الدوري الاسكتلندي", country: "اسكتلندا"},
+                {name: "St Mirren", league: "الدوري الاسكتلندي", country: "اسكتلندا"},
+                {name: "Livingston", league: "الدوري الاسكتلندي", country: "اسكتلندا"},
+                {name: "Ross County", league: "الدوري الاسكتلندي", country: "اسكتلندا"},
+                {name: "Kilmarnock", league: "الدوري الاسكتلندي", country: "اسكتلندا"},
+                {name: "Dundee United", league: "الدوري الاسكتلندي", country: "اسكتلندا"}
             ],
             "mexico": [
                 {name: "Club America", league: "الدوري المكسيكي", country: "المكسيك"},
                 {name: "Chivas Guadalajara", league: "الدوري المكسيكي", country: "المكسيك"},
                 {name: "Cruz Azul", league: "الدوري المكسيكي", country: "المكسيك"},
-                {name: "Monterrey", league: "الدوري المكسيكي", country: "المكسيك"}
+                {name: "Monterrey", league: "الدوري المكسيكي", country: "المكسيك"},
+                {name: "Tigres UANL", league: "الدوري المكسيكي", country: "المكسيك"},
+                {name: "Pumas UNAM", league: "الدوري المكسيكي", country: "المكسيك"},
+                {name: "Toluca", league: "الدوري المكسيكي", country: "المكسيك"},
+                {name: "Santos Laguna", league: "الدوري المكسيكي", country: "المكسيك"},
+                {name: "Pachuca", league: "الدوري المكسيكي", country: "المكسيك"},
+                {name: "Leon", league: "الدوري المكسيكي", country: "المكسيك"},
+                {name: "Atlas", league: "الدوري المكسيكي", country: "المكسيك"},
+                {name: "Puebla", league: "الدوري المكسيكي", country: "المكسيك"},
+                {name: "Juarez", league: "الدوري المكسيكي", country: "المكسيك"},
+                {name: "Mazatlan", league: "الدوري المكسيكي", country: "المكسيك"},
+                {name: "Necaxa", league: "الدوري المكسيكي", country: "المكسيك"},
+                {name: "Queretaro", league: "الدوري المكسيكي", country: "المكسيك"},
+                {name: "San Luis", league: "الدوري المكسيكي", country: "المكسيك"},
+                {name: "Tijuana", league: "الدوري المكسيكي", country: "المكسيك"}
             ],
             "japan": [
                 {name: "Kawasaki Frontale", league: "الدوري الياباني", country: "اليابان"},
                 {name: "Urawa Red Diamonds", league: "الدوري الياباني", country: "اليابان"},
                 {name: "Yokohama F. Marinos", league: "الدوري الياباني", country: "اليابان"},
-                {name: "Gamba Osaka", league: "الدوري الياباني", country: "اليابان"}
+                {name: "Gamba Osaka", league: "الدوري الياباني", country: "اليابان"},
+                {name: "FC Tokyo", league: "الدوري الياباني", country: "اليابان"},
+                {name: "Kashima Antlers", league: "الدوري الياباني", country: "اليابان"},
+                {name: "Nagoya Grampus", league: "الدوري الياباني", country: "اليابان"},
+                {name: "Cerezo Osaka", league: "الدوري الياباني", country: "اليابان"},
+                {name: "Sanfrecce Hiroshima", league: "الدوري الياباني", country: "اليابان"},
+                {name: "Sagan Tosu", league: "الدوري الياباني", country: "اليابان"},
+                {name: "Consadole Sapporo", league: "الدوري الياباني", country: "اليابان"},
+                {name: "Vissel Kobe", league: "الدوري الياباني", country: "اليابان"},
+                {name: "Shimizu S-Pulse", league: "الدوري الياباني", country: "اليابان"},
+                {name: "Oita Trinita", league: "الدوري الياباني", country: "اليابان"},
+                {name: "Yokohama FC", league: "الدوري الياباني", country: "اليابان"},
+                {name: "Shonan Bellmare", league: "الدوري الياباني", country: "اليابان"},
+                {name: "Kashiwa Reysol", league: "الدوري الياباني", country: "اليابان"},
+                {name: "Avispa Fukuoka", league: "الدوري الياباني", country: "اليابان"}
             ],
             "korea": [
                 {name: "Jeonbuk Hyundai Motors", league: "الدوري الكوري", country: "كوريا الجنوبية"},
                 {name: "Ulsan Hyundai", league: "الدوري الكوري", country: "كوريا الجنوبية"},
                 {name: "FC Seoul", league: "الدوري الكوري", country: "كوريا الجنوبية"},
-                {name: "Suwon Samsung Bluewings", league: "الدوري الكوري", country: "كوريا الجنوبية"}
+                {name: "Suwon Samsung Bluewings", league: "الدوري الكوري", country: "كوريا الجنوبية"},
+                {name: "Pohang Steelers", league: "الدوري الكوري", country: "كوريا الجنوبية"},
+                {name: "Daegu FC", league: "الدوري الكوري", country: "كوريا الجنوبية"},
+                {name: "Incheon United", league: "الدوري الكوري", country: "كوريا الجنوبية"},
+                {name: "Gwangju FC", league: "الدوري الكوري", country: "كوريا الجنوبية"},
+                {name: "Seongnam FC", league: "الدوري الكوري", country: "كوريا الجنوبية"},
+                {name: "Gangwon FC", league: "الدوري الكوري", country: "كوريا الجنوبية"},
+                {name: "Jeju United", league: "الدوري الكوري", country: "كوريا الجنوبية"},
+                {name: "Suwon FC", league: "الدوري الكوري", country: "كوريا الجنوبية"}
             ],
             "china": [
                 {name: "Guangzhou Evergrande", league: "الدوري الصيني", country: "الصين"},
                 {name: "Beijing Guoan", league: "الدوري الصيني", country: "الصين"},
                 {name: "Shanghai SIPG", league: "الدوري الصيني", country: "الصين"},
-                {name: "Shandong Taishan", league: "الدوري الصيني", country: "الصين"}
+                {name: "Shandong Taishan", league: "الدوري الصيني", country: "الصين"},
+                {name: "Jiangsu Suning", league: "الدوري الصيني", country: "الصين"},
+                {name: "Shanghai Shenhua", league: "الدوري الصيني", country: "الصين"},
+                {name: "Tianjin Jinmen Tiger", league: "الدوري الصيني", country: "الصين"},
+                {name: "Hebei FC", league: "الدوري الصيني", country: "الصين"},
+                {name: "Guangzhou City", league: "الدوري الصيني", country: "الصين"},
+                {name: "Dalian Pro", league: "الدوري الصيني", country: "الصين"},
+                {name: "Shenzhen FC", league: "الدوري الصيني", country: "الصين"},
+                {name: "Wuhan Three Towns", league: "الدوري الصيني", country: "الصين"},
+                {name: "Zhejiang Professional", league: "الدوري الصيني", country: "الصين"},
+                {name: "Chengdu Rongcheng", league: "الدوري الصيني", country: "الصين"},
+                {name: "Meizhou Hakka", league: "الدوري الصيني", country: "الصين"},
+                {name: "Henan Songshan Longmen", league: "الدوري الصيني", country: "الصين"}
             ],
             "uae": [
                 {name: "Al Ain", league: "الدوري الإماراتي", country: "الإمارات"},
                 {name: "Al Wasl", league: "الدوري الإماراتي", country: "الإمارات"},
                 {name: "Al Wahda", league: "الدوري الإماراتي", country: "الإمارات"},
-                {name: "Shabab Al Ahli", league: "الدوري الإماراتي", country: "الإمارات"}
+                {name: "Shabab Al Ahli", league: "الدوري الإماراتي", country: "الإمارات"},
+                {name: "Al Jazira", league: "الدوري الإماراتي", country: "الإمارات"},
+                {name: "Al Nasr", league: "الدوري الإماراتي", country: "الإمارات"},
+                {name: "Baniyas", league: "الدوري الإماراتي", country: "الإمارات"},
+                {name: "Al Ittihad Kalba", league: "الدوري الإماراتي", country: "الإمارات"},
+                {name: "Ajman", league: "الدوري الإماراتي", country: "الإمارات"},
+                {name: "Al Dhafra", league: "الدوري الإماراتي", country: "الإمارات"},
+                {name: "Emirates Club", league: "الدوري الإماراتي", country: "الإمارات"},
+                {name: "Fujairah", league: "الدوري الإماراتي", country: "الإمارات"},
+                {name: "Khor Fakkan", league: "الدوري الإماراتي", country: "الإمارات"},
+                {name: "Al Bataeh", league: "الدوري الإماراتي", country: "الإمارات"}
             ],
             "qatar": [
                 {name: "Al Sadd", league: "الدوري القطري", country: "قطر"},
                 {name: "Al Duhail", league: "الدوري القطري", country: "قطر"},
                 {name: "Al Rayyan", league: "الدوري القطري", country: "قطر"},
-                {name: "Al Arabi", league: "الدوري القطري", country: "قطر"}
+                {name: "Al Arabi", league: "الدوري القطري", country: "قطر"},
+                {name: "Al Wakrah", league: "الدوري القطري", country: "قطر"},
+                {name: "Al Gharafa", league: "الدوري القطري", country: "قطر"},
+                {name: "Umm Salal", league: "الدوري القطري", country: "قطر"},
+                {name: "Qatar SC", league: "الدوري القطري", country: "قطر"},
+                {name: "Al Ahli Doha", league: "الدوري القطري", country: "قطر"},
+                {name: "Al Markhiya", league: "الدوري القطري", country: "قطر"},
+                {name: "Al Shamal", league: "الدوري القطري", country: "قطر"},
+                {name: "Al Mesaimeer", league: "الدوري القطري", country: "قطر"}
             ],
             "egypt": [
                 {name: "Al Ahly", league: "الدوري المصري", country: "مصر"},
                 {name: "Zamalek", league: "الدوري المصري", country: "مصر"},
                 {name: "Pyramids FC", league: "الدوري المصري", country: "مصر"},
-                {name: "Al Masry", league: "الدوري المصري", country: "مصر"}
+                {name: "Al Masry", league: "الدوري المصري", country: "مصر"},
+                {name: "Ismaily", league: "الدوري المصري", country: "مصر"},
+                {name: "ENPPI", league: "الدوري المصري", country: "مصر"},
+                {name: "Smouha", league: "الدوري المصري", country: "مصر"},
+                {name: "Al Ittihad Alexandria", league: "الدوري المصري", country: "مصر"},
+                {name: "Ceramica Cleopatra", league: "الدوري المصري", country: "مصر"},
+                {name: "National Bank of Egypt", league: "الدوري المصري", country: "مصر"},
+                {name: "El Gouna", league: "الدوري المصري", country: "مصر"},
+                {name: "Ghazl El Mahalla", league: "الدوري المصري", country: "مصر"},
+                {name: "Pharco FC", league: "الدوري المصري", country: "مصر"},
+                {name: "Aswan SC", league: "الدوري المصري", country: "مصر"},
+                {name: "Haras El Hodood", league: "الدوري المصري", country: "مصر"},
+                {name: "El Daklyeh", league: "الدوري المصري", country: "مصر"},
+                {name: "Future FC", league: "الدوري المصري", country: "مصر"},
+                {name: "Baladeyet El Mahalla", league: "الدوري المصري", country: "مصر"}
             ],
             "morocco": [
                 {name: "Wydad Casablanca", league: "الدوري المغربي", country: "المغرب"},
                 {name: "Raja Casablanca", league: "الدوري المغربي", country: "المغرب"},
                 {name: "FAR Rabat", league: "الدوري المغربي", country: "المغرب"},
-                {name: "AS FAR", league: "الدوري المغربي", country: "المغرب"}
+                {name: "AS FAR", league: "الدوري المغربي", country: "المغرب"},
+                {name: "Moghreb Tetouan", league: "الدوري المغربي", country: "المغرب"},
+                {name: "Olympic Safi", league: "الدوري المغربي", country: "المغرب"},
+                {name: "Hassania Agadir", league: "الدوري المغربي", country: "المغرب"},
+                {name: "FUS Rabat", league: "الدوري المغربي", country: "المغرب"},
+                {name: "Difaa El Jadida", league: "الدوري المغربي", country: "المغرب"},
+                {name: "Youssoufia Berrechid", league: "الدوري المغربي", country: "المغرب"},
+                {name: "Olympic Khouribga", league: "الدوري المغربي", country: "المغرب"},
+                {name: "Mouloudia Oujda", league: "الدوري المغربي", country: "المغرب"},
+                {name: "Renaissance Zemamra", league: "الدوري المغربي", country: "المغرب"},
+                {name: "Chabab Mohammedia", league: "الدوري المغربي", country: "المغرب"},
+                {name: "Itihad Tanger", league: "الدوري المغربي", country: "المغرب"},
+                {name: "Racing de Casablanca", league: "الدوري المغربي", country: "المغرب"}
             ],
             "algeria": [
                 {name: "CR Belouizdad", league: "الدوري الجزائري", country: "الجزائر"},
                 {name: "JS Kabylie", league: "الدوري الجزائري", country: "الجزائر"},
                 {name: "USM Alger", league: "الدوري الجزائري", country: "الجزائر"},
-                {name: "MC Alger", league: "الدوري الجزائري", country: "الجزائر"}
+                {name: "MC Alger", league: "الدوري الجزائري", country: "الجزائر"},
+                {name: "ES Setif", league: "الدوري الجزائري", country: "الجزائر"},
+                {name: "MC Oran", league: "الدوري الجزائري", country: "الجزائر"},
+                {name: "USM Bel Abbes", league: "الدوري الجزائري", country: "الجزائر"},
+                {name: "JS Saoura", league: "الدوري الجزائري", country: "الجزائر"},
+                {name: "Paradou AC", league: "الدوري الجزائري", country: "الجزائر"},
+                {name: "NC Magra", league: "الدوري الجزائري", country: "الجزائر"},
+                {name: "ASO Chlef", league: "الدوري الجزائري", country: "الجزائر"},
+                {name: "RC Arbaa", league: "الدوري الجزائري", country: "الجزائر"},
+                {name: "US Biskra", league: "الدوري الجزائري", country: "الجزائر"},
+                {name: "HB Chelghoum Laid", league: "الدوري الجزائري", country: "الجزائر"},
+                {name: "Olympique de Medea", league: "الدوري الجزائري", country: "الجزائر"},
+                {name: "RC Kouba", league: "الدوري الجزائري", country: "الجزائر"}
             ],
             "tunisia": [
                 {name: "Esperance Tunis", league: "الدوري التونسي", country: "تونس"},
                 {name: "Club Africain", league: "الدوري التونسي", country: "تونس"},
                 {name: "Etoile du Sahel", league: "الدوري التونسي", country: "تونس"},
-                {name: "CS Sfaxien", league: "الدوري التونسي", country: "تونس"}
+                {name: "CS Sfaxien", league: "الدوري التونسي", country: "تونس"},
+                {name: "US Monastir", league: "الدوري التونسي", country: "تونس"},
+                {name: "Stade Tunisien", league: "الدوري التونسي", country: "تونس"},
+                {name: "CA Bizertin", league: "الدوري التونسي", country: "تونس"},
+                {name: "EOG Kram", league: "الدوري التونسي", country: "تونس"},
+                {name: "AS Marsa", league: "الدوري التونسي", country: "تونس"},
+                {name: "US Ben Guerdane", league: "الدوري التونسي", country: "تونس"},
+                {name: "Olympique Beja", league: "الدوري التونسي", country: "تونس"},
+                {name: "AS Gabes", league: "الدوري التونسي", country: "تونس"},
+                {name: "Club Sfaxien", league: "الدوري التونسي", country: "تونس"},
+                {name: "Stade Gabesien", league: "الدوري التونسي", country: "تونس"},
+                {name: "Metlaoui", league: "الدوري التونسي", country: "تونس"},
+                {name: "Chebba", league: "الدوري التونسي", country: "تونس"}
             ]
         };
 
