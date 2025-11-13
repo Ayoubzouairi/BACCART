@@ -1,1101 +1,338 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حاسبة الفرص المزدوجة - تحليل متقدم</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: #333;
-            line-height: 1.6;
-            padding: 20px;
-            min-height: 100vh;
-            transition: all 0.3s ease;
-        }
-
-        body.night-mode {
-            background: linear-gradient(135deg, #0f1a2e 0%, #1a2b4e 100%);
-            color: #e0e0e0;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            color: white;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .night-mode header {
-            background: rgba(0, 0, 0, 0.4);
-            color: #e0e0e0;
-        }
-        
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-        
-        .main-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .input-section {
-            flex: 1;
-            min-width: 300px;
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .input-section {
-            background: #2d3748;
-            color: #e0e0e0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        .result-section {
-            flex: 2;
-            min-width: 300px;
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .result-section {
-            background: #2d3748;
-            color: #e0e0e0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        .team-input {
-            margin-bottom: 25px;
-        }
-        
-        h2 {
-            color: #2a5298;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #eee;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode h2 {
-            color: #63b3ed;
-            border-bottom-color: #4a5568;
-        }
-        
-        h3 {
-            color: #2a5298;
-            margin-bottom: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode h3 {
-            color: #63b3ed;
-        }
-        
-        h4 {
-            color: #555;
-            margin: 15px 0 10px 0;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode h4 {
-            color: #cbd5e0;
-        }
-        
-        .team-name {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .team-name:focus {
-            border-color: #2a5298;
-            outline: none;
-        }
-
-        .night-mode .team-name {
-            background: #4a5568;
-            border-color: #718096;
-            color: #e0e0e0;
-        }
-
-        .night-mode .team-name:focus {
-            border-color: #63b3ed;
-        }
-        
-        .match-results {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .result-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-        
-        .win {
-            background-color: #4CAF50;
-            color: white;
-        }
-        
-        .draw {
-            background-color: #FFC107;
-            color: black;
-        }
-        
-        .lose {
-            background-color: #F44336;
-            color: white;
-        }
-        
-        .result-btn.selected {
-            transform: scale(1.05);
-            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.5);
-        }
-        
-        .goals-input {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 5px;
-        }
-        
-        .goals-input input {
-            width: 60px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .goals-input input {
-            background: #4a5568;
-            border-color: #718096;
-            color: #e0e0e0;
-        }
-        
-        .reset-btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            transition: all 0.3s;
-        }
-
-        .reset-btn:hover {
-            background: #ff5252;
-            transform: translateY(-2px);
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .night-mode .theme-toggle {
-            background: rgba(0, 0, 0, 0.3);
-            color: #ffd700;
-        }
-        
-        .calculate-btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s;
-            margin-top: 20px;
-        }
-        
-        .calculate-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .night-mode .calculate-btn {
-            background: linear-gradient(135deg, #63b3ed 0%, #3182ce 100%);
-        }
-        
-        .probability-card {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .probability-card {
-            background: #4a5568;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-        }
-        
-        .probability-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        
-        .probability-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #2a5298;
-            text-align: center;
-            margin: 10px 0;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .probability-value {
-            color: #63b3ed;
-        }
-        
-        .probability-bar {
-            height: 20px;
-            background: #e9ecef;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 15px 0;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .probability-bar {
-            background: #718096;
-        }
-        
-        .probability-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4CAF50, #2a5298);
-            border-radius: 10px;
-            transition: width 0.5s ease-in-out;
-        }
-
-        .night-mode .probability-fill {
-            background: linear-gradient(90deg, #68d391, #63b3ed);
-        }
-        
-        .accuracy-high {
-            color: #4CAF50;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .accuracy-high {
-            color: #68d391;
-        }
-        
-        .team-stats {
-            display: flex;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .stats-card {
-            flex: 1;
-            background: white;
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .stats-card {
-            background: #4a5568;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-        }
-        
-        .stats-title {
-            font-weight: bold;
-            color: #2a5298;
-            margin-bottom: 10px;
-            text-align: center;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .stats-title {
-            color: #63b3ed;
-            border-bottom-color: #718096;
-        }
-        
-        .goals-prediction {
-            margin-top: 20px;
-            background: #e8f5e9;
-            padding: 15px;
-            border-radius: 10px;
-            border-right: 4px solid #4CAF50;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .goals-prediction {
-            background: #2d4a3c;
-            border-right-color: #68d391;
-        }
-        
-        .prediction-title {
-            font-weight: bold;
-            color: #2a5298;
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .prediction-title {
-            color: #63b3ed;
-        }
-        
-        .prediction-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #4CAF50;
-            text-align: center;
-            margin: 10px 0;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .prediction-value {
-            color: #68d391;
-        }
-        
-        .match-history {
-            margin-top: 30px;
-        }
-        
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            transition: all 0.3s ease;
-        }
-        
-        .history-table th, .history-table td {
-            padding: 12px 15px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .history-table th,
-        .night-mode .history-table td {
-            border-bottom-color: #718096;
-        }
-        
-        .history-table th {
-            background-color: #2a5298;
-            color: white;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .history-table th {
-            background-color: #63b3ed;
-            color: #1a202c;
-        }
-        
-        .history-table tr:hover {
-            background-color: #f1f1f1;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .history-table tr:hover {
-            background-color: #4a5568;
-        }
-        
-        .team1-color {
-            color: #2a5298;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .team1-color {
-            color: #63b3ed;
-        }
-        
-        .team2-color {
-            color: #4CAF50;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .team2-color {
-            color: #68d391;
-        }
-        
-        .goals-summary {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #2a5298;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .goals-summary {
-            color: #63b3ed;
-        }
-        
-        footer {
-            text-align: center;
-            color: white;
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode footer {
-            background: rgba(0, 0, 0, 0.4);
-            color: #e0e0e0;
-        }
-        
-        @media (max-width: 768px) {
-            .main-content {
-                flex-direction: column;
-            }
-            
-            .team-stats {
-                flex-direction: column;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-
-            .theme-toggle {
-                top: 10px;
-                left: 10px;
-                width: 40px;
-                height: 40px;
-                font-size: 1.2rem;
-            }
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>تحليل آخر 5 جولات + الإصابات — BACCARAT SPEED</title>
+<style>
+  :root{--bg:#0f1115;--card:#121418;--accent:gold;--muted:#9aa0a6;--glass:rgba(255,255,255,0.03)}
+  body{margin:0;font-family:Inter, "Segoe UI", Tahoma, sans-serif;background:linear-gradient(180deg,#071018 0%, #0b1220 100%);color:#e9eef2}
+  .wrap{max-width:920px;margin:28px auto;padding:20px}
+  h1{color:var(--accent);margin:0 0 12px;font-size:20px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,0.6)}
+  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+  input[type=text], textarea, select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:inherit}
+  button{background:var(--accent);border:none;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600}
+  .result{margin-top:12px}
+  .small{font-size:13px;color:var(--muted)}
+  .player-card{background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;margin:8px 0}
+  .bar{height:12px;background:rgba(255,255,255,0.06);border-radius:8px;overflow:hidden}
+  .bar > i{display:block;height:100%;background:linear-gradient(90deg,#ffd966,#ffb84d);width:0%}
+  pre{white-space:pre-wrap;color:#cfe8ff;font-size:13px}
+  @media(max-width:800px){.grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-    <button class="theme-toggle" id="theme-toggle">🌙</button>
-    
-    <div class="container">
-        <header>
-            <h1>🦾 حاسبة الفرص المزدوجة - تحليل متقدم</h1>
-            <p class="subtitle">تحليل إحصائي متقدم لنتائج المباريات</p>
-        </header>
-        
-        <div class="main-content">
-            <div class="input-section">
-                <h2>إدخال البيانات</h2>
-                
-                <div class="team-input">
-                    <h3>الفريق الأول</h3>
-                    <input type="text" class="team-name" id="team1-name" placeholder="اسم الفريق الأول">
-                    
-                    <h4>نتائج آخر 5 مباريات:</h4>
-                    <div id="team1-results">
-                        <!-- سيتم إضافة أزرار النتائج هنا بواسطة JavaScript -->
-                    </div>
-                    
-                    <h4>إحصائيات الأهداف:</h4>
-                    <div id="team1-goals">
-                        <!-- سيتم إضافة حقول الأهداف هنا بواسطة JavaScript -->
-                    </div>
-                    
-                    <button class="reset-btn" onclick="resetTeamData('team1')">
-                        🔄 إعادة تعيين الفريق الأول
-                    </button>
-                </div>
-                
-                <div class="team-input">
-                    <h3>الفريق الثاني</h3>
-                    <input type="text" class="team-name" id="team2-name" placeholder="اسم الفريق الثاني">
-                    
-                    <h4>نتائج آخر 5 مباريات:</h4>
-                    <div id="team2-results">
-                        <!-- سيتم إضافة أزرار النتائج هنا بواسطة JavaScript -->
-                    </div>
-                    
-                    <h4>إحصائيات الأهداف:</h4>
-                    <div id="team2-goals">
-                        <!-- سيتم إضافة حقول الأهداف هنا بواسطة JavaScript -->
-                    </div>
-                    
-                    <button class="reset-btn" onclick="resetTeamData('team2')">
-                        🔄 إعادة تعيين الفريق الثاني
-                    </button>
-                </div>
+  <div class="wrap">
+    <h1>تحليل آخر 5 جولات + الإصابات → Over/Under & Double Chance</h1>
 
-                <button class="reset-btn" onclick="resetAllData()" style="background: #ff9800;">
-                    🗑️ إعادة تعيين كل البيانات
-                </button>
-                
-                <button class="calculate-btn" id="calculate-btn">🧮 احسب الفرص المزدوجة</button>
-            </div>
-            
-            <div class="result-section">
-                <h2>النتائج والتحليل المتقدم</h2>
-                
-                <div id="results-container">
-                    <p style="text-align: center; padding: 20px;">سيظهر تحليل الفرص المزدوجة هنا بعد إدخال البيانات</p>
-                </div>
-                
-                <div class="team-stats" id="team-stats" style="display: none;">
-                    <!-- سيتم إضافة إحصائيات الفريقين هنا -->
-                </div>
-                
-                <div class="goals-prediction" id="goals-prediction" style="display: none;">
-                    <!-- سيتم إضافة توقع الأهداف هنا -->
-                </div>
-                
-                <div class="match-history" id="match-history" style="display: none;">
-                    <h3>سجل المباريات</h3>
-                    <table class="history-table">
-                        <thead>
-                            <tr>
-                                <th>الفريق</th>
-                                <th>آخر 5 مباريات</th>
-                                <th>النقاط</th>
-                                <th>الأهداف</th>
-                            </tr>
-                        </thead>
-                        <tbody id="history-body">
-                            <!-- سيتم ملء هذا الجدول بواسطة JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+    <div class="grid">
+      <div class="card">
+        <label>اسم الفريق الأول (Team A)</label>
+        <input id="teamA" type="text" placeholder="مثال: Barcelona" value="Barcelona">
+
+        <label style="margin-top:8px">آخر 5 جولات — عدد الأهداف لكل ماتش (Team A) — coma-separated</label>
+        <input id="lastA" type="text" placeholder="مثال: 2,1,3,0,1" value="2,1,3,0,1">
+
+        <label style="margin-top:8px">اسم الفريق الثاني (Team B)</label>
+        <input id="teamB" type="text" placeholder="مثال: Real Madrid" value="Real Madrid">
+
+        <label style="margin-top:8px">آخر 5 جولات — عدد الأهداف لكل ماتش (Team B)</label>
+        <input id="lastB" type="text" placeholder="مثال: 1,2,0,1,3" value="1,2,0,1,3">
+
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button onclick="analyze()">حسب دابا</button>
+          <button onclick="fetchInjuriesBoth()">جيب الإصابات من API (TheSportsDB)</button>
         </div>
-        
-        <footer>
-            <p>🦾 تم التطوير باستخدام خوارزميات إحصائية متقدمة لتحليل نتائج المباريات</p>
-        </footer>
+
+        <div class="small" style="margin-top:8px">
+          ملاحظة: نموذج الاحتمالات مبني على Poisson مستقل لكل فريق وتعديل بسيط حسب عدد المصابين.
+        </div>
+      </div>
+
+      <div class="card">
+        <label>إعدادات سريعة</label>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1">
+            <label>حد الأداء للاحتمالات (max goals calc)</label>
+            <select id="maxGoals">
+              <option value="6">0–6 (سريع)</option>
+              <option value="8">0–8 (أدق شوية)</option>
+            </select>
+          </div>
+          <div style="width:120px">
+            <label>تأثير كل إصابة (%)</label>
+            <input id="injPercent" type="text" value="8">
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <label>الإصابات الممسوكة يدويًا (اختياري)</label>
+          <textarea id="manualInj" rows="4" placeholder="مثال: A:Pedri, Gavi&#10;B:Kroos"></textarea>
+          <div class="small" style="margin-top:6px">صيغة: اكتب A:اسم1,اسم2 ثم سطر جديد B:... أو استعمل زر 'جيب الإصابات' للحصول على بيانات من TheSportsDB.</div>
+        </div>
+      </div>
     </div>
 
-    <script>
-        // حالة الوضع الليلي
-        let isNightMode = false;
+    <div class="card" style="margin-top:14px">
+      <h3 style="margin:0 0 8px">النتائج</h3>
+      <div id="output" class="result">
+        <div class="small">ضغط "حسب دابا" باش تبدا التحليلات.</div>
+      </div>
+    </div>
 
-        // تخزين بيانات الفريقين
-        let teamData = {
-            team1: { name: "", results: [], goals: [] },
-            team2: { name: "", results: [], goals: [] }
-        };
+  </div>
 
-        // تهيئة النتائج للفرق
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeTeamResults('team1-results', ['W', 'W', 'D', 'W', 'L']);
-            initializeTeamResults('team2-results', ['W', 'D', 'L', 'W', 'W']);
-            
-            initializeGoalsInput('team1-goals', [2, 3, 1, 2, 0]);
-            initializeGoalsInput('team2-goals', [2, 1, 0, 3, 2]);
-            
-            // إضافة حدث النقر لزر الحساب
-            document.getElementById('calculate-btn').addEventListener('click', calculateDoubleChance);
-            
-            // إضافة حدث لزر تغيير الوضع
-            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
-            
-            // تحميل الوضع من التخزين المحلي
-            loadThemePreference();
-        });
+<script>
+/* --- Utilities --- */
+function parseGoals(str){
+  if(!str) return [];
+  return str.split(',').map(s=>{ const n = parseInt(s.trim()); return isNaN(n)?0:n; }).slice(0,5);
+}
+function avg(arr){
+  if(!arr.length) return 0;
+  return arr.reduce((a,b)=>a+b,0)/arr.length;
+}
+function poissonProb(k, lambda){
+  // e^-λ λ^k / k!
+  return Math.exp(-lambda) * Math.pow(lambda, k) / factorial(k);
+}
+function factorial(n){
+  let f=1;
+  for(let i=2;i<=n;i++) f*=i;
+  return f;
+}
 
-        // دالة تغيير الوضع الليلي/النهاري
-        function toggleTheme() {
-            isNightMode = !isNightMode;
-            const body = document.body;
-            const themeToggle = document.getElementById('theme-toggle');
-            
-            if (isNightMode) {
-                body.classList.add('night-mode');
-                themeToggle.textContent = '☀️';
-            } else {
-                body.classList.remove('night-mode');
-                themeToggle.textContent = '🌙';
-            }
-            
-            // حفظ التفضيل في التخزين المحلي
-            localStorage.setItem('nightMode', isNightMode);
-        }
+/* --- Fetch injuries from TheSportsDB (searchplayers returns player.strInjury) --- */
+async function fetchInjuriesForTeam(teamName){
+  try{
+    const url = `https://www.thesportsdb.com/api/v1/json/3/searchplayers.php?t=${encodeURIComponent(teamName)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if(!data || !data.player) return [];
+    const injured = data.player.filter(p => p.strInjury && p.strInjury.trim() !== "");
+    return injured.map(p => ({name: p.strPlayer, team: p.strTeam, pos: p.strPosition, injury: p.strInjury}));
+  }catch(e){
+    console.warn('fetch error', e);
+    return [];
+  }
+}
 
-        // دالة تحميل تفضيل الوضع
-        function loadThemePreference() {
-            const savedTheme = localStorage.getItem('nightMode');
-            if (savedTheme === 'true') {
-                isNightMode = true;
-                document.body.classList.add('night-mode');
-                document.getElementById('theme-toggle').textContent = '☀️';
-            }
-        }
+async function fetchInjuriesBoth(){
+  const a = document.getElementById('teamA').value.trim();
+  const b = document.getElementById('teamB').value.trim();
+  const out = document.getElementById('output');
+  out.innerHTML = '⏳ كنجلب الإصابات...';
+  const [injA, injB] = await Promise.all([fetchInjuriesForTeam(a), fetchInjuriesForTeam(b)]);
+  // put manual injuries into textarea
+  let manual = document.getElementById('manualInj').value || "";
+  if(injA.length) manual += (manual?'\n':'') + `A:${injA.map(x=>x.name).join(',')}`;
+  if(injB.length) manual += (manual?'\n':'') + `B:${injB.map(x=>x.name).join(',')}`;
+  document.getElementById('manualInj').value = manual;
+  renderInjuriesSummary(injA, injB);
+}
 
-        // دالة إعادة تعيين فريق معين
-        function resetTeamData(team) {
-            if (confirm(`هل تريد إعادة تعيين جميع بيانات ${team === 'team1' ? 'الفريق الأول' : 'الفريق الثاني'}؟`)) {
-                // إعادة تعيين النتائج
-                const initialResults = team === 'team1' ? ['W', 'W', 'D', 'W', 'L'] : ['W', 'D', 'L', 'W', 'W'];
-                const initialGoals = team === 'team1' ? [2, 3, 1, 2, 0] : [2, 1, 0, 3, 2];
-                
-                initializeTeamResults(`${team}-results`, initialResults);
-                initializeGoalsInput(`${team}-goals`, initialGoals);
-                
-                // إعادة تعيين اسم الفريق
-                document.getElementById(`${team}-name`).value = '';
-                
-                alert(`✅ تم إعادة تعيين ${team === 'team1' ? 'الفريق الأول' : 'الفريق الثاني'} بنجاح`);
-            }
-        }
+function renderInjuriesSummary(injA, injB){
+  const out = document.getElementById('output');
+  out.innerHTML = `
+    <div><strong>Injuries fetched:</strong></div>
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <div style="flex:1">
+        <div class="small">Team A (${document.getElementById('teamA').value.trim()}): ${injA.length} مصاب</div>
+        ${injA.map(p=>`<div class="player-card"><strong>${p.name}</strong><div class="small">${p.pos} — ${p.injury}</div></div>`).join('')}
+      </div>
+      <div style="flex:1">
+        <div class="small">Team B (${document.getElementById('teamB').value.trim()}): ${injB.length} مصاب</div>
+        ${injB.map(p=>`<div class="player-card"><strong>${p.name}</strong><div class="small">${p.pos} — ${p.injury}</div></div>`).join('')}
+      </div>
+    </div>
+  `;
+}
 
-        // دالة إعادة تعيين كل البيانات
-        function resetAllData() {
-            if (confirm('هل تريد إعادة تعيين جميع البيانات؟ سيتم مسح كل شيء!')) {
-                // إعادة تعيين الفريق الأول
-                initializeTeamResults('team1-results', ['W', 'W', 'D', 'W', 'L']);
-                initializeGoalsInput('team1-goals', [2, 3, 1, 2, 0]);
-                document.getElementById('team1-name').value = '';
-                
-                // إعادة تعيين الفريق الثاني
-                initializeTeamResults('team2-results', ['W', 'D', 'L', 'W', 'W']);
-                initializeGoalsInput('team2-goals', [2, 1, 0, 3, 2]);
-                document.getElementById('team2-name').value = '';
-                
-                // إعادة تعيين النتائج
-                document.getElementById('results-container').innerHTML = 
-                    '<p style="text-align: center; padding: 20px;">سيظهر تحليل الفرص المزدوجة هنا بعد إدخال البيانات</p>';
-                document.getElementById('team-stats').style.display = 'none';
-                document.getElementById('goals-prediction').style.display = 'none';
-                document.getElementById('match-history').style.display = 'none';
-                
-                alert('✅ تم إعادة تعيين جميع البيانات بنجاح');
-            }
-        }
-        
-        // دالة لتهيئة أزرار نتائج الفريق
-        function initializeTeamResults(containerId, initialResults) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
-            
-            for (let i = 0; i < 5; i++) {
-                const matchDiv = document.createElement('div');
-                matchDiv.className = 'match-results';
-                
-                const matchLabel = document.createElement('span');
-                matchLabel.textContent = `مباراة ${i+1}:`;
-                matchLabel.style.width = '80px';
-                matchDiv.appendChild(matchLabel);
-                
-                // إنشاء أزرار النتائج (فوز، تعادل، خسارة)
-                const results = ['W', 'D', 'L'];
-                const resultLabels = {'W': 'فوز', 'D': 'تعادل', 'L': 'خسارة'};
-                const resultClasses = {'W': 'win', 'D': 'draw', 'L': 'lose'};
-                
-                results.forEach(result => {
-                    const btn = document.createElement('button');
-                    btn.className = `result-btn ${resultClasses[result]}`;
-                    btn.textContent = resultLabels[result];
-                    btn.dataset.result = result;
-                    
-                    // تحديد الزر الافتراضي بناءً على initialResults
-                    if (result === initialResults[i]) {
-                        btn.classList.add('selected');
-                    }
-                    
-                    btn.addEventListener('click', function() {
-                        // إزالة التحديد من جميع أزرار هذه المباراة
-                        this.parentElement.querySelectorAll('.result-btn').forEach(b => {
-                            b.classList.remove('selected');
-                        });
-                        
-                        // تحديد الزر المختار
-                        this.classList.add('selected');
-                    });
-                    
-                    matchDiv.appendChild(btn);
-                });
-                
-                container.appendChild(matchDiv);
-            }
-        }
-        
-        // دالة لتهيئة حقول إدخال الأهداف
-        function initializeGoalsInput(containerId, initialGoals) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
-            
-            for (let i = 0; i < 5; i++) {
-                const goalsDiv = document.createElement('div');
-                goalsDiv.className = 'goals-input';
-                
-                const matchLabel = document.createElement('span');
-                matchLabel.textContent = `مباراة ${i+1}:`;
-                matchLabel.style.width = '80px';
-                goalsDiv.appendChild(matchLabel);
-                
-                const goalsInput = document.createElement('input');
-                goalsInput.type = 'number';
-                goalsInput.min = '0';
-                goalsInput.value = initialGoals[i];
-                goalsInput.dataset.match = i+1;
-                goalsDiv.appendChild(goalsInput);
-                
-                const goalsText = document.createElement('span');
-                goalsText.textContent = 'هدف';
-                goalsDiv.appendChild(goalsText);
-                
-                container.appendChild(goalsDiv);
-            }
-        }
-        
-        // دالة لجمع نتائج الفريق
-        function getTeamResults(containerId) {
-            const container = document.getElementById(containerId);
-            const matches = container.querySelectorAll('.match-results');
-            const results = [];
-            
-            matches.forEach(match => {
-                const selectedBtn = match.querySelector('.result-btn.selected');
-                if (selectedBtn) {
-                    results.push(selectedBtn.dataset.result);
-                }
-            });
-            
-            return results;
-        }
-        
-        // دالة لجمع أهداف الفريق
-        function getTeamGoals(containerId) {
-            const container = document.getElementById(containerId);
-            const inputs = container.querySelectorAll('input');
-            const goals = [];
-            
-            inputs.forEach(input => {
-                goals.push(parseInt(input.value) || 0);
-            });
-            
-            return goals;
-        }
-        
-        // دالة حساب الفرص المزدوجة مع التحليل المتقدم
-        function calculateDoubleChance() {
-            const team1Name = document.getElementById('team1-name').value || 'الفريق الأول';
-            const team2Name = document.getElementById('team2-name').value || 'الفريق الثاني';
-            
-            const team1Results = getTeamResults('team1-results');
-            const team2Results = getTeamResults('team2-results');
-            
-            const team1Goals = getTeamGoals('team1-goals');
-            const team2Goals = getTeamGoals('team2-goals');
-            
-            // حساب النقاط بناءً على النتائج
-            const team1Points = calculatePoints(team1Results);
-            const team2Points = calculatePoints(team2Results);
-            
-            // حساب متوسط الأهداف
-            const team1AvgGoals = team1Goals.reduce((a, b) => a + b, 0) / team1Goals.length;
-            const team2AvgGoals = team2Goals.reduce((a, b) => a + b, 0) / team2Goals.length;
-            
-            // حساب القوة النسبية
-            const totalPoints = team1Points + team2Points;
-            const team1Strength = totalPoints > 0 ? team1Points / totalPoints : 0.5;
-            const team2Strength = totalPoints > 0 ? team2Points / totalPoints : 0.5;
-            
-            // حساب الاحتمالات الأساسية
-            const team1WinProb = team1Strength * (1 - team2Strength) * 0.8;
-            const team2WinProb = team2Strength * (1 - team1Strength) * 0.8;
-            const drawProb = 0.2 + (team1Strength * team2Strength * 0.3);
-            
-            // تطبيع الاحتمالات لتصل إلى 100%
-            const totalProb = team1WinProb + team2WinProb + drawProb;
-            const normalizedTeam1Win = (team1WinProb / totalProb) * 100;
-            const normalizedTeam2Win = (team2WinProb / totalProb) * 100;
-            const normalizedDraw = (drawProb / totalProb) * 100;
-            
-            // حساب الفرص المزدوجة
-            const doubleChance1X = normalizedTeam1Win + normalizedDraw;
-            const doubleChance12 = normalizedTeam1Win + normalizedTeam2Win;
-            const doubleChanceX2 = normalizedDraw + normalizedTeam2Win;
-            
-            // حساب توقع الأهداف
-            const predictedGoals = calculatePredictedGoals(team1AvgGoals, team2AvgGoals);
-            
-            // عرض النتائج
-            displayAdvancedResults(
-                team1Name, team2Name, 
-                normalizedTeam1Win, normalizedTeam2Win, normalizedDraw,
-                doubleChance1X, doubleChance12, doubleChanceX2,
-                team1Results, team2Results, team1Points, team2Points,
-                team1Goals, team2Goals, predictedGoals
-            );
-        }
-        
-        // دالة لحساب النقاط من النتائج
-        function calculatePoints(results) {
-            let points = 0;
-            results.forEach(result => {
-                if (result === 'W') points += 3;
-                else if (result === 'D') points += 1;
-                // لا نقاط للخسارة
-            });
-            return points;
-        }
-        
-        // دالة لحساب توقع الأهداف
-        function calculatePredictedGoals(team1Avg, team2Avg) {
-            // حساب الأهداف المتوقعة بناءً على المتوسطات
-            const team1Predicted = team1Avg * 0.8;
-            const team2Predicted = team2Avg * 0.8;
-            
-            // حساب إجمالي الأهداف المتوقعة في المباراة
-            const totalPredicted = team1Predicted + team2Predicted;
-            
-            return {
-                team1: team1Predicted,
-                team2: team2Predicted,
-                total: totalPredicted
-            };
-        }
-        
-        // دالة لعرض النتائج المتقدمة
-        function displayAdvancedResults(team1Name, team2Name, team1Win, team2Win, draw, 
-                                       doubleChance1X, doubleChance12, doubleChanceX2,
-                                       team1Results, team2Results, team1Points, team2Points,
-                                       team1Goals, team2Goals, predictedGoals) {
-            
-            const resultsContainer = document.getElementById('results-container');
-            const matchHistory = document.getElementById('match-history');
-            const teamStats = document.getElementById('team-stats');
-            const goalsPrediction = document.getElementById('goals-prediction');
-            
-            // تنسيق النتائج
-            const formatPercent = (value) => {
-                return value.toFixed(1) + '%';
-            };
-            
-            // حساب إجمالي الأهداف
-            const team1TotalGoals = team1Goals.reduce((a, b) => a + b, 0);
-            const team2TotalGoals = team2Goals.reduce((a, b) => a + b, 0);
-            
-            // إنشاء محتوى النتائج المتقدم
-            let resultsHTML = `
-                <div class="probability-card">
-                    <h3>🎯 الاحتمالات الأساسية</h3>
-                    <div class="probability-item">
-                        <div class="probability-header">
-                            <span class="team1-color">فوز ${team1Name}</span>
-                            <span>${formatPercent(team1Win)}</span>
-                        </div>
-                        <div class="probability-bar">
-                            <div class="probability-fill" style="width: ${team1Win}%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="probability-item">
-                        <div class="probability-header">
-                            <span>تعادل</span>
-                            <span>${formatPercent(draw)}</span>
-                        </div>
-                        <div class="probability-bar">
-                            <div class="probability-fill" style="width: ${draw}%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="probability-item">
-                        <div class="probability-header">
-                            <span class="team2-color">فوز ${team2Name}</span>
-                            <span>${formatPercent(team2Win)}</span>
-                        </div>
-                        <div class="probability-bar">
-                            <div class="probability-fill" style="width: ${team2Win}%"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="probability-card">
-                    <h3>🔄 الفرص المزدوجة <span class="accuracy-high">(دقة عالية)</span></h3>
-                    
-                    <div class="probability-item">
-                        <div class="probability-header">
-                            <span>${team1Name} أو تعادل (1X)</span>
-                            <span>${formatPercent(doubleChance1X)}</span>
-                        </div>
-                        <div class="probability-value">${formatPercent(doubleChance1X)}</div>
-                        <div class="probability-bar">
-                            <div class="probability-fill" style="width: ${doubleChance1X}%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="probability-item">
-                        <div class="probability-header">
-                            <span>${team1Name} أو ${team2Name} (12)</span>
-                            <span>${formatPercent(doubleChance12)}</span>
-                        </div>
-                        <div class="probability-value">${formatPercent(doubleChance12)}</div>
-                        <div class="probability-bar">
-                            <div class="probability-fill" style="width: ${doubleChance12}%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="probability-item">
-                        <div class="probability-header">
-                            <span>تعادل أو ${team2Name} (X2)</span>
-                            <span>${formatPercent(doubleChanceX2)}</span>
-                        </div>
-                        <div class="probability-value">${formatPercent(doubleChanceX2)}</div>
-                        <div class="probability-bar">
-                            <div class="probability-fill" style="width: ${doubleChanceX2}%"></div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            resultsContainer.innerHTML = resultsHTML;
-            
-            // إنشاء إحصائيات الفريقين المتقدمة
-            let statsHTML = `
-                <div class="stats-card">
-                    <div class="stats-title team1-color">${team1Name}</div>
-                    <div class="goals-summary">إجمالي الأهداف: ${team1TotalGoals}</div>
-                    <div>متوسط الأهداف: ${(team1TotalGoals / 5).toFixed(1)}</div>
-                    <div>النقاط: ${team1Points}</div>
-                </div>
-                
-                <div class="stats-card">
-                    <div class="stats-title team2-color">${team2Name}</div>
-                    <div class="goals-summary">إجمالي الأهداف: ${team2TotalGoals}</div>
-                    <div>متوسط الأهداف: ${(team2TotalGoals / 5).toFixed(1)}</div>
-                    <div>النقاط: ${team2Points}</div>
-                </div>
-            `;
-            
-            teamStats.innerHTML = statsHTML;
-            teamStats.style.display = 'flex';
-            
-            // إنشاء توقع الأهداف المتقدم
-            let predictionHTML = `
-                <div class="prediction-title">🎯 توقع الأهداف في المباراة القادمة</div>
-                <div style="display: flex; justify-content: space-around; text-align: center;">
-                    <div>
-                        <div class="team1-color">${team1Name}</div>
-                        <div class="prediction-value">${predictedGoals.team1.toFixed(1)}</div>
-                        <div>هدف متوقع</div>
-                    </div>
-                    <div>
-                        <div>المجموع</div>
-                        <div class="prediction-value">${predictedGoals.total.toFixed(1)}</div>
-                        <div>أهداف متوقعة</div>
-                    </div>
-                    <div>
-                        <div class="team2-color">${team2Name}</div>
-                        <div class="prediction-value">${predictedGoals.team2.toFixed(1)}</div>
-                        <div>هدف متوقع</div>
-                    </div>
-                </div>
-            `;
-            
-            goalsPrediction.innerHTML = predictionHTML;
-            goalsPrediction.style.display = 'block';
-            
-            // تحديث سجل المباريات
-            const historyBody = document.getElementById('history-body');
-            let historyHTML = '';
-            
-            // إضافة سجل الفريق الأول
-            historyHTML += `
-                <tr>
-                    <td class="team1-color">${team1Name}</td>
-                    <td>${team1Results.map(r => getResultSymbol(r)).join(' ')}</td>
-                    <td>${team1Points}</td>
-                    <td>${team1Goals.join(' - ')}</td>
-                </tr>
-            `;
-            
-            // إضافة سجل الفريق الثاني
-            historyHTML += `
-                <tr>
-                    <td class="team2-color">${team2Name}</td>
-                    <td>${team2Results.map(r => getResultSymbol(r)).join(' ')}</td>
-                    <td>${team2Points}</td>
-                    <td>${team2Goals.join(' - ')}</td>
-                </tr>
-            `;
-            
-            historyBody.innerHTML = historyHTML;
-            matchHistory.style.display = 'block';
-        }
-        
-        // دالة للحصول على رمز النتيجة
-        function getResultSymbol(result) {
-            switch(result) {
-                case 'W': return '✅';
-                case 'D': return '➖';
-                case 'L': return '❌';
-                default: return '?';
-            }
-        }
-    </script>
+/* --- Main analysis --- */
+function analyze(){
+  const teamA = document.getElementById('teamA').value.trim() || 'Team A';
+  const teamB = document.getElementById('teamB').value.trim() || 'Team B';
+  const lastA = parseGoals(document.getElementById('lastA').value);
+  const lastB = parseGoals(document.getElementById('lastB').value);
+  const maxG = parseInt(document.getElementById('maxGoals').value || '6');
+  const injPercent = parseFloat(document.getElementById('injPercent').value) || 8;
+
+  // manual injuries textarea parsing
+  const manual = (document.getElementById('manualInj').value || '').split('\n');
+  let injA_manual = [], injB_manual = [];
+  manual.forEach(line=>{
+    const L = line.trim();
+    if(!L) return;
+    if(L.startsWith('A:') || L.startsWith('a:')) injA_manual = L.slice(2).split(',').map(s=>s.trim()).filter(Boolean);
+    if(L.startsWith('B:') || L.startsWith('b:')) injB_manual = L.slice(2).split(',').map(s=>s.trim()).filter(Boolean);
+  });
+
+  // basic stats
+  const avgA = avg(lastA);
+  const avgB = avg(lastB);
+
+  // injury counts
+  const injCountA = injA_manual.length;
+  const injCountB = injB_manual.length;
+
+  // injury factor: each injured player reduces lambda by injPercent% but clamp so factor>=0.6
+  const minFactor = 0.6;
+  const factorA = Math.max(minFactor, 1 - (injPercent/100) * injCountA);
+  const factorB = Math.max(minFactor, 1 - (injPercent/100) * injCountB);
+
+  // adjusted lambdas
+  const lambdaA = avgA * factorA;
+  const lambdaB = avgB * factorB;
+
+  // compute distribution up to maxG for each team
+  const probsA = [], probsB = [];
+  for(let i=0;i<=maxG;i++){
+    probsA[i] = poissonProb(i, lambdaA);
+    probsB[i] = poissonProb(i, lambdaB);
+  }
+  // probability mass beyond maxG (tail)
+  const tailA = 1 - probsA.reduce((s,x)=>s+x,0);
+  const tailB = 1 - probsB.reduce((s,x)=>s+x,0);
+
+  // outcome matrix (independent Poisson)
+  let pHome=0, pDraw=0, pAway=0;
+  const matrix = [];
+  for(let i=0;i<=maxG;i++){
+    matrix[i]=[];
+    for(let j=0;j<=maxG;j++){
+      const pa = probsA[i] !== undefined ? probsA[i] : 0;
+      const pb = probsB[j] !== undefined ? probsB[j] : 0;
+      const p = pa * pb;
+      matrix[i][j]=p;
+      if(i>j) pHome += p;
+      else if(i===j) pDraw += p;
+      else pAway += p;
+    }
+  }
+  // add tails approx by distributing tail mass equally across last row/col (simple approx)
+  // this is a crude correction: distribute tails to "maxG+1" bucket (ignored detailed)
+  // For better accuracy, increase maxG.
+  // total prob from matrix:
+  const matrixTotal = matrix.flat().reduce((s,x)=>s+x,0);
+  const remainder = (1 - matrixTotal);
+  // allocate remainder proportional to existing outcomes
+  if(remainder > 1e-9){
+    // rough allocation using current proportions
+    const total = pHome + pDraw + pAway;
+    if(total>0){
+      pHome += remainder * (pHome/total);
+      pDraw += remainder * (pDraw/total);
+      pAway += remainder * (pAway/total);
+    }
+  }
+
+  // total goals distribution approximate lambdaTotal
+  const lambdaTotal = lambdaA + lambdaB;
+  // P(total <= 2) = sum_{k=0..2} e^-λ λ^k / k!
+  let pTotLE2 = 0;
+  for(let k=0;k<=2;k++) pTotLE2 += poissonProb(k, lambdaTotal);
+  const pOver25 = 1 - pTotLE2;
+  const pUnder25 = pTotLE2;
+
+  // Double chance
+  const doubleHome_Draw = pHome + pDraw;
+  const doubleHome_Away = pHome + pAway;
+  const doubleDraw_Away = pDraw + pAway;
+
+  // prepare output
+  const out = document.getElementById('output');
+  out.innerHTML = `
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:260px">
+        <strong>${teamA}</strong>
+        <div class="small">avg goals (last5): ${avgA.toFixed(2)} → adjusted λ: ${lambdaA.toFixed(2)} (inj:${injCountA})</div>
+      </div>
+      <div style="flex:1;min-width:260px">
+        <strong>${teamB}</strong>
+        <div class="small">avg goals (last5): ${avgB.toFixed(2)} → adjusted λ: ${lambdaB.toFixed(2)} (inj:${injCountB})</div>
+      </div>
+    </div>
+
+    <div style="margin-top:10px">
+      <div class="small">احتمالات نتيجة المباراة (تقريبية، Poisson مستقل):</div>
+      <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+        <div style="flex:1;min-width:140px" class="card">
+          <div><strong>Home Win</strong></div>
+          <div class="small">${(pHome*100).toFixed(1)}%</div>
+          <div class="bar" style="margin-top:6px"><i style="width:${(pHome*100).toFixed(1)}%"></i></div>
+        </div>
+        <div style="flex:1;min-width:140px" class="card">
+          <div><strong>Draw</strong></div>
+          <div class="small">${(pDraw*100).toFixed(1)}%</div>
+          <div class="bar" style="margin-top:6px"><i style="width:${(pDraw*100).toFixed(1)}%"></i></div>
+        </div>
+        <div style="flex:1;min-width:140px" class="card">
+          <div><strong>Away Win</strong></div>
+          <div class="small">${(pAway*100).toFixed(1)}%</div>
+          <div class="bar" style="margin-top:6px"><i style="width:${(pAway*100).toFixed(1)}%"></i></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px">
+      <div class="small">Double Chance (نسبة مئوية):</div>
+      <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+        <div class="card" style="min-width:200px">
+          <div><strong>Home or Draw</strong> — ${(doubleHome_Draw*100).toFixed(1)}%</div>
+        </div>
+        <div class="card" style="min-width:200px">
+          <div><strong>Home or Away</strong> — ${(doubleHome_Away*100).toFixed(1)}%</div>
+        </div>
+        <div class="card" style="min-width:200px">
+          <div><strong>Draw or Away</strong> — ${(doubleDraw_Away*100).toFixed(1)}%</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px">
+      <div class="small">Over/Under 2.5:</div>
+      <div style="display:flex;gap:8px;margin-top:6px;">
+        <div class="card" style="flex:1">
+          <div><strong>Over 2.5</strong> — ${(pOver25*100).toFixed(1)}%</div>
+          <div class="small">(λ total = ${lambdaTotal.toFixed(2)})</div>
+        </div>
+        <div class="card" style="flex:1">
+          <div><strong>Under 2.5</strong> — ${(pUnder25*100).toFixed(1)}%</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px">
+      <div class="small">ملاحظات تأثير الإصابات:</div>
+      <div class="small">كل مصاب ينقص λ الفريق بنسبة ${injPercent}% حتى حد أدنى ${Math.round(minFactor*100)}% من λ الأصلية.</div>
+    </div>
+
+    <div style="margin-top:12px" class="card">
+      <strong>تفاصيل تقنية (مصفوفة احتمالات مختصرة 0..${maxG})</strong>
+      <pre>${generateMatrixText(matrix, maxG)}</pre>
+    </div>
+
+  `;
+}
+
+/* pretty-print matrix summary */
+function generateMatrixText(matrix, maxG){
+  // header
+  let s = '    ';
+  for(let j=0;j<=maxG;j++) s += (j+' ').padStart(6,' ');
+  s += '\n';
+  for(let i=0;i<=maxG;i++){
+    s += (i+' |').padStart(4,' ');
+    for(let j=0;j<=maxG;j++){
+      const v = matrix[i][j] || 0;
+      s += (' '+(v*100).toFixed(2)+'%').padStart(6,' ');
+    }
+    s += '\n';
+  }
+  return s;
+}
+</script>
 </body>
 </html>
