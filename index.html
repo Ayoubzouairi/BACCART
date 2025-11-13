@@ -912,28 +912,6 @@
         // حالة الوضع الليلي
         let isNightMode = false;
 
-        // قاعدة بيانات اللاعبين ومستوياتهم (محاكاة للذكاء الاصطناعي)
-        const playersDatabase = {
-            // الفريق الأول (النصر)
-            "لا. كبورها": { position: "مهاجم", level: "نجم", importance: 0.9, goals: 15, assists: 8 },
-            "ش. رياض": { position: "وسط", level: "أساسي", importance: 0.7, goals: 5, assists: 12 },
-            "ش. دوكتوري": { position: "مدافع", level: "أساسي", importance: 0.6, goals: 2, assists: 3 },
-            "إ. نكبتياه": { position: "حارس", level: "احتياطي", importance: 0.3, goals: 0, assists: 0 },
-            "ز. كاردينيس": { position: "مدافع", level: "أساسي", importance: 0.7, goals: 1, assists: 4 },
-            
-            // الفريق الثاني (الهلال)
-            "م. السلمي": { position: "وسط", level: "نجم", importance: 0.8, goals: 8, assists: 10 },
-            "ع. الغامدي": { position: "مهاجم", level: "أساسي", importance: 0.6, goals: 10, assists: 4 },
-            "ر. الشمراني": { position: "مدافع", level: "أساسي", importance: 0.5, goals: 0, assists: 2 },
-            "ف. الجابر": { position: "وسط", level: "احتياطي", importance: 0.4, goals: 2, assists: 3 },
-            
-            // اللاعبين من صورتك
-            "السلمي": { position: "وسط", level: "نجم", importance: 0.8, goals: 8, assists: 10 },
-            "القامدي": { position: "مهاجم", level: "أساسي", importance: 0.6, goals: 10, assists: 4 },
-            "الشعراني": { position: "مدافع", level: "أساسي", importance: 0.5, goals: 0, assists: 2 },
-            "الجابر": { position: "وسط", level: "احتياطي", importance: 0.4, goals: 2, assists: 3 }
-        };
-
         // تخزين اللاعبين المصابين والتحليل
         let injuredPlayers = {
             team1: [],
@@ -1075,137 +1053,9 @@
         
         // دالة لمحاكاة تحليل الذكاء الاصطناعي
         function simulateAIAnalysis(team, photoData) {
-            let extractedPlayers = [];
-            
-            // تحديد الفريق واختيار البيانات المناسبة
+            // إنشاء تحليل ديناميكي بناءً على الصورة
             const teamName = document.getElementById(`${team}-name`).value;
-            
-            if (teamName.includes("الهلال") || team === 'team2') {
-                // استخدام بيانات اللاعبين من صورتك للفريق الثاني (الهلال)
-                extractedPlayers = [
-                    { 
-                        name: "السلمي", 
-                        status: "out",
-                        analysis: {
-                            position: "وسط",
-                            level: "نجم",
-                            importance: 0.8,
-                            impact: 0.20,
-                            role: "قائد الفريق",
-                            replacement: "ضعيف",
-                            effectOn: "القيادة"
-                        }
-                    },
-                    { 
-                        name: "القامدي", 
-                        status: "out",
-                        analysis: {
-                            position: "مهاجم",
-                            level: "أساسي",
-                            importance: 0.6,
-                            impact: 0.12,
-                            role: "مهاجم ثانوي",
-                            replacement: "جيد",
-                            effectOn: "الهجوم"
-                        }
-                    },
-                    { 
-                        name: "الشعراني", 
-                        status: "doubtful",
-                        analysis: {
-                            position: "مدافع",
-                            level: "أساسي",
-                            importance: 0.5,
-                            impact: 0.06,
-                            role: "مدافع جناح",
-                            replacement: "متوسط",
-                            effectOn: "الدفاع"
-                        }
-                    },
-                    { 
-                        name: "الجابر", 
-                        status: "doubtful",
-                        analysis: {
-                            position: "وسط",
-                            level: "احتياطي",
-                            importance: 0.4,
-                            impact: 0.04,
-                            role: "وسط دفاعي",
-                            replacement: "ممتاز",
-                            effectOn: "الوسط"
-                        }
-                    }
-                ];
-            } else {
-                // استخدام البيانات الافتراضية للفريق الأول (النصر)
-                extractedPlayers = [
-                    { 
-                        name: "لا. كبورها", 
-                        status: "out",
-                        analysis: {
-                            position: "مهاجم",
-                            level: "نجم",
-                            importance: 0.9,
-                            impact: 0.25,
-                            role: "هداف رئيسي",
-                            replacement: "ضعيف",
-                            effectOn: "الهجوم"
-                        }
-                    },
-                    { 
-                        name: "ش. رياض", 
-                        status: "out",
-                        analysis: {
-                            position: "وسط",
-                            level: "أساسي",
-                            importance: 0.7,
-                            impact: 0.15,
-                            role: "صانع ألعاب",
-                            replacement: "متوسط",
-                            effectOn: "التوزيع"
-                        }
-                    },
-                    { 
-                        name: "ش. دوكتوري", 
-                        status: "out",
-                        analysis: {
-                            position: "مدافع",
-                            level: "أساسي",
-                            importance: 0.6,
-                            impact: 0.12,
-                            role: "مدافع مركزي",
-                            replacement: "جيد",
-                            effectOn: "الدفاع"
-                        }
-                    },
-                    { 
-                        name: "إ. نكبتياه", 
-                        status: "out",
-                        analysis: {
-                            position: "حارس",
-                            level: "احتياطي",
-                            importance: 0.3,
-                            impact: 0.05,
-                            role: "حارس احتياطي",
-                            replacement: "ممتاز",
-                            effectOn: "المرمى"
-                        }
-                    },
-                    { 
-                        name: "ز. كاردينيس", 
-                        status: "doubtful",
-                        analysis: {
-                            position: "مدافع",
-                            level: "أساسي",
-                            importance: 0.7,
-                            impact: 0.08,
-                            role: "ظهير أيمن",
-                            replacement: "ضعيف",
-                            effectOn: "الجناح"
-                        }
-                    }
-                ];
-            }
+            const extractedPlayers = generateDynamicPlayerAnalysis(teamName);
             
             // حفظ البيانات المستخرجة
             injuredPlayers[team] = extractedPlayers;
@@ -1215,6 +1065,65 @@
             
             // عرض البيانات المستخرجة
             displayAIExtractedData(team, extractedPlayers);
+        }
+        
+        // دالة لإنشاء تحليل ديناميكي للاعبين
+        function generateDynamicPlayerAnalysis(teamName) {
+            // أسماء عشوائية للاعبين (محاكاة لتحليل الصورة)
+            const arabicFirstNames = ["محمد", "أحمد", "خالد", "علي", "يوسف", "عمر", "مصطفى", "حسن", "طارق", "سعيد"];
+            const arabicLastNames = ["الفهيد", "الغنيم", "الشمراني", "الغامدي", "الحارثي", "الزهراني", "العتيبي", "المطيري", "القحطاني", "الجعفري"];
+            
+            const positions = ["مهاجم", "وسط", "مدافع", "حارس"];
+            const levels = ["نجم", "أساسي", "احتياطي"];
+            const statuses = ["out", "doubtful"];
+            const roles = {
+                "مهاجم": ["هداف رئيسي", "مهاجم ثانوي", "جناح", "مهاجم مركزي"],
+                "وسط": ["صانع ألعاب", "وسط دفاعي", "وسط هجومي", "قائد الفريق"],
+                "مدافع": ["مدافع مركزي", "ظهير أيمن", "ظهير أيسر", "مدافع جناح"],
+                "حارس": ["حارس مرمى أساسي", "حارس احتياطي"]
+            };
+            
+            const replacements = ["ضعيف", "متوسط", "جيد", "ممتاز"];
+            const effects = ["الهجوم", "الدفاع", "الوسط", "القيادة", "التوزيع", "المرمى"];
+            
+            // عدد عشوائي من اللاعبين بين 3 و6
+            const numPlayers = Math.floor(Math.random() * 4) + 3;
+            const players = [];
+            
+            for (let i = 0; i < numPlayers; i++) {
+                const firstName = arabicFirstNames[Math.floor(Math.random() * arabicFirstNames.length)];
+                const lastName = arabicLastNames[Math.floor(Math.random() * arabicLastNames.length)];
+                const position = positions[Math.floor(Math.random() * positions.length)];
+                const level = levels[Math.floor(Math.random() * levels.length)];
+                const status = statuses[Math.floor(Math.random() * statuses.length)];
+                
+                // حساب التأثير بناءً على المستوى والمركز
+                let baseImpact = 0;
+                if (level === "نجم") baseImpact = 0.15 + (Math.random() * 0.1);
+                else if (level === "أساسي") baseImpact = 0.08 + (Math.random() * 0.07);
+                else baseImpact = 0.03 + (Math.random() * 0.05);
+                
+                // تعديل التأثير بناءً على الحالة
+                if (status === "doubtful") baseImpact *= 0.6;
+                
+                const importance = baseImpact * 5; // تحويل إلى مقياس 0-1
+                
+                players.push({
+                    name: `${firstName} ${lastName}`,
+                    status: status,
+                    analysis: {
+                        position: position,
+                        level: level,
+                        importance: Math.min(importance, 0.9),
+                        impact: baseImpact,
+                        role: roles[position][Math.floor(Math.random() * roles[position].length)],
+                        replacement: replacements[Math.floor(Math.random() * replacements.length)],
+                        effectOn: effects[Math.floor(Math.random() * effects.length)]
+                    }
+                });
+            }
+            
+            return players;
         }
         
         // دالة لتحليل تأثير الإصابات على الفريق
