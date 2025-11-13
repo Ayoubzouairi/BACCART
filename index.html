@@ -3,465 +3,1590 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حاسبة الفرص المزدوجة - تحليل متقدم (مع رفع صور الإصابات)</title>
+    <title>حاسبة الفرص المزدوجة - تحليل متقدم</title>
     <style>
-        /* (existing CSS kept mostly unchanged; shortened here for brevity) */
-        * { box-sizing: border-box; margin:0; padding:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
-        body { background: linear-gradient(135deg,#1e3c72 0%,#2a5298 100%); color:#333; padding:20px; min-height:100vh; transition: all .3s;}
-        body.night-mode { background: linear-gradient(135deg,#0f1a2e 0%,#1a2b4e 100%); color:#e0e0e0; }
-        .container{ max-width:1200px; margin:0 auto;}
-        header{ text-align:center; margin-bottom:30px; color:white; padding:20px; background:rgba(0,0,0,0.2); border-radius:15px;}
-        .main-content{ display:flex; flex-wrap:wrap; gap:20px; margin-bottom:30px; }
-        .input-section, .result-section{ background:white; padding:25px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
-        .input-section{ flex:1; min-width:300px;}
-        .result-section{ flex:2; min-width:300px;}
-        .team-input{ margin-bottom:20px;}
-        .team-name{ width:100%; padding:12px; margin-bottom:15px; border:2px solid #ddd; border-radius:8px; font-size:16px;}
-        .image-upload-row{ display:flex; gap:10px; align-items:center; margin-top:10px; flex-wrap:wrap;}
-        .image-preview{ width:120px; height:80px; border-radius:8px; object-fit:cover; border:1px solid #ddd; }
-        .small-btn{ padding:8px 10px; border-radius:8px; cursor:pointer; border:none; background:#3182ce; color:white;}
-        .notice{ font-size:0.9rem; color:#444; margin-top:8px;}
-        @media(max-width:768px){ .main-content{ flex-direction:column; } .image-preview{ width:80px; height:60px; } }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        body.night-mode {
+            background: linear-gradient(135deg, #0f1a2e 0%, #1a2b4e 100%);
+            color: #e0e0e0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .night-mode header {
+            background: rgba(0, 0, 0, 0.4);
+            color: #e0e0e0;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .input-section {
+            background: #2d3748;
+            color: #e0e0e0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .result-section {
+            flex: 2;
+            min-width: 300px;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .result-section {
+            background: #2d3748;
+            color: #e0e0e0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .team-input {
+            margin-bottom: 25px;
+        }
+        
+        h2 {
+            color: #2a5298;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode h2 {
+            color: #63b3ed;
+            border-bottom-color: #4a5568;
+        }
+        
+        h3 {
+            color: #2a5298;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode h3 {
+            color: #63b3ed;
+        }
+        
+        h4 {
+            color: #555;
+            margin: 15px 0 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode h4 {
+            color: #cbd5e0;
+        }
+        
+        .team-name {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .team-name:focus {
+            border-color: #2a5298;
+            outline: none;
+        }
+
+        .night-mode .team-name {
+            background: #4a5568;
+            border-color: #718096;
+            color: #e0e0e0;
+        }
+
+        .night-mode .team-name:focus {
+            border-color: #63b3ed;
+        }
+        
+        .match-results {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .result-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .win {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .draw {
+            background-color: #FFC107;
+            color: black;
+        }
+        
+        .lose {
+            background-color: #F44336;
+            color: white;
+        }
+        
+        .result-btn.selected {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.5);
+        }
+        
+        .goals-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        
+        .goals-input input {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .goals-input input {
+            background: #4a5568;
+            border-color: #718096;
+            color: #e0e0e0;
+        }
+        
+        .reset-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .reset-btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .night-mode .theme-toggle {
+            background: rgba(0, 0, 0, 0.3);
+            color: #ffd700;
+        }
+        
+        .calculate-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+            margin-top: 20px;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .night-mode .calculate-btn {
+            background: linear-gradient(135deg, #63b3ed 0%, #3182ce 100%);
+        }
+        
+        .probability-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .probability-card {
+            background: #4a5568;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .probability-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .probability-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2a5298;
+            text-align: center;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .probability-value {
+            color: #63b3ed;
+        }
+        
+        .probability-bar {
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .probability-bar {
+            background: #718096;
+        }
+        
+        .probability-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #2a5298);
+            border-radius: 10px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .night-mode .probability-fill {
+            background: linear-gradient(90deg, #68d391, #63b3ed);
+        }
+        
+        .accuracy-high {
+            color: #4CAF50;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .accuracy-high {
+            color: #68d391;
+        }
+        
+        .team-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .stats-card {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .stats-card {
+            background: #4a5568;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stats-title {
+            font-weight: bold;
+            color: #2a5298;
+            margin-bottom: 10px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .stats-title {
+            color: #63b3ed;
+            border-bottom-color: #718096;
+        }
+        
+        .goals-prediction {
+            margin-top: 20px;
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+            border-right: 4px solid #4CAF50;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .goals-prediction {
+            background: #2d4a3c;
+            border-right-color: #68d391;
+        }
+        
+        .prediction-title {
+            font-weight: bold;
+            color: #2a5298;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .prediction-title {
+            color: #63b3ed;
+        }
+        
+        .prediction-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4CAF50;
+            text-align: center;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .prediction-value {
+            color: #68d391;
+        }
+        
+        .match-history {
+            margin-top: 30px;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .history-table th, .history-table td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .history-table th,
+        .night-mode .history-table td {
+            border-bottom-color: #718096;
+        }
+        
+        .history-table th {
+            background-color: #2a5298;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .history-table th {
+            background-color: #63b3ed;
+            color: #1a202c;
+        }
+        
+        .history-table tr:hover {
+            background-color: #f1f1f1;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .history-table tr:hover {
+            background-color: #4a5568;
+        }
+        
+        .team1-color {
+            color: #2a5298;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .team1-color {
+            color: #63b3ed;
+        }
+        
+        .team2-color {
+            color: #4CAF50;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .team2-color {
+            color: #68d391;
+        }
+        
+        .goals-summary {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #2a5298;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .goals-summary {
+            color: #63b3ed;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode footer {
+            background: rgba(0, 0, 0, 0.4);
+            color: #e0e0e0;
+        }
+
+        /* الأنماط الجديدة لقسم تحليل اللاعبين */
+        .players-analysis {
+            margin-top: 30px;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .players-analysis {
+            background: #2d3748;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .players-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .team-players {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .player-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .player-card {
+            background: #4a5568;
+        }
+        
+        .player-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .player-image {
+            border-color: #718096;
+        }
+        
+        .player-info {
+            flex: 1;
+        }
+        
+        .player-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .player-status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .status-injured {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .night-mode .status-injured {
+            background: #4a2323;
+            color: #ff8a8a;
+        }
+        
+        .status-doubtful {
+            background: #fff8e1;
+            color: #ff8f00;
+        }
+
+        .night-mode .status-doubtful {
+            background: #4a3c23;
+            color: #ffd54f;
+        }
+        
+        .player-impact {
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .impact-high {
+            color: #c62828;
+            font-weight: bold;
+        }
+        
+        .impact-medium {
+            color: #ff8f00;
+            font-weight: bold;
+        }
+        
+        .impact-low {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .night-mode .impact-high {
+            color: #ff8a8a;
+        }
+
+        .night-mode .impact-medium {
+            color: #ffd54f;
+        }
+
+        .night-mode .impact-low {
+            color: #81c784;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: #2a5298;
+            background: #f8f9fa;
+        }
+
+        .night-mode .upload-area {
+            border-color: #718096;
+        }
+
+        .night-mode .upload-area:hover {
+            border-color: #63b3ed;
+            background: #4a5568;
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: #2a5298;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .upload-icon {
+            color: #63b3ed;
+        }
+        
+        .upload-text {
+            margin-bottom: 10px;
+        }
+        
+        .upload-btn {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-btn:hover {
+            background: #1e3c72;
+        }
+
+        .night-mode .upload-btn {
+            background: #63b3ed;
+            color: #1a202c;
+        }
+
+        .night-mode .upload-btn:hover {
+            background: #3182ce;
+        }
+        
+        .ai-analysis-result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 10px;
+            border-left: 4px solid #2196F3;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .ai-analysis-result {
+            background: #2d3748;
+            border-left-color: #63b3ed;
+        }
+        
+        .ai-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2196F3;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .ai-title {
+            color: #63b3ed;
+        }
+        
+        .ai-impact-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+            color: #2196F3;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .ai-impact-value {
+            color: #63b3ed;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .team-stats {
+                flex-direction: column;
+            }
+            
+            .players-section {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+
+            .theme-toggle {
+                top: 10px;
+                left: 10px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+        }
     </style>
 </head>
 <body>
     <button class="theme-toggle" id="theme-toggle">🌙</button>
+    
     <div class="container">
         <header>
             <h1>🦾 حاسبة الفرص المزدوجة - تحليل متقدم</h1>
-            <p class="subtitle">الآن مع رفع صور اللاعبين المصابين/المشكوك في لعبهم</p>
+            <p class="subtitle">تحليل إحصائي متقدم لنتائج المباريات مع تحليل اللاعبين المصابين بالذكاء الاصطناعي</p>
         </header>
-
+        
         <div class="main-content">
             <div class="input-section">
                 <h2>إدخال البيانات</h2>
-
+                
                 <div class="team-input">
                     <h3>الفريق الأول</h3>
                     <input type="text" class="team-name" id="team1-name" placeholder="اسم الفريق الأول">
-
-                    <div class="image-upload-row">
-                        <label for="team1-image" class="small-btn">رفع صورة لاعبين الفريق الأول</label>
-                        <input id="team1-image" type="file" accept="image/*" style="display:none">
-                        <img id="team1-preview" class="image-preview" src="" alt="عرض الصورة" style="display:none">
-                        <button class="small-btn" id="team1-analyze-btn">🔍 تحليل الصورة (AI)</button>
-                    </div>
-                    <div id="team1-injuries" class="notice">لم يتم تحليل صورة الفريق الأول بعد.</div>
-
+                    
                     <h4>نتائج آخر 5 مباريات:</h4>
-                    <div id="team1-results"></div>
-
+                    <div id="team1-results">
+                        <!-- سيتم إضافة أزرار النتائج هنا بواسطة JavaScript -->
+                    </div>
+                    
                     <h4>إحصائيات الأهداف:</h4>
-                    <div id="team1-goals"></div>
-
-                    <button class="reset-btn" onclick="resetTeamData('team1')">🔄 إعادة تعيين الفريق الأول</button>
+                    <div id="team1-goals">
+                        <!-- سيتم إضافة حقول الأهداف هنا بواسطة JavaScript -->
+                    </div>
+                    
+                    <button class="reset-btn" onclick="resetTeamData('team1')">
+                        🔄 إعادة تعيين الفريق الأول
+                    </button>
                 </div>
-
+                
                 <div class="team-input">
                     <h3>الفريق الثاني</h3>
                     <input type="text" class="team-name" id="team2-name" placeholder="اسم الفريق الثاني">
-
-                    <div class="image-upload-row">
-                        <label for="team2-image" class="small-btn">رفع صورة لاعبين الفريق الثاني</label>
-                        <input id="team2-image" type="file" accept="image/*" style="display:none">
-                        <img id="team2-preview" class="image-preview" src="" alt="عرض الصورة" style="display:none">
-                        <button class="small-btn" id="team2-analyze-btn">🔍 تحليل الصورة (AI)</button>
-                    </div>
-                    <div id="team2-injuries" class="notice">لم يتم تحليل صورة الفريق الثاني بعد.</div>
-
+                    
                     <h4>نتائج آخر 5 مباريات:</h4>
-                    <div id="team2-results"></div>
-
+                    <div id="team2-results">
+                        <!-- سيتم إضافة أزرار النتائج هنا بواسطة JavaScript -->
+                    </div>
+                    
                     <h4>إحصائيات الأهداف:</h4>
-                    <div id="team2-goals"></div>
-
-                    <button class="reset-btn" onclick="resetTeamData('team2')">🔄 إعادة تعيين الفريق الثاني</button>
+                    <div id="team2-goals">
+                        <!-- سيتم إضافة حقول الأهداف هنا بواسطة JavaScript -->
+                    </div>
+                    
+                    <button class="reset-btn" onclick="resetTeamData('team2')">
+                        🔄 إعادة تعيين الفريق الثاني
+                    </button>
                 </div>
 
-                <button class="reset-btn" onclick="resetAllData()" style="background:#ff9800;">🗑️ إعادة تعيين كل البيانات</button>
-
+                <button class="reset-btn" onclick="resetAllData()" style="background: #ff9800;">
+                    🗑️ إعادة تعيين كل البيانات
+                </button>
+                
                 <button class="calculate-btn" id="calculate-btn">🧮 احسب الفرص المزدوجة</button>
-
-                <div style="margin-top:12px;">
-                    <label class="small-btn" id="toggle-sim">وضع محلي (محاكاة) : تشغيل</label>
-                    <div class="notice">الوضع المحلي هو احتياطي يسمح بالحصول على نتائج بدون سيرفر AI حقيقي. لتشغيل AI حقيقي، قم بتشغيل سيرفر مطابق للواجهة في README.</div>
-                </div>
             </div>
-
+            
             <div class="result-section">
                 <h2>النتائج والتحليل المتقدم</h2>
+                
                 <div id="results-container">
-                    <p style="text-align:center; padding:20px;">سيظهر تحليل الفرص المزدوجة هنا بعد إدخال البيانات</p>
+                    <p style="text-align: center; padding: 20px;">سيظهر تحليل الفرص المزدوجة هنا بعد إدخال البيانات</p>
                 </div>
-
-                <div class="team-stats" id="team-stats" style="display:none;"></div>
-                <div class="goals-prediction" id="goals-prediction" style="display:none;"></div>
-                <div class="match-history" id="match-history" style="display:none;">
+                
+                <div class="team-stats" id="team-stats" style="display: none;">
+                    <!-- سيتم إضافة إحصائيات الفريقين هنا -->
+                </div>
+                
+                <div class="goals-prediction" id="goals-prediction" style="display: none;">
+                    <!-- سيتم إضافة توقع الأهداف هنا -->
+                </div>
+                
+                <div class="players-analysis" id="players-analysis" style="display: none;">
+                    <h3>🧠 تحليل اللاعبين المصابين والمشكوك فيهم بالذكاء الاصطناعي</h3>
+                    
+                    <div class="players-section">
+                        <div class="team-players">
+                            <h4 class="team1-color" id="team1-players-title">الفريق الأول</h4>
+                            <div class="upload-area" id="team1-upload" onclick="document.getElementById('team1-file').click()">
+                                <div class="upload-icon">📤</div>
+                                <div class="upload-text">انقر لرفع صورة لاعبين الفريق الأول</div>
+                                <button class="upload-btn">رفع الصورة</button>
+                                <input type="file" id="team1-file" accept="image/*" style="display: none;" onchange="handlePlayerUpload(this, 'team1')">
+                            </div>
+                            <div id="team1-players-list">
+                                <!-- سيتم إضافة قائمة اللاعبين هنا -->
+                            </div>
+                        </div>
+                        
+                        <div class="team-players">
+                            <h4 class="team2-color" id="team2-players-title">الفريق الثاني</h4>
+                            <div class="upload-area" id="team2-upload" onclick="document.getElementById('team2-file').click()">
+                                <div class="upload-icon">📤</div>
+                                <div class="upload-text">انقر لرفع صورة لاعبين الفريق الثاني</div>
+                                <button class="upload-btn">رفع الصورة</button>
+                                <input type="file" id="team2-file" accept="image/*" style="display: none;" onchange="handlePlayerUpload(this, 'team2')">
+                            </div>
+                            <div id="team2-players-list">
+                                <!-- سيتم إضافة قائمة اللاعبين هنا -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-analysis-result" id="ai-analysis" style="display: none;">
+                        <div class="ai-title">📊 تحليل تأثير الإصابات على نتيجة المباراة</div>
+                        <div class="ai-impact-value" id="ai-impact-value">0%</div>
+                        <div id="ai-analysis-text">سيظهر تحليل تأثير الإصابات هنا بعد رفع صور اللاعبين</div>
+                    </div>
+                </div>
+                
+                <div class="match-history" id="match-history" style="display: none;">
                     <h3>سجل المباريات</h3>
                     <table class="history-table">
                         <thead>
-                            <tr><th>الفريق</th><th>آخر 5 مباريات</th><th>النقاط</th><th>الأهداف</th></tr>
+                            <tr>
+                                <th>الفريق</th>
+                                <th>آخر 5 مباريات</th>
+                                <th>النقاط</th>
+                                <th>الأهداف</th>
+                            </tr>
                         </thead>
-                        <tbody id="history-body"></tbody>
+                        <tbody id="history-body">
+                            <!-- سيتم ملء هذا الجدول بواسطة JavaScript -->
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
-
+        
         <footer>
-            <p>🦾 تم التطوير باستخدام خوارزميات إحصائية متقدمة لتحليل نتائج المباريات — الآن مع تكامل صور الإصابات</p>
+            <p>🦾 تم التطوير باستخدام خوارزميات إحصائية متقدمة وتحليل اللاعبين بالذكاء الاصطناعي</p>
         </footer>
     </div>
 
-<script>
-/* ====== وضع الليلي وتهيئة الواجهة (من الكود الأصلي) ====== */
-let isNightMode = false;
-document.addEventListener('DOMContentLoaded', function() {
-    initializeTeamResults('team1-results', ['W','W','D','W','L']);
-    initializeTeamResults('team2-results', ['W','D','L','W','W']);
-    initializeGoalsInput('team1-goals', [2,3,1,2,0]);
-    initializeGoalsInput('team2-goals', [2,1,0,3,2]);
-    document.getElementById('calculate-btn').addEventListener('click', calculateDoubleChance);
-    document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
-    loadThemePreference();
+    <script>
+        // حالة الوضع الليلي
+        let isNightMode = false;
 
-    // image upload handlers
-    document.getElementById('team1-image').addEventListener('change', e => handleImagePreview(e, 'team1'));
-    document.getElementById('team2-image').addEventListener('change', e => handleImagePreview(e, 'team2'));
-    document.getElementById('team1-analyze-btn').addEventListener('click', () => analyzeImageForTeam('team1'));
-    document.getElementById('team2-analyze-btn').addEventListener('click', () => analyzeImageForTeam('team2'));
+        // تخزين بيانات الفريقين
+        let teamData = {
+            team1: { name: "", results: [], goals: [] },
+            team2: { name: "", results: [], goals: [] }
+        };
 
-    // toggle simulation
-    const toggleSim = document.getElementById('toggle-sim');
-    toggleSim.addEventListener('click', () => {
-        simulateMode = !simulateMode;
-        toggleSim.textContent = 'وضع محلي (محاكاة) : ' + (simulateMode ? 'تشغيل' : 'إيقاف');
-    });
-});
+        // تخزين بيانات اللاعبين المصابين
+        let injuredPlayers = {
+            team1: [],
+            team2: []
+        };
 
-// حفظ تفضيل الوضع
-function toggleTheme() {
-    isNightMode = !isNightMode;
-    const body = document.body;
-    const themeToggle = document.getElementById('theme-toggle');
-    if (isNightMode) { body.classList.add('night-mode'); themeToggle.textContent='☀️'; }
-    else { body.classList.remove('night-mode'); themeToggle.textContent='🌙'; }
-    localStorage.setItem('nightMode', isNightMode);
-}
-function loadThemePreference(){ const savedTheme = localStorage.getItem('nightMode'); if(savedTheme==='true'){ isNightMode=true; document.body.classList.add('night-mode'); document.getElementById('theme-toggle').textContent='☀️'; } }
-
-/* ====== بيانات الفرق كما في الملف الأصلي ====== */
-let teamData = { team1:{ name:'', results:[], goals:[], injuries: [] }, team2:{ name:'', results:[], goals:[], injuries: [] } };
-
-/* ====== وظائف نتائج المباريات وادخال الاهداف (من الكود الأصلي) ====== */
-function resetTeamData(team) {
-    if (confirm(`هل تريد إعادة تعيين جميع بيانات ${team==='team1' ? 'الفريق الأول' : 'الفريق الثاني'}؟`)) {
-        const initialResults = team === 'team1' ? ['W','W','D','W','L'] : ['W','D','L','W','W'];
-        const initialGoals = team === 'team1' ? [2,3,1,2,0] : [2,1,0,3,2];
-        initializeTeamResults(`${team}-results`, initialResults);
-        initializeGoalsInput(`${team}-goals`, initialGoals);
-        document.getElementById(`${team}-name`).value = '';
-        document.getElementById(`${team}-preview`).style.display = 'none';
-        document.getElementById(`${team}-injuries`).textContent = 'لم يتم تحليل صورة الفريق بعد.';
-        alert('✅ تم إعادة تعيين بنجاح');
-    }
-}
-function resetAllData(){
-    if(confirm('هل تريد إعادة تعيين جميع البيانات؟ سيتم مسح كل شيء!')){
-        initializeTeamResults('team1-results', ['W','W','D','W','L']);
-        initializeGoalsInput('team1-goals', [2,3,1,2,0]);
-        document.getElementById('team1-name').value='';
-        initializeTeamResults('team2-results', ['W','D','L','W','W']);
-        initializeGoalsInput('team2-goals', [2,1,0,3,2]);
-        document.getElementById('team2-name').value='';
-        document.getElementById('results-container').innerHTML = '<p style="text-align:center;padding:20px;">سيظهر تحليل الفرص المزدوجة هنا بعد إدخال البيانات</p>';
-        document.getElementById('team-stats').style.display='none';
-        document.getElementById('goals-prediction').style.display='none';
-        document.getElementById('match-history').style.display='none';
-        document.getElementById('team1-preview').style.display='none';
-        document.getElementById('team2-preview').style.display='none';
-        document.getElementById('team1-injuries').textContent='لم يتم تحليل صورة الفريق الأول بعد.';
-        document.getElementById('team2-injuries').textContent='لم يتم تحليل صورة الفريق الثاني بعد.';
-        alert('✅ تم إعادة تعيين جميع البيانات بنجاح');
-    }
-}
-function initializeTeamResults(containerId, initialResults){
-    const container = document.getElementById(containerId);
-    container.innerHTML = '';
-    for(let i=0;i<5;i++){
-        const matchDiv = document.createElement('div');
-        matchDiv.className='match-results';
-        const matchLabel = document.createElement('span'); matchLabel.textContent = `مباراة ${i+1}:`; matchLabel.style.width='80px'; matchDiv.appendChild(matchLabel);
-        const results = ['W','D','L'];
-        const resultLabels = {'W':'فوز','D':'تعادل','L':'خسارة'};
-        const resultClasses = {'W':'win','D':'draw','L':'lose'};
-        results.forEach(result => {
-            const btn = document.createElement('button');
-            btn.className = `result-btn ${resultClasses[result]}`; btn.textContent = resultLabels[result]; btn.dataset.result = result;
-            if(result === initialResults[i]) btn.classList.add('selected');
-            btn.addEventListener('click', function(){ this.parentElement.querySelectorAll('.result-btn').forEach(b=>b.classList.remove('selected')); this.classList.add('selected'); });
-            matchDiv.appendChild(btn);
+        // تهيئة النتائج للفرق
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTeamResults('team1-results', ['W', 'W', 'D', 'W', 'L']);
+            initializeTeamResults('team2-results', ['W', 'D', 'L', 'W', 'W']);
+            
+            initializeGoalsInput('team1-goals', [2, 3, 1, 2, 0]);
+            initializeGoalsInput('team2-goals', [2, 1, 0, 3, 2]);
+            
+            // إضافة حدث النقر لزر الحساب
+            document.getElementById('calculate-btn').addEventListener('click', calculateDoubleChance);
+            
+            // إضافة حدث لزر تغيير الوضع
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            
+            // تحميل الوضع من التخزين المحلي
+            loadThemePreference();
         });
-        container.appendChild(matchDiv);
-    }
-}
-function initializeGoalsInput(containerId, initialGoals){
-    const container = document.getElementById(containerId);
-    container.innerHTML='';
-    for(let i=0;i<5;i++){
-        const goalsDiv = document.createElement('div'); goalsDiv.className='goals-input';
-        const matchLabel = document.createElement('span'); matchLabel.textContent=`مباراة ${i+1}:`; matchLabel.style.width='80px'; goalsDiv.appendChild(matchLabel);
-        const goalsInput = document.createElement('input'); goalsInput.type='number'; goalsInput.min='0'; goalsInput.value = initialGoals[i]; goalsInput.dataset.match = i+1; goalsDiv.appendChild(goalsInput);
-        const goalsText = document.createElement('span'); goalsText.textContent = ' هدف'; goalsDiv.appendChild(goalsText);
-        container.appendChild(goalsDiv);
-    }
-}
-function getTeamResults(containerId){
-    const container = document.getElementById(containerId);
-    const matches = container.querySelectorAll('.match-results');
-    const results = [];
-    matches.forEach(match => {
-        const selectedBtn = match.querySelector('.result-btn.selected');
-        if(selectedBtn) results.push(selectedBtn.dataset.result);
-    });
-    return results;
-}
-function getTeamGoals(containerId){
-    const container = document.getElementById(containerId);
-    const inputs = container.querySelectorAll('input');
-    const goals = [];
-    inputs.forEach(input => goals.push(parseInt(input.value) || 0));
-    return goals;
-}
 
-/* ====== حساب الاحتمالات (تم تحديثه ليتأثر بإصابات اللاعبين) ====== */
-function calculatePoints(results){
-    let points = 0;
-    results.forEach(result => { if(result==='W') points+=3; else if(result==='D') points+=1; });
-    return points;
-}
-function calculatePredictedGoals(team1Avg, team2Avg){
-    const team1Predicted = team1Avg * 0.8; const team2Predicted = team2Avg * 0.8; const totalPredicted = team1Predicted + team2Predicted;
-    return { team1:team1Predicted, team2:team2Predicted, total:totalPredicted };
-}
-
-function calculateDoubleChance() {
-    const team1Name = document.getElementById('team1-name').value || 'الفريق الأول';
-    const team2Name = document.getElementById('team2-name').value || 'الفريق الثاني';
-    const team1Results = getTeamResults('team1-results');
-    const team2Results = getTeamResults('team2-results');
-    const team1Goals = getTeamGoals('team1-goals');
-    const team2Goals = getTeamGoals('team2-goals');
-
-    const team1Points = calculatePoints(team1Results);
-    const team2Points = calculatePoints(team2Results);
-    const team1AvgGoals = team1Goals.reduce((a,b)=>a+b,0)/team1Goals.length;
-    const team2AvgGoals = team2Goals.reduce((a,b)=>a+b,0)/team2Goals.length;
-
-    /* تأثير الإصابات: كل لاعب مصاب مُعلن يقلل من قوة الفريق بنسبة 0.12 (قابلة للتعديل)، حتى حد أقصى 0.6 */
-    const injuryPenaltyPerPlayer = 0.12;
-    const team1Injuries = (teamData.team1.injuries || []).filter(p => p.injured).length;
-    const team2Injuries = (teamData.team2.injuries || []).filter(p => p.injured).length;
-    const team1Penalty = Math.min(team1Injuries * injuryPenaltyPerPlayer, 0.6);
-    const team2Penalty = Math.min(team2Injuries * injuryPenaltyPerPlayer, 0.6);
-
-    const totalPoints = team1Points + team2Points;
-    let team1Strength = totalPoints > 0 ? team1Points / totalPoints : 0.5;
-    let team2Strength = totalPoints > 0 ? team2Points / totalPoints : 0.5;
-
-    // تطبيق عقوبة الإصابات على القوة
-    team1Strength = Math.max(0.05, team1Strength - team1Penalty);
-    team2Strength = Math.max(0.05, team2Strength - team2Penalty);
-
-    const team1WinProb = team1Strength * (1 - team2Strength) * 0.8;
-    const team2WinProb = team2Strength * (1 - team1Strength) * 0.8;
-    const drawProb = 0.2 + (team1Strength * team2Strength * 0.3);
-    const totalProb = team1WinProb + team2WinProb + drawProb;
-    const normalizedTeam1Win = (team1WinProb / totalProb) * 100;
-    const normalizedTeam2Win = (team2WinProb / totalProb) * 100;
-    const normalizedDraw = (drawProb / totalProb) * 100;
-    const doubleChance1X = normalizedTeam1Win + normalizedDraw;
-    const doubleChance12 = normalizedTeam1Win + normalizedTeam2Win;
-    const doubleChanceX2 = normalizedDraw + normalizedTeam2Win;
-    const predictedGoals = calculatePredictedGoals(team1AvgGoals, team2AvgGoals);
-
-    displayAdvancedResults(
-        team1Name, team2Name,
-        normalizedTeam1Win, normalizedTeam2Win, normalizedDraw,
-        doubleChance1X, doubleChance12, doubleChanceX2,
-        team1Results, team2Results, team1Points, team2Points,
-        team1Goals, team2Goals, predictedGoals
-    );
-}
-
-/* ====== عرض النتائج (نفس الوظيفة مع بقية التفاصيل) ====== */
-function displayAdvancedResults(team1Name, team2Name, team1Win, team2Win, draw,
-                               doubleChance1X, doubleChance12, doubleChanceX2,
-                               team1Results, team2Results, team1Points, team2Points,
-                               team1Goals, team2Goals, predictedGoals) {
-    const resultsContainer = document.getElementById('results-container');
-    const matchHistory = document.getElementById('match-history');
-    const teamStats = document.getElementById('team-stats');
-    const goalsPrediction = document.getElementById('goals-prediction');
-
-    const formatPercent = (v)=> v.toFixed(1)+'%';
-    const team1TotalGoals = team1Goals.reduce((a,b)=>a+b,0);
-    const team2TotalGoals = team2Goals.reduce((a,b)=>a+b,0);
-
-    // Append injury summary at top
-    const injurySummaryHTML = `
-        <div class="probability-card">
-            <h3>🩺 ملخص الإصابات المكتشفة</h3>
-            <div style="display:flex; gap:12px; flex-wrap:wrap;">
-                <div style="min-width:200px;">
-                    <div class="stats-title team1-color">الفريق الأول</div>
-                    <div id="injury-team1-list">${(teamData.team1.injuries && teamData.team1.injuries.length>0) ? teamData.team1.injuries.map(p=>p.name+' ('+(p.injured? 'مصاب':'مشكوك')+')').join('<br>') : 'لا يوجد لاعبين مصابين مؤكدين.'}</div>
-                </div>
-                <div style="min-width:200px;">
-                    <div class="stats-title team2-color">الفريق الثاني</div>
-                    <div id="injury-team2-list">${(teamData.team2.injuries && teamData.team2.injuries.length>0) ? teamData.team2.injuries.map(p=>p.name+' ('+(p.injured? 'مصاب':'مشكوك')+')').join('<br>') : 'لا يوجد لاعبين مصابين مؤكدين.'}</div>
-                </div>
-            </div>
-        </div>
-    `;
-
-    let resultsHTML = injurySummaryHTML + `
-        <div class="probability-card">
-            <h3>🎯 الاحتمالات الأساسية</h3>
-            <div class="probability-item">
-                <div class="probability-header">
-                    <span class="team1-color">فوز ${team1Name}</span><span>${formatPercent(team1Win)}</span>
-                </div>
-                <div class="probability-bar"><div class="probability-fill" style="width:${team1Win}%"></div></div>
-            </div>
-            <div class="probability-item">
-                <div class="probability-header"><span>تعادل</span><span>${formatPercent(draw)}</span></div>
-                <div class="probability-bar"><div class="probability-fill" style="width:${draw}%"></div></div>
-            </div>
-            <div class="probability-item">
-                <div class="probability-header"><span class="team2-color">فوز ${team2Name}</span><span>${formatPercent(team2Win)}</span></div>
-                <div class="probability-bar"><div class="probability-fill" style="width:${team2Win}%"></div></div>
-            </div>
-        </div>
-
-        <div class="probability-card">
-            <h3>🔄 الفرص المزدوجة <span class="accuracy-high">(متأثرة بالإصابات)</span></h3>
-            <div class="probability-item">
-                <div class="probability-header"><span>${team1Name} أو تعادل (1X)</span><span>${formatPercent(doubleChance1X)}</span></div>
-                <div class="probability-value">${formatPercent(doubleChance1X)}</div>
-                <div class="probability-bar"><div class="probability-fill" style="width:${doubleChance1X}%"></div></div>
-            </div>
-            <div class="probability-item">
-                <div class="probability-header"><span>${team1Name} أو ${team2Name} (12)</span><span>${formatPercent(doubleChance12)}</span></div>
-                <div class="probability-value">${formatPercent(doubleChance12)}</div>
-                <div class="probability-bar"><div class="probability-fill" style="width:${doubleChance12}%"></div></div>
-            </div>
-            <div class="probability-item">
-                <div class="probability-header"><span>تعادل أو ${team2Name} (X2)</span><span>${formatPercent(doubleChanceX2)}</span></div>
-                <div class="probability-value">${formatPercent(doubleChanceX2)}</div>
-                <div class="probability-bar"><div class="probability-fill" style="width:${doubleChanceX2}%"></div></div>
-            </div>
-        </div>
-    `;
-    resultsContainer.innerHTML = resultsHTML;
-
-    let statsHTML = `
-        <div class="stats-card">
-            <div class="stats-title team1-color">${team1Name}</div>
-            <div class="goals-summary">إجمالي الأهداف: ${team1TotalGoals}</div>
-            <div>متوسط الأهداف: ${(team1TotalGoals/5).toFixed(1)}</div>
-            <div>النقاط: ${team1Points}</div>
-        </div>
-        <div class="stats-card">
-            <div class="stats-title team2-color">${team2Name}</div>
-            <div class="goals-summary">إجمالي الأهداف: ${team2TotalGoals}</div>
-            <div>متوسط الأهداف: ${(team2TotalGoals/5).toFixed(1)}</div>
-            <div>النقاط: ${team2Points}</div>
-        </div>
-    `;
-    teamStats.innerHTML = statsHTML; teamStats.style.display='flex';
-
-    let predictionHTML = `
-        <div class="prediction-title">🎯 توقع الأهداف في المباراة القادمة</div>
-        <div style="display:flex; justify-content:space-around; text-align:center;">
-            <div><div class="team1-color">${team1Name}</div><div class="prediction-value">${predictedGoals.team1.toFixed(1)}</div><div>هدف متوقع</div></div>
-            <div><div>المجموع</div><div class="prediction-value">${predictedGoals.total.toFixed(1)}</div><div>أهداف متوقعة</div></div>
-            <div><div class="team2-color">${team2Name}</div><div class="prediction-value">${predictedGoals.team2.toFixed(1)}</div><div>هدف متوقع</div></div>
-        </div>
-    `;
-    goalsPrediction.innerHTML = predictionHTML; goalsPrediction.style.display='block';
-
-    const historyBody = document.getElementById('history-body');
-    let historyHTML = '';
-    historyHTML += `<tr><td class="team1-color">${team1Name}</td><td>${team1Results.map(r=>getResultSymbol(r)).join(' ')}</td><td>${team1Points}</td><td>${team1Goals.join(' - ')}</td></tr>`;
-    historyHTML += `<tr><td class="team2-color">${team2Name}</td><td>${team2Results.map(r=>getResultSymbol(r)).join(' ')}</td><td>${team2Points}</td><td>${team2Goals.join(' - ')}</td></tr>`;
-    historyBody.innerHTML = historyHTML; matchHistory.style.display='block';
-}
-function getResultSymbol(result){ switch(result){ case 'W': return '✅'; case 'D': return '➖'; case 'L': return '❌'; default: return '?'; }}
-
-/* ====== وظائف رفع الصور والمعالجة بالذكاء الاصطناعي ====== */
-/* سلوك التطبيق:
-   - يحاول إرسال الصورة إلى endpoint: POST /api/analyze مع حقل form-data: "team" (team1|team2) و "image" (file).
-   - التوقع: الرد JSON بالشكل: { players: [ { name: "Player Name", confidence: 0.92, injured: true|false, position: "FW" }, ... ] }
-   - إذا لم يتوفر سيرفر، يوجد وضع محلي (simulateMode) يعيد نتيجة محاكاة.
-*/
-let simulateMode = true; // الوضع المحلي افتراضياً (يمكن تبديله بالزر)
-async function handleImagePreview(event, team){
-    const file = event.target.files[0];
-    if(!file) return;
-    const preview = document.getElementById(team + '-preview');
-    preview.src = URL.createObjectURL(file);
-    preview.style.display = 'block';
-    // حفظ الملف في teamData temporally (File object)
-    teamData[team].imageFile = file;
-    document.getElementById(team + '-inuries')?.textContent = 'تم تحميل الصورة. اضغط "تحليل الصورة (AI)" لتحليلها.';
-}
-
-async function analyzeImageForTeam(team){
-    const file = teamData[team].imageFile;
-    if(!file){ alert('📸 لم تقم برفع صورة للفريق بعد.'); return; }
-    document.getElementById(team + '-inuries').textContent = '⏳ جاري التحليل...';
-    try {
-        let result;
-        if(simulateMode){
-            // محاكاة سريعة: نستخرج أسماء وهمية من اسم الملف أو نقترح لاعب مصاب واحد عشوائي
-            result = await simulateAnalyze(file, team);
-        } else {
-            // إرسال الصورة إلى سيرفر خارجي (يجب تشغيل السيرفر الموضح في README)
-            const form = new FormData();
-            form.append('team', team);
-            form.append('image', file, file.name);
-            const resp = await fetch('/api/analyze', { method: 'POST', body: form });
-            if(!resp.ok) throw new Error('لم يتوصل برد من السيرفر: ' + resp.statusText);
-            result = await resp.json();
+        // دالة تغيير الوضع الليلي/النهاري
+        function toggleTheme() {
+            isNightMode = !isNightMode;
+            const body = document.body;
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            if (isNightMode) {
+                body.classList.add('night-mode');
+                themeToggle.textContent = '☀️';
+            } else {
+                body.classList.remove('night-mode');
+                themeToggle.textContent = '🌙';
+            }
+            
+            // حفظ التفضيل في التخزين المحلي
+            localStorage.setItem('nightMode', isNightMode);
         }
-        // result.players => تحديث teamData
-        teamData[team].injuries = result.players || [];
-        // تحديث نص الواجهة
-        document.getElementById(team + '-inuries').innerHTML = (teamData[team].injuries.length>0) ? teamData[team].injuries.map(p=>`${p.name} — ${p.injured ? 'مصاب' : 'مشكوك'} (${Math.round((p.confidence||0)*100)}%)`).join('<br>') : 'لا لاعبين مصابين مكتشفين.';
-        // بعد التحليل نعيد حساب النتائج تلقائياً (اختياري)
-        calculateDoubleChance();
-    } catch(e){
-        console.error(e);
-        document.getElementById(team + '-injuries').textContent = '❌ حدث خطأ أثناء التحليل. راجع README لتشغيل السيرفر أو فعّل وضع المحاكاة.';
-    }
-}
 
-// محاكاة تحليل الصورة (وضع محلي، لا يحتاج إنترنت)
-async function simulateAnalyze(file, team){
-    // نستخدم اسم الملف لتوليد بعض الأسماء (إن وُجد)
-    const base = (file.name || 'player').split('.')[0];
-    const samplePlayers = [
-        {name: base + ' أ', confidence: 0.92, injured: Math.random() < 0.5, position: 'FW'},
-        {name: base + ' ب', confidence: 0.81, injured: Math.random() < 0.35, position: 'MF'},
-        {name: base + ' ج', confidence: 0.73, injured: Math.random() < 0.2, position: 'DF'}
-    ];
-    // نرجع من 0 إلى 3 لاعبين مع احتمالات مختلفة
-    return new Promise(resolve => setTimeout(()=> resolve({ players: samplePlayers.slice(0, 1 + Math.floor(Math.random()*3)) }), 800));
-}
+        // دالة تحميل تفضيل الوضع
+        function loadThemePreference() {
+            const savedTheme = localStorage.getItem('nightMode');
+            if (savedTheme === 'true') {
+                isNightMode = true;
+                document.body.classList.add('night-mode');
+                document.getElementById('theme-toggle').textContent = '☀️';
+            }
+        }
 
-/* ====== نهاية الكود الجديد ====== */
+        // دالة إعادة تعيين فريق معين
+        function resetTeamData(team) {
+            if (confirm(`هل تريد إعادة تعيين جميع بيانات ${team === 'team1' ? 'الفريق الأول' : 'الفريق الثاني'}؟`)) {
+                // إعادة تعيين النتائج
+                const initialResults = team === 'team1' ? ['W', 'W', 'D', 'W', 'L'] : ['W', 'D', 'L', 'W', 'W'];
+                const initialGoals = team === 'team1' ? [2, 3, 1, 2, 0] : [2, 1, 0, 3, 2];
+                
+                initializeTeamResults(`${team}-results`, initialResults);
+                initializeGoalsInput(`${team}-goals`, initialGoals);
+                
+                // إعادة تعيين اسم الفريق
+                document.getElementById(`${team}-name`).value = '';
+                
+                // إعادة تعيين اللاعبين المصابين
+                injuredPlayers[team] = [];
+                updatePlayersList(team);
+                
+                alert(`✅ تم إعادة تعيين ${team === 'team1' ? 'الفريق الأول' : 'الفريق الثاني'} بنجاح`);
+            }
+        }
 
-</script>
+        // دالة إعادة تعيين كل البيانات
+        function resetAllData() {
+            if (confirm('هل تريد إعادة تعيين جميع البيانات؟ سيتم مسح كل شيء!')) {
+                // إعادة تعيين الفريق الأول
+                initializeTeamResults('team1-results', ['W', 'W', 'D', 'W', 'L']);
+                initializeGoalsInput('team1-goals', [2, 3, 1, 2, 0]);
+                document.getElementById('team1-name').value = '';
+                
+                // إعادة تعيين الفريق الثاني
+                initializeTeamResults('team2-results', ['W', 'D', 'L', 'W', 'W']);
+                initializeGoalsInput('team2-goals', [2, 1, 0, 3, 2]);
+                document.getElementById('team2-name').value = '';
+                
+                // إعادة تعيين اللاعبين المصابين
+                injuredPlayers.team1 = [];
+                injuredPlayers.team2 = [];
+                updatePlayersList('team1');
+                updatePlayersList('team2');
+                
+                // إعادة تعيين النتائج
+                document.getElementById('results-container').innerHTML = 
+                    '<p style="text-align: center; padding: 20px;">سيظهر تحليل الفرص المزدوجة هنا بعد إدخال البيانات</p>';
+                document.getElementById('team-stats').style.display = 'none';
+                document.getElementById('goals-prediction').style.display = 'none';
+                document.getElementById('players-analysis').style.display = 'none';
+                document.getElementById('match-history').style.display = 'none';
+                document.getElementById('ai-analysis').style.display = 'none';
+                
+                alert('✅ تم إعادة تعيين جميع البيانات بنجاح');
+            }
+        }
+        
+        // دالة لتهيئة أزرار نتائج الفريق
+        function initializeTeamResults(containerId, initialResults) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 5; i++) {
+                const matchDiv = document.createElement('div');
+                matchDiv.className = 'match-results';
+                
+                const matchLabel = document.createElement('span');
+                matchLabel.textContent = `مباراة ${i+1}:`;
+                matchLabel.style.width = '80px';
+                matchDiv.appendChild(matchLabel);
+                
+                // إنشاء أزرار النتائج (فوز، تعادل، خسارة)
+                const results = ['W', 'D', 'L'];
+                const resultLabels = {'W': 'فوز', 'D': 'تعادل', 'L': 'خسارة'};
+                const resultClasses = {'W': 'win', 'D': 'draw', 'L': 'lose'};
+                
+                results.forEach(result => {
+                    const btn = document.createElement('button');
+                    btn.className = `result-btn ${resultClasses[result]}`;
+                    btn.textContent = resultLabels[result];
+                    btn.dataset.result = result;
+                    
+                    // تحديد الزر الافتراضي بناءً على initialResults
+                    if (result === initialResults[i]) {
+                        btn.classList.add('selected');
+                    }
+                    
+                    btn.addEventListener('click', function() {
+                        // إزالة التحديد من جميع أزرار هذه المباراة
+                        this.parentElement.querySelectorAll('.result-btn').forEach(b => {
+                            b.classList.remove('selected');
+                        });
+                        
+                        // تحديد الزر المختار
+                        this.classList.add('selected');
+                    });
+                    
+                    matchDiv.appendChild(btn);
+                });
+                
+                container.appendChild(matchDiv);
+            }
+        }
+        
+        // دالة لتهيئة حقول إدخال الأهداف
+        function initializeGoalsInput(containerId, initialGoals) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 5; i++) {
+                const goalsDiv = document.createElement('div');
+                goalsDiv.className = 'goals-input';
+                
+                const matchLabel = document.createElement('span');
+                matchLabel.textContent = `مباراة ${i+1}:`;
+                matchLabel.style.width = '80px';
+                goalsDiv.appendChild(matchLabel);
+                
+                const goalsInput = document.createElement('input');
+                goalsInput.type = 'number';
+                goalsInput.min = '0';
+                goalsInput.value = initialGoals[i];
+                goalsInput.dataset.match = i+1;
+                goalsDiv.appendChild(goalsInput);
+                
+                const goalsText = document.createElement('span');
+                goalsText.textContent = 'هدف';
+                goalsDiv.appendChild(goalsText);
+                
+                container.appendChild(goalsDiv);
+            }
+        }
+        
+        // دالة لجمع نتائج الفريق
+        function getTeamResults(containerId) {
+            const container = document.getElementById(containerId);
+            const matches = container.querySelectorAll('.match-results');
+            const results = [];
+            
+            matches.forEach(match => {
+                const selectedBtn = match.querySelector('.result-btn.selected');
+                if (selectedBtn) {
+                    results.push(selectedBtn.dataset.result);
+                }
+            });
+            
+            return results;
+        }
+        
+        // دالة لجمع أهداف الفريق
+        function getTeamGoals(containerId) {
+            const container = document.getElementById(containerId);
+            const inputs = container.querySelectorAll('input');
+            const goals = [];
+            
+            inputs.forEach(input => {
+                goals.push(parseInt(input.value) || 0);
+            });
+            
+            return goals;
+        }
+        
+        // دالة التعامل مع رفع صور اللاعبين
+        function handlePlayerUpload(input, team) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // محاكاة تحليل الصورة بالذكاء الاصطناعي
+                    analyzePlayersWithAI(e.target.result, team);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // دالة محاكاة تحليل الصورة بالذكاء الاصطناعي
+        function analyzePlayersWithAI(imageData, team) {
+            // محاكاة معالجة الصورة بالذكاء الاصطناعي
+            // في التطبيق الحقيقي، سيتم استخدام API للتعرف على الوجوه واللاعبين
+            
+            // عرض رسالة تحميل
+            const uploadArea = document.getElementById(`${team}-upload`);
+            uploadArea.innerHTML = '<div class="upload-icon">🤖</div><div class="upload-text">جاري تحليل الصورة بالذكاء الاصطناعي...</div>';
+            
+            // محاكاة وقت المعالجة
+            setTimeout(() => {
+                // محاكاة نتائج التعرف على اللاعبين
+                const teamName = document.getElementById(`${team}-name`).value || `الفريق ${team === 'team1' ? 'الأول' : 'الثاني'}`;
+                const detectedPlayers = simulatePlayerDetection(team);
+                
+                // تحديث قائمة اللاعبين
+                injuredPlayers[team] = detectedPlayers;
+                updatePlayersList(team);
+                
+                // تحديث عنوان قسم اللاعبين
+                document.getElementById(`${team}-players-title`).textContent = teamName;
+                
+                // إعادة تعيين منطقة الرفع
+                uploadArea.innerHTML = `
+                    <div class="upload-icon">✅</div>
+                    <div class="upload-text">تم تحليل ${detectedPlayers.length} لاعب</div>
+                    <button class="upload-btn" onclick="document.getElementById('${team}-file').click()">رفع صورة أخرى</button>
+                `;
+                
+                // عرض قسم تحليل اللاعبين إذا لم يكن معروضاً
+                document.getElementById('players-analysis').style.display = 'block';
+                
+                // تحديث تحليل تأثير الإصابات
+                updateInjuryImpactAnalysis();
+                
+            }, 2000);
+        }
+        
+        // دالة محاكاة التعرف على اللاعبين
+        function simulatePlayerDetection(team) {
+            // محاكاة قائمة اللاعبين المعروفين
+            const playerNames = [
+                "كريم بنزيما", "ليونيل ميسي", "كريستيانو رونالدو", "نيمار", "كيليان مبابي",
+                "محمد صلاح", "ساديو ماني", "فيرجيل فان ديك", "كيفين دي بروين", "روبرت ليفاندوفسكي",
+                "هاري كين", "إدين Hazard", "لوكا مودريتش", "توني كروس", "جوشوا كيميش",
+                "سيرخيو راموس", "جيرارد بيكيه", "أندريس إنييستا", "زلاتان إبراهيموفيتش", "جيانلويجي بوفون"
+            ];
+            
+            // تحديد عدد اللاعبين المصابين عشوائياً (بين 1 و4)
+            const injuredCount = Math.floor(Math.random() * 4) + 1;
+            const players = [];
+            
+            for (let i = 0; i < injuredCount; i++) {
+                // اختيار اسم لاعب عشوائي
+                const randomName = playerNames[Math.floor(Math.random() * playerNames.length)];
+                
+                // تحديد حالة الإصابة عشوائياً
+                const status = Math.random() > 0.5 ? 'injured' : 'doubtful';
+                
+                // تحديد مستوى التأثير عشوائياً
+                const impactLevel = Math.random() > 0.7 ? 'high' : (Math.random() > 0.4 ? 'medium' : 'low');
+                
+                players.push({
+                    name: randomName,
+                    status: status,
+                    impact: impactLevel,
+                    image: `https://via.placeholder.com/80?text=${randomName.split(' ')[0]}`
+                });
+            }
+            
+            return players;
+        }
+        
+        // دالة تحديث قائمة اللاعبين
+        function updatePlayersList(team) {
+            const playersList = document.getElementById(`${team}-players-list`);
+            playersList.innerHTML = '';
+            
+            if (injuredPlayers[team].length === 0) {
+                playersList.innerHTML = '<p style="text-align: center; padding: 10px;">لا توجد بيانات عن اللاعبين المصابين</p>';
+                return;
+            }
+            
+            injuredPlayers[team].forEach(player => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'player-card';
+                
+                playerCard.innerHTML = `
+                    <img src="${player.image}" alt="${player.name}" class="player-image">
+                    <div class="player-info">
+                        <div class="player-name">${player.name}</div>
+                        <div class="player-status ${player.status === 'injured' ? 'status-injured' : 'status-doubtful'}">
+                            ${player.status === 'injured' ? '📛 مصاب' : '❓ مشكوك في مشاركته'}
+                        </div>
+                        <div class="player-impact ${'impact-' + player.impact}">
+                            مستوى التأثير: ${player.impact === 'high' ? 'مرتفع' : (player.impact === 'medium' ? 'متوسط' : 'منخفض')}
+                        </div>
+                    </div>
+                `;
+                
+                playersList.appendChild(playerCard);
+            });
+        }
+        
+        // دالة تحديث تحليل تأثير الإصابات
+        function updateInjuryImpactAnalysis() {
+            const aiAnalysis = document.getElementById('ai-analysis');
+            const aiImpactValue = document.getElementById('ai-impact-value');
+            const aiAnalysisText = document.getElementById('ai-analysis-text');
+            
+            // حساب تأثير الإصابات الإجمالي
+            let totalImpact = 0;
+            let team1Impact = calculateTeamImpact('team1');
+            let team2Impact = calculateTeamImpact('team2');
+            
+            // التأثير النهائي يعتمد على الفرق بين تأثير الفريقين
+            totalImpact = Math.abs(team1Impact - team2Impact);
+            
+            // تحديث القيمة المئوية
+            aiImpactValue.textContent = `${totalImpact.toFixed(1)}%`;
+            
+            // تحديث النص التحليلي
+            let analysisText = '';
+            
+            if (totalImpact < 10) {
+                analysisText = 'تأثير الإصابات على نتيجة المباراة محدود. كلا الفريقين متكافئان من حيث القوة المتاحة.';
+            } else if (totalImpact < 20) {
+                analysisText = 'هناك تأثير معتدل للإصابات على نتيجة المباراة. أحد الفريقين قد يكون في وضع أفضل قليلاً.';
+            } else {
+                analysisText = 'تأثير الإصابات على نتيجة المباراة كبير. أحد الفريقين يعاني من غياب لاعبين أساسيين مما قد يؤثر بشكل ملحوظ على أدائه.';
+            }
+            
+            // إضافة تحليل تفصيلي لكل فريق
+            analysisText += `<br><br><strong>تحليل تفصيلي:</strong><br>`;
+            analysisText += `- ${document.getElementById('team1-name').value || 'الفريق الأول'}: ${getImpactDescription(team1Impact)}<br>`;
+            analysisText += `- ${document.getElementById('team2-name').value || 'الفريق الثاني'}: ${getImpactDescription(team2Impact)}`;
+            
+            aiAnalysisText.innerHTML = analysisText;
+            aiAnalysis.style.display = 'block';
+        }
+        
+        // دالة حساب تأثير الإصابات للفريق
+        function calculateTeamImpact(team) {
+            let impact = 0;
+            
+            injuredPlayers[team].forEach(player => {
+                let playerImpact = 0;
+                
+                // تحديد تأثير اللاعب بناءً على حالته ومستوى تأثيره
+                if (player.status === 'injured') {
+                    // لاعب مصاب بالتأكيد
+                    if (player.impact === 'high') playerImpact = 8;
+                    else if (player.impact === 'medium') playerImpact = 5;
+                    else playerImpact = 2;
+                } else {
+                    // لاعب مشكوك في مشاركته
+                    if (player.impact === 'high') playerImpact = 6;
+                    else if (player.impact === 'medium') playerImpact = 3;
+                    else playerImpact = 1;
+                }
+                
+                impact += playerImpact;
+            });
+            
+            // الحد الأقصى للتأثير 30%
+            return Math.min(impact, 30);
+        }
+        
+        // دالة للحصول على وصف تأثير الفريق
+        function getImpactDescription(impact) {
+            if (impact < 5) return 'تأثير محدود للغاية';
+            if (impact < 10) return 'تأثير محدود';
+            if (impact < 15) return 'تأثير معتدل';
+            if (impact < 20) return 'تأثير كبير';
+            return 'تأثير كبير جداً';
+        }
+        
+        // دالة حساب الفرص المزدوجة مع التحليل المتقدم
+        function calculateDoubleChance() {
+            const team1Name = document.getElementById('team1-name').value || 'الفريق الأول';
+            const team2Name = document.getElementById('team2-name').value || 'الفريق الثاني';
+            
+            const team1Results = getTeamResults('team1-results');
+            const team2Results = getTeamResults('team2-results');
+            
+            const team1Goals = getTeamGoals('team1-goals');
+            const team2Goals = getTeamGoals('team2-goals');
+            
+            // حساب النقاط بناءً على النتائج
+            const team1Points = calculatePoints(team1Results);
+            const team2Points = calculatePoints(team2Results);
+            
+            // حساب متوسط الأهداف
+            const team1AvgGoals = team1Goals.reduce((a, b) => a + b, 0) / team1Goals.length;
+            const team2AvgGoals = team2Goals.reduce((a, b) => a + b, 0) / team2Goals.length;
+            
+            // حساب القوة النسبية
+            const totalPoints = team1Points + team2Points;
+            const team1Strength = totalPoints > 0 ? team1Points / totalPoints : 0.5;
+            const team2Strength = totalPoints > 0 ? team2Points / totalPoints : 0.5;
+            
+            // حساب تأثير الإصابات على القوة
+            const team1Impact = calculateTeamImpact('team1') / 100;
+            const team2Impact = calculateTeamImpact('team2') / 100;
+            
+            // تعديل القوة بناءً على تأثير الإصابات
+            const adjustedTeam1Strength = team1Strength * (1 - team1Impact);
+            const adjustedTeam2Strength = team2Strength * (1 - team2Impact);
+            
+            // حساب الاحتمالات الأساسية
+            const team1WinProb = adjustedTeam1Strength * (1 - adjustedTeam2Strength) * 0.8;
+            const team2WinProb = adjustedTeam2Strength * (1 - adjustedTeam1Strength) * 0.8;
+            const drawProb = 0.2 + (adjustedTeam1Strength * adjustedTeam2Strength * 0.3);
+            
+            // تطبيع الاحتمالات لتصل إلى 100%
+            const totalProb = team1WinProb + team2WinProb + drawProb;
+            const normalizedTeam1Win = (team1WinProb / totalProb) * 100;
+            const normalizedTeam2Win = (team2WinProb / totalProb) * 100;
+            const normalizedDraw = (drawProb / totalProb) * 100;
+            
+            // حساب الفرص المزدوجة
+            const doubleChance1X = normalizedTeam1Win + normalizedDraw;
+            const doubleChance12 = normalizedTeam1Win + normalizedTeam2Win;
+            const doubleChanceX2 = normalizedDraw + normalizedTeam2Win;
+            
+            // حساب توقع الأهداف
+            const predictedGoals = calculatePredictedGoals(team1AvgGoals, team2AvgGoals);
+            
+            // عرض النتائج
+            displayAdvancedResults(
+                team1Name, team2Name, 
+                normalizedTeam1Win, normalizedTeam2Win, normalizedDraw,
+                doubleChance1X, doubleChance12, doubleChanceX2,
+                team1Results, team2Results, team1Points, team2Points,
+                team1Goals, team2Goals, predictedGoals
+            );
+            
+            // عرض قسم تحليل اللاعبين
+            document.getElementById('players-analysis').style.display = 'block';
+            
+            // تحديث عناوين الفرق في قسم اللاعبين
+            document.getElementById('team1-players-title').textContent = team1Name;
+            document.getElementById('team2-players-title').textContent = team2Name;
+        }
+        
+        // دالة لحساب النقاط من النتائج
+        function calculatePoints(results) {
+            let points = 0;
+            results.forEach(result => {
+                if (result === 'W') points += 3;
+                else if (result === 'D') points += 1;
+                // لا نقاط للخسارة
+            });
+            return points;
+        }
+        
+        // دالة لحساب توقع الأهداف
+        function calculatePredictedGoals(team1Avg, team2Avg) {
+            // حساب الأهداف المتوقعة بناءً على المتوسطات
+            const team1Predicted = team1Avg * 0.8;
+            const team2Predicted = team2Avg * 0.8;
+            
+            // حساب إجمالي الأهداف المتوقعة في المباراة
+            const totalPredicted = team1Predicted + team2Predicted;
+            
+            return {
+                team1: team1Predicted,
+                team2: team2Predicted,
+                total: totalPredicted
+            };
+        }
+        
+        // دالة لعرض النتائج المتقدمة
+        function displayAdvancedResults(team1Name, team2Name, team1Win, team2Win, draw, 
+                                       doubleChance1X, doubleChance12, doubleChanceX2,
+                                       team1Results, team2Results, team1Points, team2Points,
+                                       team1Goals, team2Goals, predictedGoals) {
+            
+            const resultsContainer = document.getElementById('results-container');
+            const matchHistory = document.getElementById('match-history');
+            const teamStats = document.getElementById('team-stats');
+            const goalsPrediction = document.getElementById('goals-prediction');
+            
+            // تنسيق النتائج
+            const formatPercent = (value) => {
+                return value.toFixed(1) + '%';
+            };
+            
+            // حساب إجمالي الأهداف
+            const team1TotalGoals = team1Goals.reduce((a, b) => a + b, 0);
+            const team2TotalGoals = team2Goals.reduce((a, b) => a + b, 0);
+            
+            // إنشاء محتوى النتائج المتقدم
+            let resultsHTML = `
+                <div class="probability-card">
+                    <h3>🎯 الاحتمالات الأساسية</h3>
+                    <div class="probability-item">
+                        <div class="probability-header">
+                            <span class="team1-color">فوز ${team1Name}</span>
+                            <span>${formatPercent(team1Win)}</span>
+                        </div>
+                        <div class="probability-bar">
+                            <div class="probability-fill" style="width: ${team1Win}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="probability-item">
+                        <div class="probability-header">
+                            <span>تعادل</span>
+                            <span>${formatPercent(draw)}</span>
+                        </div>
+                        <div class="probability-bar">
+                            <div class="probability-fill" style="width: ${draw}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="probability-item">
+                        <div class="probability-header">
+                            <span class="team2-color">فوز ${team2Name}</span>
+                            <span>${formatPercent(team2Win)}</span>
+                        </div>
+                        <div class="probability-bar">
+                            <div class="probability-fill" style="width: ${team2Win}%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="probability-card">
+                    <h3>🔄 الفرص المزدوجة <span class="accuracy-high">(دقة عالية)</span></h3>
+                    
+                    <div class="probability-item">
+                        <div class="probability-header">
+                            <span>${team1Name} أو تعادل (1X)</span>
+                            <span>${formatPercent(doubleChance1X)}</span>
+                        </div>
+                        <div class="probability-value">${formatPercent(doubleChance1X)}</div>
+                        <div class="probability-bar">
+                            <div class="probability-fill" style="width: ${doubleChance1X}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="probability-item">
+                        <div class="probability-header">
+                            <span>${team1Name} أو ${team2Name} (12)</span>
+                            <span>${formatPercent(doubleChance12)}</span>
+                        </div>
+                        <div class="probability-value">${formatPercent(doubleChance12)}</div>
+                        <div class="probability-bar">
+                            <div class="probability-fill" style="width: ${doubleChance12}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="probability-item">
+                        <div class="probability-header">
+                            <span>تعادل أو ${team2Name} (X2)</span>
+                            <span>${formatPercent(doubleChanceX2)}</span>
+                        </div>
+                        <div class="probability-value">${formatPercent(doubleChanceX2)}</div>
+                        <div class="probability-bar">
+                            <div class="probability-fill" style="width: ${doubleChanceX2}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            resultsContainer.innerHTML = resultsHTML;
+            
+            // إنشاء إحصائيات الفريقين المتقدمة
+            let statsHTML = `
+                <div class="stats-card">
+                    <div class="stats-title team1-color">${team1Name}</div>
+                    <div class="goals-summary">إجمالي الأهداف: ${team1TotalGoals}</div>
+                    <div>متوسط الأهداف: ${(team1TotalGoals / 5).toFixed(1)}</div>
+                    <div>النقاط: ${team1Points}</div>
+                </div>
+                
+                <div class="stats-card">
+                    <div class="stats-title team2-color">${team2Name}</div>
+                    <div class="goals-summary">إجمالي الأهداف: ${team2TotalGoals}</div>
+                    <div>متوسط الأهداف: ${(team2TotalGoals / 5).toFixed(1)}</div>
+                    <div>النقاط: ${team2Points}</div>
+                </div>
+            `;
+            
+            teamStats.innerHTML = statsHTML;
+            teamStats.style.display = 'flex';
+            
+            // إنشاء توقع الأهداف المتقدم
+            let predictionHTML = `
+                <div class="prediction-title">🎯 توقع الأهداف في المباراة القادمة</div>
+                <div style="display: flex; justify-content: space-around; text-align: center;">
+                    <div>
+                        <div class="team1-color">${team1Name}</div>
+                        <div class="prediction-value">${predictedGoals.team1.toFixed(1)}</div>
+                        <div>هدف متوقع</div>
+                    </div>
+                    <div>
+                        <div>المجموع</div>
+                        <div class="prediction-value">${predictedGoals.total.toFixed(1)}</div>
+                        <div>أهداف متوقعة</div>
+                    </div>
+                    <div>
+                        <div class="team2-color">${team2Name}</div>
+                        <div class="prediction-value">${predictedGoals.team2.toFixed(1)}</div>
+                        <div>هدف متوقع</div>
+                    </div>
+                </div>
+            `;
+            
+            goalsPrediction.innerHTML = predictionHTML;
+            goalsPrediction.style.display = 'block';
+            
+            // تحديث سجل المباريات
+            const historyBody = document.getElementById('history-body');
+            let historyHTML = '';
+            
+            // إضافة سجل الفريق الأول
+            historyHTML += `
+                <tr>
+                    <td class="team1-color">${team1Name}</td>
+                    <td>${team1Results.map(r => getResultSymbol(r)).join(' ')}</td>
+                    <td>${team1Points}</td>
+                    <td>${team1Goals.join(' - ')}</td>
+                </tr>
+            `;
+            
+            // إضافة سجل الفريق الثاني
+            historyHTML += `
+                <tr>
+                    <td class="team2-color">${team2Name}</td>
+                    <td>${team2Results.map(r => getResultSymbol(r)).join(' ')}</td>
+                    <td>${team2Points}</td>
+                    <td>${team2Goals.join(' - ')}</td>
+                </tr>
+            `;
+            
+            historyBody.innerHTML = historyHTML;
+            matchHistory.style.display = 'block';
+        }
+        
+        // دالة للحصول على رمز النتيجة
+        function getResultSymbol(result) {
+            switch(result) {
+                case 'W': return '✅';
+                case 'D': return '➖';
+                case 'L': return '❌';
+                default: return '?';
+            }
+        }
+    </script>
 </body>
 </html>
