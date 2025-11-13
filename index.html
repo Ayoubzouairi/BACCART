@@ -161,9 +161,38 @@
             margin-top: 15px;
         }
         
+        .add-injured {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .add-injured input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .add-injured select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .add-injured button {
+            padding: 8px 15px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
         .player-item {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 8px 0;
             border-bottom: 1px solid #eee;
         }
@@ -186,6 +215,16 @@
         .status-doubtful {
             background-color: #fff3e0;
             color: #ef6c00;
+        }
+        
+        .remove-player {
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 2px 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
         }
         
         .calculate-btn {
@@ -271,6 +310,28 @@
             text-align: center;
             border-bottom: 1px solid #eee;
             padding-bottom: 5px;
+        }
+        
+        .goals-prediction {
+            margin-top: 20px;
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+            border-right: 4px solid #4CAF50;
+        }
+        
+        .prediction-title {
+            font-weight: bold;
+            color: #2a5298;
+            margin-bottom: 10px;
+        }
+        
+        .prediction-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4CAF50;
+            text-align: center;
+            margin: 10px 0;
         }
         
         .match-history {
@@ -364,6 +425,14 @@
                     </div>
                     
                     <h4>اللاعبين المصابين:</h4>
+                    <div class="add-injured">
+                        <input type="text" id="team1-player-name" placeholder="اسم اللاعب">
+                        <select id="team1-player-status">
+                            <option value="out">خارج</option>
+                            <option value="doubtful">مشكوك في لعبه</option>
+                        </select>
+                        <button id="team1-add-player">إضافة</button>
+                    </div>
                     <div class="injured-players" id="team1-injured">
                         <!-- سيتم إضافة اللاعبين المصابين هنا بواسطة JavaScript -->
                     </div>
@@ -384,6 +453,14 @@
                     </div>
                     
                     <h4>اللاعبين المصابين:</h4>
+                    <div class="add-injured">
+                        <input type="text" id="team2-player-name" placeholder="اسم اللاعب">
+                        <select id="team2-player-status">
+                            <option value="out">خارج</option>
+                            <option value="doubtful">مشكوك في لعبه</option>
+                        </select>
+                        <button id="team2-add-player">إضافة</button>
+                    </div>
                     <div class="injured-players" id="team2-injured">
                         <!-- سيتم إضافة اللاعبين المصابين هنا بواسطة JavaScript -->
                     </div>
@@ -401,6 +478,10 @@
                 
                 <div class="team-stats" id="team-stats" style="display: none;">
                     <!-- سيتم إضافة إحصائيات الفريقين هنا -->
+                </div>
+                
+                <div class="goals-prediction" id="goals-prediction" style="display: none;">
+                    <!-- سيتم إضافة توقع الأهداف هنا -->
                 </div>
                 
                 <div class="match-history" id="match-history" style="display: none;">
@@ -451,6 +532,15 @@
             
             initializeInjuredPlayers('team1-injured', initialInjuredPlayers.team1);
             initializeInjuredPlayers('team2-injured', initialInjuredPlayers.team2);
+            
+            // إضافة أحداث للأزرار
+            document.getElementById('team1-add-player').addEventListener('click', function() {
+                addInjuredPlayer('team1');
+            });
+            
+            document.getElementById('team2-add-player').addEventListener('click', function() {
+                addInjuredPlayer('team2');
+            });
             
             // إضافة حدث النقر لزر الحساب
             document.getElementById('calculate-btn').addEventListener('click', calculateDoubleChance);
@@ -538,21 +628,49 @@
             container.innerHTML = '';
             
             players.forEach(player => {
-                const playerDiv = document.createElement('div');
-                playerDiv.className = 'player-item';
-                
-                const nameSpan = document.createElement('span');
-                nameSpan.className = 'player-name';
-                nameSpan.textContent = player.name;
-                
-                const statusSpan = document.createElement('span');
-                statusSpan.className = `player-status status-${player.status}`;
-                statusSpan.textContent = player.status === 'out' ? 'خارج' : 'مشكوك في لعبه';
-                
-                playerDiv.appendChild(nameSpan);
-                playerDiv.appendChild(statusSpan);
-                container.appendChild(playerDiv);
+                addPlayerToContainer(container, player.name, player.status);
             });
+        }
+        
+        // دالة لإضافة لاعب مصاب
+        function addInjuredPlayer(team) {
+            const nameInput = document.getElementById(`${team}-player-name`);
+            const statusSelect = document.getElementById(`${team}-player-status`);
+            const container = document.getElementById(`${team}-injured`);
+            
+            const name = nameInput.value.trim();
+            const status = statusSelect.value;
+            
+            if (name) {
+                addPlayerToContainer(container, name, status);
+                nameInput.value = '';
+            }
+        }
+        
+        // دالة لإضافة لاعب إلى القائمة
+        function addPlayerToContainer(container, name, status) {
+            const playerDiv = document.createElement('div');
+            playerDiv.className = 'player-item';
+            
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'player-name';
+            nameSpan.textContent = name;
+            
+            const statusSpan = document.createElement('span');
+            statusSpan.className = `player-status status-${status}`;
+            statusSpan.textContent = status === 'out' ? 'خارج' : 'مشكوك في لعبه';
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-player';
+            removeBtn.textContent = '✕';
+            removeBtn.addEventListener('click', function() {
+                container.removeChild(playerDiv);
+            });
+            
+            playerDiv.appendChild(nameSpan);
+            playerDiv.appendChild(statusSpan);
+            playerDiv.appendChild(removeBtn);
+            container.appendChild(playerDiv);
         }
         
         // دالة لجمع نتائج الفريق
@@ -645,13 +763,17 @@
             const doubleChance12 = normalizedTeam1Win + normalizedTeam2Win;
             const doubleChanceX2 = normalizedDraw + normalizedTeam2Win;
             
+            // حساب توقع الأهداف
+            const predictedGoals = calculatePredictedGoals(team1AvgGoals, team2AvgGoals, team1InjuryImpact, team2InjuryImpact);
+            
             // عرض النتائج
             displayResults(
                 team1Name, team2Name, 
                 normalizedTeam1Win, normalizedTeam2Win, normalizedDraw,
                 doubleChance1X, doubleChance12, doubleChanceX2,
                 team1Results, team2Results, team1Points, team2Points,
-                team1Goals, team2Goals, team1Injured, team2Injured
+                team1Goals, team2Goals, team1Injured, team2Injured,
+                predictedGoals
             );
         }
         
@@ -676,15 +798,33 @@
             return Math.min(impact, 0.3); // لا يزيد التأثير عن 30%
         }
         
+        // دالة لحساب توقع الأهداف
+        function calculatePredictedGoals(team1Avg, team2Avg, team1Impact, team2Impact) {
+            // حساب الأهداف المتوقعة مع مراعاة تأثير الإصابات
+            const team1Predicted = team1Avg * (1 - team1Impact);
+            const team2Predicted = team2Avg * (1 - team2Impact);
+            
+            // حساب إجمالي الأهداف المتوقعة في المباراة
+            const totalPredicted = team1Predicted + team2Predicted;
+            
+            return {
+                team1: team1Predicted,
+                team2: team2Predicted,
+                total: totalPredicted
+            };
+        }
+        
         // دالة لعرض النتائج
         function displayResults(team1Name, team2Name, team1Win, team2Win, draw, 
                                doubleChance1X, doubleChance12, doubleChanceX2,
                                team1Results, team2Results, team1Points, team2Points,
-                               team1Goals, team2Goals, team1Injured, team2Injured) {
+                               team1Goals, team2Goals, team1Injured, team2Injured,
+                               predictedGoals) {
             
             const resultsContainer = document.getElementById('results-container');
             const matchHistory = document.getElementById('match-history');
             const teamStats = document.getElementById('team-stats');
+            const goalsPrediction = document.getElementById('goals-prediction');
             
             // تنسيق النتائج
             const formatPercent = (value) => {
@@ -793,6 +933,31 @@
             
             teamStats.innerHTML = statsHTML;
             teamStats.style.display = 'flex';
+            
+            // إنشاء توقع الأهداف
+            let predictionHTML = `
+                <div class="prediction-title">توقع الأهداف في المباراة القادمة</div>
+                <div style="display: flex; justify-content: space-around; text-align: center;">
+                    <div>
+                        <div class="team1-color">${team1Name}</div>
+                        <div class="prediction-value">${predictedGoals.team1.toFixed(1)}</div>
+                        <div>هدف متوقع</div>
+                    </div>
+                    <div>
+                        <div>المجموع</div>
+                        <div class="prediction-value">${predictedGoals.total.toFixed(1)}</div>
+                        <div>أهداف متوقعة</div>
+                    </div>
+                    <div>
+                        <div class="team2-color">${team2Name}</div>
+                        <div class="prediction-value">${predictedGoals.team2.toFixed(1)}</div>
+                        <div>هدف متوقع</div>
+                    </div>
+                </div>
+            `;
+            
+            goalsPrediction.innerHTML = predictionHTML;
+            goalsPrediction.style.display = 'block';
             
             // تحديث سجل المباريات
             const historyBody = document.getElementById('history-body');
