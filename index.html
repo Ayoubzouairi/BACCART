@@ -18,6 +18,12 @@
             line-height: 1.6;
             padding: 20px;
             min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        body.night-mode {
+            background: linear-gradient(135deg, #0f1a2e 0%, #1a2b4e 100%);
+            color: #e0e0e0;
         }
         
         .container {
@@ -33,6 +39,12 @@
             background: rgba(0, 0, 0, 0.2);
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .night-mode header {
+            background: rgba(0, 0, 0, 0.4);
+            color: #e0e0e0;
         }
         
         h1 {
@@ -59,6 +71,13 @@
             padding: 25px;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .input-section {
+            background: #2d3748;
+            color: #e0e0e0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
         .result-section {
@@ -68,6 +87,13 @@
             padding: 25px;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .result-section {
+            background: #2d3748;
+            color: #e0e0e0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
         .team-input {
@@ -79,16 +105,32 @@
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 2px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode h2 {
+            color: #63b3ed;
+            border-bottom-color: #4a5568;
         }
         
         h3 {
             color: #2a5298;
             margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode h3 {
+            color: #63b3ed;
         }
         
         h4 {
             color: #555;
             margin: 15px 0 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode h4 {
+            color: #cbd5e0;
         }
         
         .team-name {
@@ -98,12 +140,22 @@
             border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
-            transition: border 0.3s;
+            transition: all 0.3s ease;
         }
-        
+
         .team-name:focus {
             border-color: #2a5298;
             outline: none;
+        }
+
+        .night-mode .team-name {
+            background: #4a5568;
+            border-color: #718096;
+            color: #e0e0e0;
+        }
+
+        .night-mode .team-name:focus {
+            border-color: #63b3ed;
         }
         
         .match-results {
@@ -155,6 +207,13 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .goals-input input {
+            background: #4a5568;
+            border-color: #718096;
+            color: #e0e0e0;
         }
         
         .upload-section {
@@ -163,6 +222,12 @@
             background: #f8f9fa;
             border-radius: 10px;
             border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .upload-section {
+            background: #4a5568;
+            border-color: #718096;
         }
         
         .upload-btn {
@@ -184,6 +249,54 @@
             background: #1976D2;
             transform: translateY(-2px);
         }
+
+        .reset-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .reset-btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .night-mode .theme-toggle {
+            background: rgba(0, 0, 0, 0.3);
+            color: #ffd700;
+        }
         
         .photo-preview {
             width: 100%;
@@ -192,6 +305,11 @@
             border-radius: 8px;
             margin-top: 10px;
             border: 2px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .photo-preview {
+            border-color: #718096;
         }
         
         .extracted-data {
@@ -200,6 +318,12 @@
             background: #e8f5e9;
             border-radius: 8px;
             border-right: 4px solid #4CAF50;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .extracted-data {
+            background: #2d4a3c;
+            border-right-color: #4CAF50;
         }
         
         .extracted-title {
@@ -207,6 +331,11 @@
             color: #2a5298;
             margin-bottom: 10px;
             font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .extracted-title {
+            color: #63b3ed;
         }
         
         .player-analysis {
@@ -215,6 +344,12 @@
             background: white;
             border-radius: 5px;
             border: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .player-analysis {
+            background: #4a5568;
+            border-color: #718096;
         }
         
         .player-header {
@@ -227,6 +362,11 @@
         .player-name {
             font-weight: bold;
             color: #2a5298;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .player-name {
+            color: #63b3ed;
         }
         
         .player-status {
@@ -240,10 +380,20 @@
             background-color: #ffebee;
             color: #c62828;
         }
+
+        .night-mode .status-out {
+            background-color: #4a2a2a;
+            color: #ff6b6b;
+        }
         
         .status-doubtful {
             background-color: #fff3e0;
             color: #ef6c00;
+        }
+
+        .night-mode .status-doubtful {
+            background-color: #4a3a2a;
+            color: #ffb74d;
         }
         
         .player-details {
@@ -261,11 +411,21 @@
         
         .detail-label {
             color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .detail-label {
+            color: #cbd5e0;
         }
         
         .detail-value {
             font-weight: bold;
             color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .detail-value {
+            color: #e0e0e0;
         }
         
         .impact-badge {
@@ -279,15 +439,30 @@
             background-color: #ffebee;
             color: #c62828;
         }
+
+        .night-mode .impact-high {
+            background-color: #4a2a2a;
+            color: #ff6b6b;
+        }
         
         .impact-medium {
             background-color: #fff3e0;
             color: #ef6c00;
         }
+
+        .night-mode .impact-medium {
+            background-color: #4a3a2a;
+            color: #ffb74d;
+        }
         
         .impact-low {
             background-color: #e8f5e9;
             color: #2e7d32;
+        }
+
+        .night-mode .impact-low {
+            background-color: #2d4a3c;
+            color: #81c784;
         }
         
         .ai-analysis {
@@ -296,6 +471,12 @@
             background: #e3f2fd;
             border-radius: 8px;
             border-right: 4px solid #2196F3;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .ai-analysis {
+            background: #2a3a4a;
+            border-right-color: #63b3ed;
         }
         
         .ai-title {
@@ -305,6 +486,11 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .ai-title {
+            color: #63b3ed;
         }
         
         .ai-insight {
@@ -313,6 +499,12 @@
             background: white;
             border-radius: 5px;
             border-right: 3px solid #2196F3;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .ai-insight {
+            background: #4a5568;
+            border-right-color: #63b3ed;
         }
         
         .calculate-btn {
@@ -334,6 +526,10 @@
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
+
+        .night-mode .calculate-btn {
+            background: linear-gradient(135deg, #63b3ed 0%, #3182ce 100%);
+        }
         
         .probability-card {
             background: #f8f9fa;
@@ -341,6 +537,12 @@
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .probability-card {
+            background: #4a5568;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
         }
         
         .probability-header {
@@ -355,6 +557,11 @@
             color: #2a5298;
             text-align: center;
             margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .probability-value {
+            color: #63b3ed;
         }
         
         .probability-bar {
@@ -363,6 +570,11 @@
             border-radius: 10px;
             overflow: hidden;
             margin: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .probability-bar {
+            background: #718096;
         }
         
         .probability-fill {
@@ -371,10 +583,19 @@
             border-radius: 10px;
             transition: width 0.5s ease-in-out;
         }
+
+        .night-mode .probability-fill {
+            background: linear-gradient(90deg, #68d391, #63b3ed);
+        }
         
         .accuracy-high {
             color: #4CAF50;
             font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .accuracy-high {
+            color: #68d391;
         }
         
         .team-stats {
@@ -389,6 +610,12 @@
             border-radius: 10px;
             padding: 15px;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .stats-card {
+            background: #4a5568;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
         }
         
         .stats-title {
@@ -398,6 +625,12 @@
             text-align: center;
             border-bottom: 1px solid #eee;
             padding-bottom: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .stats-title {
+            color: #63b3ed;
+            border-bottom-color: #718096;
         }
         
         .goals-prediction {
@@ -406,12 +639,23 @@
             padding: 15px;
             border-radius: 10px;
             border-right: 4px solid #4CAF50;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .goals-prediction {
+            background: #2d4a3c;
+            border-right-color: #68d391;
         }
         
         .prediction-title {
             font-weight: bold;
             color: #2a5298;
             margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .prediction-title {
+            color: #63b3ed;
         }
         
         .prediction-value {
@@ -420,6 +664,11 @@
             color: #4CAF50;
             text-align: center;
             margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .prediction-value {
+            color: #68d391;
         }
         
         .match-history {
@@ -430,37 +679,70 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
+            transition: all 0.3s ease;
         }
         
         .history-table th, .history-table td {
             padding: 12px 15px;
             text-align: center;
             border-bottom: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .history-table th,
+        .night-mode .history-table td {
+            border-bottom-color: #718096;
         }
         
         .history-table th {
             background-color: #2a5298;
             color: white;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .history-table th {
+            background-color: #63b3ed;
+            color: #1a202c;
         }
         
         .history-table tr:hover {
             background-color: #f1f1f1;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .history-table tr:hover {
+            background-color: #4a5568;
         }
         
         .team1-color {
             color: #2a5298;
             font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .team1-color {
+            color: #63b3ed;
         }
         
         .team2-color {
             color: #4CAF50;
             font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .team2-color {
+            color: #68d391;
         }
         
         .goals-summary {
             margin-top: 10px;
             font-weight: bold;
             color: #2a5298;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .goals-summary {
+            color: #63b3ed;
         }
         
         footer {
@@ -470,6 +752,12 @@
             padding: 20px;
             background: rgba(0, 0, 0, 0.2);
             border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode footer {
+            background: rgba(0, 0, 0, 0.4);
+            color: #e0e0e0;
         }
         
         @media (max-width: 768px) {
@@ -488,10 +776,20 @@
             h1 {
                 font-size: 2rem;
             }
+
+            .theme-toggle {
+                top: 10px;
+                left: 10px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
 <body>
+    <button class="theme-toggle" id="theme-toggle">🌙</button>
+    
     <div class="container">
         <header>
             <h1>🦾 حاسبة الفرص المزدوجة - تحليل متقدم بالذكاء الاصطناعي</h1>
@@ -521,6 +819,9 @@
                         <button class="upload-btn" onclick="uploadInjuredPhoto('team1')">
                             📷 رفع صورة وتحليل بالذكاء الاصطناعي
                         </button>
+                        <button class="reset-btn" onclick="resetTeamData('team1')">
+                            🔄 إعادة تعيين الفريق الأول
+                        </button>
                         <div id="team1-photo-preview"></div>
                         <div id="team1-extracted-data" class="extracted-data" style="display: none;">
                             <div class="extracted-title">🧠 تحليل الذكاء الاصطناعي للاعبين المصابين</div>
@@ -549,6 +850,9 @@
                         <button class="upload-btn" onclick="uploadInjuredPhoto('team2')">
                             📷 رفع صورة وتحليل بالذكاء الاصطناعي
                         </button>
+                        <button class="reset-btn" onclick="resetTeamData('team2')">
+                            🔄 إعادة تعيين الفريق الثاني
+                        </button>
                         <div id="team2-photo-preview"></div>
                         <div id="team2-extracted-data" class="extracted-data" style="display: none;">
                             <div class="extracted-title">🧠 تحليل الذكاء الاصطناعي للاعبين المصابين</div>
@@ -557,6 +861,10 @@
                         </div>
                     </div>
                 </div>
+
+                <button class="reset-btn" onclick="resetAllData()" style="background: #ff9800;">
+                    🗑️ إعادة تعيين كل البيانات
+                </button>
                 
                 <button class="calculate-btn" id="calculate-btn">🧮 احسب الفرص المزدوجة بالتحليل المتقدم</button>
             </div>
@@ -601,6 +909,9 @@
     </div>
 
     <script>
+        // حالة الوضع الليلي
+        let isNightMode = false;
+
         // قاعدة بيانات اللاعبين ومستوياتهم (محاكاة للذكاء الاصطناعي)
         const playersDatabase = {
             // الفريق الأول (النصر)
@@ -638,7 +949,98 @@
             
             // إضافة حدث النقر لزر الحساب
             document.getElementById('calculate-btn').addEventListener('click', calculateDoubleChance);
+            
+            // إضافة حدث لزر تغيير الوضع
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            
+            // تحميل الوضع من التخزين المحلي
+            loadThemePreference();
         });
+
+        // دالة تغيير الوضع الليلي/النهاري
+        function toggleTheme() {
+            isNightMode = !isNightMode;
+            const body = document.body;
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            if (isNightMode) {
+                body.classList.add('night-mode');
+                themeToggle.textContent = '☀️';
+            } else {
+                body.classList.remove('night-mode');
+                themeToggle.textContent = '🌙';
+            }
+            
+            // حفظ التفضيل في التخزين المحلي
+            localStorage.setItem('nightMode', isNightMode);
+        }
+
+        // دالة تحميل تفضيل الوضع
+        function loadThemePreference() {
+            const savedTheme = localStorage.getItem('nightMode');
+            if (savedTheme === 'true') {
+                isNightMode = true;
+                document.body.classList.add('night-mode');
+                document.getElementById('theme-toggle').textContent = '☀️';
+            }
+        }
+
+        // دالة إعادة تعيين فريق معين
+        function resetTeamData(team) {
+            if (confirm(`هل تريد إعادة تعيين جميع بيانات ${team === 'team1' ? 'الفريق الأول' : 'الفريق الثاني'}؟`)) {
+                // إعادة تعيين النتائج
+                const initialResults = team === 'team1' ? ['W', 'W', 'D', 'W', 'L'] : ['W', 'D', 'L', 'W', 'W'];
+                const initialGoals = team === 'team1' ? [2, 3, 1, 2, 0] : [2, 1, 0, 3, 2];
+                
+                initializeTeamResults(`${team}-results`, initialResults);
+                initializeGoalsInput(`${team}-goals`, initialGoals);
+                
+                // إعادة تعيين اسم الفريق
+                document.getElementById(`${team}-name`).value = team === 'team1' ? 'النصر' : 'الهلال';
+                
+                // إعادة تعيين الإصابات
+                injuredPlayers[team] = [];
+                teamAnalysis[team] = { totalImpact: 0, attackImpact: 0, defenseImpact: 0, keyPlayers: [] };
+                
+                // إخفاء البيانات المستخرجة
+                document.getElementById(`${team}-photo-preview`).innerHTML = '';
+                document.getElementById(`${team}-extracted-data`).style.display = 'none';
+                
+                alert(`✅ تم إعادة تعيين ${team === 'team1' ? 'الفريق الأول' : 'الفريق الثاني'} بنجاح`);
+            }
+        }
+
+        // دالة إعادة تعيين كل البيانات
+        function resetAllData() {
+            if (confirm('هل تريد إعادة تعيين جميع البيانات؟ سيتم مسح كل شيء!')) {
+                // إعادة تعيين الفريق الأول
+                initializeTeamResults('team1-results', ['W', 'W', 'D', 'W', 'L']);
+                initializeGoalsInput('team1-goals', [2, 3, 1, 2, 0]);
+                document.getElementById('team1-name').value = 'النصر';
+                injuredPlayers.team1 = [];
+                teamAnalysis.team1 = { totalImpact: 0, attackImpact: 0, defenseImpact: 0, keyPlayers: [] };
+                document.getElementById('team1-photo-preview').innerHTML = '';
+                document.getElementById('team1-extracted-data').style.display = 'none';
+                
+                // إعادة تعيين الفريق الثاني
+                initializeTeamResults('team2-results', ['W', 'D', 'L', 'W', 'W']);
+                initializeGoalsInput('team2-goals', [2, 1, 0, 3, 2]);
+                document.getElementById('team2-name').value = 'الهلال';
+                injuredPlayers.team2 = [];
+                teamAnalysis.team2 = { totalImpact: 0, attackImpact: 0, defenseImpact: 0, keyPlayers: [] };
+                document.getElementById('team2-photo-preview').innerHTML = '';
+                document.getElementById('team2-extracted-data').style.display = 'none';
+                
+                // إعادة تعيين النتائج
+                document.getElementById('results-container').innerHTML = 
+                    '<p style="text-align: center; padding: 20px;">سيظهر تحليل الفرص المزدوجة هنا بعد إدخال البيانات</p>';
+                document.getElementById('team-stats').style.display = 'none';
+                document.getElementById('goals-prediction').style.display = 'none';
+                document.getElementById('match-history').style.display = 'none';
+                
+                alert('✅ تم إعادة تعيين جميع البيانات بنجاح');
+            }
+        }
         
         // دالة لرفع صورة اللاعبين المصابين
         function uploadInjuredPhoto(team) {
