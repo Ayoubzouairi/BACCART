@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حاسبة الفرص المزدوجة - تحليل متقدم بالذكاء الاصطناعي</title>
+    <title>حاسبة الفرص المزدوجة - تحليل متقدم</title>
     <style>
         * {
             box-sizing: border-box;
@@ -216,40 +216,6 @@
             color: #e0e0e0;
         }
         
-        .upload-section {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border: 2px solid #e9ecef;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .upload-section {
-            background: #4a5568;
-            border-color: #718096;
-        }
-        
-        .upload-btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background: #2196F3;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            transition: all 0.3s;
-        }
-        
-        .upload-btn:hover {
-            background: #1976D2;
-            transform: translateY(-2px);
-        }
-
         .reset-btn {
             display: block;
             width: 100%;
@@ -296,215 +262,6 @@
         .night-mode .theme-toggle {
             background: rgba(0, 0, 0, 0.3);
             color: #ffd700;
-        }
-        
-        .photo-preview {
-            width: 100%;
-            max-height: 200px;
-            object-fit: contain;
-            border-radius: 8px;
-            margin-top: 10px;
-            border: 2px solid #ddd;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .photo-preview {
-            border-color: #718096;
-        }
-        
-        .extracted-data {
-            margin-top: 15px;
-            padding: 15px;
-            background: #e8f5e9;
-            border-radius: 8px;
-            border-right: 4px solid #4CAF50;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .extracted-data {
-            background: #2d4a3c;
-            border-right-color: #4CAF50;
-        }
-        
-        .extracted-title {
-            font-weight: bold;
-            color: #2a5298;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .extracted-title {
-            color: #63b3ed;
-        }
-        
-        .player-analysis {
-            margin-top: 10px;
-            padding: 10px;
-            background: white;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .player-analysis {
-            background: #4a5568;
-            border-color: #718096;
-        }
-        
-        .player-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        
-        .player-name {
-            font-weight: bold;
-            color: #2a5298;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .player-name {
-            color: #63b3ed;
-        }
-        
-        .player-status {
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-        
-        .status-out {
-            background-color: #ffebee;
-            color: #c62828;
-        }
-
-        .night-mode .status-out {
-            background-color: #4a2a2a;
-            color: #ff6b6b;
-        }
-        
-        .status-doubtful {
-            background-color: #fff3e0;
-            color: #ef6c00;
-        }
-
-        .night-mode .status-doubtful {
-            background-color: #4a3a2a;
-            color: #ffb74d;
-        }
-        
-        .player-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            font-size: 0.9rem;
-        }
-        
-        .detail-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 3px 0;
-        }
-        
-        .detail-label {
-            color: #666;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .detail-label {
-            color: #cbd5e0;
-        }
-        
-        .detail-value {
-            font-weight: bold;
-            color: #333;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .detail-value {
-            color: #e0e0e0;
-        }
-        
-        .impact-badge {
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 0.7rem;
-            font-weight: bold;
-        }
-        
-        .impact-high {
-            background-color: #ffebee;
-            color: #c62828;
-        }
-
-        .night-mode .impact-high {
-            background-color: #4a2a2a;
-            color: #ff6b6b;
-        }
-        
-        .impact-medium {
-            background-color: #fff3e0;
-            color: #ef6c00;
-        }
-
-        .night-mode .impact-medium {
-            background-color: #4a3a2a;
-            color: #ffb74d;
-        }
-        
-        .impact-low {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .night-mode .impact-low {
-            background-color: #2d4a3c;
-            color: #81c784;
-        }
-        
-        .ai-analysis {
-            margin-top: 15px;
-            padding: 15px;
-            background: #e3f2fd;
-            border-radius: 8px;
-            border-right: 4px solid #2196F3;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .ai-analysis {
-            background: #2a3a4a;
-            border-right-color: #63b3ed;
-        }
-        
-        .ai-title {
-            font-weight: bold;
-            color: #1565c0;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .ai-title {
-            color: #63b3ed;
-        }
-        
-        .ai-insight {
-            margin: 8px 0;
-            padding: 8px;
-            background: white;
-            border-radius: 5px;
-            border-right: 3px solid #2196F3;
-            transition: all 0.3s ease;
-        }
-
-        .night-mode .ai-insight {
-            background: #4a5568;
-            border-right-color: #63b3ed;
         }
         
         .calculate-btn {
@@ -769,10 +526,6 @@
                 flex-direction: column;
             }
             
-            .player-details {
-                grid-template-columns: 1fr;
-            }
-            
             h1 {
                 font-size: 2rem;
             }
@@ -792,8 +545,8 @@
     
     <div class="container">
         <header>
-            <h1>🦾 حاسبة الفرص المزدوجة - تحليل متقدم بالذكاء الاصطناعي</h1>
-            <p class="subtitle">تحليل ذكي للإصابات وتأثيرها الحقيقي على نتائج المباريات</p>
+            <h1>🦾 حاسبة الفرص المزدوجة - تحليل متقدم</h1>
+            <p class="subtitle">تحليل إحصائي متقدم لنتائج المباريات</p>
         </header>
         
         <div class="main-content">
@@ -802,7 +555,7 @@
                 
                 <div class="team-input">
                     <h3>الفريق الأول</h3>
-                    <input type="text" class="team-name" id="team1-name" placeholder="اسم الفريق الأول" value="الفريق الأول">
+                    <input type="text" class="team-name" id="team1-name" placeholder="اسم الفريق الأول">
                     
                     <h4>نتائج آخر 5 مباريات:</h4>
                     <div id="team1-results">
@@ -814,26 +567,14 @@
                         <!-- سيتم إضافة حقول الأهداف هنا بواسطة JavaScript -->
                     </div>
                     
-                    <div class="upload-section">
-                        <h4>🦠 رفع صورة اللاعبين المصابين - الفريق الأول</h4>
-                        <button class="upload-btn" onclick="uploadInjuredPhoto('team1')">
-                            📷 رفع صورة وتحليل بالذكاء الاصطناعي
-                        </button>
-                        <button class="reset-btn" onclick="resetTeamData('team1')">
-                            🔄 إعادة تعيين الفريق الأول
-                        </button>
-                        <div id="team1-photo-preview"></div>
-                        <div id="team1-extracted-data" class="extracted-data" style="display: none;">
-                            <div class="extracted-title">🧠 تحليل الذكاء الاصطناعي للاعبين المصابين</div>
-                            <div id="team1-players-list"></div>
-                            <div id="team1-ai-analysis" class="ai-analysis"></div>
-                        </div>
-                    </div>
+                    <button class="reset-btn" onclick="resetTeamData('team1')">
+                        🔄 إعادة تعيين الفريق الأول
+                    </button>
                 </div>
                 
                 <div class="team-input">
                     <h3>الفريق الثاني</h3>
-                    <input type="text" class="team-name" id="team2-name" placeholder="اسم الفريق الثاني" value="الفريق الثاني">
+                    <input type="text" class="team-name" id="team2-name" placeholder="اسم الفريق الثاني">
                     
                     <h4>نتائج آخر 5 مباريات:</h4>
                     <div id="team2-results">
@@ -845,28 +586,16 @@
                         <!-- سيتم إضافة حقول الأهداف هنا بواسطة JavaScript -->
                     </div>
                     
-                    <div class="upload-section">
-                        <h4>🦠 رفع صورة اللاعبين المصابين - الفريق الثاني</h4>
-                        <button class="upload-btn" onclick="uploadInjuredPhoto('team2')">
-                            📷 رفع صورة وتحليل بالذكاء الاصطناعي
-                        </button>
-                        <button class="reset-btn" onclick="resetTeamData('team2')">
-                            🔄 إعادة تعيين الفريق الثاني
-                        </button>
-                        <div id="team2-photo-preview"></div>
-                        <div id="team2-extracted-data" class="extracted-data" style="display: none;">
-                            <div class="extracted-title">🧠 تحليل الذكاء الاصطناعي للاعبين المصابين</div>
-                            <div id="team2-players-list"></div>
-                            <div id="team2-ai-analysis" class="ai-analysis"></div>
-                        </div>
-                    </div>
+                    <button class="reset-btn" onclick="resetTeamData('team2')">
+                        🔄 إعادة تعيين الفريق الثاني
+                    </button>
                 </div>
 
                 <button class="reset-btn" onclick="resetAllData()" style="background: #ff9800;">
                     🗑️ إعادة تعيين كل البيانات
                 </button>
                 
-                <button class="calculate-btn" id="calculate-btn">🧮 احسب الفرص المزدوجة بالتحليل المتقدم</button>
+                <button class="calculate-btn" id="calculate-btn">🧮 احسب الفرص المزدوجة</button>
             </div>
             
             <div class="result-section">
@@ -904,7 +633,7 @@
         </div>
         
         <footer>
-            <p>🦾 تم التطوير باستخدام خوارزميات الذكاء الاصطناعي المتقدمة لتحليل تأثير الإصابات الحقيقي على المباريات</p>
+            <p>🦾 تم التطوير باستخدام خوارزميات إحصائية متقدمة لتحليل نتائج المباريات</p>
         </footer>
     </div>
 
@@ -912,21 +641,10 @@
         // حالة الوضع الليلي
         let isNightMode = false;
 
-        // تخزين اللاعبين المصابين والتحليل
-        let injuredPlayers = {
-            team1: [],
-            team2: []
-        };
-
-        let teamAnalysis = {
-            team1: { totalImpact: 0, attackImpact: 0, defenseImpact: 0, keyPlayers: [] },
-            team2: { totalImpact: 0, attackImpact: 0, defenseImpact: 0, keyPlayers: [] }
-        };
-
-        // تخزين الصور المرفوعة
-        let uploadedPhotos = {
-            team1: null,
-            team2: null
+        // تخزين بيانات الفريقين
+        let teamData = {
+            team1: { name: "", results: [], goals: [] },
+            team2: { name: "", results: [], goals: [] }
         };
 
         // تهيئة النتائج للفرق
@@ -986,16 +704,7 @@
                 initializeGoalsInput(`${team}-goals`, initialGoals);
                 
                 // إعادة تعيين اسم الفريق
-                document.getElementById(`${team}-name`).value = team === 'team1' ? 'الفريق الأول' : 'الفريق الثاني';
-                
-                // إعادة تعيين الإصابات
-                injuredPlayers[team] = [];
-                teamAnalysis[team] = { totalImpact: 0, attackImpact: 0, defenseImpact: 0, keyPlayers: [] };
-                uploadedPhotos[team] = null;
-                
-                // إخفاء البيانات المستخرجة
-                document.getElementById(`${team}-photo-preview`).innerHTML = '';
-                document.getElementById(`${team}-extracted-data`).style.display = 'none';
+                document.getElementById(`${team}-name`).value = '';
                 
                 alert(`✅ تم إعادة تعيين ${team === 'team1' ? 'الفريق الأول' : 'الفريق الثاني'} بنجاح`);
             }
@@ -1007,22 +716,12 @@
                 // إعادة تعيين الفريق الأول
                 initializeTeamResults('team1-results', ['W', 'W', 'D', 'W', 'L']);
                 initializeGoalsInput('team1-goals', [2, 3, 1, 2, 0]);
-                document.getElementById('team1-name').value = 'الفريق الأول';
-                injuredPlayers.team1 = [];
-                teamAnalysis.team1 = { totalImpact: 0, attackImpact: 0, defenseImpact: 0, keyPlayers: [] };
-                uploadedPhotos.team1 = null;
-                document.getElementById('team1-photo-preview').innerHTML = '';
-                document.getElementById('team1-extracted-data').style.display = 'none';
+                document.getElementById('team1-name').value = '';
                 
                 // إعادة تعيين الفريق الثاني
                 initializeTeamResults('team2-results', ['W', 'D', 'L', 'W', 'W']);
                 initializeGoalsInput('team2-goals', [2, 1, 0, 3, 2]);
-                document.getElementById('team2-name').value = 'الفريق الثاني';
-                injuredPlayers.team2 = [];
-                teamAnalysis.team2 = { totalImpact: 0, attackImpact: 0, defenseImpact: 0, keyPlayers: [] };
-                uploadedPhotos.team2 = null;
-                document.getElementById('team2-photo-preview').innerHTML = '';
-                document.getElementById('team2-extracted-data').style.display = 'none';
+                document.getElementById('team2-name').value = '';
                 
                 // إعادة تعيين النتائج
                 document.getElementById('results-container').innerHTML = 
@@ -1035,342 +734,6 @@
             }
         }
         
-        // دالة لرفع صورة اللاعبين المصابين
-        function uploadInjuredPhoto(team) {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            
-            input.onchange = function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        // حفظ الصورة
-                        uploadedPhotos[team] = e.target.result;
-                        
-                        // عرض الصورة
-                        const previewContainer = document.getElementById(`${team}-photo-preview`);
-                        previewContainer.innerHTML = `<img src="${e.target.result}" class="photo-preview" alt="صورة اللاعبين المصابين">`;
-                        
-                        // تحليل الصورة بالذكاء الاصطناعي
-                        analyzePhotoWithAI(team, e.target.result);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            };
-            
-            input.click();
-        }
-        
-        // دالة لتحليل الصورة بالذكاء الاصطناعي
-        function analyzePhotoWithAI(team, imageData) {
-            // محاكاة تحليل الصورة الحقيقي
-            // في التطبيق الحقيقي، هنا سيتم إرسال الصورة لخادم الذكاء الاصطناعي
-            
-            // إنشاء تحليل فريد لكل صورة بناءً على محتواها
-            const analysis = createUniqueAnalysisFromImage(imageData, team);
-            
-            // حفظ البيانات المستخرجة
-            injuredPlayers[team] = analysis.players;
-            
-            // تحليل تأثير الإصابات
-            analyzeTeamImpact(team, analysis.players);
-            
-            // عرض البيانات المستخرجة
-            displayAIExtractedData(team, analysis.players, analysis.teamInfo);
-        }
-        
-        // دالة لإنشاء تحليل فريد من الصورة
-        function createUniqueAnalysisFromImage(imageData, team) {
-            // إنشاء بصمة فريدة للصورة
-            const imageHash = generateImageHash(imageData);
-            
-            // استخدام البصمة لإنشاء تحليل فريد ومتسق
-            const analysis = generateConsistentAnalysis(imageHash, team);
-            
-            return analysis;
-        }
-        
-        // دالة لإنشاء بصمة للصورة
-        function generateImageHash(imageData) {
-            // محاكاة إنشاء بصمة فريدة للصورة
-            let hash = 0;
-            for (let i = 0; i < imageData.length; i++) {
-                hash = ((hash << 5) - hash) + imageData.charCodeAt(i);
-                hash = hash & hash;
-            }
-            return Math.abs(hash);
-        }
-        
-        // دالة لإنشاء تحليل متسق بناءً على بصمة الصورة
-        function generateConsistentAnalysis(imageHash, team) {
-            const teamName = document.getElementById(`${team}-name`).value;
-            
-            // استخدام البصمة كبذرة للعشوائية لضمان الاتساق
-            const seed = imageHash;
-            const random = new Math.seedrandom(seed);
-            
-            // تحديد عدد اللاعبين (2-4 لاعبين)
-            const numPlayers = Math.floor(random() * 3) + 2;
-            
-            // قوائم الأسماء بناءً على الفريق
-            const names = getPlayerNamesByTeam(teamName, seed);
-            
-            const players = [];
-            let totalImpact = 0;
-            
-            for (let i = 0; i < numPlayers; i++) {
-                const name = names[i % names.length];
-                const position = getRandomPosition(random);
-                const status = getRandomStatus(random);
-                const impact = calculatePlayerImpact(position, status, random);
-                
-                players.push({
-                    name: name,
-                    status: status,
-                    analysis: {
-                        position: position,
-                        level: getPlayerLevel(impact),
-                        importance: impact * 3,
-                        impact: impact,
-                        role: getPlayerRole(position, random),
-                        replacement: getReplacementQuality(impact, random),
-                        effectOn: getEffectArea(position)
-                    }
-                });
-                
-                totalImpact += impact;
-            }
-            
-            return {
-                players: players,
-                teamInfo: {
-                    name: teamName,
-                    totalImpact: totalImpact,
-                    playerCount: numPlayers
-                }
-            };
-        }
-        
-        // دالة للحصول على أسماء اللاعبين بناءً على الفريق
-        function getPlayerNamesByTeam(teamName, seed) {
-            const random = new Math.seedrandom(seed);
-            
-            // قوائم أسماء افتراضية للفرق المختلفة
-            const namePools = {
-                "النصر": ["كريم بنزيما", "أندرسون تاليسكا", "ساديو ماني", "أوتافيو", "برونو فيرنانديز"],
-                "الهلال": "نيمار", "مالكوم", "سيرغي ميلينكوفيتش", "روبن نيفيز", "كاليدو كوليبالي"],
-                "الاتحاد": ["بنزيما", "فابينيو", "كانتي", "جوتا", "لويس هيرنانديز"],
-                "الأهلي": ["فرانك كيسي", "روبرتو فيرمينو", "ألان سانت ماكسيمان", "رياض محرز", "إدوار ميندي"],
-                "default": ["محمد أحمد", "خالد حسن", "علي محمد", "يوسف عمر", "أحمد محمود"]
-            };
-            
-            const names = namePools[teamName] || namePools.default;
-            
-            // خلط الأسماء بشكل متسق
-            return names.sort(() => random() - 0.5);
-        }
-        
-        // دوال مساعدة للتحليل
-        function getRandomPosition(random) {
-            const positions = ["مهاجم", "وسط", "مدافع", "حارس"];
-            return positions[Math.floor(random() * positions.length)];
-        }
-        
-        function getRandomStatus(random) {
-            return random() > 0.5 ? "out" : "doubtful";
-        }
-        
-        function calculatePlayerImpact(position, status, random) {
-            let baseImpact = 0;
-            
-            // تأثير حسب المركز
-            switch(position) {
-                case "مهاجم": baseImpact = 0.12 + (random() * 0.08); break;
-                case "وسط": baseImpact = 0.10 + (random() * 0.06); break;
-                case "مدافع": baseImpact = 0.08 + (random() * 0.05); break;
-                case "حارس": baseImpact = 0.15 + (random() * 0.10); break;
-            }
-            
-            // تعديل حسب الحالة
-            if (status === "doubtful") {
-                baseImpact *= 0.6;
-            }
-            
-            return Math.min(baseImpact, 0.25);
-        }
-        
-        function getPlayerLevel(impact) {
-            if (impact > 0.15) return "نجم";
-            if (impact > 0.08) return "أساسي";
-            return "احتياطي";
-        }
-        
-        function getPlayerRole(position, random) {
-            const roles = {
-                "مهاجم": ["هداف رئيسي", "مهاجم ثانوي", "جناح", "مهاجم مركزي"],
-                "وسط": ["صانع ألعاب", "وسط دفاعي", "وسط هجومي", "قائد الفريق"],
-                "مدافع": ["مدافع مركزي", "ظهير أيمن", "ظهير أيسر", "مدافع جناح"],
-                "حارس": ["حارس مرمى أساسي", "حارس احتياطي"]
-            };
-            const positionRoles = roles[position];
-            return positionRoles[Math.floor(random() * positionRoles.length)];
-        }
-        
-        function getReplacementQuality(impact, random) {
-            if (impact > 0.15) return "ضعيف";
-            if (impact > 0.08) return "متوسط";
-            return "جيد";
-        }
-        
-        function getEffectArea(position) {
-            switch(position) {
-                case "مهاجم": return "الهجوم";
-                case "وسط": return "الوسط";
-                case "مدافع": return "الدفاع";
-                case "حارس": return "المرمى";
-            }
-        }
-        
-        // دالة لتحليل تأثير الإصابات على الفريق
-        function analyzeTeamImpact(team, players) {
-            let totalImpact = 0;
-            let attackImpact = 0;
-            let defenseImpact = 0;
-            let keyPlayers = [];
-            
-            players.forEach(player => {
-                const impact = player.analysis.impact;
-                totalImpact += impact;
-                
-                // تحليل تأثير حسب المركز
-                if (player.analysis.position.includes("مهاجم") || player.analysis.position.includes("وسط")) {
-                    attackImpact += impact;
-                } else {
-                    defenseImpact += impact;
-                }
-                
-                // تحديد اللاعبين الأساسيين
-                if (player.analysis.importance >= 0.7) {
-                    keyPlayers.push({
-                        name: player.name,
-                        impact: impact,
-                        role: player.analysis.role
-                    });
-                }
-            });
-            
-            teamAnalysis[team] = {
-                totalImpact: Math.min(totalImpact, 0.6),
-                attackImpact: Math.min(attackImpact, 0.4),
-                defenseImpact: Math.min(defenseImpact, 0.4),
-                keyPlayers: keyPlayers
-            };
-        }
-        
-        // دالة لعرض البيانات المستخرجة بالذكاء الاصطناعي
-        function displayAIExtractedData(team, players, teamInfo) {
-            const container = document.getElementById(`${team}-extracted-data`);
-            const playersList = document.getElementById(`${team}-players-list`);
-            const aiAnalysis = document.getElementById(`${team}-ai-analysis`);
-            
-            let playersHTML = '';
-            players.forEach(player => {
-                const statusText = player.status === 'out' ? 'خارج' : 'مشكوك فيه';
-                const statusClass = player.status === 'out' ? 'status-out' : 'status-doubtful';
-                
-                // تحديد لون التأثير
-                let impactClass = 'impact-low';
-                if (player.analysis.impact >= 0.15) impactClass = 'impact-high';
-                else if (player.analysis.impact >= 0.08) impactClass = 'impact-medium';
-                
-                playersHTML += `
-                    <div class="player-analysis">
-                        <div class="player-header">
-                            <span class="player-name">${player.name}</span>
-                            <span class="player-status ${statusClass}">${statusText}</span>
-                        </div>
-                        <div class="player-details">
-                            <div class="detail-item">
-                                <span class="detail-label">المركز:</span>
-                                <span class="detail-value">${player.analysis.position}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">المستوى:</span>
-                                <span class="detail-value">${player.analysis.level}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">الدور:</span>
-                                <span class="detail-value">${player.analysis.role}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">التأثير:</span>
-                                <span class="detail-value">
-                                    <span class="impact-badge ${impactClass}">
-                                        ${(player.analysis.impact * 100).toFixed(1)}%
-                                    </span>
-                                </span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">البديل:</span>
-                                <span class="detail-value">${player.analysis.replacement}</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">التأثير على:</span>
-                                <span class="detail-value">${player.analysis.effectOn}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            playersList.innerHTML = playersHTML;
-            
-            // عرض التحليل الشامل
-            const analysis = teamAnalysis[team];
-            let aiHTML = `
-                <div class="ai-title">📊 التحليل الشامل للفريق</div>
-                <div class="ai-insight">
-                    <strong>الفريق:</strong> ${teamInfo.name}
-                </div>
-                <div class="ai-insight">
-                    <strong>عدد اللاعبين المصابين:</strong> ${players.length}
-                </div>
-                <div class="ai-insight">
-                    <strong>التأثير الكلي:</strong> ${(analysis.totalImpact * 100).toFixed(1)}%
-                </div>
-                <div class="ai-insight">
-                    <strong>تأثير على الهجوم:</strong> ${(analysis.attackImpact * 100).toFixed(1)}%
-                </div>
-                <div class="ai-insight">
-                    <strong>تأثير على الدفاع:</strong> ${(analysis.defenseImpact * 100).toFixed(1)}%
-                </div>
-            `;
-            
-            if (analysis.keyPlayers.length > 0) {
-                aiHTML += `<div class="ai-insight"><strong>اللاعبين الأساسيين المصابين:</strong> ${analysis.keyPlayers.length}</div>`;
-                analysis.keyPlayers.forEach(player => {
-                    aiHTML += `<div class="ai-insight" style="margin-right: 10px;">• ${player.name} (${player.role}) - تأثير: ${(player.impact * 100).toFixed(1)}%</div>`;
-                });
-            }
-            
-            aiAnalysis.innerHTML = aiHTML;
-            container.style.display = 'block';
-            
-            alert(`🧠 تم تحليل ${players.length} لاعب من الصورة بنجاح!\nسيظهر تأثيرهم في نتائج التحليل.`);
-        }
-
-        // إضافة مكتبة seedrandom للعشوائية المتسقة
-        const Math = window.Math;
-        Math.seedrandom = function(seed) {
-            return function() {
-                seed = (seed * 9301 + 49297) % 233280;
-                return seed / 233280;
-            };
-        };
-
-        // ... [باقي الدوال تبقى كما هي بدون تغيير] ...
         // دالة لتهيئة أزرار نتائج الفريق
         function initializeTeamResults(containerId, initialResults) {
             const container = document.getElementById(containerId);
@@ -1487,9 +850,6 @@
             const team1Goals = getTeamGoals('team1-goals');
             const team2Goals = getTeamGoals('team2-goals');
             
-            const team1Injured = injuredPlayers['team1'];
-            const team2Injured = injuredPlayers['team2'];
-            
             // حساب النقاط بناءً على النتائج
             const team1Points = calculatePoints(team1Results);
             const team2Points = calculatePoints(team2Results);
@@ -1498,31 +858,15 @@
             const team1AvgGoals = team1Goals.reduce((a, b) => a + b, 0) / team1Goals.length;
             const team2AvgGoals = team2Goals.reduce((a, b) => a + b, 0) / team2Goals.length;
             
-            // حساب التأثير المتقدم للإصابات
-            const team1Impact = teamAnalysis['team1'].totalImpact;
-            const team2Impact = teamAnalysis['team2'].totalImpact;
-            
-            // حساب التأثير على الهجوم والدفاع
-            const team1AttackImpact = teamAnalysis['team1'].attackImpact;
-            const team1DefenseImpact = teamAnalysis['team1'].defenseImpact;
-            const team2AttackImpact = teamAnalysis['team2'].attackImpact;
-            const team2DefenseImpact = teamAnalysis['team2'].defenseImpact;
-            
-            // حساب القوة النسبية مع التأثير المتقدم
+            // حساب القوة النسبية
             const totalPoints = team1Points + team2Points;
-            const team1Strength = totalPoints > 0 ? 
-                (team1Points / totalPoints) * (1 - team1Impact) * 
-                (1 - team1AttackImpact * 0.7) * (1 - team1DefenseImpact * 0.3) : 0.5;
-                
-            const team2Strength = totalPoints > 0 ? 
-                (team2Points / totalPoints) * (1 - team2Impact) * 
-                (1 - team2AttackImpact * 0.7) * (1 - team2DefenseImpact * 0.3) : 0.5;
+            const team1Strength = totalPoints > 0 ? team1Points / totalPoints : 0.5;
+            const team2Strength = totalPoints > 0 ? team2Points / totalPoints : 0.5;
             
-            // حساب الاحتمالات الأساسية مع تحسينات
-            const team1WinProb = team1Strength * (1 - team2Strength) * 0.8 * (1 - team1AttackImpact);
-            const team2WinProb = team2Strength * (1 - team1Strength) * 0.8 * (1 - team2AttackImpact);
-            const drawProb = 0.2 + (team1Strength * team2Strength * 0.3) * 
-                (1 - Math.max(team1DefenseImpact, team2DefenseImpact));
+            // حساب الاحتمالات الأساسية
+            const team1WinProb = team1Strength * (1 - team2Strength) * 0.8;
+            const team2WinProb = team2Strength * (1 - team1Strength) * 0.8;
+            const drawProb = 0.2 + (team1Strength * team2Strength * 0.3);
             
             // تطبيع الاحتمالات لتصل إلى 100%
             const totalProb = team1WinProb + team2WinProb + drawProb;
@@ -1535,12 +879,8 @@
             const doubleChance12 = normalizedTeam1Win + normalizedTeam2Win;
             const doubleChanceX2 = normalizedDraw + normalizedTeam2Win;
             
-            // حساب توقع الأهداف مع التأثير المتقدم
-            const predictedGoals = calculateAdvancedPredictedGoals(
-                team1AvgGoals, team2AvgGoals, 
-                team1AttackImpact, team1DefenseImpact,
-                team2AttackImpact, team2DefenseImpact
-            );
+            // حساب توقع الأهداف
+            const predictedGoals = calculatePredictedGoals(team1AvgGoals, team2AvgGoals);
             
             // عرض النتائج
             displayAdvancedResults(
@@ -1548,9 +888,7 @@
                 normalizedTeam1Win, normalizedTeam2Win, normalizedDraw,
                 doubleChance1X, doubleChance12, doubleChanceX2,
                 team1Results, team2Results, team1Points, team2Points,
-                team1Goals, team2Goals, team1Injured, team2Injured,
-                predictedGoals,
-                teamAnalysis['team1'], teamAnalysis['team2']
+                team1Goals, team2Goals, predictedGoals
             );
         }
         
@@ -1565,11 +903,11 @@
             return points;
         }
         
-        // دالة لحساب توقع الأهداف المتقدم
-        function calculateAdvancedPredictedGoals(team1Avg, team2Avg, team1Attack, team1Defense, team2Attack, team2Defense) {
-            // حساب الأهداف المتوقعة مع مراعاة التأثير على الهجوم والدفاع
-            const team1Predicted = team1Avg * (1 - team1Attack) * (1 - team2Defense * 0.8);
-            const team2Predicted = team2Avg * (1 - team2Attack) * (1 - team1Defense * 0.8);
+        // دالة لحساب توقع الأهداف
+        function calculatePredictedGoals(team1Avg, team2Avg) {
+            // حساب الأهداف المتوقعة بناءً على المتوسطات
+            const team1Predicted = team1Avg * 0.8;
+            const team2Predicted = team2Avg * 0.8;
             
             // حساب إجمالي الأهداف المتوقعة في المباراة
             const totalPredicted = team1Predicted + team2Predicted;
@@ -1585,8 +923,7 @@
         function displayAdvancedResults(team1Name, team2Name, team1Win, team2Win, draw, 
                                        doubleChance1X, doubleChance12, doubleChanceX2,
                                        team1Results, team2Results, team1Points, team2Points,
-                                       team1Goals, team2Goals, team1Injured, team2Injured,
-                                       predictedGoals, team1Analysis, team2Analysis) {
+                                       team1Goals, team2Goals, predictedGoals) {
             
             const resultsContainer = document.getElementById('results-container');
             const matchHistory = document.getElementById('match-history');
@@ -1605,7 +942,7 @@
             // إنشاء محتوى النتائج المتقدم
             let resultsHTML = `
                 <div class="probability-card">
-                    <h3>🎯 الاحتمالات الأساسية (مع تحليل الإصابات)</h3>
+                    <h3>🎯 الاحتمالات الأساسية</h3>
                     <div class="probability-item">
                         <div class="probability-header">
                             <span class="team1-color">فوز ${team1Name}</span>
@@ -1613,9 +950,6 @@
                         </div>
                         <div class="probability-bar">
                             <div class="probability-fill" style="width: ${team1Win}%"></div>
-                        </div>
-                        <div style="font-size: 0.9rem; color: #666; text-align: center;">
-                            تأثير الإصابات: -${(team1Analysis.totalImpact * 100).toFixed(1)}%
                         </div>
                     </div>
                     
@@ -1637,14 +971,11 @@
                         <div class="probability-bar">
                             <div class="probability-fill" style="width: ${team2Win}%"></div>
                         </div>
-                        <div style="font-size: 0.9rem; color: #666; text-align: center;">
-                            تأثير الإصابات: -${(team2Analysis.totalImpact * 100).toFixed(1)}%
-                        </div>
                     </div>
                 </div>
                 
                 <div class="probability-card">
-                    <h3>🔄 الفرص المزدوجة <span class="accuracy-high">(دقة عالية بالذكاء الاصطناعي)</span></h3>
+                    <h3>🔄 الفرص المزدوجة <span class="accuracy-high">(دقة عالية)</span></h3>
                     
                     <div class="probability-item">
                         <div class="probability-header">
@@ -1690,10 +1021,6 @@
                     <div class="goals-summary">إجمالي الأهداف: ${team1TotalGoals}</div>
                     <div>متوسط الأهداف: ${(team1TotalGoals / 5).toFixed(1)}</div>
                     <div>النقاط: ${team1Points}</div>
-                    <div>الإصابات: ${team1Injured.length} لاعب</div>
-                    <div>تأثير الإصابات: ${(team1Analysis.totalImpact * 100).toFixed(1)}%</div>
-                    <div>تأثير على الهجوم: ${(team1Analysis.attackImpact * 100).toFixed(1)}%</div>
-                    <div>تأثير على الدفاع: ${(team1Analysis.defenseImpact * 100).toFixed(1)}%</div>
                 </div>
                 
                 <div class="stats-card">
@@ -1701,10 +1028,6 @@
                     <div class="goals-summary">إجمالي الأهداف: ${team2TotalGoals}</div>
                     <div>متوسط الأهداف: ${(team2TotalGoals / 5).toFixed(1)}</div>
                     <div>النقاط: ${team2Points}</div>
-                    <div>الإصابات: ${team2Injured.length} لاعب</div>
-                    <div>تأثير الإصابات: ${(team2Analysis.totalImpact * 100).toFixed(1)}%</div>
-                    <div>تأثير على الهجوم: ${(team2Analysis.attackImpact * 100).toFixed(1)}%</div>
-                    <div>تأثير على الدفاع: ${(team2Analysis.defenseImpact * 100).toFixed(1)}%</div>
                 </div>
             `;
             
@@ -1713,15 +1036,12 @@
             
             // إنشاء توقع الأهداف المتقدم
             let predictionHTML = `
-                <div class="prediction-title">🎯 توقع الأهداف في المباراة القادمة (مع تحليل الإصابات)</div>
+                <div class="prediction-title">🎯 توقع الأهداف في المباراة القادمة</div>
                 <div style="display: flex; justify-content: space-around; text-align: center;">
                     <div>
                         <div class="team1-color">${team1Name}</div>
                         <div class="prediction-value">${predictedGoals.team1.toFixed(1)}</div>
                         <div>هدف متوقع</div>
-                        <div style="font-size: 0.8rem; color: #666;">
-                            تأثير: -${(team1Analysis.attackImpact * 100).toFixed(1)}%
-                        </div>
                     </div>
                     <div>
                         <div>المجموع</div>
@@ -1732,9 +1052,6 @@
                         <div class="team2-color">${team2Name}</div>
                         <div class="prediction-value">${predictedGoals.team2.toFixed(1)}</div>
                         <div>هدف متوقع</div>
-                        <div style="font-size: 0.8rem; color: #666;">
-                            تأثير: -${(team2Analysis.attackImpact * 100).toFixed(1)}%
-                        </div>
                     </div>
                 </div>
             `;
