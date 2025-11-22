@@ -1,35 +1,264 @@
 <!doctype html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AYOUB BACCARAT PRO - IMPROVED</title>
+<title>AYOUB BACCARAT PRO ULTIMATE</title>
 <style>
-/* نفس الأنماط السابقة مع إضافات */
-.improvement-panel { margin-top: 15px; padding: 12px; background: rgba(212,175,55,0.05); border-radius: 8px; border-left: 4px solid var(--gold); }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+:root {
+  --gold: #d4af37; --gold-2: #b8871d; --bg-dark: #070606; --card: #0f0e10; 
+  --muted: #bfb7a6; --player: #2d7ef7; --banker: #e03b3b; --tie: #28a745;
+  --blue-bead: #3a86ff; --red-bead: #ff006e;
+}
+:root[data-theme="light"] {
+  --gold: #d4af37; --gold-2: #b8871d; --bg-dark: #f5f5f5; --card: #ffffff; 
+  --muted: #666666; --player: #2d7ef7; --banker: #e03b3b; --tie: #28a745;
+  --blue-bead: #3a86ff; --red-bead: #ff006e;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: Inter, sans-serif;
+  background: linear-gradient(180deg, var(--bg-dark), #0b0b0b);
+  color: #fff;
+  padding: 18px;
+  transition: background 0.3s, color 0.3s;
+  min-height: 100vh;
+}
+:root[data-theme="light"] body { color: #333; }
+.app { max-width: 1400px; margin: 0 auto; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.logo {
+  font-weight: 800;
+  background: linear-gradient(90deg, var(--gold), #fff3b0);
+  color: #000;
+  padding: 8px 12px;
+  border-radius: 12px;
+  display: inline-block;
+}
+.subtitle { font-size: 14px; color: var(--muted); margin-top: 4px; }
+.controls { display: flex; gap: 8px; align-items: center; }
+.card {
+  background: linear-gradient(180deg, var(--card), #0b0b0b);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  border: 1px solid rgba(212,175,55,0.08);
+}
+:root[data-theme="light"] .card {
+  background: linear-gradient(180deg, var(--card), #f0f0f0);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+.layout { display: flex; gap: 12px; }
+.left { width: 380px; display: flex; flex-direction: column; gap: 10px; }
+.right { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+.panel { padding: 10px; }
+.row { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+input[type=number], select {
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.3);
+  padding: 10px;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  width: 100%;
+}
+:root[data-theme="light"] input[type=number], :root[data-theme="light"] select {
+  background: rgba(255,255,255,0.9);
+  border: 2px solid rgba(0,0,0,0.2);
+  color: #333;
+}
+.btn {
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.btn.gold {
+  background: linear-gradient(90deg, var(--gold), var(--gold-2));
+  color: #000;
+  font-weight: 700;
+  box-shadow: 0 6px 20px rgba(212,175,55,0.3);
+}
+.btn.player { background: linear-gradient(135deg, #3a86ff, #2667cc); color: white; border: 2px solid #3a86ff; }
+.btn.banker { background: linear-gradient(135deg, #ff006e, #cc0058); color: white; border: 2px solid #ff006e; }
+.btn.tie { background: linear-gradient(135deg, #38b000, #2c8a00); color: white; border: 2px solid #38b000; }
+:root[data-theme="light"] .btn.player { background: linear-gradient(135deg, #2d7ef7, #1a67d8); color: white; }
+:root[data-theme="light"] .btn.banker { background: linear-gradient(135deg, #e03b3b, #c53232); color: white; }
+:root[data-theme="light"] .btn.tie { background: linear-gradient(135deg, #28a745, #218838); color: white; }
+:root[data-theme="light"] .btn { background: rgba(0,0,0,0.1); color: #333; border: 1px solid rgba(0,0,0,0.1); }
+.small { font-size: 13px; color: var(--muted); }
+.muted { color: var(--muted); font-size: 12px; }
+.pattern-list { list-style: none; padding: 6px; margin: 6px 0 0 0; max-height: 200px; overflow: auto; }
+.pattern-list li {
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+:root[data-theme="light"] .pattern-list li { background: linear-gradient(180deg, rgba(0,0,0,0.02), transparent); }
+.section-title { font-weight: 700; margin-bottom: 6px; color: var(--gold); }
+.stat-table { width: 100%; border-collapse: collapse; }
+.stat-table th, .stat-table td { border: 1px solid rgba(255,255,255,0.05); padding: 6px; text-align: center; }
+:root[data-theme="light"] .stat-table th, :root[data-theme="light"] .stat-table td { border: 1px solid rgba(0,0,0,0.05); }
+.stat-table th { background: rgba(212,175,55,0.1); font-weight: 600; }
+.player { color: #3a86ff; font-weight: 700; }
+.banker { color: #ff006e; font-weight: 700; }
+.tie { color: #38b000; font-weight: 700; }
+.pred-head { display: flex; justify-content: space-between; align-items: center; }
+.final {
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  padding: 12px;
+  background: linear-gradient(90deg, rgba(212,175,55,0.06), transparent);
+  border-radius: 10px;
+}
+:root[data-theme="light"] .final { background: linear-gradient(90deg, rgba(212,175,55,0.1), transparent); }
+.foot { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; }
+.credits { opacity: 0.85; }
+canvas { border-radius: 10px; background: #0f0e10; }
+:root[data-theme="light"] canvas { background: #f0f0f0; }
+.color-legend { display: flex; gap: 15px; justify-content: center; margin-bottom: 10px; font-size: 14px; }
+.color-legend span { padding: 4px 8px; border-radius: 6px; font-weight: 600; }
+.prediction-cards { display: flex; gap: 10px; justify-content: center; margin: 10px 0; }
+.pred-card { padding: 10px; border-radius: 8px; text-align: center; min-width: 80px; font-weight: 600; }
+.pred-card.active { transform: scale(1.1); border: 2px solid var(--gold); box-shadow: 0 4px 15px rgba(212,175,55,0.4); }
+.win-effect { animation: winPulse 0.5s ease-in-out; }
+.loss-effect { animation: lossShake 0.5s ease-in-out; }
+@keyframes winPulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+@keyframes lossShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+.analysis-result { margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; text-align: center; }
+:root[data-theme="light"] .analysis-result { background: rgba(0,0,0,0.03); }
+.theme-toggle { background: transparent; border: none; font-size: 24px; cursor: pointer; padding: 5px; border-radius: 50%; transition: background 0.3s; }
+.theme-toggle:hover { background: rgba(255,255,255,0.1); }
+:root[data-theme="light"] .theme-toggle:hover { background: rgba(0,0,0,0.05); }
+.input-group { display: flex; gap: 8px; align-items: center; }
+.input-group input { flex: 1; }
+.input-label { font-weight: 600; margin-bottom: 6px; display: block; }
+.pred-card.player { background: linear-gradient(135deg, #3a86ff, #2667cc); color: white; }
+.pred-card.banker { background: linear-gradient(135deg, #ff006e, #cc0058); color: white; }
+.pred-card.tie { background: linear-gradient(135deg, #38b000, #2c8a00); color: white; }
+.accuracy-panel { margin-top: 12px; }
+.accuracy-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.accuracy-value { font-weight: 700; font-size: 18px; }
+.accuracy-label { font-size: 12px; color: var(--muted); }
+.accuracy-chart-container { position: relative; height: 80px; margin-top: 8px; }
+.accuracy-line { stroke: var(--gold); stroke-width: 2; fill: none; }
+.accuracy-point { fill: var(--gold); r: 3; transition: r 0.2s; }
+.accuracy-point:hover { r: 5; }
+.accuracy-grid { stroke: rgba(255,255,255,0.1); stroke-width: 1; }
+:root[data-theme="light"] .accuracy-grid { stroke: rgba(0,0,0,0.1); }
+.accuracy-tooltip {
+  position: absolute;
+  background: rgba(0,0,0,0.8);
+  color: white;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+/* أنماط Bead Road */
+.bead-road-container { margin-top: 15px; }
+.bead-road-title { font-weight: 600; margin-bottom: 8px; color: var(--gold); font-size: 14px; }
+.bead-road { display: flex; flex-direction: column; gap: 2px; margin-bottom: 15px; }
+.bead-row { display: flex; gap: 2px; }
+.bead-cell {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+}
+.bead-cell.blue { background: var(--blue-bead); color: white; }
+.bead-cell.red { background: var(--red-bead); color: white; }
+.bead-cell.empty { background: rgba(255,255,255,0.05); }
+:root[data-theme="light"] .bead-cell.empty { background: rgba(0,0,0,0.05); }
+.bead-roads-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+/* تحسينات النظام الذكي */
+.improvement-panel {
+  margin-top: 15px;
+  padding: 12px;
+  background: rgba(212,175,55,0.05);
+  border-radius: 8px;
+  border-left: 4px solid var(--gold);
+}
 .confidence-meter { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
 .confidence-bar { flex: 1; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
-.confidence-fill { height: 100%; background: linear-gradient(90deg, #ff006e, #ff8c00, #38b000); border-radius: 4px; transition: width 0.5s; }
+.confidence-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff006e, #ff8c00, #38b000);
+  border-radius: 4px;
+  transition: width 0.5s;
+}
 .confidence-text { font-size: 12px; font-weight: 600; }
-.risk-indicator { padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; text-align: center; margin-top: 5px; }
+.risk-indicator {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 5px;
+}
 .risk-low { background: rgba(56, 176, 0, 0.2); color: #38b000; border: 1px solid #38b000; }
 .risk-medium { background: rgba(255, 140, 0, 0.2); color: #ff8c00; border: 1px solid #ff8c00; }
 .risk-high { background: rgba(255, 0, 110, 0.2); color: #ff006e; border: 1px solid #ff006e; }
-.suggestion-box { background: rgba(59, 130, 246, 0.1); padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid #3b82f6; }
+.suggestion-box {
+  background: rgba(59, 130, 246, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+  border: 1px solid #3b82f6;
+}
 .suggestion-title { font-weight: 600; color: #3b82f6; margin-bottom: 5px; }
 .adaptive-controls { display: flex; gap: 10px; margin-top: 10px; }
-.adaptive-btn { padding: 8px 12px; border-radius: 6px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+.adaptive-btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
 .adaptive-btn.auto { background: rgba(56, 176, 0, 0.2); color: #38b000; border: 1px solid #38b000; }
 .adaptive-btn.manual { background: rgba(59, 130, 246, 0.2); color: #3b82f6; border: 1px solid #3b82f6; }
 .adaptive-btn:hover { transform: translateY(-2px); }
+.pred-confidence { font-size: 11px; margin-top: 4px; opacity: 0.8; }
+
+/* تحسينات للشاشات الصغيرة */
+@media (max-width: 768px) {
+  .layout { flex-direction: column; }
+  .left { width: 100%; }
+  .bead-roads-grid { grid-template-columns: 1fr; }
+  .prediction-cards { flex-direction: column; }
+  .adaptive-controls { flex-direction: column; }
+}
 </style>
 </head>
 <body>
 <div class="app">
 <header class="top card">
   <div class="brand">
-    <div class="logo">AYOUB BACCARAT PRO - IMPROVED</div>
-    <div class="subtitle">نظام متكيف ذكي يتعلم من الأخطاء 🧠📈</div>
+    <div class="logo">AYOUB BACCARAT PRO ULTIMATE</div>
+    <div class="subtitle">نظام ذكي متكامل يعتمد على تحليل الأنماط المتقدمة 🧠🎯</div>
   </div>
   <div class="controls">
     <button id="themeToggle" class="theme-toggle">🌚</button>
@@ -39,7 +268,6 @@
 
 <main class="card layout">
 <aside class="left">
-  <!-- نفس المحتوى السابق -->
   <div class="panel card">
     <label class="input-label">نافذة التحليل الذكية (3 - 15)</label>
     <div class="input-group">
@@ -49,8 +277,8 @@
     <div class="muted small">يتكيف تلقائياً مع استقرار الأنماط</div>
     
     <div class="adaptive-controls">
-      <button id="btnAutoAdjust" class="adaptive-btn auto">تكيف تلقائي</button>
-      <button id="btnManualMode" class="adaptive-btn manual">وضع يدوي</button>
+      <button id="btnAutoAdjust" class="adaptive-btn auto">التكيف التلقائي</button>
+      <button id="btnManualMode" class="adaptive-btn manual">الوضع اليدوي</button>
     </div>
   </div>
 
@@ -69,10 +297,10 @@
   <div class="panel card patterns">
     <div class="section-title">الأنماط المتقدمة</div>
     <ul id="patternList" class="pattern-list">
-      <li>تتابع: 0</li>
-      <li>تبادل: 0</li>
-      <li>ازدواج: 0</li>
-      <li>استقرار: 0%</li>
+      <li>تتابع: <span>0</span></li>
+      <li>تبادل: <span>0</span></li>
+      <li>ازدواج: <span>0</span></li>
+      <li>استقرار: <span>0%</span></li>
     </ul>
   </div>
 
@@ -109,17 +337,17 @@
     <div class="pred-card player" id="predP">
       <div>لاعب</div>
       <div id="predPctP">0%</div>
-      <div class="confidence-text" id="predConfP">ثقة: -</div>
+      <div class="pred-confidence" id="predConfP">ثقة: -</div>
     </div>
     <div class="pred-card banker" id="predB">
       <div>مصرفي</div>
       <div id="predPctB">0%</div>
-      <div class="confidence-text" id="predConfB">ثقة: -</div>
+      <div class="pred-confidence" id="predConfB">ثقة: -</div>
     </div>
     <div class="pred-card tie" id="predT">
       <div>تعادل</div>
       <div id="predPctT">0%</div>
-      <div class="confidence-text" id="predConfT">ثقة: -</div>
+      <div class="pred-confidence" id="predConfT">ثقة: -</div>
     </div>
   </div>
 
@@ -134,6 +362,26 @@
       <span class="confidence-text" id="confidenceText">0%</span>
     </div>
     <div id="riskIndicator" class="risk-indicator risk-low">مخاطرة منخفضة</div>
+  </div>
+
+  <!-- لوحة Bead Road -->
+  <div class="panel card bead-road-container">
+    <div class="section-title">Bead Road Charts - تحليل الأنماط المتقدم</div>
+    <div class="bead-roads-grid">
+      <div>
+        <div class="bead-road-title">Big Eye Boy (العين الكبيرة)</div>
+        <div id="bigEyeBoy" class="bead-road"></div>
+      </div>
+      <div>
+        <div class="bead-road-title">Small Road (الطريق الصغير)</div>
+        <div id="smallRoad" class="bead-road"></div>
+      </div>
+      <div>
+        <div class="bead-road-title">Cockroach Pig (صرصور الخنزير)</div>
+        <div id="cockroachPig" class="bead-road"></div>
+      </div>
+    </div>
+    <div class="muted small">تحليل الأنماط المتقدمة للتنبؤ بالنتائج المستقبلية</div>
   </div>
 
   <!-- لوحة التحسينات -->
@@ -153,13 +401,39 @@
     </div>
   </div>
 
-  <!-- باقي المكونات -->
+  <!-- منحنى التوقعات -->
+  <div class="panel card accuracy-panel">
+    <div class="section-title">منحنى دقة التوقعات</div>
+    <div class="accuracy-stats">
+      <div>
+        <div class="accuracy-label">الدقة الحالية</div>
+        <div class="accuracy-value" id="currentAccuracy">0%</div>
+      </div>
+      <div>
+        <div class="accuracy-label">أفضل دقة</div>
+        <div class="accuracy-value" id="bestAccuracy">0%</div>
+      </div>
+      <div>
+        <div class="accuracy-label">متوسط الدقة</div>
+        <div class="accuracy-value" id="averageAccuracy">0%</div>
+      </div>
+    </div>
+    <div class="accuracy-chart-container">
+      <svg id="accuracyChart" width="100%" height="100%"></svg>
+      <div id="accuracyTooltip" class="accuracy-tooltip"></div>
+    </div>
+    <div class="muted small">تتبع دقة توقعاتك مع مرور الوقت</div>
+  </div>
 </section>
 </main>
-</div>
+
+<footer class="foot card">
+<div>تصميم: Ayoub • نظام Baccarat متكامل</div>
+<div class="credits small">نافذة ذكية • خوارزميات متقدمة • Bead Road • تعلم آلي • واجهة عربية</div>
+</footer>
 
 <script>
-// State مع تحسينات
+// State كامل مع جميع الميزات
 const state = {
   rounds: [],
   windowSize: 7,
@@ -177,227 +451,65 @@ const state = {
   accuracyHistory: [],
   predictionsHistory: [],
   bigRoadData: [],
-  // بيانات التعلم
   learningData: {
     mistakePatterns: [],
     successRates: {},
     adaptiveWeights: { frequency: 0.4, pattern: 0.3, streak: 0.2, external: 0.1 },
-    confidenceThresholds: { low: 45, medium: 60, high: 75 }
+    confidenceThresholds: { low: 45, medium: 60, high: 75 },
+    performanceHistory: []
   }
 };
 
-// تحسين دالة التنبؤ الرئيسية
-function improvedPredict() {
-  const n = getOptimalWindowSize();
-  const recent = state.rounds.slice(-n);
-  
-  if (recent.length < 3) {
-    return { 
-      P: 33.3, B: 33.3, T: 33.3, 
-      final: '—',
-      confidence: 0,
-      method: 'غير كافٍ'
-    };
-  }
+const el = id => document.getElementById(id);
 
-  // تحليل متعدد المستويات
-  const analyses = {
-    frequency: analyzeFrequency(recent),
-    pattern: analyzePattern(recent),
-    streak: analyzeStreak(recent),
-    beadRoad: analyzeBeadRoad(),
-    historical: analyzeHistoricalPatterns()
-  };
-
-  // دمج التحليلات بوزن تكيفي
-  const merged = mergeAnalyses(analyses);
-  const confidence = calculateOverallConfidence(merged, analyses);
+function init() {
+  // تهيئة العناصر
+  el('windowSize').value = state.windowSize;
   
-  // تحديد التوقع النهائي مع مراعاة الثقة
-  let final = determineFinalPrediction(merged, confidence);
-  
-  return {
-    P: merged.P.toFixed(1),
-    B: merged.B.toFixed(1),
-    T: merged.T.toFixed(1),
-    final,
-    confidence,
-    method: getPredictionMethod(analyses)
-  };
-}
-
-// تحليل التكرار
-function analyzeFrequency(recent) {
-  const counts = { P: 0, B: 0, T: 0 };
-  recent.forEach(x => counts[x]++);
-  
-  const total = recent.length;
-  return {
-    P: (counts.P / total) * 100,
-    B: (counts.B / total) * 100,
-    T: (counts.T / total) * 100
-  };
-}
-
-// تحليل الأنماط المتقدمة
-function analyzePattern(recent) {
-  const weights = { P: 1, B: 1, T: 1 };
-  const lastRound = recent[recent.length - 1];
-  
-  // تحليل التتابع
-  const streak = calculateStreak(recent);
-  if (streak.length >= 2) {
-    weights[streak.type] *= (1 + (streak.length * 0.1));
-  }
-  
-  // تحليل التبادل
-  const pingPong = analyzePingPong(recent);
-  if (pingPong.strength > 0.6) {
-    weights[pingPong.expected] *= 1.3;
-  }
-  
-  // تطبيق الأوزان
-  const baseFreq = analyzeFrequency(recent);
-  return {
-    P: baseFreq.P * weights.P,
-    B: baseFreq.B * weights.B,
-    T: baseFreq.T * weights.T
-  };
-}
-
-// تحليل التتابع
-function analyzeStreak(recent) {
-  let currentStreak = 1;
-  let streakType = recent[recent.length - 1];
-  
-  for (let i = recent.length - 2; i >= 0; i--) {
-    if (recent[i] === streakType) {
-      currentStreak++;
-    } else {
-      break;
+  // إعداد الأحداث
+  el('applyWindow').onclick = () => {
+    const v = Number(el('windowSize').value);
+    if (v < 3 || v > 15) {
+      alert('النافذة يجب أن تكون بين 3 و 15');
+      return;
     }
-  }
-  
-  return {
-    length: currentStreak,
-    type: streakType,
-    strength: Math.min(currentStreak / 5, 1)
+    state.windowSize = v;
+    state.adaptiveWindow = false;
+    updateAll();
   };
-}
 
-// دمج التحليلات
-function mergeAnalyses(analyses) {
-  const weights = state.learningData.adaptiveWeights;
-  const result = { P: 0, B: 0, T: 0 };
+  el('btnP').onclick = () => pushRound('P');
+  el('btnB').onclick = () => pushRound('B');
+  el('btnT').onclick = () => pushRound('T');
+  el('btnUndo').onclick = undoRound;
+  el('btnReset').onclick = resetAll;
   
-  // تطبيق الأوزان على كل تحليل
-  for (const [method, analysis] of Object.entries(analyses)) {
-    const weight = weights[method] || 0.2;
-    result.P += analysis.P * weight;
-    result.B += analysis.B * weight;
-    result.T += analysis.T * weight;
-  }
-  
-  // تطبيع النتائج
-  const sum = result.P + result.B + result.T;
-  if (sum > 0) {
-    result.P = (result.P / sum) * 100;
-    result.B = (result.B / sum) * 100;
-    result.T = (result.T / sum) * 100;
-  }
-  
-  return result;
-}
-
-// حساب الثقة الشاملة
-function calculateOverallConfidence(merged, analyses) {
-  const maxProb = Math.max(merged.P, merged.B, merged.T);
-  const secondMax = Object.values(merged).sort((a, b) => b - a)[1];
-  const gap = maxProb - secondMax;
-  
-  // عوامل الثقة
-  const dataConfidence = Math.min(state.rounds.length / 20, 1);
-  const patternStability = calculatePatternStability();
-  const gapConfidence = Math.min(gap / 30, 1);
-  
-  return (dataConfidence * 0.4 + patternStability * 0.3 + gapConfidence * 0.3) * 100;
-}
-
-// تحديد الحجم الأمثل للنافذة
-function getOptimalWindowSize() {
-  if (!state.adaptiveWindow) return state.windowSize;
-  
-  const dataLength = state.rounds.length;
-  if (dataLength < 10) return Math.max(3, Math.floor(dataLength / 2));
-  if (dataLength < 20) return 7;
-  if (dataLength < 30) return 10;
-  return 12;
-}
-
-// نظام التعلم من الأخطاء
-function learnFromMistakes() {
-  if (state.predictionsHistory.length < 3) return;
-  
-  const recentPredictions = state.predictionsHistory.slice(-10);
-  const mistakeRate = recentPredictions.filter(p => !p.correct).length / recentPredictions.length;
-  
-  // تحليل أنماط الأخطاء
-  const mistakePatterns = analyzeMistakePatterns(recentPredictions);
-  
-  // تعديل الأوزان
-  adjustWeightsBasedOnPerformance(mistakeRate, mistakePatterns);
-  
-  // تحديث عتبات الثقة
-  updateConfidenceThresholds(mistakeRate);
-  
-  return {
-    mistakeRate: (mistakeRate * 100).toFixed(1),
-    pattern: getMistakePatternDescription(mistakePatterns),
-    learningRate: calculateLearningRate()
+  el('btnAutoAdjust').onclick = () => {
+    state.adaptiveWindow = true;
+    showMessage('تم تفعيل الوضع التكيفي الذكي');
   };
+  
+  el('btnManualMode').onclick = () => {
+    state.adaptiveWindow = false;
+    showMessage('تم تفعيل الوضع اليدوي');
+  };
+
+  el('themeToggle').onclick = toggleTheme;
+  
+  // تعيين الوضع الافتراضي
+  document.documentElement.setAttribute('data-theme', 'dark');
+  
+  updateAll();
 }
 
-// تحديث واجهة المستخدم المحسنة
-function updateImprovedUI(prediction, learningData) {
-  // تحديث النسب المئوية
-  el('predPctP').textContent = prediction.P + '%';
-  el('predPctB').textContent = prediction.B + '%';
-  el('predPctT').textContent = prediction.T + '%';
-  
-  // تحديث مستويات الثقة
-  updateConfidenceDisplays(prediction);
-  
-  // تحديث شريط الثقة
-  const confidenceFill = el('confidenceFill');
-  const confidenceText = el('confidenceText');
-  confidenceFill.style.width = prediction.confidence + '%';
-  confidenceText.textContent = prediction.confidence.toFixed(1) + '%';
-  
-  // تحديث مؤشر المخاطرة
-  updateRiskIndicator(prediction.confidence);
-  
-  // تحديث اقتراحات الذكاء الاصطناعي
-  updateAISuggestions(learningData);
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  el('themeToggle').textContent = newTheme === 'dark' ? '🌚' : '🌕';
+  updateAccuracyChart();
 }
 
-// تحديث مؤشر المخاطرة
-function updateRiskIndicator(confidence) {
-  const indicator = el('riskIndicator');
-  indicator.className = 'risk-indicator ';
-  
-  if (confidence >= 70) {
-    indicator.classList.add('risk-low');
-    indicator.textContent = 'مخاطرة منخفضة';
-  } else if (confidence >= 50) {
-    indicator.classList.add('risk-medium');
-    indicator.textContent = 'مخاطرة متوسطة';
-  } else {
-    indicator.classList.add('risk-high');
-    indicator.textContent = 'مخاطرة عالية';
-  }
-}
-
-// باقي الدوال الأساسية تبقى كما هي مع التكيف
 function pushRound(r) {
   const pred = improvedPredict();
   state.lastPrediction = pred.final;
@@ -418,102 +530,4 @@ function pushRound(r) {
   
   updateAccuracyData(r);
   
-  // التعلم من الأخطاء
-  const learningData = learnFromMistakes();
-  
-  const newPred = improvedPredict();
-  updateImprovedUI(newPred, learningData);
-  showResult(r, newPred, state.lastPrediction === r);
-  updateAll();
-}
-
-// التهيئة المحسنة
-function init() {
-  // التهيئة الأساسية
-  el('windowSize').value = state.windowSize;
-  el('applyWindow').onclick = () => {
-    const v = Number(el('windowSize').value);
-    if (v < 3 || v > 15) {
-      alert('النافذة يجب أن تكون بين 3 و 15');
-      return;
-    }
-    state.windowSize = v;
-    state.adaptiveWindow = false;
-    updateAll();
-  };
-
-  el('btnP').onclick = () => pushRound('P');
-  el('btnB').onclick = () => pushRound('B');
-  el('btnT').onclick = () => pushRound('T');
-  el('btnUndo').onclick = undoRound;
-  el('btnReset').onclick = resetAll;
-  
-  // عناصر التحكم التكيفية
-  el('btnAutoAdjust').onclick = () => {
-    state.adaptiveWindow = true;
-    alert('تم تفعيل الوضع التكيفي الذكي');
-  };
-  
-  el('btnManualMode').onclick = () => {
-    state.adaptiveWindow = false;
-    alert('تم تفعيل الوضع اليدوي');
-  };
-
-  el('themeToggle').onclick = toggleTheme;
-  document.documentElement.setAttribute('data-theme', 'dark');
-
-  updateAll();
-}
-
-// دعم للدوال الإضافية
-function calculateStreak(arr) {
-  if (arr.length === 0) return { length: 0, type: null };
-  
-  let streak = 1;
-  const last = arr[arr.length - 1];
-  
-  for (let i = arr.length - 2; i >= 0; i--) {
-    if (arr[i] === last) streak++;
-    else break;
-  }
-  
-  return { length: streak, type: last };
-}
-
-function analyzePingPong(arr) {
-  if (arr.length < 3) return { strength: 0, expected: null };
-  
-  let pingPongCount = 0;
-  for (let i = arr.length - 1; i >= 2; i--) {
-    if (arr[i] !== arr[i-1] && arr[i-1] !== arr[i-2] && arr[i] === arr[i-2]) {
-      pingPongCount++;
-    }
-  }
-  
-  const strength = pingPongCount / (arr.length - 2);
-  const expected = strength > 0.5 ? arr[arr.length - 2] : null;
-  
-  return { strength, expected };
-}
-
-function calculatePatternStability() {
-  if (state.rounds.length < 5) return 0;
-  
-  const recent = state.rounds.slice(-10);
-  let changes = 0;
-  
-  for (let i = 1; i < recent.length; i++) {
-    if (recent[i] !== recent[i-1]) changes++;
-  }
-  
-  const stability = 1 - (changes / (recent.length - 1));
-  return stability;
-}
-
-// استبدال دالة التوقع القديمة بالجديدة
-const predict = improvedPredict;
-
-window.onload = init;
-</script>
-</body>
-</html>
+  const learningData = learnFr
