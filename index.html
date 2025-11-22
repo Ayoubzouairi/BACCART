@@ -251,6 +251,14 @@ canvas { border-radius: 10px; background: #0f0e10; }
   .prediction-cards { flex-direction: column; }
   .adaptive-controls { flex-direction: column; }
 }
+
+/* أنيميشن للرسائل */
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  20% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
 </style>
 </head>
 <body>
@@ -466,8 +474,8 @@ function init() {
   // تهيئة العناصر
   el('windowSize').value = state.windowSize;
   
-  // إعداد الأحداث
-  el('applyWindow').onclick = () => {
+  // إعداد الأحداث - التأكد من أن جميع الأزرار تعمل
+  el('applyWindow').addEventListener('click', () => {
     const v = Number(el('windowSize').value);
     if (v < 3 || v > 15) {
       alert('النافذة يجب أن تكون بين 3 و 15');
@@ -476,58 +484,36 @@ function init() {
     state.windowSize = v;
     state.adaptiveWindow = false;
     updateAll();
-  };
+    showMessage('تم تحديث نافذة التحليل إلى ' + v);
+  });
 
-  el('btnP').onclick = () => pushRound('P');
-  el('btnB').onclick = () => pushRound('B');
-  el('btnT').onclick = () => pushRound('T');
-  el('btnUndo').onclick = undoRound;
-  el('btnReset').onclick = resetAll;
+  el('btnP').addEventListener('click', () => pushRound('P'));
+  el('btnB').addEventListener('click', () => pushRound('B'));
+  el('btnT').addEventListener('click', () => pushRound('T'));
+  el('btnUndo').addEventListener('click', undoRound);
+  el('btnReset').addEventListener('click', resetAll);
   
-  el('btnAutoAdjust').onclick = () => {
+  el('btnAutoAdjust').addEventListener('click', () => {
     state.adaptiveWindow = true;
     showMessage('تم تفعيل الوضع التكيفي الذكي');
-  };
+  });
   
-  el('btnManualMode').onclick = () => {
+  el('btnManualMode').addEventListener('click', () => {
     state.adaptiveWindow = false;
     showMessage('تم تفعيل الوضع اليدوي');
-  };
+  });
 
-  el('themeToggle').onclick = toggleTheme;
+  el('themeToggle').addEventListener('click', toggleTheme);
   
   // تعيين الوضع الافتراضي
   document.documentElement.setAttribute('data-theme', 'dark');
   
   updateAll();
+  showMessage('مرحباً! ابدأ بإدخال نتائج الجولات');
 }
 
 function toggleTheme() {
   const currentTheme = document.documentElement.getAttribute('data-theme');
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', newTheme);
-  el('themeToggle').textContent = newTheme === 'dark' ? '🌚' : '🌕';
-  updateAccuracyChart();
-}
-
-function pushRound(r) {
-  const pred = improvedPredict();
-  state.lastPrediction = pred.final;
-  
-  state.rounds.push(r);
-  state.count[r]++;
-  updatePatterns();
-  
-  if (state.lastPrediction !== '—' && state.lastPrediction !== null) {
-    const didWin = (r === state.lastPrediction);
-    
-    if (didWin) {
-      state.win[state.lastPrediction]++;
-    } else {
-      state.loss[state.lastPrediction]++;
-    }
-  }
-  
-  updateAccuracyData(r);
-  
-  const learningData = learnFr
+  el('themeToggle').textContent = 
