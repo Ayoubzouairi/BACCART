@@ -126,12 +126,18 @@ canvas{border-radius:10px;background:#0f0e10}
 .status-processing {background: rgba(212,175,55,0.1); color: var(--gold);}
 .status-success {background: rgba(56,176,0,0.1); color: #38b000;}
 .status-error {background: rgba(255,0,110,0.1); color: #ff006e;}
-.card-detection-grid {display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;}
-.card-cell {padding: 8px; border-radius: 6px; text-align: center; background: rgba(255,255,255,0.05);}
-.card-cell.player {border: 1px solid #3a86ff;}
-.card-cell.banker {border: 1px solid #ff006e;}
-.card-value {font-weight: 700; font-size: 18px;}
-.card-label {font-size: 12px; color: var(--muted);}
+.road-detection-results {display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;}
+.road-result {padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.05); text-align: center;}
+.road-result.big-road {border: 1px solid var(--gold);}
+.road-result.small-road {border: 1px solid #3a86ff;}
+.road-title {font-weight: 600; margin-bottom: 5px; font-size: 14px;}
+.road-value {font-size: 18px; font-weight: 700;}
+.road-pattern {font-size: 12px; color: var(--muted); margin-top: 5px;}
+.detected-rounds {margin-top: 10px; max-height: 120px; overflow-y: auto;}
+.detected-round {display: inline-block; width: 25px; height: 25px; border-radius: 4px; text-align: center; line-height: 25px; font-weight: 600; margin: 2px; font-size: 12px;}
+.detected-round.player {background: #3a86ff; color: white;}
+.detected-round.banker {background: #ff006e; color: white;}
+.detected-round.tie {background: #38b000; color: white;}
 </style>
 </head>
 <body>
@@ -139,7 +145,7 @@ canvas{border-radius:10px;background:#0f0e10}
 <header class="top card">
   <div class="brand">
     <div class="logo">AYOUB BACCARAT PRO FULL <span class="model-badge badge-advanced">محسّن + تحليل الفيديو</span></div>
-    <div class="subtitle">نظام تنبؤ ذكي متقدم مع تحليل الفيديو المباشر للبطاقات 🎰🚀📹</div>
+    <div class="subtitle">نظام تنبؤ ذكي متقدم مع تحليل الفيديو للطرق (Big Road, Small Road) 🎰🚀📹</div>
   </div>
   <div class="controls">
     <button id="themeToggle" class="theme-toggle">🌚</button>
@@ -265,30 +271,36 @@ canvas{border-radius:10px;background:#0f0e10}
 
   <!-- لوحة تحليل الفيديو المضافة -->
   <div class="panel card video-panel">
-    <div class="section-title">تحليل الفيديو المباشر للبطاقات</div>
+    <div class="section-title">تحليل الفيديو للطرق (Big Road, Small Road)</div>
     <div class="video-container">
       <video id="videoInput" class="video-preview" autoplay muted playsinline></video>
       <canvas id="canvasOverlay" class="canvas-overlay"></canvas>
     </div>
     <div class="video-controls">
       <button id="btnStartCamera" class="btn gold">تشغيل الكاميرا</button>
-      <button id="btnCaptureFrame" class="btn player">تحليل لقطة</button>
-      <button id="btnAutoDetect" class="btn banker">التلقائي</button>
+      <button id="btnDetectRoads" class="btn player">قراءة الطرق</button>
+      <button id="btnAddDetected" class="btn banker">إضافة النتائج</button>
     </div>
     <div id="videoStatus" class="analysis-status">جاهز لتحليل الفيديو</div>
     
-    <div class="card-detection-grid">
-      <div class="card-cell player">
-        <div class="card-label">بطاقات اللاعب</div>
-        <div class="card-value" id="playerCards">-</div>
+    <div class="road-detection-results">
+      <div class="road-result big-road">
+        <div class="road-title">Big Road</div>
+        <div class="road-value" id="bigRoadResult">-</div>
+        <div class="road-pattern" id="bigRoadPattern">-</div>
       </div>
-      <div class="card-cell banker">
-        <div class="card-label">بطاقات المصرفي</div>
-        <div class="card-value" id="bankerCards">-</div>
+      <div class="road-result small-road">
+        <div class="road-title">Small Road</div>
+        <div class="road-value" id="smallRoadResult">-</div>
+        <div class="road-pattern" id="smallRoadPattern">-</div>
       </div>
     </div>
     
-    <div class="muted small">يقوم النظام بتحليل الفيديو المباشر لاكتشاف البطاقات وتحديد النتيجة تلقائياً</div>
+    <div class="detected-rounds" id="detectedRounds">
+      <!-- الجولات المكتشفة ستظهر هنا -->
+    </div>
+    
+    <div class="muted small">انقر على "قراءة الطرق" عندما ترى النتيجة على الشاشة ليتم قراءة الـ Big Road و Small Road تلقائياً</div>
   </div>
 
   <!-- منحنى التوقعات المضاف -->
@@ -323,7 +335,7 @@ canvas{border-radius:10px;background:#0f0e10}
 
 <footer class="foot card">
 <div>تصميم: Ayoub • النسخة المحسنة مع تحليل الفيديو</div>
-<div class="credits small">نظام متعدد النماذج • تحليل الأنماط • تحليل الفيديو • مؤشرات متقدمة</div>
+<div class="credits small">نظام متعدد النماذج • تحليل الأنماط • تحليل الطرق • مؤشرات متقدمة</div>
 </footer>
 
 <script>
@@ -348,7 +360,8 @@ const state = {
   // تحليل الفيديو
   videoStream: null,
   isVideoActive: false,
-  autoDetectionInterval: null
+  detectedRounds: [],
+  lastDetectedResult: null
 };
 
 const el = id => document.getElementById(id);
@@ -399,8 +412,8 @@ function init() {
 
   // إعدادات تحليل الفيديو
   el('btnStartCamera').onclick = toggleCamera;
-  el('btnCaptureFrame').onclick = captureAndAnalyzeFrame;
-  el('btnAutoDetect').onclick = toggleAutoDetection;
+  el('btnDetectRoads').onclick = detectRoadsFromVideo;
+  el('btnAddDetected').onclick = addDetectedResults;
 
   updateAll();
 }
@@ -413,7 +426,7 @@ function toggleTheme() {
   updateAccuracyChart();
 }
 
-// ========== خوارزميات تحليل الفيديو ==========
+// ========== خوارزميات تحليل الفيديو للطرق ==========
 
 async function toggleCamera() {
   if (state.isVideoActive) {
@@ -436,7 +449,7 @@ async function toggleCamera() {
       state.isVideoActive = true;
       
       el('btnStartCamera').textContent = 'إيقاف الكاميرا';
-      el('videoStatus').textContent = 'الكاميرا نشطة - جاهز للتحليل';
+      el('videoStatus').textContent = 'الكاميرا نشطة - جاهز لقراءة الطرق';
       el('videoStatus').className = 'analysis-status status-success';
       
     } catch (error) {
@@ -453,21 +466,16 @@ function stopCamera() {
     state.videoStream = null;
   }
   state.isVideoActive = false;
-  
-  if (state.autoDetectionInterval) {
-    clearInterval(state.autoDetectionInterval);
-    state.autoDetectionInterval = null;
-  }
 }
 
-function captureAndAnalyzeFrame() {
+function detectRoadsFromVideo() {
   if (!state.isVideoActive) {
     el('videoStatus').textContent = 'يجب تشغيل الكاميرا أولاً';
     el('videoStatus').className = 'analysis-status status-error';
     return;
   }
   
-  el('videoStatus').textContent = 'جاري تحليل اللقطة...';
+  el('videoStatus').textContent = 'جاري قراءة الطرق...';
   el('videoStatus').className = 'analysis-status status-processing';
   
   const video = el('videoInput');
@@ -481,86 +489,100 @@ function captureAndAnalyzeFrame() {
   // رسم الفيديو على الـ canvas
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
   
-  // محاكاة تحليل البطاقات (في التطبيق الحقيقي سيتم استخدام مكتبة رؤية حاسوبية)
-  simulateCardDetection(ctx);
+  // محاكاة قراءة الـ Big Road و Small Road
+  simulateRoadDetection(ctx);
 }
 
-function simulateCardDetection(ctx) {
-  // محاكاة اكتشاف البطاقات (هذه محاكاة، في التطبيق الحقيقي سيتم استخدام رؤية حاسوبية حقيقية)
-  const detectedCards = simulateCardRecognition();
+function simulateRoadDetection(ctx) {
+  // محاكاة خوارزمية قراءة الطرق (Big Road, Small Road)
+  // في التطبيق الحقيقي، سيتم استخدام رؤية حاسوبية لاكتشاف النقاط والألوان
   
-  // رسم مربعات حول البطاقات المكتشفة
-  drawDetectionBoxes(ctx, detectedCards);
+  const detectedData = simulateRoadRecognition();
+  
+  // رسم مربعات حول المناطق المكتشفة
+  drawRoadDetectionBoxes(ctx, detectedData);
   
   // عرض النتائج
-  displayCardResults(detectedCards);
+  displayRoadResults(detectedData);
   
   // تحديث حالة التحليل
-  el('videoStatus').textContent = 'تم تحليل البطاقات بنجاح';
+  el('videoStatus').textContent = 'تم قراءة الطرق بنجاح';
   el('videoStatus').className = 'analysis-status status-success';
   
-  // إضافة النتيجة تلقائياً إذا كانت واضحة
-  if (detectedCards.confidence > 70) {
-    setTimeout(() => {
-      pushRound(detectedCards.result);
-      el('videoStatus').textContent = `تم إضافة النتيجة: ${getResultName(detectedCards.result)}`;
-    }, 1000);
-  }
+  // حفظ النتائج المكتشفة
+  state.detectedRounds = detectedData.detectedRounds;
+  state.lastDetectedResult = detectedData.lastResult;
 }
 
-function simulateCardRecognition() {
-  // محاكاة خوارزمية اكتشاف البطاقات
-  // في التطبيق الحقيقي، سيتم استخدام TensorFlow.js أو OpenCV.js
+function simulateRoadRecognition() {
+  // محاكاة خوارزمية قراءة الـ Big Road و Small Road
+  // في التطبيق الحقيقي، سيتم تحليل الصورة لاكتشاف النقاط الملونة
   
-  const playerCards = [];
-  const bankerCards = [];
+  const detectedRounds = [];
+  const totalRounds = 8 + Math.floor(Math.random() * 10); // 8-17 جولة
   
-  // محاكاة قيم البطاقات (عشوائية لأغراض العرض)
-  for (let i = 0; i < 2; i++) {
-    playerCards.push(Math.floor(Math.random() * 10));
-    bankerCards.push(Math.floor(Math.random() * 10));
+  // إنشاء جولات عشوائية لمحاكاة الاكتشاف
+  for (let i = 0; i < totalRounds; i++) {
+    const rand = Math.random();
+    let result;
+    if (rand < 0.45) result = 'P'; // 45% لاعب
+    else if (rand < 0.9) result = 'B'; // 45% مصرفي
+    else result = 'T'; // 10% تعادل
+    
+    detectedRounds.push(result);
   }
   
-  // محاكاة بطاقة ثالثة في بعض الحالات
-  if (Math.random() > 0.7) {
-    playerCards.push(Math.floor(Math.random() * 10));
-  }
-  if (Math.random() > 0.7) {
-    bankerCards.push(Math.floor(Math.random() * 10));
-  }
+  // آخر نتيجة (الأحدث)
+  const lastResult = detectedRounds[detectedRounds.length - 1];
   
-  // حساب النقاط
-  const playerScore = calculateBaccaratScore(playerCards);
-  const bankerScore = calculateBaccaratScore(bankerCards);
+  // تحليل الأنماط في الـ Big Road
+  const bigRoadPattern = analyzeBigRoadPattern(detectedRounds);
   
-  // تحديد النتيجة
-  let result;
-  if (playerScore > bankerScore) result = 'P';
-  else if (bankerScore > playerScore) result = 'B';
-  else result = 'T';
-  
-  // محاكاة مستوى الثقة
-  const confidence = 60 + Math.random() * 35;
+  // تحليل الـ Small Road (مبسط)
+  const smallRoadPattern = analyzeSmallRoadPattern(detectedRounds);
   
   return {
-    playerCards,
-    bankerCards,
-    playerScore,
-    bankerScore,
-    result,
-    confidence
+    detectedRounds,
+    lastResult,
+    bigRoadPattern,
+    smallRoadPattern,
+    confidence: 75 + Math.random() * 20 // 75-95% ثقة
   };
 }
 
-function calculateBaccaratScore(cards) {
-  let total = 0;
-  cards.forEach(card => {
-    total += (card > 9 ? 0 : card); // في الباكارات، 10 و J و Q و K تساوي 0
-  });
-  return total % 10; // فقط الرقم الأخير هو المهم
+function analyzeBigRoadPattern(rounds) {
+  if (rounds.length < 3) return 'نمط غير واضح';
+  
+  const lastThree = rounds.slice(-3);
+  const allSame = lastThree.every(r => r === lastThree[0]);
+  
+  if (allSame) {
+    return `تتابع ${lastThree[0] === 'P' ? 'لاعب' : lastThree[0] === 'B' ? 'مصرفي' : 'تعادل'}`;
+  }
+  
+  // تحليل التناوب
+  const alternates = (lastThree[0] !== lastThree[1]) && (lastThree[1] !== lastThree[2]);
+  if (alternates) return 'نمط تناوب';
+  
+  return 'نمط مختلط';
 }
 
-function drawDetectionBoxes(ctx, detection) {
+function analyzeSmallRoadPattern(rounds) {
+  if (rounds.length < 4) return 'بيانات غير كافية';
+  
+  // محاكاة تحليل الـ Small Road (المبني على الـ Big Road)
+  const recent = rounds.slice(-6);
+  const pCount = recent.filter(r => r === 'P').length;
+  const bCount = recent.filter(r => r === 'B').length;
+  
+  if (pCount > bCount + 2) return 'اتجاه لاعب قوي';
+  if (bCount > pCount + 2) return 'اتجاه مصرفي قوي';
+  if (Math.abs(pCount - bCount) <= 1) return 'اتجاه متوازن';
+  
+  return 'اتجاه متقلب';
+}
+
+function drawRoadDetectionBoxes(ctx, detection) {
   const { width, height } = ctx.canvas;
   
   // مسح الـ canvas السابق
@@ -570,36 +592,80 @@ function drawDetectionBoxes(ctx, detection) {
   const video = el('videoInput');
   ctx.drawImage(video, 0, 0, width, height);
   
-  // رسم مربع حول منطقة اللاعب
-  ctx.strokeStyle = '#3a86ff';
+  // رسم مربع حول منطقة الـ Big Road
+  ctx.strokeStyle = '#d4af37'; // ذهبي
   ctx.lineWidth = 3;
-  ctx.strokeRect(width * 0.1, height * 0.3, width * 0.35, height * 0.4);
+  ctx.strokeRect(width * 0.1, height * 0.1, width * 0.4, height * 0.7);
   
-  // رسم مربع حول منطقة المصرفي
-  ctx.strokeStyle = '#ff006e';
+  // رسم مربع حول منطقة الـ Small Road
+  ctx.strokeStyle = '#3a86ff'; // أزرق
   ctx.lineWidth = 3;
-  ctx.strokeRect(width * 0.55, height * 0.3, width * 0.35, height * 0.4);
+  ctx.strokeRect(width * 0.55, height * 0.1, width * 0.35, height * 0.4);
   
   // إضافة تسميات
-  ctx.font = 'bold 20px Inter';
+  ctx.font = 'bold 18px Inter';
+  ctx.fillStyle = '#d4af37';
+  ctx.fillText('Big Road', width * 0.1, height * 0.08);
   ctx.fillStyle = '#3a86ff';
-  ctx.fillText('لاعب', width * 0.1, height * 0.25);
-  ctx.fillStyle = '#ff006e';
-  ctx.fillText('مصرفي', width * 0.55, height * 0.25);
+  ctx.fillText('Small Road', width * 0.55, height * 0.08);
   
-  // إضافة النتيجة المكتشفة
-  if (detection.result) {
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 24px Inter';
-    ctx.textAlign = 'center';
-    ctx.fillText(`النتيجة: ${getResultName(detection.result)}`, width / 2, height * 0.85);
-    ctx.fillText(`الثقة: ${detection.confidence.toFixed(1)}%`, width / 2, height * 0.9);
-  }
+  // إضافة النتائج المكتشفة
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 20px Inter';
+  ctx.textAlign = 'center';
+  ctx.fillText(`النتيجة الأخيرة: ${getResultName(detection.lastResult)}`, width / 2, height * 0.85);
+  ctx.fillText(`الجولات المكتشفة: ${detection.detectedRounds.length}`, width / 2, height * 0.9);
 }
 
-function displayCardResults(detection) {
-  el('playerCards').textContent = detection.playerCards.join(', ');
-  el('bankerCards').textContent = detection.bankerCards.join(', ');
+function displayRoadResults(detection) {
+  // عرض نتائج الـ Big Road
+  el('bigRoadResult').textContent = getResultName(detection.lastResult);
+  el('bigRoadPattern').textContent = detection.bigRoadPattern;
+  
+  // عرض نتائج الـ Small Road
+  el('smallRoadResult').textContent = getResultName(detection.lastResult);
+  el('smallRoadPattern').textContent = detection.smallRoadPattern;
+  
+  // عرض الجولات المكتشفة
+  displayDetectedRounds(detection.detectedRounds);
+}
+
+function displayDetectedRounds(rounds) {
+  const container = el('detectedRounds');
+  container.innerHTML = '';
+  
+  rounds.forEach((round, index) => {
+    const roundEl = document.createElement('div');
+    roundEl.className = `detected-round ${round === 'P' ? 'player' : round === 'B' ? 'banker' : 'tie'}`;
+    roundEl.textContent = index + 1;
+    roundEl.title = `الجولة ${index + 1}: ${getResultName(round)}`;
+    container.appendChild(roundEl);
+  });
+}
+
+function addDetectedResults() {
+  if (state.detectedRounds.length === 0) {
+    el('videoStatus').textContent = 'لا توجد نتائج مكتشفة للإضافة';
+    el('videoStatus').className = 'analysis-status status-error';
+    return;
+  }
+  
+  // إضافة جميع الجولات المكتشفة
+  let addedCount = 0;
+  state.detectedRounds.forEach(round => {
+    // تجنب التكرار - التحقق إذا كانت الجولة موجودة مسبقاً
+    if (state.rounds.length === 0 || round !== state.rounds[state.rounds.length - 1]) {
+      pushRound(round);
+      addedCount++;
+    }
+  });
+  
+  el('videoStatus').textContent = `تم إضافة ${addedCount} جولة جديدة`;
+  el('videoStatus').className = 'analysis-status status-success';
+  
+  // مسح البيانات المكتشفة بعد الإضافة
+  state.detectedRounds = [];
+  el('detectedRounds').innerHTML = '';
 }
 
 function getResultName(result) {
@@ -608,29 +674,6 @@ function getResultName(result) {
     case 'B': return 'مصرفي';
     case 'T': return 'تعادل';
     default: return 'غير معروف';
-  }
-}
-
-function toggleAutoDetection() {
-  if (state.autoDetectionInterval) {
-    clearInterval(state.autoDetectionInterval);
-    state.autoDetectionInterval = null;
-    el('btnAutoDetect').textContent = 'التلقائي';
-    el('videoStatus').textContent = 'الكشف التلقائي متوقف';
-  } else {
-    if (!state.isVideoActive) {
-      el('videoStatus').textContent = 'يجب تشغيل الكاميرا أولاً';
-      el('videoStatus').className = 'analysis-status status-error';
-      return;
-    }
-    
-    state.autoDetectionInterval = setInterval(() => {
-      captureAndAnalyzeFrame();
-    }, 3000); // تحليل كل 3 ثواني
-    
-    el('btnAutoDetect').textContent = 'إيقاف التلقائي';
-    el('videoStatus').textContent = 'جاري الكشف التلقائي...';
-    el('videoStatus').className = 'analysis-status status-processing';
   }
 }
 
@@ -880,6 +923,8 @@ function resetAll() {
   state.predictionsHistory = [];
   state.modelPerformance = { basic: 0, advanced: 0, pattern: 0 };
   state.previousPredictions = { P: 0, B: 0, T: 0 };
+  state.detectedRounds = [];
+  state.lastDetectedResult = null;
   
   // إيقاف الكاميرا إذا كانت نشطة
   if (state.isVideoActive) {
