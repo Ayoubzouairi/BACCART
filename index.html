@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام Baccarat - إصلاح الكاميرا</title>
+    <title>نظام Baccarat - إصلاح الأزرار</title>
     <style>
         * {
             margin: 0;
@@ -35,7 +35,7 @@
         }
         
         h1 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             margin-bottom: 10px;
             background: linear-gradient(45deg, #3498db, #27ae60);
             -webkit-background-clip: text;
@@ -44,7 +44,7 @@
         
         .subtitle {
             color: #bdc3c7;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
         
         .main-content {
@@ -63,18 +63,18 @@
         .card {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
-            padding: 25px;
+            padding: 20px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .card-title {
-            font-size: 1.4rem;
-            margin-bottom: 20px;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
             color: #3498db;
             text-align: center;
             border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
         }
         
         .camera-section {
@@ -90,7 +90,7 @@
             overflow: hidden;
             background: #000;
             border: 3px solid #3498db;
-            min-height: 400px;
+            min-height: 350px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -98,79 +98,55 @@
         
         #video {
             width: 100%;
-            height: 400px;
+            height: 350px;
             display: block;
             object-fit: cover;
         }
         
         .camera-placeholder {
             text-align: center;
-            padding: 40px;
+            padding: 30px;
             color: #bdc3c7;
         }
         
         .camera-placeholder i {
-            font-size: 3rem;
-            margin-bottom: 20px;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
             display: block;
-        }
-        
-        .camera-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-        
-        .detection-area {
-            position: absolute;
-            border: 2px solid #e74c3c;
-            background: rgba(231, 76, 60, 0.1);
-        }
-        
-        .detection-label {
-            position: absolute;
-            background: rgba(231, 76, 60, 0.9);
-            color: white;
-            padding: 5px 10px;
-            font-size: 12px;
-            border-radius: 5px;
         }
         
         .controls {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
+            gap: 12px;
+            margin: 15px 0;
             flex-wrap: wrap;
         }
         
-        button {
+        .btn {
             background: linear-gradient(135deg, #3498db, #2980b9);
             color: white;
             border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
+            padding: 10px 20px;
+            border-radius: 20px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: bold;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            min-width: 140px;
+            justify-content: center;
         }
         
-        button:hover {
+        .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
-        button:disabled {
-            background: #7f8c8d;
-            cursor: not-allowed;
-            transform: none;
+        .btn:active {
+            transform: translateY(0);
         }
         
         .btn-success {
@@ -191,26 +167,26 @@
         
         .game-info {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
         }
         
         .info-item {
             background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
+            padding: 12px;
+            border-radius: 8px;
             text-align: center;
         }
         
         .info-label {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #bdc3c7;
             margin-bottom: 5px;
         }
         
         .info-value {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: bold;
         }
         
@@ -228,43 +204,43 @@
         
         .betting-options {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 10px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+            margin-top: 15px;
         }
         
         .bet-option {
             background: rgba(52, 152, 219, 0.3);
-            padding: 15px;
-            border-radius: 8px;
+            padding: 12px;
+            border-radius: 6px;
             text-align: center;
             transition: all 0.3s ease;
         }
         
         .bet-option:hover {
             background: rgba(52, 152, 219, 0.5);
-            transform: scale(1.05);
+            transform: scale(1.03);
         }
         
         .bet-odds {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
             margin-top: 5px;
             color: #f1c40f;
         }
         
         .history-list {
-            max-height: 300px;
+            max-height: 250px;
             overflow-y: auto;
             background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            padding: 15px;
+            border-radius: 8px;
+            padding: 12px;
         }
         
         .history-item {
             display: flex;
             justify-content: space-between;
-            padding: 10px;
+            padding: 8px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
@@ -274,33 +250,34 @@
         
         .prediction-section {
             background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(39, 174, 96, 0.2));
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
         }
         
         .prediction-result {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: bold;
             text-align: center;
-            margin: 10px 0;
+            margin: 8px 0;
         }
         
         .probability {
             background: #27ae60;
             color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.9rem;
-            margin-right: 10px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-right: 8px;
         }
         
         .status-message {
             text-align: center;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 10px;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 8px;
             font-weight: bold;
+            font-size: 0.9rem;
         }
         
         .status-success {
@@ -325,28 +302,29 @@
         
         .ocr-results {
             background: rgba(0, 0, 0, 0.5);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
             font-family: monospace;
-            max-height: 200px;
+            max-height: 150px;
             overflow-y: auto;
+            font-size: 0.8rem;
         }
         
         .auto-mode {
             background: rgba(243, 156, 18, 0.2);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
             text-align: center;
         }
         
         .progress-bar {
             width: 100%;
-            height: 20px;
+            height: 15px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            margin: 15px 0;
+            border-radius: 8px;
+            margin: 12px 0;
             overflow: hidden;
         }
         
@@ -360,95 +338,107 @@
         .round-badge {
             background: #3498db;
             color: white;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            margin-right: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            margin-right: 8px;
         }
         
         .troubleshooting {
             background: rgba(231, 76, 60, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
         }
         
         .troubleshooting h3 {
             color: #e74c3c;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+            font-size: 1rem;
         }
         
         .troubleshooting ul {
             list-style: none;
-            padding-right: 20px;
+            padding-right: 15px;
         }
         
         .troubleshooting li {
-            margin-bottom: 10px;
-            padding-right: 10px;
+            margin-bottom: 8px;
+            padding-right: 8px;
             position: relative;
+            font-size: 0.8rem;
         }
         
         .troubleshooting li:before {
             content: "•";
             color: #e74c3c;
             position: absolute;
-            right: -15px;
+            right: -12px;
         }
         
         .manual-input {
             background: rgba(52, 152, 219, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
         }
         
         .input-group {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         
         .input-group label {
             display: block;
             margin-bottom: 5px;
             color: #bdc3c7;
+            font-size: 0.8rem;
         }
         
         .input-group input, .input-group select {
             width: 100%;
-            padding: 10px;
+            padding: 8px;
             border-radius: 5px;
             border: 1px solid #34495e;
             background: rgba(255, 255, 255, 0.1);
             color: white;
+            font-size: 0.9rem;
         }
         
         .camera-options {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             justify-content: center;
-            margin: 15px 0;
+            margin: 12px 0;
+        }
+        
+        .browser-check {
+            background: rgba(155, 89, 182, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            text-align: center;
+            font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>نظام Baccarat - إصلاح الكاميرا</h1>
-            <p class="subtitle">نظام متكامل مع حلول بديلة في حال عدم عمل الكاميرا</p>
+            <h1>نظام Baccarat - إصلاح الأزرار</h1>
+            <p class="subtitle">نظام محسن يعمل في جميع المتصفحات</p>
         </header>
         
         <div class="main-content">
             <div class="card camera-section">
-                <h2 class="card-title">نظام الكاميرا والمراقبة</h2>
+                <h2 class="card-title">نظام المراقبة</h2>
                 
                 <div class="camera-container" id="camera-container">
                     <video id="video" autoplay playsinline style="display: none;"></video>
                     <div class="camera-placeholder" id="camera-placeholder">
                         <i>📷</i>
                         <p>الكاميرا غير نشطة</p>
-                        <p>انقر على "تشغيل الكاميرا" لبدء المراقبة</p>
+                        <p>انقر على "تشغيل الكاميرا"</p>
                     </div>
-                    <div class="camera-overlay" id="overlay"></div>
                 </div>
                 
                 <div class="progress-bar">
@@ -456,46 +446,46 @@
                 </div>
                 
                 <div class="camera-options">
-                    <button id="try-front-camera" class="btn-secondary">
-                        📱 كاميرا أمامية
+                    <button class="btn btn-secondary" id="try-front-camera">
+                        📱 أمامية
                     </button>
-                    <button id="try-back-camera" class="btn-secondary">
-                        📷 كاميرا خلفية
+                    <button class="btn btn-secondary" id="try-back-camera">
+                        📷 خلفية
                     </button>
                 </div>
                 
                 <div class="controls">
-                    <button id="start-camera" class="btn-success">
-                        📷 تشغيل الكاميرا
+                    <button class="btn btn-success" id="start-camera">
+                        📷 تشغيل
                     </button>
-                    <button id="capture-frame" class="btn-success" disabled>
-                        🔍 تحليل الصورة
+                    <button class="btn btn-success" id="capture-frame" disabled>
+                        🔍 تحليل
                     </button>
-                    <button id="auto-scan" class="btn-warning" disabled>
-                        ⚡ المسح التلقائي
+                    <button class="btn btn-warning" id="auto-scan" disabled>
+                        ⚡ تلقائي
                     </button>
-                    <button id="stop-camera" class="btn-danger" disabled>
-                        ⏹️ إيقاف الكاميرا
+                    <button class="btn btn-danger" id="stop-camera" disabled>
+                        ⏹️ إيقاف
                     </button>
                 </div>
                 
                 <div class="auto-mode">
                     <label>
-                        <input type="checkbox" id="auto-toggle" disabled> تفعيل المسح التلقائي كل 3 ثواني
+                        <input type="checkbox" id="auto-toggle" disabled> المسح التلقائي كل 3 ثواني
                     </label>
                 </div>
                 
                 <div id="camera-status" class="status-message status-warning">
-                    🔴 الكاميرا غير نشطة - انقر على "تشغيل الكاميرا"
+                    🔴 الكاميرا غير نشطة
                 </div>
                 
                 <div class="ocr-results" id="ocr-results">
-                    📝 لم يتم تحليل أي بيانات بعد. سيظهر هنا النص الذي تم قراءته من الصورة.
+                    📝 لم يتم تحليل أي بيانات بعد.
                 </div>
                 
                 <!-- بدائل في حال عدم عمل الكاميرا -->
                 <div class="manual-input">
-                    <h3>📝 إدخال البيانات يدوياً (بديل الكاميرا)</h3>
+                    <h3 style="color: #3498db; margin-bottom: 10px; text-align: center;">📝 إدخال يدوي</h3>
                     <div class="input-group">
                         <label for="manual-round">رقم الجولة:</label>
                         <input type="number" id="manual-round" value="39" min="1">
@@ -508,29 +498,25 @@
                             <option value="tie">تعادل (T)</option>
                         </select>
                     </div>
-                    <div class="input-group">
-                        <label for="manual-player-points">نقاط اللاعب:</label>
-                        <input type="number" id="manual-player-points" value="15" min="0" max="30">
-                    </div>
-                    <div class="input-group">
-                        <label for="manual-banker-points">نقاط البنك:</label>
-                        <input type="number" id="manual-banker-points" value="18" min="0" max="30">
-                    </div>
-                    <button id="add-manual-data" class="btn-success" style="width: 100%;">
-                        ➕ إضافة البيانات يدوياً
+                    <button class="btn btn-success" id="add-manual-data" style="width: 100%; margin-top: 10px;">
+                        ➕ إضافة يدوياً
                     </button>
                 </div>
                 
                 <div class="troubleshooting">
-                    <h3>🔧 إصلاح مشاكل الكاميرا</h3>
+                    <h3>🔧 إصلاح الأزرار</h3>
                     <ul>
-                        <li>تأكد من منح الإذن لاستخدام الكاميرا</li>
-                        <li>جرب الكاميرا الأمامية أو الخلفية</li>
-                        <li>تأكد من أن الكاميرا غير مستخدمة في تطبيق آخر</li>
-                        <li>جرب تحديث الصفحة وإعادة المحاولة</li>
-                        <li>استخدم متصفح Chrome أو Firefox لأفضل نتائج</li>
-                        <li>يمكنك استخدام الإدخال اليدوي كبديل</li>
+                        <li>تأكد من استخدام HTTPS في المتصفح</li>
+                        <li>جرب متصفح Chrome أو Firefox</li>
+                        <li>تأكد من تفعيل JavaScript</li>
+                        <li>جرب تحديث الصفحة (F5)</li>
+                        <li>استخدم الإدخال اليدوي كبديل</li>
                     </ul>
+                </div>
+
+                <div class="browser-check">
+                    <strong>معلومات المتصفح:</strong>
+                    <div id="browser-info">جاري التحقق...</div>
                 </div>
             </div>
             
@@ -553,36 +539,20 @@
                         <div class="info-label">نقاط البنك</div>
                         <div class="info-value" id="banker-points">20</div>
                     </div>
-                    <div class="info-item">
-                        <div class="info-label">المجموع</div>
-                        <div class="info-value" id="total-points">2</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">البطاقات</div>
-                        <div class="info-value" id="cards-count">4</div>
-                    </div>
                 </div>
                 
                 <div class="betting-options">
-                    <div class="bet-option">
-                        <div>زوج لاعب</div>
-                        <div class="bet-odds">11:1</div>
-                    </div>
-                    <div class="bet-option">
-                        <div>زوج بنك</div>
-                        <div class="bet-odds">11:1</div>
-                    </div>
                     <div class="bet-option">
                         <div>لاعب</div>
                         <div class="bet-odds">1:1</div>
                     </div>
                     <div class="bet-option">
-                        <div>تعادل</div>
-                        <div class="bet-odds">8:1</div>
-                    </div>
-                    <div class="bet-option">
                         <div>بنك</div>
                         <div class="bet-odds">0.95:1</div>
+                    </div>
+                    <div class="bet-option">
+                        <div>تعادل</div>
+                        <div class="bet-odds">8:1</div>
                     </div>
                 </div>
             </div>
@@ -594,12 +564,9 @@
                         <span class="probability">72%</span>
                         الفائز المتوقع: <span class="player-win">لاعب</span>
                     </div>
-                    <div style="text-align: center; font-size: 0.9rem; color: #bdc3c7; margin-top: 10px;">
-                        📊 بناءً على تحليل 8 جولات سابقة
-                    </div>
                 </div>
                 
-                <h3 style="margin: 20px 0 10px 0; color: #3498db;">سجل الجولات</h3>
+                <h3 style="margin: 15px 0 8px 0; color: #3498db; font-size: 1rem;">سجل الجولات</h3>
                 <div class="history-list" id="history-list">
                     <!-- سيتم ملؤه بالجافاسكريبت -->
                 </div>
@@ -607,30 +574,61 @@
         </div>
         
         <div class="controls">
-            <button id="simulate-data" class="btn-success">
-                🎮 محاكاة بيانات تلقائية
+            <button class="btn btn-success" id="simulate-data">
+                🎮 محاكاة تلقائية
             </button>
-            <button id="reset-data" class="btn-danger">
+            <button class="btn btn-danger" id="reset-data">
                 🔄 إعادة تعيين
             </button>
         </div>
         
         <div id="system-status" class="status-message status-processing">
-            ⚡ النظام جاهز - اختر طريقة إدخال البيانات
+            ⚡ النظام جاهز - اختر طريقة الإدخال
         </div>
     </div>
 
     <script>
-        // بيانات محاكاة للعرض
+        // كشف معلومات المتصفح
+        function detectBrowser() {
+            const userAgent = navigator.userAgent;
+            let browserName = "متصفح غير معروف";
+            let browserVersion = "غير معروف";
+            
+            if (userAgent.includes("Chrome") && !userAgent.includes("Edg")) {
+                browserName = "Google Chrome";
+                const match = userAgent.match(/Chrome\/([0-9.]+)/);
+                browserVersion = match ? match[1] : "غير معروف";
+            } else if (userAgent.includes("Firefox")) {
+                browserName = "Mozilla Firefox";
+                const match = userAgent.match(/Firefox\/([0-9.]+)/);
+                browserVersion = match ? match[1] : "غير معروف";
+            } else if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) {
+                browserName = "Safari";
+                const match = userAgent.match(/Version\/([0-9.]+)/);
+                browserVersion = match ? match[1] : "غير معروف";
+            } else if (userAgent.includes("Edg")) {
+                browserName = "Microsoft Edge";
+                const match = userAgent.match(/Edg\/([0-9.]+)/);
+                browserVersion = match ? match[1] : "غير معروف";
+            }
+            
+            return { name: browserName, version: browserVersion };
+        }
+
+        // بيانات محاكاة
         const sampleBaccaratData = [
-            "Korean Speed Baccarat 1",
-            "ID: 1055751533-07-21", 
-            "#38 P 16 B 20 T 2 C 4",
-            "PLAYER PAIR 11:1",
-            "BANKER PAIR 11:1",
+            "Baccarat Live",
+            "#38 P 16 B 20 T 2",
             "PLAYER 1:1",
-            "TIE 8:1",
-            "BANKER 0.95:1"
+            "BANKER 0.95:1", 
+            "TIE 8:1"
         ];
 
-    
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.getElementById('video');
+            const cameraContainer = document.getElementById('camera-container');
+            const cameraPlaceholder = document.getElementById('camera-placeholder');
+            const startCameraBtn = document.getElementById('start-camera');
+            const captureFrameBtn = document.getElementById('capture-frame');
+            const autoScanBtn = document.getElementById('auto-scan');
+            const stopCameraBt
