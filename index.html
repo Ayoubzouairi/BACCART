@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قارئ بث مباشر للعبة Baccarat</title>
+    <title>قارئ بث مباشر Baccarat بالكاميرا</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -86,8 +86,47 @@
             padding-bottom: 8px;
         }
         
-        .current-game {
+        .camera-section {
             grid-column: 1 / -1;
+        }
+        
+        .camera-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #000;
+        }
+        
+        #video {
+            width: 100%;
+            display: block;
+        }
+        
+        .camera-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .detection-box {
+            position: absolute;
+            border: 2px dashed #3498db;
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        
+        .detection-label {
+            position: absolute;
+            background-color: rgba(52, 152, 219, 0.8);
+            color: white;
+            padding: 2px 5px;
+            font-size: 12px;
+            border-radius: 3px;
         }
         
         .game-info {
@@ -223,6 +262,14 @@
             background-color: #c0392b;
         }
         
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #219955;
+        }
+        
         footer {
             text-align: center;
             margin-top: 30px;
@@ -243,42 +290,89 @@
         .tie {
             color: var(--warning-color);
         }
+        
+        .status-message {
+            text-align: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .status-success {
+            background-color: rgba(39, 174, 96, 0.2);
+            color: var(--success-color);
+        }
+        
+        .status-error {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--accent-color);
+        }
+        
+        .ocr-results {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>قارئ بث مباشر للعبة Baccarat</h1>
-            <p class="subtitle">تحليل البيانات والتنبؤ بالنتائج بناءً على البيانات السابقة</p>
+            <h1>قارئ بث مباشر Baccarat بالكاميرا</h1>
+            <p class="subtitle">تحليل البيانات والتنبؤ بالنتائج باستخدام قراءة الكاميرا</p>
         </header>
         
         <div class="main-content">
+            <div class="card camera-section">
+                <h2 class="card-title">كاميرا القراءة</h2>
+                <div class="camera-container">
+                    <video id="video" autoplay playsinline></video>
+                    <div class="camera-overlay" id="overlay"></div>
+                </div>
+                <div class="controls">
+                    <button id="start-camera" class="btn-success">تشغيل الكاميرا</button>
+                    <button id="capture-frame" class="btn-success">التقاط وتحليل</button>
+                    <button id="stop-camera" class="btn-danger">إيقاف الكاميرا</button>
+                </div>
+                <div id="camera-status" class="status-message">
+                    الكاميرا غير نشطة - يرجى تشغيل الكاميرا
+                </div>
+                <div class="ocr-results" id="ocr-results">
+                    لم يتم تحليل أي بيانات بعد
+                </div>
+            </div>
+            
             <div class="card current-game">
                 <h2 class="card-title">الجولة الحالية</h2>
                 <div class="game-info">
                     <div class="info-item">
                         <div class="info-label">رقم الجولة</div>
-                        <div class="info-value">#38</div>
+                        <div class="info-value" id="round-number">#38</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">الفائز</div>
-                        <div class="info-value player-win">لاعب (P)</div>
+                        <div class="info-value player-win" id="winner">لاعب (P)</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">نقاط اللاعب</div>
-                        <div class="info-value">16</div>
+                        <div class="info-value" id="player-points">16</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">نقاط البنك</div>
-                        <div class="info-value">20</div>
+                        <div class="info-value" id="banker-points">20</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">المجموع</div>
-                        <div class="info-value">2</div>
+                        <div class="info-value" id="total-points">2</div>
                     </div>
                     <div class="info-item">
                         <div class="info-label">عدد البطاقات</div>
-                        <div class="info-value">4</div>
+                        <div class="info-value" id="cards-count">4</div>
                     </div>
                 </div>
                 
@@ -310,7 +404,7 @@
                 <h2 class="card-title">التنبؤ بالجولة القادمة</h2>
                 <div class="prediction-section">
                     <div class="prediction-title">التنبؤ بناءً على تحليل البيانات السابقة:</div>
-                    <div class="prediction-result">
+                    <div class="prediction-result" id="prediction">
                         الفائز المتوقع: <span class="player-win">لاعب</span> 
                         <span class="probability">72%</span>
                     </div>
@@ -318,47 +412,11 @@
                 
                 <div class="history-section">
                     <h3 class="card-title">سجل الجولات السابقة</h3>
-                    <div class="history-list">
-                        <div class="history-item">
-                            <span>الجولة #38</span>
-                            <span class="player-win">لاعب فاز</span>
-                        </div>
-                        <div class="history-item">
-                            <span>الجولة #37</span>
-                            <span class="banker-win">بنك فاز</span>
-                        </div>
-                        <div class="history-item">
-                            <span>الجولة #36</span>
-                            <span class="player-win">لاعب فاز</span>
-                        </div>
-                        <div class="history-item">
-                            <span>الجولة #35</span>
-                            <span class="tie">تعادل</span>
-                        </div>
-                        <div class="history-item">
-                            <span>الجولة #34</span>
-                            <span class="banker-win">بنك فاز</span>
-                        </div>
-                        <div class="history-item">
-                            <span>الجولة #33</span>
-                            <span class="player-win">لاعب فاز</span>
-                        </div>
-                        <div class="history-item">
-                            <span>الجولة #32</span>
-                            <span class="player-win">لاعب فاز</span>
-                        </div>
-                        <div class="history-item">
-                            <span>الجولة #31</span>
-                            <span class="banker-win">بنك فاز</span>
-                        </div>
+                    <div class="history-list" id="history-list">
+                        <!-- سيتم ملؤه بالجافاسكريبت -->
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="controls">
-            <button id="start-btn">بدء تحليل البث المباشر</button>
-            <button id="reset-btn" class="btn-danger">إعادة تعيين البيانات</button>
         </div>
         
         <footer>
@@ -368,24 +426,171 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const startBtn = document.getElementById('start-btn');
-            const resetBtn = document.getElementById('reset-btn');
+            const video = document.getElementById('video');
+            const startCameraBtn = document.getElementById('start-camera');
+            const captureFrameBtn = document.getElementById('capture-frame');
+            const stopCameraBtn = document.getElementById('stop-camera');
+            const cameraStatus = document.getElementById('camera-status');
+            const ocrResults = document.getElementById('ocr-results');
+            const overlay = document.getElementById('overlay');
             
-            // بيانات محاكاة للجولات السابقة
-            let gameHistory = [
-                { round: 38, winner: 'player' },
-                { round: 37, winner: 'banker' },
-                { round: 36, winner: 'player' },
-                { round: 35, winner: 'tie' },
-                { round: 34, winner: 'banker' },
-                { round: 33, winner: 'player' },
-                { round: 32, winner: 'player' },
-                { round: 31, winner: 'banker' }
-            ];
+            let stream = null;
+            let gameHistory = [];
+            
+            // تهيئة البيانات الأولية
+            initializeData();
+            
+            // تشغيل الكاميرا
+            startCameraBtn.addEventListener('click', async function() {
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: { 
+                            facingMode: 'environment',
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        } 
+                    });
+                    video.srcObject = stream;
+                    cameraStatus.textContent = 'الكاميرا نشطة - يمكنك التقاط صورة للتحليل';
+                    cameraStatus.className = 'status-message status-success';
+                    
+                    // إضافة مربعات الكشف المحاكاة
+                    addDetectionBoxes();
+                    
+                } catch (err) {
+                    console.error('Error accessing camera:', err);
+                    cameraStatus.textContent = 'خطأ في الوصول إلى الكاميرا: ' + err.message;
+                    cameraStatus.className = 'status-message status-error';
+                }
+            });
+            
+            // إيقاف الكاميرا
+            stopCameraBtn.addEventListener('click', function() {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    video.srcObject = null;
+                    stream = null;
+                    cameraStatus.textContent = 'الكاميرا غير نشطة - يرجى تشغيل الكاميرا';
+                    cameraStatus.className = 'status-message';
+                    overlay.innerHTML = '';
+                }
+            });
+            
+            // التقاط وتحليل الإطار
+            captureFrameBtn.addEventListener('click', function() {
+                if (!stream) {
+                    cameraStatus.textContent = 'يرجى تشغيل الكاميرا أولاً';
+                    cameraStatus.className = 'status-message status-error';
+                    return;
+                }
+                
+                // محاكاة تحليل الصورة باستخدام OCR
+                simulateOCR();
+                
+                // إضافة جولة جديدة
+                addNewRound();
+            });
+            
+            // دالة لإضافة مربعات الكشف المحاكاة
+            function addDetectionBoxes() {
+                overlay.innerHTML = '';
+                
+                // مربع كشف رقم الجولة
+                const roundBox = document.createElement('div');
+                roundBox.className = 'detection-box';
+                roundBox.style.width = '200px';
+                roundBox.style.height = '50px';
+                roundBox.style.top = '10%';
+                roundBox.style.left = '10%';
+                
+                const roundLabel = document.createElement('div');
+                roundLabel.className = 'detection-label';
+                roundLabel.textContent = 'رقم الجولة';
+                roundLabel.style.top = '8%';
+                roundLabel.style.left = '10%';
+                
+                // مربع كشف النتائج
+                const resultBox = document.createElement('div');
+                resultBox.className = 'detection-box';
+                resultBox.style.width = '300px';
+                resultBox.style.height = '100px';
+                resultBox.style.top = '30%';
+                resultBox.style.left = '35%';
+                
+                const resultLabel = document.createElement('div');
+                resultLabel.className = 'detection-label';
+                resultLabel.textContent = 'نتائج الجولة';
+                resultLabel.style.top = '28%';
+                resultLabel.style.left = '35%';
+                
+                // مربع كشف خيارات الرهان
+                const betBox = document.createElement('div');
+                betBox.className = 'detection-box';
+                betBox.style.width = '250px';
+                betBox.style.height = '150px';
+                betBox.style.top = '60%';
+                betBox.style.left = '60%';
+                
+                const betLabel = document.createElement('div');
+                betLabel.className = 'detection-label';
+                betLabel.textContent = 'خيارات الرهان';
+                betLabel.style.top = '58%';
+                betLabel.style.left = '60%';
+                
+                overlay.appendChild(roundBox);
+                overlay.appendChild(roundLabel);
+                overlay.appendChild(resultBox);
+                overlay.appendChild(resultLabel);
+                overlay.appendChild(betBox);
+                overlay.appendChild(betLabel);
+            }
+            
+            // دالة لمحاكاة تحليل الصورة باستخدام OCR
+            function simulateOCR() {
+                const sampleData = [
+                    "Korean Speed Baccarat 1",
+                    "Korean Speed Baccarat 1 > MAD 2 – 50,000",
+                    "ID: 1055751533-07-21",
+                    "PLAYER 2",
+                    "#38 P 16 B 20 T 2 C 4 I",
+                    "PLAYER PAIR 11:1",
+                    "BANKER PAIR 11:1",
+                    "PLAYER 1:1",
+                    "TIE 8:1",
+                    "BANKER 0.95:1"
+                ];
+                
+                let resultsHTML = '<strong>نتائج تحليل الصورة:</strong><br>';
+                sampleData.forEach(line => {
+                    resultsHTML += line + '<br>';
+                });
+                
+                ocrResults.innerHTML = resultsHTML;
+                
+                // تحديث حالة الكاميرا
+                cameraStatus.textContent = 'تم تحليل الصورة بنجاح!';
+                cameraStatus.className = 'status-message status-success';
+            }
+            
+            // دالة لتهيئة البيانات
+            function initializeData() {
+                gameHistory = [
+                    { round: 38, winner: 'player', playerPoints: 16, bankerPoints: 20, total: 2, cards: 4 },
+                    { round: 37, winner: 'banker', playerPoints: 12, bankerPoints: 15, total: 7, cards: 4 },
+                    { round: 36, winner: 'player', playerPoints: 18, bankerPoints: 17, total: 5, cards: 4 },
+                    { round: 35, winner: 'tie', playerPoints: 14, bankerPoints: 14, total: 4, cards: 4 },
+                    { round: 34, winner: 'banker', playerPoints: 11, bankerPoints: 19, total: 0, cards: 4 },
+                    { round: 33, winner: 'player', playerPoints: 20, bankerPoints: 18, total: 8, cards: 4 },
+                    { round: 32, winner: 'player', playerPoints: 17, bankerPoints: 15, total: 2, cards: 4 },
+                    { round: 31, winner: 'banker', playerPoints: 13, bankerPoints: 16, total: 9, cards: 4 }
+                ];
+                
+                updateGameDisplay();
+                updatePrediction();
+            }
             
             // دالة لتحديث التنبؤ
             function updatePrediction() {
-                // تحليل البيانات السابقة للتنبؤ
                 const playerWins = gameHistory.filter(game => game.winner === 'player').length;
                 const bankerWins = gameHistory.filter(game => game.winner === 'banker').length;
                 const ties = gameHistory.filter(game => game.winner === 'tie').length;
@@ -407,7 +612,7 @@
                 }
                 
                 // تحديث واجهة المستخدم
-                const predictionElement = document.querySelector('.prediction-result');
+                const predictionElement = document.getElementById('prediction');
                 predictionElement.innerHTML = `الفائز المتوقع: <span class="${predictedWinner === 'لاعب' ? 'player-win' : predictedWinner === 'بنك' ? 'banker-win' : 'tie'}">${predictedWinner}</span> <span class="probability">${probability}%</span>`;
             }
             
@@ -429,10 +634,19 @@
                     selectedWinner = 'tie';
                 }
                 
+                // إنشاء بيانات عشوائية للجولة الجديدة
+                const playerPoints = Math.floor(Math.random() * 10) + 10;
+                const bankerPoints = Math.floor(Math.random() * 10) + 10;
+                const total = (playerPoints + bankerPoints) % 10;
+                
                 // إضافة الجولة الجديدة
                 gameHistory.unshift({
                     round: lastRound + 1,
-                    winner: selectedWinner
+                    winner: selectedWinner,
+                    playerPoints: playerPoints,
+                    bankerPoints: bankerPoints,
+                    total: total,
+                    cards: 4
                 });
                 
                 // تحديث واجهة المستخدم
@@ -442,7 +656,7 @@
             
             // دالة لتحديث عرض الجولات
             function updateGameDisplay() {
-                const historyList = document.querySelector('.history-list');
+                const historyList = document.getElementById('history-list');
                 historyList.innerHTML = '';
                 
                 gameHistory.forEach(game => {
@@ -477,7 +691,7 @@
                 
                 // تحديث الجولة الحالية
                 const currentGame = gameHistory[0];
-                document.querySelector('.info-value:nth-child(2)').textContent = `#${currentGame.round}`;
+                document.getElementById('round-number').textContent = `#${currentGame.round}`;
                 
                 let currentWinnerText = '';
                 let currentWinnerClass = '';
@@ -493,43 +707,15 @@
                     currentWinnerClass = 'tie';
                 }
                 
-                const winnerElement = document.querySelector('.info-value:nth-child(4)');
+                const winnerElement = document.getElementById('winner');
                 winnerElement.textContent = currentWinnerText;
                 winnerElement.className = `info-value ${currentWinnerClass}`;
+                
+                document.getElementById('player-points').textContent = currentGame.playerPoints;
+                document.getElementById('banker-points').textContent = currentGame.bankerPoints;
+                document.getElementById('total-points').textContent = currentGame.total;
+                document.getElementById('cards-count').textContent = currentGame.cards;
             }
-            
-            // إعداد الأزرار
-            startBtn.addEventListener('click', function() {
-                // محاكاة بدء تحليل البث المباشر
-                startBtn.textContent = 'جارٍ التحليل...';
-                startBtn.disabled = true;
-                
-                setTimeout(() => {
-                    addNewRound();
-                    startBtn.textContent = 'بدء تحليل البث المباشر';
-                    startBtn.disabled = false;
-                }, 1500);
-            });
-            
-            resetBtn.addEventListener('click', function() {
-                // إعادة تعيين البيانات
-                gameHistory = [
-                    { round: 38, winner: 'player' },
-                    { round: 37, winner: 'banker' },
-                    { round: 36, winner: 'player' },
-                    { round: 35, winner: 'tie' },
-                    { round: 34, winner: 'banker' },
-                    { round: 33, winner: 'player' },
-                    { round: 32, winner: 'player' },
-                    { round: 31, winner: 'banker' }
-                ];
-                
-                updateGameDisplay();
-                updatePrediction();
-            });
-            
-            // التهيئة الأولية
-            updatePrediction();
         });
     </script>
 </body>
