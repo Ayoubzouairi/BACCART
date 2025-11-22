@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام مراقبة Baccarat الآلي</title>
+    <title>نظام Baccarat بالكاميرا الحقيقية</title>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -99,79 +100,52 @@
             text-align: center;
         }
         
-        .monitor-section {
+        .camera-section {
             grid-column: 1 / -1;
         }
         
-        .monitor-container {
-            background: #000;
+        .camera-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
             border-radius: 12px;
             overflow: hidden;
-            position: relative;
-            height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
+            background: #000;
             border: 3px solid #3498db;
         }
         
-        .monitor-screen {
+        #video {
+            width: 100%;
+            display: block;
+        }
+        
+        #canvas {
+            display: none;
+        }
+        
+        .camera-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #0c2461, #1e3799);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            position: relative;
+            pointer-events: none;
         }
         
-        .baccarat-table {
-            width: 90%;
-            height: 80%;
-            background: #0a3d62;
-            border-radius: 10px;
+        .detection-box {
+            position: absolute;
             border: 2px solid #3498db;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-around;
-            padding: 20px;
+            background-color: rgba(52, 152, 219, 0.1);
         }
         
-        .cards-container {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-            margin: 15px 0;
-        }
-        
-        .player-cards, .banker-cards {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .card-slot {
-            width: 80px;
-            height: 120px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            border: 2px dashed rgba(255, 255, 255, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255, 255, 255, 0.5);
+        .detection-label {
+            position: absolute;
+            background-color: rgba(52, 152, 219, 0.8);
+            color: white;
+            padding: 5px 10px;
             font-size: 14px;
-        }
-        
-        .card-slot.filled {
-            background: #fff;
-            color: #000;
-            border: 2px solid #fff;
-            font-weight: bold;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
         }
         
         .game-info {
@@ -378,7 +352,33 @@
             color: var(--secondary-color);
         }
         
-        .auto-detection {
+        .ocr-results {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-color), #2ecc71);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .auto-mode {
             background: rgba(243, 156, 18, 0.2);
             padding: 15px;
             border-radius: 10px;
@@ -408,16 +408,6 @@
             100% { opacity: 1; transform: scale(1); }
         }
         
-        .analysis-results {
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            font-family: monospace;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        
         .round-badge {
             display: inline-block;
             background: var(--secondary-color);
@@ -425,60 +415,54 @@
             padding: 3px 8px;
             border-radius: 12px;
             font-size: 0.8rem;
-            margin-left: 5px;
+            margin-right: 5px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>نظام مراقبة Baccarat الآلي</h1>
-            <p class="subtitle">تحليل تلقائي للبث المباشر - التعرف على البطاقات والنتائج فوراً</p>
+            <h1>نظام Baccarat بالكاميرا الحقيقية</h1>
+            <p class="subtitle">تحليل تلقائي للبث المباشر باستخدام كاميرا الويب وتقنية OCR</p>
         </header>
         
         <div class="main-content">
-            <div class="card monitor-section">
-                <h2 class="card-title">شاشة المراقبة المباشرة</h2>
-                <div class="monitor-container">
-                    <div class="monitor-screen">
-                        <div class="baccarat-table">
-                            <h3>BACCARAT TABLE</h3>
-                            <div class="cards-container">
-                                <div class="player-section">
-                                    <div class="info-label">PLAYER</div>
-                                    <div class="player-cards">
-                                        <div class="card-slot" id="player-card-1">?</div>
-                                        <div class="card-slot" id="player-card-2">?</div>
-                                        <div class="card-slot" id="player-card-3">?</div>
-                                    </div>
-                                </div>
-                                <div class="banker-section">
-                                    <div class="info-label">BANKER</div>
-                                    <div class="banker-cards">
-                                        <div class="card-slot" id="banker-card-1">?</div>
-                                        <div class="card-slot" id="banker-card-2">?</div>
-                                        <div class="card-slot" id="banker-card-3">?</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="game-result" id="game-result">
-                                <div class="info-label">نتيجة الجولة الحالية</div>
-                                <div class="info-value">بانتظار البطاقات...</div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="card camera-section">
+                <h2 class="card-title">كاميرا المراقبة المباشرة</h2>
+                <div class="camera-container">
+                    <video id="video" autoplay playsinline></video>
+                    <canvas id="canvas"></canvas>
+                    <div class="camera-overlay" id="overlay"></div>
                 </div>
                 
-                <div class="auto-detection">
-                    <div class="info-label">نظام التعرف الآلي</div>
-                    <div class="detection-status">
-                        <div class="pulse-dot"></div>
-                        <span>جاري مراقبة البث المباشر للعبة...</span>
-                    </div>
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
                 </div>
                 
-                <div class="analysis-results" id="analysis-results">
-                    جاهز لتحليل البطاقات والنتائج...
+                <div class="controls">
+                    <button id="start-camera" class="btn-success">
+                        <span>📷</span> تشغيل الكاميرا
+                    </button>
+                    <button id="capture-frame" class="btn-success">
+                        <span>🔍</span> تحليل الصورة
+                    </button>
+                    <button id="stop-camera" class="btn-danger">
+                        <span>⏹️</span> إيقاف الكاميرا
+                    </button>
+                </div>
+                
+                <div class="auto-mode">
+                    <label>
+                        <input type="checkbox" id="auto-toggle"> تفعيل المسح التلقائي كل 3 ثواني
+                    </label>
+                </div>
+                
+                <div id="camera-status" class="status-message">
+                    الكاميرا غير نشطة - يرجى تشغيل الكاميرا لبدء المراقبة
+                </div>
+                
+                <div class="ocr-results" id="ocr-results">
+                    لم يتم تحليل أي بيانات بعد. قم بتشغيل الكاميرا وتوجيهها نحو شاشة Baccarat
                 </div>
             </div>
             
@@ -559,47 +543,64 @@
         </div>
         
         <div class="controls">
-            <button id="simulate-round" class="btn-success">
-                <span>🎮</span> محاكاة جولة جديدة
-            </button>
-            <button id="auto-simulate" class="btn-success">
-                <span>⚡</span> المحاكاة التلقائية
-            </button>
             <button id="reset-data" class="btn-danger">
                 <span>🔄</span> إعادة تعيين البيانات
             </button>
         </div>
         
         <div id="system-status" class="status-message status-processing">
-            النظام يعمل - جاهز لتحليل البطاقات والنتائج من البث المباشر
+            النظام جاهز - يرجى تشغيل الكاميرا لبدء مراقبة البث المباشر
         </div>
         
         <footer>
             <p>تم تطوير هذه الأداة لأغراض تعليمية وتحليلية فقط. المقامرة قد تؤدي إلى خسائر مالية.</p>
-            <p>نظام التعرف الآلي يعمل على تحليل البطاقات والنتائج فور ظهورها في البث المباشر</p>
+            <p>يعمل النظام باستخدام Tesseract.js لتحليل النصوص من الصور عبر الكاميرا</p>
         </footer>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const simulateRoundBtn = document.getElementById('simulate-round');
-            const autoSimulateBtn = document.getElementById('auto-simulate');
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const startCameraBtn = document.getElementById('start-camera');
+            const captureFrameBtn = document.getElementById('capture-frame');
+            const stopCameraBtn = document.getElementById('stop-camera');
             const resetDataBtn = document.getElementById('reset-data');
+            const autoToggle = document.getElementById('auto-toggle');
+            const cameraStatus = document.getElementById('camera-status');
             const systemStatus = document.getElementById('system-status');
-            const analysisResults = document.getElementById('analysis-results');
+            const ocrResults = document.getElementById('ocr-results');
+            const overlay = document.getElementById('overlay');
+            const progressBar = document.getElementById('progress');
             
+            let stream = null;
             let gameHistory = [];
             let currentRound = 38;
-            let autoSimulateInterval = null;
-            let isAutoSimulating = false;
+            let autoScanInterval = null;
+            let isProcessing = false;
             
             // تهيئة البيانات الأولية
             initializeData();
             
-            // محاكاة جولة جديدة
-            simulateRoundBtn.addEventListener('click', function() {
-                simulateNewRound();
-            });
-            
-            // تفعيل/إلغاء المحاكاة التلقائية
-            aut
+            // تشغيل الكاميرا
+            startCameraBtn.addEventListener('click', async function() {
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: { 
+                            facingMode: 'environment',
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        } 
+                    });
+                    video.srcObject = stream;
+                    cameraStatus.textContent = 'الكاميرا نشطة - قم بتوجيهها نحو شاشة Baccarat';
+                    cameraStatus.className = 'status-message status-success';
+                    systemStatus.textContent = 'الكاميرا نشطة - جاري مراقبة البث المباشر';
+                    
+                    // إضافة مربعات الكشف
+                    addDetectionBoxes();
+                    
+                } catch (err) {
+                    console.error('Error accessing camera:', err);
+                    cameraStatus.textContent = 'خطأ في الوصول إلى الكاميرا: ' + err.message;
+                    cameraStatus.className = 'status-message s
