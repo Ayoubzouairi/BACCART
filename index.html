@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام قراءة Baccarat بالكاميرا الحقيقية</title>
+    <title>نظام Baccarat - إصلاح الكاميرا</title>
     <style>
         * {
             margin: 0;
@@ -90,6 +90,10 @@
             overflow: hidden;
             background: #000;
             border: 3px solid #3498db;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         #video {
@@ -99,8 +103,16 @@
             object-fit: cover;
         }
         
-        #canvas {
-            display: none;
+        .camera-placeholder {
+            text-align: center;
+            padding: 40px;
+            color: #bdc3c7;
+        }
+        
+        .camera-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
         }
         
         .camera-overlay {
@@ -155,6 +167,12 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
+        button:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
         .btn-success {
             background: linear-gradient(135deg, #27ae60, #219955);
         }
@@ -165,6 +183,10 @@
         
         .btn-warning {
             background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
         }
         
         .game-info {
@@ -291,6 +313,11 @@
             color: #e74c3c;
         }
         
+        .status-warning {
+            background: rgba(243, 156, 18, 0.3);
+            color: #f39c12;
+        }
+        
         .status-processing {
             background: rgba(52, 152, 219, 0.3);
             color: #3498db;
@@ -339,27 +366,88 @@
             margin-right: 10px;
         }
         
-        .detection-help {
-            text-align: center;
+        .troubleshooting {
+            background: rgba(231, 76, 60, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .troubleshooting h3 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+        
+        .troubleshooting ul {
+            list-style: none;
+            padding-right: 20px;
+        }
+        
+        .troubleshooting li {
+            margin-bottom: 10px;
+            padding-right: 10px;
+            position: relative;
+        }
+        
+        .troubleshooting li:before {
+            content: "•";
+            color: #e74c3c;
+            position: absolute;
+            right: -15px;
+        }
+        
+        .manual-input {
+            background: rgba(52, 152, 219, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
             color: #bdc3c7;
-            font-size: 0.9rem;
-            margin-top: 10px;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #34495e;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .camera-options {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>نظام قراءة Baccarat بالكاميرا</h1>
-            <p class="subtitle">وجه الكاميرا نحو شاشة اللعبة وسيقوم النظام بقراءة النتائج تلقائياً</p>
+            <h1>نظام Baccarat - إصلاح الكاميرا</h1>
+            <p class="subtitle">نظام متكامل مع حلول بديلة في حال عدم عمل الكاميرا</p>
         </header>
         
         <div class="main-content">
             <div class="card camera-section">
-                <h2 class="card-title">كاميرا القراءة المباشرة</h2>
-                <div class="camera-container">
-                    <video id="video" autoplay playsinline></video>
-                    <canvas id="canvas"></canvas>
+                <h2 class="card-title">نظام الكاميرا والمراقبة</h2>
+                
+                <div class="camera-container" id="camera-container">
+                    <video id="video" autoplay playsinline style="display: none;"></video>
+                    <div class="camera-placeholder" id="camera-placeholder">
+                        <i>📷</i>
+                        <p>الكاميرا غير نشطة</p>
+                        <p>انقر على "تشغيل الكاميرا" لبدء المراقبة</p>
+                    </div>
                     <div class="camera-overlay" id="overlay"></div>
                 </div>
                 
@@ -367,37 +455,82 @@
                     <div class="progress" id="progress"></div>
                 </div>
                 
+                <div class="camera-options">
+                    <button id="try-front-camera" class="btn-secondary">
+                        📱 كاميرا أمامية
+                    </button>
+                    <button id="try-back-camera" class="btn-secondary">
+                        📷 كاميرا خلفية
+                    </button>
+                </div>
+                
                 <div class="controls">
                     <button id="start-camera" class="btn-success">
                         📷 تشغيل الكاميرا
                     </button>
-                    <button id="capture-frame" class="btn-success">
+                    <button id="capture-frame" class="btn-success" disabled>
                         🔍 تحليل الصورة
                     </button>
-                    <button id="auto-scan" class="btn-warning">
+                    <button id="auto-scan" class="btn-warning" disabled>
                         ⚡ المسح التلقائي
                     </button>
-                    <button id="stop-camera" class="btn-danger">
+                    <button id="stop-camera" class="btn-danger" disabled>
                         ⏹️ إيقاف الكاميرا
                     </button>
                 </div>
                 
                 <div class="auto-mode">
                     <label>
-                        <input type="checkbox" id="auto-toggle"> تفعيل المسح التلقائي كل 3 ثواني
+                        <input type="checkbox" id="auto-toggle" disabled> تفعيل المسح التلقائي كل 3 ثواني
                     </label>
                 </div>
                 
-                <div id="camera-status" class="status-message">
-                    🔴 الكاميرا غير نشطة - يرجى الضغط على "تشغيل الكاميرا"
-                </div>
-                
-                <div class="detection-help">
-                    💡 توجيهات الاستخدام: وجه الكاميرا نحو شاشة Baccarat بحيث تكون منطقة النتائج واضحة في منتصف الشاشة
+                <div id="camera-status" class="status-message status-warning">
+                    🔴 الكاميرا غير نشطة - انقر على "تشغيل الكاميرا"
                 </div>
                 
                 <div class="ocr-results" id="ocr-results">
                     📝 لم يتم تحليل أي بيانات بعد. سيظهر هنا النص الذي تم قراءته من الصورة.
+                </div>
+                
+                <!-- بدائل في حال عدم عمل الكاميرا -->
+                <div class="manual-input">
+                    <h3>📝 إدخال البيانات يدوياً (بديل الكاميرا)</h3>
+                    <div class="input-group">
+                        <label for="manual-round">رقم الجولة:</label>
+                        <input type="number" id="manual-round" value="39" min="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="manual-winner">الفائز:</label>
+                        <select id="manual-winner">
+                            <option value="player">لاعب (P)</option>
+                            <option value="banker">بنك (B)</option>
+                            <option value="tie">تعادل (T)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="manual-player-points">نقاط اللاعب:</label>
+                        <input type="number" id="manual-player-points" value="15" min="0" max="30">
+                    </div>
+                    <div class="input-group">
+                        <label for="manual-banker-points">نقاط البنك:</label>
+                        <input type="number" id="manual-banker-points" value="18" min="0" max="30">
+                    </div>
+                    <button id="add-manual-data" class="btn-success" style="width: 100%;">
+                        ➕ إضافة البيانات يدوياً
+                    </button>
+                </div>
+                
+                <div class="troubleshooting">
+                    <h3>🔧 إصلاح مشاكل الكاميرا</h3>
+                    <ul>
+                        <li>تأكد من منح الإذن لاستخدام الكاميرا</li>
+                        <li>جرب الكاميرا الأمامية أو الخلفية</li>
+                        <li>تأكد من أن الكاميرا غير مستخدمة في تطبيق آخر</li>
+                        <li>جرب تحديث الصفحة وإعادة المحاولة</li>
+                        <li>استخدم متصفح Chrome أو Firefox لأفضل نتائج</li>
+                        <li>يمكنك استخدام الإدخال اليدوي كبديل</li>
+                    </ul>
                 </div>
             </div>
             
@@ -475,7 +608,7 @@
         
         <div class="controls">
             <button id="simulate-data" class="btn-success">
-                🎮 محاكاة بيانات
+                🎮 محاكاة بيانات تلقائية
             </button>
             <button id="reset-data" class="btn-danger">
                 🔄 إعادة تعيين
@@ -483,7 +616,7 @@
         </div>
         
         <div id="system-status" class="status-message status-processing">
-            ⚡ النظام جاهز - قم بتشغيل الكاميرا لبدء قراءة النتائج
+            ⚡ النظام جاهز - اختر طريقة إدخال البيانات
         </div>
     </div>
 
@@ -491,112 +624,13 @@
         // بيانات محاكاة للعرض
         const sampleBaccaratData = [
             "Korean Speed Baccarat 1",
-            "ID: 1055751533-07-21",
+            "ID: 1055751533-07-21", 
             "#38 P 16 B 20 T 2 C 4",
             "PLAYER PAIR 11:1",
-            "BANKER PAIR 11:1", 
+            "BANKER PAIR 11:1",
             "PLAYER 1:1",
             "TIE 8:1",
             "BANKER 0.95:1"
         ];
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const video = document.getElementById('video');
-            const canvas = document.getElementById('canvas');
-            const startCameraBtn = document.getElementById('start-camera');
-            const captureFrameBtn = document.getElementById('capture-frame');
-            const autoScanBtn = document.getElementById('auto-scan');
-            const stopCameraBtn = document.getElementById('stop-camera');
-            const simulateDataBtn = document.getElementById('simulate-data');
-            const resetDataBtn = document.getElementById('reset-data');
-            const autoToggle = document.getElementById('auto-toggle');
-            const cameraStatus = document.getElementById('camera-status');
-            const systemStatus = document.getElementById('system-status');
-            const ocrResults = document.getElementById('ocr-results');
-            const overlay = document.getElementById('overlay');
-            const progressBar = document.getElementById('progress');
-            
-            let stream = null;
-            let gameHistory = [];
-            let currentRound = 38;
-            let autoScanInterval = null;
-            let isAutoScanning = false;
-            
-            // تهيئة البيانات
-            initializeData();
-            
-            // تشغيل الكاميرا
-            startCameraBtn.addEventListener('click', async function() {
-                try {
-                    stream = await navigator.mediaDevices.getUserMedia({ 
-                        video: { 
-                            facingMode: 'environment',
-                            width: { ideal: 1280 },
-                            height: { ideal: 720 }
-                        } 
-                    });
-                    video.srcObject = stream;
-                    cameraStatus.textContent = '🟢 الكاميرا نشطة - قم بتوجيهها نحو شاشة Baccarat';
-                    cameraStatus.className = 'status-message status-success';
-                    systemStatus.textContent = '🎯 الكاميرا جاهزة - يمكنك بدء المسح الآن';
-                    
-                    // إضافة مناطق الكشف
-                    addDetectionAreas();
-                    
-                } catch (err) {
-                    console.error('خطأ في تشغيل الكاميرا:', err);
-                    cameraStatus.textContent = '🔴 خطأ: ' + err.message;
-                    cameraStatus.className = 'status-message status-error';
-                }
-            });
-            
-            // إيقاف الكاميرا
-            stopCameraBtn.addEventListener('click', function() {
-                if (stream) {
-                    stream.getTracks().forEach(track => track.stop());
-                    video.srcObject = null;
-                    stream = null;
-                    cameraStatus.textContent = '🔴 الكاميرا غير نشطة';
-                    cameraStatus.className = 'status-message status-error';
-                    systemStatus.textContent = '⚡ النظام جاهز - قم بتشغيل الكاميرا لبدء قراءة النتائج';
-                    overlay.innerHTML = '';
-                    
-                    if (autoScanInterval) {
-                        clearInterval(autoScanInterval);
-                        autoScanInterval = null;
-                        autoToggle.checked = false;
-                        isAutoScanning = false;
-                        autoScanBtn.textContent = '⚡ المسح التلقائي';
-                    }
-                }
-            });
-            
-            // تحليل الصورة
-            captureFrameBtn.addEventListener('click', function() {
-                if (!stream) {
-                    cameraStatus.textContent = '🔴 يرجى تشغيل الكاميرا أولاً';
-                    return;
-                }
-                simulateOCRProcessing();
-            });
-            
-            // المسح التلقائي
-            autoScanBtn.addEventListener('click', function() {
-                if (!stream) {
-                    cameraStatus.textContent = '🔴 يرجى تشغيل الكاميرا أولاً';
-                    return;
-                }
-                
-                if (!isAutoScanning) {
-                    isAutoScanning = true;
-                    autoScanBtn.textContent = '⏸️ إيقاف المسح';
-                    autoToggle.checked = true;
-                    systemStatus.textContent = '🔄 المسح التلقائي نشط - يجري التحليل كل 3 ثواني';
-                    
-                    autoScanInterval = setInterval(function() {
-                        simulateOCRProcessing();
-                    }, 3000);
-                } else {
-                    isAutoScanning = false;
-                    autoScanBtn.textContent = '⚡ المسح التلقائي';
-                    autoT
+    
