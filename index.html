@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قارئ بث مباشر Baccarat بالكاميرا</title>
+    <title>قارئ بث مباشر Baccarat - نظام حقيقي</title>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -103,6 +104,10 @@
         #video {
             width: 100%;
             display: block;
+        }
+        
+        #canvas {
+            display: none;
         }
         
         .camera-overlay {
@@ -237,6 +242,7 @@
             justify-content: center;
             gap: 15px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
         
         button {
@@ -318,13 +324,37 @@
             max-height: 200px;
             overflow-y: auto;
         }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--success-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .auto-mode {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>قارئ بث مباشر Baccarat بالكاميرا</h1>
-            <p class="subtitle">تحليل البيانات والتنبؤ بالنتائج باستخدام قراءة الكاميرا</p>
+            <h1>قارئ بث مباشر Baccarat - نظام حقيقي</h1>
+            <p class="subtitle">تحليل البيانات باستخدام الكاميرا و OCR حقيقي</p>
         </header>
         
         <div class="main-content">
@@ -332,13 +362,27 @@
                 <h2 class="card-title">كاميرا القراءة</h2>
                 <div class="camera-container">
                     <video id="video" autoplay playsinline></video>
+                    <canvas id="canvas"></canvas>
                     <div class="camera-overlay" id="overlay"></div>
                 </div>
+                
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                
                 <div class="controls">
                     <button id="start-camera" class="btn-success">تشغيل الكاميرا</button>
                     <button id="capture-frame" class="btn-success">التقاط وتحليل</button>
+                    <button id="auto-mode" class="btn-success">الوضع التلقائي</button>
                     <button id="stop-camera" class="btn-danger">إيقاف الكاميرا</button>
                 </div>
+                
+                <div class="auto-mode">
+                    <label>
+                        <input type="checkbox" id="auto-toggle"> تفعيل المسح التلقائي كل 5 ثواني
+                    </label>
+                </div>
+                
                 <div id="camera-status" class="status-message">
                     الكاميرا غير نشطة - يرجى تشغيل الكاميرا
                 </div>
@@ -421,21 +465,28 @@
         
         <footer>
             <p>تم تطوير هذه الأداة لأغراض تعليمية وتحليلية فقط. المقامرة قد تؤدي إلى خسائر مالية.</p>
+            <p>يعمل النظام باستخدام Tesseract.js لتحليل النصوص من الصور</p>
         </footer>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
             const startCameraBtn = document.getElementById('start-camera');
             const captureFrameBtn = document.getElementById('capture-frame');
             const stopCameraBtn = document.getElementById('stop-camera');
+            const autoModeBtn = document.getElementById('auto-mode');
+            const autoToggle = document.getElementById('auto-toggle');
             const cameraStatus = document.getElementById('camera-status');
             const ocrResults = document.getElementById('ocr-results');
             const overlay = document.getElementById('overlay');
+            const progressBar = document.getElementById('progress');
             
             let stream = null;
             let gameHistory = [];
+            let autoScanInterval = null;
+            let isProcessing = false;
             
             // تهيئة البيانات الأولية
             initializeData();
@@ -473,10 +524,17 @@
                     cameraStatus.textContent = 'الكاميرا غير نشطة - يرجى تشغيل الكاميرا';
                     cameraStatus.className = 'status-message';
                     overlay.innerHTML = '';
+                    
+                    // إيقاف المسح التلقائي
+                    if (autoScanInterval) {
+                        clearInterval(autoScanInterval);
+                        autoScanInterval = null;
+                    }
+                    autoToggle.checked = false;
                 }
             });
             
-            // التقاط وتحليل الإطار
+            // التقاط وتحليل الإطار باستخدام OCR حقيقي
             captureFrameBtn.addEventListener('click', function() {
                 if (!stream) {
                     cameraStatus.textContent = 'يرجى تشغيل الكاميرا أولاً';
@@ -484,239 +542,59 @@
                     return;
                 }
                 
-                // محاكاة تحليل الصورة باستخدام OCR
-                simulateOCR();
-                
-                // إضافة جولة جديدة
-                addNewRound();
+                captureAndAnalyze();
             });
             
-            // دالة لإضافة مربعات الكشف المحاكاة
-            function addDetectionBoxes() {
-                overlay.innerHTML = '';
-                
-                // مربع كشف رقم الجولة
-                const roundBox = document.createElement('div');
-                roundBox.className = 'detection-box';
-                roundBox.style.width = '200px';
-                roundBox.style.height = '50px';
-                roundBox.style.top = '10%';
-                roundBox.style.left = '10%';
-                
-                const roundLabel = document.createElement('div');
-                roundLabel.className = 'detection-label';
-                roundLabel.textContent = 'رقم الجولة';
-                roundLabel.style.top = '8%';
-                roundLabel.style.left = '10%';
-                
-                // مربع كشف النتائج
-                const resultBox = document.createElement('div');
-                resultBox.className = 'detection-box';
-                resultBox.style.width = '300px';
-                resultBox.style.height = '100px';
-                resultBox.style.top = '30%';
-                resultBox.style.left = '35%';
-                
-                const resultLabel = document.createElement('div');
-                resultLabel.className = 'detection-label';
-                resultLabel.textContent = 'نتائج الجولة';
-                resultLabel.style.top = '28%';
-                resultLabel.style.left = '35%';
-                
-                // مربع كشف خيارات الرهان
-                const betBox = document.createElement('div');
-                betBox.className = 'detection-box';
-                betBox.style.width = '250px';
-                betBox.style.height = '150px';
-                betBox.style.top = '60%';
-                betBox.style.left = '60%';
-                
-                const betLabel = document.createElement('div');
-                betLabel.className = 'detection-label';
-                betLabel.textContent = 'خيارات الرهان';
-                betLabel.style.top = '58%';
-                betLabel.style.left = '60%';
-                
-                overlay.appendChild(roundBox);
-                overlay.appendChild(roundLabel);
-                overlay.appendChild(resultBox);
-                overlay.appendChild(resultLabel);
-                overlay.appendChild(betBox);
-                overlay.appendChild(betLabel);
-            }
-            
-            // دالة لمحاكاة تحليل الصورة باستخدام OCR
-            function simulateOCR() {
-                const sampleData = [
-                    "Korean Speed Baccarat 1",
-                    "Korean Speed Baccarat 1 > MAD 2 – 50,000",
-                    "ID: 1055751533-07-21",
-                    "PLAYER 2",
-                    "#38 P 16 B 20 T 2 C 4 I",
-                    "PLAYER PAIR 11:1",
-                    "BANKER PAIR 11:1",
-                    "PLAYER 1:1",
-                    "TIE 8:1",
-                    "BANKER 0.95:1"
-                ];
-                
-                let resultsHTML = '<strong>نتائج تحليل الصورة:</strong><br>';
-                sampleData.forEach(line => {
-                    resultsHTML += line + '<br>';
-                });
-                
-                ocrResults.innerHTML = resultsHTML;
-                
-                // تحديث حالة الكاميرا
-                cameraStatus.textContent = 'تم تحليل الصورة بنجاح!';
-                cameraStatus.className = 'status-message status-success';
-            }
-            
-            // دالة لتهيئة البيانات
-            function initializeData() {
-                gameHistory = [
-                    { round: 38, winner: 'player', playerPoints: 16, bankerPoints: 20, total: 2, cards: 4 },
-                    { round: 37, winner: 'banker', playerPoints: 12, bankerPoints: 15, total: 7, cards: 4 },
-                    { round: 36, winner: 'player', playerPoints: 18, bankerPoints: 17, total: 5, cards: 4 },
-                    { round: 35, winner: 'tie', playerPoints: 14, bankerPoints: 14, total: 4, cards: 4 },
-                    { round: 34, winner: 'banker', playerPoints: 11, bankerPoints: 19, total: 0, cards: 4 },
-                    { round: 33, winner: 'player', playerPoints: 20, bankerPoints: 18, total: 8, cards: 4 },
-                    { round: 32, winner: 'player', playerPoints: 17, bankerPoints: 15, total: 2, cards: 4 },
-                    { round: 31, winner: 'banker', playerPoints: 13, bankerPoints: 16, total: 9, cards: 4 }
-                ];
-                
-                updateGameDisplay();
-                updatePrediction();
-            }
-            
-            // دالة لتحديث التنبؤ
-            function updatePrediction() {
-                const playerWins = gameHistory.filter(game => game.winner === 'player').length;
-                const bankerWins = gameHistory.filter(game => game.winner === 'banker').length;
-                const ties = gameHistory.filter(game => game.winner === 'tie').length;
-                
-                const totalGames = playerWins + bankerWins + ties;
-                
-                let predictedWinner = '';
-                let probability = 0;
-                
-                if (playerWins > bankerWins) {
-                    predictedWinner = 'لاعب';
-                    probability = Math.round((playerWins / totalGames) * 100);
-                } else if (bankerWins > playerWins) {
-                    predictedWinner = 'بنك';
-                    probability = Math.round((bankerWins / totalGames) * 100);
+            // تفعيل/إلغاء الوضع التلقائي
+            autoToggle.addEventListener('change', function() {
+                if (this.checked && stream) {
+                    // بدء المسح التلقائي
+                    autoScanInterval = setInterval(function() {
+                        if (!isProcessing) {
+                            captureAndAnalyze();
+                        }
+                    }, 5000);
+                    cameraStatus.textContent = 'تم تفعيل المسح التلقائي - يجري التحليل كل 5 ثواني';
                 } else {
-                    predictedWinner = 'تعادل';
-                    probability = Math.round((ties / totalGames) * 100);
-                }
-                
-                // تحديث واجهة المستخدم
-                const predictionElement = document.getElementById('prediction');
-                predictionElement.innerHTML = `الفائز المتوقع: <span class="${predictedWinner === 'لاعب' ? 'player-win' : predictedWinner === 'بنك' ? 'banker-win' : 'tie'}">${predictedWinner}</span> <span class="probability">${probability}%</span>`;
-            }
-            
-            // دالة لإضافة جولة جديدة
-            function addNewRound() {
-                const lastRound = gameHistory[0].round;
-                const winners = ['player', 'banker', 'tie'];
-                const weights = [45, 45, 10]; // نسب احتمالية (لاعب، بنك، تعادل)
-                
-                // اختيار فائز عشوائي مع مراعاة الأوزان
-                let randomValue = Math.random() * 100;
-                let selectedWinner = '';
-                
-                if (randomValue < weights[0]) {
-                    selectedWinner = 'player';
-                } else if (randomValue < weights[0] + weights[1]) {
-                    selectedWinner = 'banker';
-                } else {
-                    selectedWinner = 'tie';
-                }
-                
-                // إنشاء بيانات عشوائية للجولة الجديدة
-                const playerPoints = Math.floor(Math.random() * 10) + 10;
-                const bankerPoints = Math.floor(Math.random() * 10) + 10;
-                const total = (playerPoints + bankerPoints) % 10;
-                
-                // إضافة الجولة الجديدة
-                gameHistory.unshift({
-                    round: lastRound + 1,
-                    winner: selectedWinner,
-                    playerPoints: playerPoints,
-                    bankerPoints: bankerPoints,
-                    total: total,
-                    cards: 4
-                });
-                
-                // تحديث واجهة المستخدم
-                updateGameDisplay();
-                updatePrediction();
-            }
-            
-            // دالة لتحديث عرض الجولات
-            function updateGameDisplay() {
-                const historyList = document.getElementById('history-list');
-                historyList.innerHTML = '';
-                
-                gameHistory.forEach(game => {
-                    const historyItem = document.createElement('div');
-                    historyItem.className = 'history-item';
-                    
-                    const roundSpan = document.createElement('span');
-                    roundSpan.textContent = `الجولة #${game.round}`;
-                    
-                    const winnerSpan = document.createElement('span');
-                    let winnerText = '';
-                    let winnerClass = '';
-                    
-                    if (game.winner === 'player') {
-                        winnerText = 'لاعب فاز';
-                        winnerClass = 'player-win';
-                    } else if (game.winner === 'banker') {
-                        winnerText = 'بنك فاز';
-                        winnerClass = 'banker-win';
-                    } else {
-                        winnerText = 'تعادل';
-                        winnerClass = 'tie';
+                    // إيقاف المسح التلقائي
+                    if (autoScanInterval) {
+                        clearInterval(autoScanInterval);
+                        autoScanInterval = null;
                     }
-                    
-                    winnerSpan.textContent = winnerText;
-                    winnerSpan.className = winnerClass;
-                    
-                    historyItem.appendChild(roundSpan);
-                    historyItem.appendChild(winnerSpan);
-                    historyList.appendChild(historyItem);
-                });
-                
-                // تحديث الجولة الحالية
-                const currentGame = gameHistory[0];
-                document.getElementById('round-number').textContent = `#${currentGame.round}`;
-                
-                let currentWinnerText = '';
-                let currentWinnerClass = '';
-                
-                if (currentGame.winner === 'player') {
-                    currentWinnerText = 'لاعب (P)';
-                    currentWinnerClass = 'player-win';
-                } else if (currentGame.winner === 'banker') {
-                    currentWinnerText = 'بنك (B)';
-                    currentWinnerClass = 'banker-win';
-                } else {
-                    currentWinnerText = 'تعادل (T)';
-                    currentWinnerClass = 'tie';
+                    if (stream) {
+                        cameraStatus.textContent = 'الكاميرا نشطة - يمكنك التقاط صورة للتحليل';
+                    }
                 }
+            });
+            
+            // دالة للتقاط الصورة وتحليلها
+            async function captureAndAnalyze() {
+                if (isProcessing) return;
                 
-                const winnerElement = document.getElementById('winner');
-                winnerElement.textContent = currentWinnerText;
-                winnerElement.className = `info-value ${currentWinnerClass}`;
+                isProcessing = true;
+                cameraStatus.textContent = 'جاري معالجة الصورة...';
+                cameraStatus.className = 'status-message';
                 
-                document.getElementById('player-points').textContent = currentGame.playerPoints;
-                document.getElementById('banker-points').textContent = currentGame.bankerPoints;
-                document.getElementById('total-points').textContent = currentGame.total;
-                document.getElementById('cards-count').textContent = currentGame.cards;
-            }
-        });
-    </script>
-</body>
-</html>
+                try {
+                    // التقاط الصورة من الفيديو
+                    const context = canvas.getContext('2d');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    
+                    // تحسين الصورة قبل التحليل
+                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                    enhanceImage(imageData);
+                    context.putImageData(imageData, 0, 0);
+                    
+                    // استخدام Tesseract.js لتحليل النص
+                    progressBar.style.width = '0%';
+                    
+                    const { data: { text, confidence } } = await Tesseract.recognize(
+                        canvas,
+                        'eng',
+                        { 
+                            logger: m => {
+                                if (m.status === 'recognizing text') {
+                                    const progress = Math.round(m.progress * 100);
+                                    progressBar.style
