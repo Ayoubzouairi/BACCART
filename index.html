@@ -1,205 +1,812 @@
 <!DOCTYPE html>
-
-<html dir="rtl" lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>حاسبة الفرص المزدوجة - قاعدة بيانات شاملة</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة الفرص المزدوجة - قاعدة بيانات شاملة</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
 
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<button class="theme-toggle" id="theme-toggle">🌙</button>
-<div class="container">
-<header>
-<h1>🦾 حاسبة الفرص المزدوجة - قاعدة بيانات شاملة</h1>
-<p class="subtitle">تحليل إحصائي متقدم لنتائج المباريات - قاعدة بيانات موسعة لجميع أندية العالم</p>
-</header>
-<div class="main-content">
-<div class="input-section">
-<h2>إدخال البيانات</h2>
-<div class="league-filter">
-<h3>🔍 اختر الدوري</h3>
-<select id="league-select" onchange="filterTeamsByLeague()">
-<option value="all">جميع الدوريات</option>
-<option value="premier">الدوري الإنجليزي</option>
-<option value="laliga">الدوري الإسباني</option>
-<option value="seriea">الدوري الإيطالي</option>
-<option value="bundesliga">الدوري الألماني</option>
-<option value="ligue1">الدوري الفرنسي</option>
-<option value="saudi">الدوري السعودي</option>
-<option value="mls">الدوري الأمريكي</option>
-<option value="brazil">الدوري البرازيلي</option>
-<option value="argentina">الدوري الأرجنتيني</option>
-<option value="portugal">الدوري البرتغالي</option>
-<option value="netherlands">الدوري الهولندي</option>
-<option value="turkey">الدوري التركي</option>
-<option value="russia">الدوري الروسي</option>
-<option value="belgium">الدوري البلجيكي</option>
-<option value="scotland">الدوري الاسكتلندي</option>
-<option value="mexico">الدوري المكسيكي</option>
-<option value="japan">الدوري الياباني</option>
-<option value="korea">الدوري الكوري</option>
-<option value="china">الدوري الصيني</option>
-<option value="uae">الدوري الإماراتي</option>
-<option value="qatar">الدوري القطري</option>
-<option value="egypt">الدوري المصري</option>
-<option value="morocco">الدوري المغربي</option>
-<option value="algeria">الدوري الجزائري</option>
-<option value="tunisia">الدوري التونسي</option>
-<option value="greece">الدوري اليوناني</option>
-<option value="switzerland">الدوري السويسري</option>
-<option value="austria">الدوري النمساوي</option>
-<option value="denmark">الدوري الدنماركي</option>
-<option value="sweden">الدوري السويدي</option>
-<option value="norway">الدوري النرويجي</option>
-<option value="poland">الدوري البولندي</option>
-<option value="czech">الدوري التشيكي</option>
-<option value="ukraine">الدوري الأوكراني</option>
-<option value="croatia">الدوري الكرواتي</option>
-<option value="serbia">الدوري الصربي</option>
-<option value="romania">الدوري الروماني</option>
-<option value="bulgaria">الدوري البلغاري</option>
-<option value="hungary">الدوري المجري</option>
-<option value="slovakia">الدوري السلوفاكي</option>
-<option value="slovenia">الدوري السلوفيني</option>
-<option value="israel">الدوري الإسرائيلي</option>
-<option value="cyprus">الدوري القبرصي</option>
-<option value="iceland">الدوري الآيسلندي</option>
-<option value="finland">الدوري الفنلندي</option>
-<option value="ireland">الدوري الأيرلندي</option>
-<option value="wales">الدوري الويلزي</option>
-<option value="northern_ireland">الدوري الأيرلندي الشمالي</option>
-<option value="colombia">الدوري الكولومبي</option>
-<option value="chile">الدوري التشيلي</option>
-<option value="peru">الدوري البيروفي</option>
-<option value="ecuador">الدوري الإكوادوري</option>
-<option value="uruguay">الدوري الأوروغواياني</option>
-<option value="paraguay">الدوري الباراغواياني</option>
-<option value="bolivia">الدوري البوليفي</option>
-<option value="venezuela">الدوري الفنزويلي</option>
-<option value="costa_rica">الدوري الكوستاريكي</option>
-<option value="honduras">الدوري الهندوراسي</option>
-<option value="el_salvador">الدوري السلفادوري</option>
-<option value="guatemala">الدوري الغواتيمالي</option>
-<option value="panama">الدوري البنمي</option>
-<option value="jamaica">الدوري الجامايكي</option>
-<option value="trinidad">الدوري الترينيدادي</option>
-<option value="australia">الدوري الأسترالي</option>
-<option value="new_zealand">الدوري النيوزيلندي</option>
-<option value="india">الدوري الهندي</option>
-<option value="thailand">الدوري التايلاندي</option>
-<option value="vietnam">الدوري الفيتنامي</option>
-<option value="malaysia">الدوري الماليزي</option>
-<option value="indonesia">الدوري الإندونيسي</option>
-<option value="singapore">الدوري السنغافوري</option>
-<option value="philippines">الدوري الفلبيني</option>
-<option value="hong_kong">الدوري الهونغ كونغي</option>
-<option value="iran">الدوري الإيراني</option>
-<option value="iraq">الدوري العراقي</option>
-<option value="jordan">الدوري الأردني</option>
-<option value="lebanon">الدوري اللبناني</option>
-<option value="syria">الدوري السوري</option>
-<option value="palestine">الدوري الفلسطيني</option>
-<option value="kuwait">الدوري الكويتي</option>
-<option value="bahrain">الدوري البحريني</option>
-<option value="oman">الدوري العماني</option>
-<option value="yemen">الدوري اليمني</option>
-<option value="sudan">الدوري السوداني</option>
-<option value="ethiopia">الدوري الإثيوبي</option>
-<option value="kenya">الدوري الكيني</option>
-<option value="uganda">الدوري الأوغندي</option>
-<option value="tanzania">الدوري التنزاني</option>
-<option value="ghana">الدوري الغاني</option>
-<option value="nigeria">الدوري النيجيري</option>
-<option value="cameroon">الدوري الكاميروني</option>
-<option value="ivory_coast">الدوري الإيفواري</option>
-<option value="senegal">الدوري السنغالي</option>
-<option value="mali">الدوري المالي</option>
-<option value="dr_congo">الدوري الكونغولي الديمقراطي</option>
-<option value="congo">الدوري الكونغولي</option>
-<option value="zambia">الدوري الزامبي</option>
-<option value="zimbabwe">الدوري الزيمبابوي</option>
-<option value="south_africa">الدوري الجنوب أفريقي</option>
-<option value="angola">الدوري الأنغولي</option>
-<option value="mozambique">الدوري الموزمبيقي</option>
-</select>
-</div>
-<div class="team-input">
-<h3>الفريق الأول</h3>
-<div class="autocomplete">
-<input class="search-input" id="team1-search" onkeyup="showSuggestions(this.value, 'team1')" placeholder="🔍 ابدأ بكتابة اسم الفريق الأول..." type="text"/>
-<div class="suggestions-box" id="team1-suggestions"></div>
-</div>
-<h4>نتائج آخر 5 مباريات:</h4>
-<div id="team1-results">
-<!-- سيتم إضافة أزرار النتائج هنا بواسطة JavaScript -->
-</div>
-<h4>إحصائيات الأهداف:</h4>
-<div id="team1-goals">
-<!-- سيتم إضافة حقول الأهداف هنا بواسطة JavaScript -->
-</div>
-<button class="reset-btn" onclick="resetTeamData('team1')">
-                        🔄 إعادة تعيين الفريق الأول
-                    </button>
-</div>
-<div class="team-input">
-<h3>الفريق الثاني</h3>
-<div class="autocomplete">
-<input class="search-input" id="team2-search" onkeyup="showSuggestions(this.value, 'team2')" placeholder="🔍 ابدأ بكتابة اسم الفريق الثاني..." type="text"/>
-<div class="suggestions-box" id="team2-suggestions"></div>
-</div>
-<h4>نتائج آخر 5 مباريات:</h4>
-<div id="team2-results">
-<!-- سيتم إضافة أزرار النتائج هنا بواسطة JavaScript -->
-</div>
-<h4>إحصائيات الأهداف:</h4>
-<div id="team2-goals">
-<!-- سيتم إضافة حقول الأهداف هنا بواسطة JavaScript -->
-</div>
-<button class="reset-btn" onclick="resetTeamData('team2')">
-                        🔄 إعادة تعيين الفريق الثاني
-                    </button>
-</div>
-<button class="reset-btn" onclick="resetAllData()" style="background: #ff9800;">
-                    🗑️ إعادة تعيين كل البيانات
-                </button>
-<button class="calculate-btn" id="calculate-btn">🧮 احسب الفرص المزدوجة</button>
-</div>
-<div class="result-section">
-<h2>النتائج والتحليل المتقدم</h2>
-<div id="results-container">
-<p style="text-align: center; padding: 20px;">سيظهر تحليل الفرص المزدوجة هنا بعد إدخال البيانات</p>
-</div>
-<div class="team-stats" id="team-stats" style="display: none;">
-<!-- سيتم إضافة إحصائيات الفريقين هنا -->
-</div>
-<div class="goals-prediction" id="goals-prediction" style="display: none;">
-<!-- سيتم إضافة توقع الأهداف هنا -->
-</div>
-<div class="match-history" id="match-history" style="display: none;">
-<h3>سجل المباريات</h3>
-<table class="history-table">
-<thead>
-<tr>
-<th>الفريق</th>
-<th>آخر 5 مباريات</th>
-<th>النقاط</th>
-<th>الأهداف</th>
-</tr>
-</thead>
-<tbody id="history-body">
-<!-- سيتم ملء هذا الجدول بواسطة JavaScript -->
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<footer>
-<p>🦾 تم التطوير باستخدام خوارزميات إحصائية متقدمة لتحليل نتائج المباريات - قاعدة بيانات شاملة تضم أكثر من 2000 نادي من جميع أنحاء العالم</p>
-</footer>
-</div>
+        body.night-mode {
+            background: linear-gradient(135deg, #0f1a2e 0%, #1a2b4e 100%);
+            color: #e0e0e0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
 
-<script src="script.js"></script>
-</body>
-</html>
+        .night-mode header {
+            background: rgba(0, 0, 0, 0.4);
+            color: #e0e0e0;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .input-section {
+            background: #2d3748;
+            color: #e0e0e0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .result-section {
+            flex: 2;
+            min-width: 300px;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .result-section {
+            background: #2d3748;
+            color: #e0e0e0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .team-input {
+            margin-bottom: 25px;
+        }
+        
+        h2 {
+            color: #2a5298;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode h2 {
+            color: #63b3ed;
+            border-bottom-color: #4a5568;
+        }
+        
+        h3 {
+            color: #2a5298;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode h3 {
+            color: #63b3ed;
+        }
+        
+        h4 {
+            color: #555;
+            margin: 15px 0 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode h4 {
+            color: #cbd5e0;
+        }
+        
+        .team-name {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .team-name:focus {
+            border-color: #2a5298;
+            outline: none;
+        }
+
+        .night-mode .team-name {
+            background: #4a5568;
+            border-color: #718096;
+            color: #e0e0e0;
+        }
+
+        .night-mode .team-name:focus {
+            border-color: #63b3ed;
+        }
+        
+        .match-results {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .result-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .win {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .draw {
+            background-color: #FFC107;
+            color: black;
+        }
+        
+        .lose {
+            background-color: #F44336;
+            color: white;
+        }
+        
+        .result-btn.selected {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.5);
+        }
+        
+        .goals-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        
+        .goals-input input {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .goals-input input {
+            background: #4a5568;
+            border-color: #718096;
+            color: #e0e0e0;
+        }
+        
+        .reset-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .reset-btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .night-mode .theme-toggle {
+            background: rgba(0, 0, 0, 0.3);
+            color: #ffd700;
+        }
+        
+        .calculate-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+            margin-top: 20px;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .night-mode .calculate-btn {
+            background: linear-gradient(135deg, #63b3ed 0%, #3182ce 100%);
+        }
+        
+        .probability-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .probability-card {
+            background: #4a5568;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .probability-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .probability-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2a5298;
+            text-align: center;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .probability-value {
+            color: #63b3ed;
+        }
+        
+        .probability-bar {
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .probability-bar {
+            background: #718096;
+        }
+        
+        .probability-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #2a5298);
+            border-radius: 10px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .night-mode .probability-fill {
+            background: linear-gradient(90deg, #68d391, #63b3ed);
+        }
+        
+        .accuracy-high {
+            color: #4CAF50;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .accuracy-high {
+            color: #68d391;
+        }
+        
+        .team-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .stats-card {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .stats-card {
+            background: #4a5568;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stats-title {
+            font-weight: bold;
+            color: #2a5298;
+            margin-bottom: 10px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .stats-title {
+            color: #63b3ed;
+            border-bottom-color: #718096;
+        }
+        
+        .goals-prediction {
+            margin-top: 20px;
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+            border-right: 4px solid #4CAF50;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .goals-prediction {
+            background: #2d4a3c;
+            border-right-color: #68d391;
+        }
+        
+        .prediction-title {
+            font-weight: bold;
+            color: #2a5298;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .prediction-title {
+            color: #63b3ed;
+        }
+        
+        .prediction-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4CAF50;
+            text-align: center;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .prediction-value {
+            color: #68d391;
+        }
+        
+        .match-history {
+            margin-top: 30px;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .history-table th, .history-table td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .history-table th,
+        .night-mode .history-table td {
+            border-bottom-color: #718096;
+        }
+        
+        .history-table th {
+            background-color: #2a5298;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .history-table th {
+            background-color: #63b3ed;
+            color: #1a202c;
+        }
+        
+        .history-table tr:hover {
+            background-color: #f1f1f1;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .history-table tr:hover {
+            background-color: #4a5568;
+        }
+        
+        .team1-color {
+            color: #2a5298;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .team1-color {
+            color: #63b3ed;
+        }
+        
+        .team2-color {
+            color: #4CAF50;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .team2-color {
+            color: #68d391;
+        }
+        
+        .goals-summary {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #2a5298;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .goals-summary {
+            color: #63b3ed;
+        }
+
+        /* الأنماط الجديدة للبحث التلقائي */
+        .league-filter {
+            margin-bottom: 20px;
+        }
+
+        .league-filter select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .league-filter select {
+            background: #4a5568;
+            border-color: #718096;
+            color: #e0e0e0;
+        }
+
+        .autocomplete {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #2a5298;
+            outline: none;
+        }
+
+        .night-mode .search-input {
+            background: #4a5568;
+            border-color: #718096;
+            color: #e0e0e0;
+        }
+
+        .night-mode .search-input:focus {
+            border-color: #63b3ed;
+        }
+
+        .suggestions-box {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .night-mode .suggestions-box {
+            background: #4a5568;
+            border-color: #718096;
+            color: #e0e0e0;
+        }
+
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            transition: all 0.2s;
+        }
+
+        .suggestion-item:hover {
+            background: #f0f0f0;
+        }
+
+        .night-mode .suggestion-item {
+            border-bottom-color: #718096;
+        }
+
+        .night-mode .suggestion-item:hover {
+            background: #5a6578;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .team-league {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .night-mode .team-league {
+            color: #a0aec0;
+        }
+
+        /* أنماط جديدة للاعبين والإصابات */
+        .players-section {
+            margin-top: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .players-section {
+            background: #2d3748;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .players-input {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .players-input input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .players-input input {
+            background: #4a5568;
+            border-color: #718096;
+            color: #e0e0e0;
+        }
+
+        .players-input input:focus {
+            border-color: #2a5298;
+            outline: none;
+        }
+
+        .night-mode .players-input input:focus {
+            border-color: #63b3ed;
+        }
+
+        .add-player-btn {
+            padding: 12px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .add-player-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .players-list {
+            margin-top: 15px;
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .player-item {
+            background: #4a5568;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-type {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .player-injured {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .night-mode .player-injured {
+            background: #4a2323;
+            color: #ff8a80;
+        }
+
+        .player-suspended {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .night-mode .player-suspended {
+            background: #4a3a23;
+            color: #ffb74d;
+        }
+
+        .remove-player {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .remove-player:hover {
+            background: #ff5252;
+        }
+
+        .api-players-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 10px;
+            border-left: 4px solid #2196F3;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .api-players-section {
+            background: #2d3a4a;
+            border-left-color: #63b3ed;
+        }
+
+        .api-players-title {
+            font-weight: bold;
+            color: #1976d2;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .api-players-title {
+            color: #63b3ed;
+        }
+
+        .api-players-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .api-player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .night-mode .api-player-item {
+            border-bottom-color: #4a5568;
+        }
+
+        .api-player-item:last-child {
+            border-bottom: none;
+        }
+
+        .player-impact {
+            font-size: 0.8rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .night-mode .player-impact {
+            background: #2d4a3c;
+            color: #68d391;
+        }
+
+        .fetch-players-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .fetch-players-btn:hover {
+            transform: translateY(-2px);
+     
