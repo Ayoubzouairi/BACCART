@@ -1,521 +1,355 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AYOUB BACCARAT PRO - النظام الذكي</title>
-    <style>
-        /* ===== CSS كامل بدون أخطاء ===== */
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap');
-        
-        :root {
-            --primary: #2D3748;
-            --secondary: #4A5568;
-            --accent: #D69E2E;
-            --success: #38A169;
-            --danger: #E53E3E;
-            --info: #3182CE;
-            --light: #F7FAFC;
-            --dark: #1A202C;
-            --player: #4299E1;
-            --banker: #F56565;
-            --tie: #48BB78;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #1a202c, #2d3748);
-            color: var(--light);
-            min-height: 100vh;
-            padding: 20px;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, var(--dark), var(--primary));
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .logo {
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--accent);
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        
-        .subtitle {
-            text-align: center;
-            color: #A0AEC0;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-        
-        /* Grid Layout */
-        .grid {
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 20px;
-        }
-        
-        @media (max-width: 1024px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        /* Cards */
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: var(--shadow);
-        }
-        
-        /* Buttons */
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent), #B7791F);
-            color: white;
-        }
-        
-        .btn-player {
-            background: linear-gradient(135deg, var(--player), #3182CE);
-            color: white;
-        }
-        
-        .btn-banker {
-            background: linear-gradient(135deg, var(--banker), #C53030);
-            color: white;
-        }
-        
-        .btn-tie {
-            background: linear-gradient(135deg, var(--tie), #38A169);
-            color: white;
-        }
-        
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        /* Inputs */
-        .input-group {
-            margin-bottom: 15px;
-        }
-        
-        .input-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #A0AEC0;
-        }
-        
-        input, select {
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.2);
-            color: white;
-            font-size: 16px;
-        }
-        
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-        
-        /* Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .stat-item {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        .stat-value {
-            font-size: 24px;
-            font-weight: 800;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: #A0AEC0;
-        }
-        
-        /* Prediction Cards */
-        .prediction-cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .pred-card {
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        
-        .pred-card.active {
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(214, 158, 46, 0.3);
-            border: 2px solid var(--accent);
-        }
-        
-        .pred-card.player { background: linear-gradient(135deg, var(--player), #3182CE); }
-        .pred-card.banker { background: linear-gradient(135deg, var(--banker), #C53030); }
-        .pred-card.tie { background: linear-gradient(135deg, var(--tie), #38A169); }
-        
-        .pred-percent {
-            font-size: 32px;
-            font-weight: 800;
-            margin: 10px 0;
-        }
-        
-        /* Progress Bars */
-        .progress-bar {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent), #F6AD55);
-            border-radius: 4px;
-            transition: width 0.5s ease;
-        }
-        
-        /* Table Info */
-        .table-info {
-            background: linear-gradient(135deg, rgba(214, 158, 46, 0.1), rgba(66, 153, 225, 0.1));
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-        }
-        
-        /* Toast */
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--success), #38A169);
-            color: white;
-            font-weight: 600;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-        }
-        
-        .toast.error { background: linear-gradient(135deg, var(--danger), #C53030); }
-        .toast.warning { background: linear-gradient(135deg, #D69E2E, #B7791F); }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .prediction-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .btn {
-                padding: 10px 16px;
-                font-size: 14px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-            
-            .card {
-                padding: 15px;
-            }
-            
-            .logo {
-                font-size: 24px;
-            }
-        }
-        
-        /* Animations */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .win-animation {
-            animation: pulse 0.5s ease 2;
-        }
-        
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent);
-            border-radius: 4px;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AYOUB BACCARAT PRO - نسخة الطاولات القصيرة (74 جولة)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+:root{--gold:#d4af37;--gold-2:#b8871d;--bg-dark:#070606;--card:#0f0e10;--muted:#bfb7a6;--player:#2d7ef7;--banker:#e03b3b;--tie:#28a745;}
+:root[data-theme="light"]{--gold:#d4af37;--gold-2:#b8871d;--bg-dark:#f5f5f5;--card:#ffffff;--muted:#666666;--player:#2d7ef7;--banker:#e03b3b;--tie:#28a745;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Inter,sans-serif;margin:0;background:linear-gradient(180deg,var(--bg-dark),#0b0b0b);color:#fff;padding:18px;transition:background 0.3s, color 0.3s;min-height:100vh;}
+:root[data-theme="light"] body{color:#333;}
+.app{max-width:1200px;margin:0 auto;width:100%;}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap;}
+.logo{font-weight:800;background:linear-gradient(90deg,var(--gold),#fff3b0);color:#000;padding:8px 12px;border-radius:12px;display:inline-block;font-size:1.2rem;}
+.subtitle{font-size:14px;color:var(--muted);margin-top:4px;}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.card{background:linear-gradient(180deg,var(--card),#0b0b0b);border-radius:12px;padding:12px;box-shadow:0 8px 30px rgba(0,0,0,0.6);border:1px solid rgba(212,175,55,0.08);margin-bottom:10px;}
+:root[data-theme="light"] .card{background:linear-gradient(180deg,var(--card),#f0f0f0);box-shadow:0 8px 30px rgba(0,0,0,0.1);border:1px solid rgba(0,0,0,0.05);}
+.layout{display:flex;gap:12px;flex-wrap:wrap;}
+.left{width:360px;min-width:300px;display:flex;flex-direction:column;gap:10px;flex:1;}
+.right{flex:2;display:flex;flex-direction:column;gap:12px;min-width:300px;}
+.panel{padding:10px;}
+.row{display:flex;gap:8px;align-items:center;margin-top:8px;}
+input[type=number], select{background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.3);padding:10px;border-radius:8px;color:#fff;font-weight:600;font-size:14px;width:100%;}
+:root[data-theme="light"] input[type=number], :root[data-theme="light"] select{background:rgba(255,255,255,0.9);border:2px solid rgba(0,0,0,0.2);color:#333;}
+.btn{padding:12px 16px;border-radius:8px;border:0;color:#fff;cursor:pointer;font-weight:600;font-size:16px;transition:all 0.3s;text-align:center;min-width:70px;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.3);}
+.btn:active{transform:translateY(0);}
+.btn.gold{background:linear-gradient(90deg,var(--gold),var(--gold-2));color:#000;font-weight:700;box-shadow:0 6px 20px rgba(212,175,55,0.3);}
+.btn.player{background:linear-gradient(135deg, #3a86ff, #2667cc); color:white; border:2px solid #3a86ff;}
+.btn.banker{background:linear-gradient(135deg, #ff006e, #cc0058); color:white; border:2px solid #ff006e;}
+.btn.tie{background:linear-gradient(135deg, #38b000, #2c8a00); color:white; border:2px solid #38b000;}
+:root[data-theme="light"] .btn.player{background:linear-gradient(135deg, #2d7ef7, #1a67d8); color:white;}
+:root[data-theme="light"] .btn.banker{background:linear-gradient(135deg, #e03b3b, #c53232); color:white;}
+:root[data-theme="light"] .btn.tie{background:linear-gradient(135deg, #28a745, #218838); color:white;}
+:root[data-theme="light"] .btn{background:rgba(0,0,0,0.1);color:#333; border:1px solid rgba(0,0,0,0.1)}
+.small{font-size:13px;color:var(--muted);}
+.muted{color:var(--muted);font-size:12px;}
+.pattern-list{list-style:none;padding:6px;margin:6px 0 0 0;max-height:200px;overflow:auto;}
+.pattern-list li{padding:8px;border-radius:8px;margin-bottom:6px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);display:flex;justify-content:space-between;align-items:center;}
+:root[data-theme="light"] .pattern-list li{background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent);}
+.section-title{font-weight:700;margin-bottom:6px;color:var(--gold);font-size:1.1rem;}
+.stat-table{width:100%;border-collapse:collapse;font-size:13px;}
+.stat-table th,.stat-table td{border:1px solid rgba(255,255,255,0.05);padding:6px;text-align:center;}
+:root[data-theme="light"] .stat-table th, :root[data-theme="light"] .stat-table td{border:1px solid rgba(0,0,0,0.05);}
+.stat-table th{background:rgba(212,175,55,0.1);font-weight:600;}
+.player{color:#3a86ff;font-weight:700;}
+.banker{color:#ff006e;font-weight:700;}
+.tie{color:#38b000;font-weight:700;}
+.pred-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.final{font-size:22px;font-weight:800;text-align:center;padding:12px;background:linear-gradient(90deg,rgba(212,175,55,0.06),transparent);border-radius:10px;margin:10px 0;}
+:root[data-theme="light"] .final{background:linear-gradient(90deg,rgba(212,175,55,0.1),transparent);}
+.foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:10px;}
+.credits{opacity:0.85;font-size:12px;}
+canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !important;max-height:450px;}
+:root[data-theme="light"] canvas{background:#f0f0f0;}
+.color-legend{display:flex;gap:15px;justify-content:center;margin-bottom:10px;font-size:14px;flex-wrap:wrap;}
+.color-legend span{padding:4px 8px;border-radius:6px; font-weight:600;}
+.prediction-cards{display:flex;gap:10px;justify-content:center;margin:10px 0;flex-wrap:wrap;}
+.pred-card{padding:10px;border-radius:8px;text-align:center;min-width:80px; font-weight:600;flex:1;}
+.pred-card.active{transform:scale(1.05);border:2px solid var(--gold); box-shadow:0 4px 15px rgba(212,175,55,0.4);}
+.win-effect{animation:winPulse 0.5s ease-in-out;}
+.loss-effect{animation:lossShake 0.5s ease-in-out;}
+@keyframes winPulse{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+@keyframes lossShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.analysis-result{margin-top:10px;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;text-align:center;}
+:root[data-theme="light"] .analysis-result{background:rgba(0,0,0,0.03);}
+.theme-toggle{background:transparent;border:none;font-size:24px;cursor:pointer;padding:5px;border-radius:50%;transition:background 0.3s;width:40px;height:40px;display:flex;align-items:center;justify-content:center;}
+.theme-toggle:hover{background:rgba(255,255,255,0.1);}
+:root[data-theme="light"] .theme-toggle:hover{background:rgba(0,0,0,0.05);}
+.input-group {display: flex; gap: 8px; align-items:center;}
+.input-group input {flex: 1;}
+.input-label {font-weight: 600; margin-bottom: 6px; display: block;}
+.pred-card.player {background:linear-gradient(135deg, #3a86ff, #2667cc); color: white;}
+.pred-card.banker {background:linear-gradient(135deg, #ff006e, #cc0058); color: white;}
+.pred-card.tie {background:linear-gradient(135deg, #38b000, #2c8a00); color: white;}
+.accuracy-panel {margin-top: 12px;}
+.accuracy-stats {display: flex; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;}
+.accuracy-stats > div {flex: 1; min-width: 120px;}
+.accuracy-value {font-weight: 700; font-size: 18px;}
+.accuracy-label {font-size: 12px; color: var(--muted);}
+.accuracy-chart-container {position: relative; height: 80px; margin-top: 8px; width: 100%;}
+.accuracy-line {stroke: var(--gold); stroke-width: 2; fill: none;}
+.accuracy-point {fill: var(--gold); r: 3; transition: r 0.2s;}
+.accuracy-point:hover {r: 5;}
+.accuracy-grid {stroke: rgba(255,255,255,0.1); stroke-width: 1;}
+:root[data-theme="light"] .accuracy-grid {stroke: rgba(0,0,0,0.1);}
+.accuracy-tooltip {position: absolute; background: rgba(0,0,0,0.9); color: white; padding: 5px 8px; border-radius: 4px; font-size: 12px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 100;}
+.advanced-controls {background: rgba(212,175,55,0.05); border-radius: 8px; padding: 10px; margin-top: 8px;}
+.control-group {display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap;}
+.control-group:last-child {margin-bottom: 0;}
+.slider-container {flex: 1; margin-left: 10px; min-width: 150px;}
+.slider {width: 100%;}
+.model-badge {display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; margin-left: 5px;}
+.badge-basic {background: #3a86ff; color: white;}
+.badge-advanced {background: #ff006e; color: white;}
+.badge-pattern {background: #38b000; color: white;}
+.badge-ml {background: #9d4edd; color: white;}
+.badge-short {background: #FF6B35; color: white;}
+.pattern-info {font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.4;}
+.confidence-meter {height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 4px; overflow: hidden;}
+.confidence-fill {height: 100%; background: linear-gradient(90deg, #38b000, #ff006e); border-radius: 3px; transition: width 0.3s;}
+.high-confidence {background: linear-gradient(90deg, #38b000, #d4af37);}
+.medium-confidence {background: linear-gradient(90deg, #d4af37, #ff006e);}
+.switch {position: relative; display: inline-block; width: 50px; height: 24px; flex-shrink: 0;}
+.switch input {opacity: 0; width: 0; height: 0;}
+.switch .slider {position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;}
+.switch .slider:before {position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%;}
+.switch input:checked + .slider {background: linear-gradient(90deg, #9d4edd, #7b2cbf);}
+.switch input:checked + .slider:before {transform: translateX(26px);}
+.ml-training-indicator {display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px;}
+.ml-training {background: #38b000; animation: pulse 1.5s infinite;}
+.ml-not-trained {background: #ff006e;}
+@keyframes pulse {0% {opacity: 1;} 50% {opacity: 0.5;} 100% {opacity: 1;}}
+.ml-info-panel {background: rgba(157, 78, 221, 0.05); border-left: 3px solid #9d4edd;}
+.data-controls {display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;}
+.data-controls .btn {padding: 6px 10px; font-size: 12px; flex: 1; min-width: 100px;}
+
+/* مؤشر مرحلة الطاولة */
+.table-phase-indicator {display: flex; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin: 10px 0;}
+.phase-segment {height: 100%; transition: all 0.3s;}
+.phase-1 {background: #ff006e;}
+.phase-2 {background: #d4af37;}
+.phase-3 {background: #38b000;}
+.phase-label {display: flex; justify-content: space-between; font-size: 11px; color: var(--muted);}
+.phase-title {font-weight: 600; color: var(--gold); margin-bottom: 5px;}
+
+/* تحذير نهاية الطاولة */
+.end-table-warning {background: linear-gradient(135deg, #ff6b35, #e63946); color: white; padding: 10px; border-radius: 8px; text-align: center; margin-top: 10px; animation: warningPulse 2s infinite;}
+@keyframes warningPulse {0%, 100% {opacity: 1;} 50% {opacity: 0.8;}}
+
+@media (max-width: 768px) {
+    .layout {flex-direction: column;}
+    .left, .right {width: 100%;}
+    .top {flex-direction: column; align-items: flex-start;}
+    .controls {width: 100%; justify-content: space-between;}
+    .accuracy-stats > div {min-width: 100px;}
+    .prediction-cards {flex-direction: column;}
+    .pred-card {width: 100%;}
+    .color-legend {justify-content: flex-start;}
+    .row {flex-wrap: wrap;}
+    .btn {flex: 1; min-width: 60px;}
+}
+
+@media (max-width: 480px) {
+    body {padding: 10px;}
+    .card {padding: 8px;}
+    .btn {padding: 10px 12px; font-size: 14px;}
+    .accuracy-stats {flex-direction: column;}
+    .accuracy-stats > div {min-width: 100%;}
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header card">
-            <div class="logo">🎰 AYOUB BACCARAT PRO</div>
-            <div class="subtitle">نظام تنبؤ ذكي مع حفظ تلقائي للطاولات - كل 73 جولة تحفظ كاملة</div>
-            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                <button id="themeToggle" class="btn btn-secondary">🌙 تبديل الوضع</button>
-                <button id="btnNewTable" class="btn btn-primary">🆕 طاولة جديدة</button>
-                <button id="btnSaveTable" class="btn btn-primary">💾 حفظ الطاولة</button>
-            </div>
-        </header>
+<div class="app">
+<header class="top card">
+  <div class="brand">
+    <div class="logo">AYOUB BACCARAT PRO <span class="model-badge badge-short">نسخة الطاولات القصيرة</span></div>
+    <div class="subtitle">تحليل سريع لأنماط 74 جولة مع تنبؤات مرحلية مخصصة ⚡🎯</div>
+  </div>
+  <div class="controls">
+    <button id="themeToggle" class="theme-toggle" title="تبديل الوضع">🌚</button>
+    <button id="btnReset" class="btn gold">إعادة تعيين</button>
+    <div id="tablePhaseDisplay" class="muted small" style="padding: 5px 10px; background: rgba(212,175,55,0.1); border-radius: 6px;">
+      الجولة: <span id="currentRound">0</span>/74
+    </div>
+  </div>
+</header>
 
-        <!-- Main Grid -->
-        <div class="grid">
-            <!-- Sidebar -->
-            <aside>
-                <!-- Input Panel -->
-                <div class="card">
-                    <h3 style="margin-bottom: 20px; color: var(--accent);">🎮 إدخال النتائج</h3>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">
-                        <button id="btnP" class="btn btn-player">🔵 لاعب</button>
-                        <button id="btnB" class="btn btn-banker">🔴 مصرفي</button>
-                        <button id="btnT" class="btn btn-tie">🟢 تعادل</button>
-                    </div>
-                    <button id="btnUndo" class="btn btn-secondary" style="width: 100%; margin-bottom: 15px;">
-                        ↩️ تراجع عن آخر إدخال
-                    </button>
-                    
-                    <div class="input-group">
-                        <label class="input-label">إعدادات التحليل</label>
-                        <select id="analysisMode">
-                            <option value="basic">نمط أساسي</option>
-                            <option value="advanced" selected>نمط متقدم</option>
-                            <option value="pattern">تحليل الأنماط</option>
-                        </select>
-                    </div>
-                </div>
+<main class="layout">
+<aside class="left">
+  <!-- مؤشر مراحل الطاولة -->
+  <div class="panel card">
+    <div class="phase-title">مراحل تحليل الطاولة</div>
+    <div class="table-phase-indicator">
+      <div class="phase-segment phase-1" id="phase1" style="width: 20%"></div>
+      <div class="phase-segment phase-2" id="phase2" style="width: 40%"></div>
+      <div class="phase-segment phase-3" id="phase3" style="width: 40%"></div>
+    </div>
+    <div class="phase-label">
+      <span>📊 المراقبة</span>
+      <span>🔍 التحليل</span>
+      <span>🎯 التنبؤ</span>
+    </div>
+    <div id="phaseAdvice" class="muted small" style="margin-top: 8px; text-align: center;">
+      ابدأ بإدخال أول 15 جولة للمراقبة
+    </div>
+  </div>
 
-                <!-- Current Table Info -->
-                <div class="card table-info">
-                    <h3 style="margin-bottom: 15px; color: var(--accent);">📊 الطاولة الحالية</h3>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <span>رقم الطاولة:</span>
-                        <span id="tableNumber" style="font-weight: 800;">1</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <span>الجولات:</span>
-                        <span id="currentRounds">0/73</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="tableProgress" style="width: 0%"></div>
-                    </div>
-                    <div style="text-align: center; margin-top: 10px; font-size: 14px; color: #A0AEC0;">
-                        <span id="tableStatus">جارية...</span>
-                    </div>
-                </div>
+  <!-- تحذير نهاية الطاولة -->
+  <div id="endTableWarning" class="end-table-warning" style="display: none;">
+    ⚠️ باقي أقل من 10 جولات على نهاية الطاولة!
+  </div>
 
-                <!-- Statistics -->
-                <div class="card">
-                    <h3 style="margin-bottom: 15px; color: var(--accent);">📈 إحصائيات الطاولة</h3>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-value" id="pTotal">0</div>
-                            <div class="stat-label">لاعب</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" id="bTotal">0</div>
-                            <div class="stat-label">مصرفي</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" id="tTotal">0</div>
-                            <div class="stat-label">تعادل</div>
-                        </div>
-                    </div>
-                    <div style="margin-top: 15px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                            <span>دقة التنبؤ:</span>
-                            <span id="accuracy" style="font-weight: 700;">0%</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>مستوى الثقة:</span>
-                            <span id="confidence" style="font-weight: 700;">0%</span>
-                        </div>
-                    </div>
-                </div>
+  <div class="panel card">
+    <label class="input-label">نافذة التحليل السريع (3 - 8 جولات)</label>
+    <div class="input-group">
+      <input id="windowSize" type="number" min="3" max="8" value="5">
+      <button id="applyWindow" class="btn gold">تطبيق</button>
+    </div>
+    <div class="muted small">نافذة صغيرة للتركيز على الأنماط القصيرة</div>
+  </div>
 
-                <!-- Saved Tables -->
-                <div class="card">
-                    <h3 style="margin-bottom: 15px; color: var(--accent);">💾 الطاولات المحفوظة</h3>
-                    <div id="savedTablesList" style="max-height: 200px; overflow-y: auto;">
-                        <div style="text-align: center; padding: 20px; color: #A0AEC0;">
-                            لا توجد طاولات محفوظة
-                        </div>
-                    </div>
-                    <button id="btnLoadTable" class="btn btn-secondary" style="width: 100%; margin-top: 15px;">
-                        📂 تحميل طاولة
-                    </button>
-                </div>
-            </aside>
-
-            <!-- Main Content -->
-            <main>
-                <!-- Prediction Area -->
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                        <h2 style="color: var(--accent);">🎯 توقع الجولة القادمة</h2>
-                        <div style="display: flex; gap: 10px;">
-                            <div style="padding: 8px 16px; background: rgba(66, 153, 225, 0.2); border-radius: 20px;">
-                                النمط: <span id="modeName">متقدم</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Prediction Cards -->
-                    <div class="prediction-cards">
-                        <div class="pred-card player" id="predP">
-                            <div style="font-size: 18px; font-weight: 700;">لاعب</div>
-                            <div class="pred-percent" id="predPctP">0%</div>
-                            <div style="font-size: 14px; opacity: 0.8;">اتجاه: <span id="predTrendP">→</span></div>
-                        </div>
-                        <div class="pred-card banker" id="predB">
-                            <div style="font-size: 18px; font-weight: 700;">مصرفي</div>
-                            <div class="pred-percent" id="predPctB">0%</div>
-                            <div style="font-size: 14px; opacity: 0.8;">اتجاه: <span id="predTrendB">→</span></div>
-                        </div>
-                        <div class="pred-card tie" id="predT">
-                            <div style="font-size: 18px; font-weight: 700;">تعادل</div>
-                            <div class="pred-percent" id="predPctT">0%</div>
-                            <div style="font-size: 14px; opacity: 0.8;">اتجاه: <span id="predTrendT">→</span></div>
-                        </div>
-                    </div>
-
-                    <!-- Final Prediction -->
-                    <div style="text-align: center; margin: 30px 0; padding: 25px; background: linear-gradient(135deg, rgba(214, 158, 46, 0.1), transparent); border-radius: 12px;">
-                        <div style="font-size: 16px; color: #A0AEC0; margin-bottom: 10px;">التوقع النهائي:</div>
-                        <div id="finalPrediction" style="font-size: 36px; font-weight: 900; color: var(--accent);">—</div>
-                        <div id="predictionReason" style="margin-top: 10px; color: #A0AEC0; font-size: 14px;">
-                            بانتظار إدخال الجولة الأولى...
-                        </div>
-                    </div>
-                </div>
-
-                <!-- History & Patterns -->
-                <div class="card">
-                    <h3 style="margin-bottom: 20px; color: var(--accent);">📜 تاريخ الجولات</h3>
-                    <div id="historyGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 8px; min-height: 100px; padding: 15px; background: rgba(0, 0, 0, 0.2); border-radius: 10px;">
-                        <!-- الجولات ستظهر هنا -->
-                    </div>
-                    
-                    <div style="margin-top: 20px;">
-                        <h4 style="margin-bottom: 10px; color: var(--accent);">🔍 تحليل الأنماط</h4>
-                        <div id="patternAnalysis" style="padding: 15px; background: rgba(0, 0, 0, 0.2); border-radius: 10px; font-size: 14px;">
-                            أدخل 5 جولات على الأقل لبدء تحليل الأنماط...
-                        </div>
-                    </div>
-                </div>
-
-                <!-- System Status -->
-                <div class="card">
-                    <h3 style="margin-bottom: 20px; color: var(--accent);">⚙️ حالة النظام</h3>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
-                        <div style="padding: 15px; background: rgba(0, 0, 0, 0.2); border-radius: 10px;">
-                            <div style="font-size: 12px; color: #A0AEC0; margin-bottom: 5px;">إجمالي الجولات</div>
-                            <div id="totalRounds" style="font-size: 24px; font-weight: 800;">0</div>
-                        </div>
-                        <div style="padding: 15px; background: rgba(0, 0, 0, 0.2); border-radius: 10px;">
-                            <div style="font-size: 12px; color: #A0AEC0; margin-bottom: 5px;">إجمالي الطاولات</div>
-                            <div id="totalTables" style="font-size: 24px; font-weight: 800;">0</div>
-                        </div>
-                    </div>
-                    <div style="margin-top: 15px; padding: 15px; background: linear-gradient(135deg, rgba(56, 161, 105, 0.1), rgba(66, 153, 225, 0.1)); border-radius: 10px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span>الحفظ التلقائي:</span>
-                            <span id="autoSaveStatus" style="color: var(--success); font-weight: 700;">✅ مفعل</span>
-                        </div>
-                        <div style="font-size: 12px; color: #A0AEC0; margin-top: 5px;">
-                            سيتم حفظ الطاولة تلقائياً عند اكتمال 73 جولة
-                        </div>
-                    </div>
-                </div>
-            </main>
+  <!-- إعدادات الطاولات القصيرة -->
+  <div class="panel card">
+    <div class="section-title">إعدادات الطاولات القصيرة</div>
+    <div class="advanced-controls">
+      <div class="control-group">
+        <label for="analysisMode">نمط التحليل السريع:</label>
+        <select id="analysisMode">
+          <option value="basic">أساسي <span class="model-badge badge-basic">سريع</span></option>
+          <option value="advanced" selected>متقدم <span class="model-badge badge-advanced">متوازن</span></option>
+          <option value="pattern">أنماط قصيرة <span class="model-badge badge-pattern">مميز</span></option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label for="confidenceSensitivity">حساسية الثقة:</label>
+        <div class="slider-container">
+          <input type="range" id="confidenceSensitivity" class="slider" min="25" max="50" value="35">
+          <div class="muted small" id="sensitivityValue">35%</div>
         </div>
+      </div>
+      <div class="control-group">
+        <label for="timeWeighting">المرجحة الزمنية:</label>
+        <select id="timeWeighting">
+          <option value="none">بدون</option>
+          <option value="linear">خطي</option>
+          <option value="exponential" selected>أسّي قوي</option>
+        </select>
+      </div>
+    </div>
+    <div class="pattern-info">
+      ⚡ <strong>ملاءمة خاصة لـ74 جولة:</strong> تركيز على الجولات الأخيرة، أنماط قصيرة، تنبؤات مرحلية
+    </div>
+  </div>
 
-        <!-- Footer -->
-        <footer style="text-align: center; margin-top: 30px; padding: 20px; color: #A0AEC0; font-size: 14px;">
-            <div>AYOUB BACCARAT PRO - نظام الذكاء الاصطناعي للتنبؤ بالباكارات</div
+  <!-- إدخال النتائج -->
+  <div class="panel card">
+    <div class="section-title">إدخال النتائج</div>
+    <div class="row">
+      <button class="btn player" id="btnP">لاعب 🔵</button>
+      <button class="btn banker" id="btnB">مصرفي 🔴</button>
+      <button class="btn tie" id="btnT">تعادل 🟢</button>
+    </div>
+    <div class="row">
+      <button class="btn" id="btnUndo" style="flex:1; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2)">تراجع</button>
+      <button class="btn gold" id="btnAutoMode" style="flex:1">وضع تلقائي</button>
+    </div>
+    <div class="muted small" style="margin-top: 8px; text-align: center;">
+      أدخل نتيجة كل جولة - الطاولة: <span id="remainingRounds">74</span> جولة متبقية
+    </div>
+  </div>
+
+  <!-- الإحصاءات -->
+  <div class="panel card stats">
+    <div class="section-title">إحصاءات الطاولة</div>
+    <table class="stat-table">
+      <thead>
+        <tr><th>الجهة</th><th>المجموع</th><th>فوز</th><th>خسارة</th><th>نسبة %</th><th>دقة</th><th>مرحلة</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="player">لاعب</td><td id="pTotal">0</td><td id="pWin">0</td><td id="pLoss">0</td><td id="pPct">0%</td><td id="pAccuracy">0%</td><td id="pPhase">-</td></tr>
+        <tr><td class="banker">مصرفي</td><td id="bTotal">0</td><td id="bWin">0</td><td id="bLoss">0</td><td id="bPct">0%</td><td id="bAccuracy">0%</td><td id="bPhase">-</td></tr>
+        <tr><td class="tie">تعادل</td><td id="tTotal">0</td><td id="tWin">0</td><td id="tLoss">0</td><td id="tPct">0%</td><td id="tAccuracy">0%</td><td id="tPhase">-</td></tr>
+      </tbody>
+    </table>
+    <div class="pattern-info" id="patternInfo">لا توجد أنماط مكتشفة بعد</div>
+  </div>
+
+  <!-- مؤشر الثقة -->
+  <div class="panel card">
+    <div class="section-title">مؤشر الثقة المرحلي</div>
+    <div class="muted small" id="confidenceLabel">ثقة منخفضة</div>
+    <div class="confidence-meter">
+      <div class="confidence-fill" id="confidenceFill" style="width: 0%"></div>
+    </div>
+    <div class="pattern-info" id="modelInfo">
+      <span id="phaseStrategy">استراتيجية: مراقبة أولية</span>
+    </div>
+  </div>
+</aside>
+
+<section class="right">
+  <div class="card prediction">
+    <div class="pred-head">
+      <div class="pred-title">التنبؤ المرحلي للجولة القادمة <span id="predModel" class="model-badge badge-short">سريع</span></div>
+      <div class="pred-sub">تنبؤات متكيفة مع مراحل طاولة الـ74 جولة</div>
+    </div>
+
+    <div class="color-legend">
+      <span style="background:linear-gradient(135deg, #3a86ff, #2667cc);">🔵 لاعب</span>
+      <span style="background:linear-gradient(135deg, #ff006e, #cc0058);">🔴 مصرفي</span>
+      <span style="background:linear-gradient(135deg, #38b000, #2c8a00);">🟢 تعادل</span>
+    </div>
+    
+    <canvas id="bigRoad" width="800" height="450"></canvas>
+
+    <div class="prediction-cards">
+      <div class="pred-card player" id="predP">
+        <div>لاعب</div>
+        <div id="predPctP">0%</div>
+        <div class="muted small" id="predTrendP">→</div>
+      </div>
+      <div class="pred-card banker" id="predB">
+        <div>مصرفي</div>
+        <div id="predPctB">0%</div>
+        <div class="muted small" id="predTrendB">→</div>
+      </div>
+      <div class="pred-card tie" id="predT">
+        <div>تعادل</div>
+        <div id="predPctT">0%</div>
+        <div class="muted small" id="predTrendT">→</div>
+      </div>
+    </div>
+
+    <div class="analysis-result">
+      <div class="muted" id="phasePredictionTitle">التنبؤ الحالي:</div>
+      <div class="final" id="finalCard">—</div>
+      <div class="muted small" id="predictionReason">بانتظار 15 جولة للبدء في التحليل</div>
+      <div class="muted small" id="phaseAdviceDetail" style="margin-top: 5px; color: #FF6B35;">
+        ⏳ المرحلة الحالية: مراقبة أولية
+      </div>
+    </div>
+  </div>
+
+  <!-- منحنى التوقعات -->
+  <div class="panel card accuracy-panel">
+    <div class="section-title">دقة التنبؤ حسب مرحلة الطاولة</div>
+    <div class="accuracy-stats">
+      <div>
+        <div class="accuracy-label">دقة المرحلة 1</div>
+        <div class="accuracy-value" id="phase1Accuracy">0%</div>
+      </div>
+      <div>
+        <div class="accuracy-label">دقة المرحلة 2</div>
+        <div class="accuracy-value" id="phase2Accuracy">0%</div>
+      </div>
+      <div>
+        <div class="accuracy-label">دقة المرحلة 3</div>
+        <div class="accuracy-value" id="phase3Accuracy">0%</div>
+      </div>
+      <div>
+        <div class="accuracy-label">الدقة الكلية</div>
+        <div class="accuracy-value" id="overallAccuracy">0%</div>
+      </div>
+    </div>
+    <div class="accuracy-chart-container">
+      <svg id="accuracyChart" width="100%" height="100%"></svg>
+      <div id="accuracyTooltip" class="accuracy-tooltip"></div>
+    </div>
+    <div class="muted small">تتبع دقة التنبؤ في كل مرحلة من مراحل الطاولة القصيرة</div>
+  </div>
+</secti
