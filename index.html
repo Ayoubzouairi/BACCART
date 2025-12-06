@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AYOUB BACCARAT PRO - النسخة الكاملة مع الحفظ التلقائي</title>
+<title>AYOUB BACCARAT PRO - المساعد الصوتي الذكي 🎤</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
 :root{--gold:#d4af37;--gold-2:#b8871d;--bg-dark:#070606;--card:#0f0e10;--muted:#bfb7a6;--player:#2d7ef7;--banker:#e03b3b;--tie:#28a745;}
@@ -29,24 +29,15 @@ input[type=number], select{background:rgba(255,255,255,0.1);border:2px solid rgb
 .btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.3);}
 .btn:active{transform:translateY(0);}
 .btn.gold{background:linear-gradient(90deg,var(--gold),var(--gold-2));color:#000;font-weight:700;box-shadow:0 6px 20px rgba(212,175,55,0.3);}
-
-/* ألوان واضحة للوضع الليلي */
 .btn.player{background:linear-gradient(135deg, #3a86ff, #2667cc); color:white; border:2px solid #3a86ff;}
 .btn.banker{background:linear-gradient(135deg, #ff006e, #cc0058); color:white; border:2px solid #ff006e;}
 .btn.tie{background:linear-gradient(135deg, #38b000, #2c8a00); color:white; border:2px solid #38b000;}
-
-/* ألوان الوضع النهاري */
 :root[data-theme="light"] .btn.player{background:linear-gradient(135deg, #2d7ef7, #1a67d8); color:white;}
 :root[data-theme="light"] .btn.banker{background:linear-gradient(135deg, #e03b3b, #c53232); color:white;}
 :root[data-theme="light"] .btn.tie{background:linear-gradient(135deg, #28a745, #218838); color:white;}
-
 :root[data-theme="light"] .btn{background:rgba(0,0,0,0.1);color:#333; border:1px solid rgba(0,0,0,0.1)}
-
 .small{font-size:13px;color:var(--muted);}
 .muted{color:var(--muted);font-size:12px;}
-.pattern-list{list-style:none;padding:6px;margin:6px 0 0 0;max-height:200px;overflow:auto;}
-.pattern-list li{padding:8px;border-radius:8px;margin-bottom:6px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);display:flex;justify-content:space-between;align-items:center;}
-:root[data-theme="light"] .pattern-list li{background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent);}
 .section-title{font-weight:700;margin-bottom:6px;color:var(--gold);font-size:1.1rem;}
 .stat-table{width:100%;border-collapse:collapse;font-size:13px;}
 .stat-table th,.stat-table td{border:1px solid rgba(255,255,255,0.05);padding:6px;text-align:center;}
@@ -76,68 +67,273 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 .theme-toggle{background:transparent;border:none;font-size:24px;cursor:pointer;padding:5px;border-radius:50%;transition:background 0.3s;width:40px;height:40px;display:flex;align-items:center;justify-content:center;}
 .theme-toggle:hover{background:rgba(255,255,255,0.1);}
 :root[data-theme="light"] .theme-toggle:hover{background:rgba(0,0,0,0.05);}
-
-/* تحسينات إضافية للحقول */
-.input-group {display: flex; gap: 8px; align-items: center;}
+.input-group {display: flex; gap: 8px; align-items:center;}
 .input-group input {flex: 1;}
 .input-label {font-weight: 600; margin-bottom: 6px; display: block;}
-
-/* ألوان البطاقات في التوقع */
 .pred-card.player {background: linear-gradient(135deg, #3a86ff, #2667cc); color: white;}
 .pred-card.banker {background: linear-gradient(135deg, #ff006e, #cc0058); color: white;}
 .pred-card.tie {background: linear-gradient(135deg, #38b000, #2c8a00); color: white;}
 
-/* أنماط لمنحنى التوقعات */
-.accuracy-panel {margin-top: 12px;}
-.accuracy-stats {display: flex; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;}
-.accuracy-stats > div {flex: 1; min-width: 120px;}
-.accuracy-value {font-weight: 700; font-size: 18px;}
-.accuracy-label {font-size: 12px; color: var(--muted);}
-.accuracy-chart-container {position: relative; height: 80px; margin-top: 8px; width: 100%;}
-.accuracy-line {stroke: var(--gold); stroke-width: 2; fill: none;}
-.accuracy-point {fill: var(--gold); r: 3; transition: r 0.2s;}
-.accuracy-point:hover {r: 5;}
-.accuracy-grid {stroke: rgba(255,255,255,0.1); stroke-width: 1;}
-:root[data-theme="light"] .accuracy-grid {stroke: rgba(0,0,0,0.1);}
-.accuracy-tooltip {position: absolute; background: rgba(0,0,0,0.9); color: white; padding: 5px 8px; border-radius: 4px; font-size: 12px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 100;}
+/* أنماط جديدة للمساعد الصوتي */
+.voice-assistant-container {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+}
 
-/* أنماط جديدة للواجهة المحسنة */
-.advanced-controls {background: rgba(212,175,55,0.05); border-radius: 8px; padding: 10px; margin-top: 8px;}
-.control-group {display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap;}
-.control-group:last-child {margin-bottom: 0;}
-.slider-container {flex: 1; margin-left: 10px; min-width: 150px;}
-.slider {width: 100%;}
-.model-badge {display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; margin-left: 5px;}
-.badge-basic {background: #3a86ff; color: white;}
-.badge-advanced {background: #ff006e; color: white;}
-.badge-pattern {background: #38b000; color: white;}
-.badge-ml {background: #9d4edd; color: white;}
-.pattern-info {font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.4;}
-.confidence-meter {height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 4px; overflow: hidden;}
-.confidence-fill {height: 100%; background: linear-gradient(90deg, #38b000, #ff006e); border-radius: 3px; transition: width 0.3s;}
-.high-confidence {background: linear-gradient(90deg, #38b000, #d4af37);}
-.medium-confidence {background: linear-gradient(90deg, #d4af37, #ff006e);}
+.voice-assistant-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #9d4edd, #7b2cbf);
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(157, 78, 221, 0.4);
+    transition: all 0.3s;
+    position: relative;
+}
 
-/* تبديل زر التعلم الآلي */
-.switch {position: relative; display: inline-block; width: 50px; height: 24px; flex-shrink: 0;}
-.switch input {opacity: 0; width: 0; height: 0;}
-.switch .slider {position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;}
-.switch .slider:before {position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%;}
-.switch input:checked + .slider {background: linear-gradient(90deg, #9d4edd, #7b2cbf);}
-.switch input:checked + .slider:before {transform: translateX(26px);}
+.voice-assistant-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(157, 78, 221, 0.6);
+}
 
-/* مؤشر تدريب ML */
-.ml-training-indicator {display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px;}
-.ml-training {background: #38b000; animation: pulse 1.5s infinite;}
-.ml-not-trained {background: #ff006e;}
-@keyframes pulse {0% {opacity: 1;} 50% {opacity: 0.5;} 100% {opacity: 1;}}
+.voice-assistant-btn.listening {
+    background: linear-gradient(135deg, #ff006e, #cc0058);
+    animation: pulse 1.5s infinite;
+}
 
-/* تحسينات للواجهة */
-.ml-info-panel {background: rgba(157, 78, 221, 0.05); border-left: 3px solid #9d4edd;}
+.voice-assistant-btn.responding {
+    background: linear-gradient(135deg, #38b000, #2c8a00);
+    animation: pulse 1s infinite;
+}
 
-/* أزرار التحكم في البيانات */
-.data-controls {display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;}
-.data-controls .btn {padding: 6px 10px; font-size: 12px; flex: 1; min-width: 100px;}
+.voice-assistant-panel {
+    position: absolute;
+    bottom: 70px;
+    left: 0;
+    width: 400px;
+    max-width: 90vw;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    border: 1px solid rgba(212,175,55,0.2);
+    display: none;
+}
+
+.voice-assistant-panel.active {
+    display: block;
+    animation: slideUp 0.3s ease-out;
+}
+
+.voice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.voice-title {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--gold);
+}
+
+.voice-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background 0.3s;
+}
+
+.voice-close:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.voice-messages {
+    height: 200px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+}
+
+.voice-message {
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    max-width: 80%;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.voice-message.user {
+    background: rgba(59, 130, 246, 0.2);
+    border-left: 3px solid #3a86ff;
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.voice-message.assistant {
+    background: rgba(157, 78, 221, 0.2);
+    border-left: 3px solid #9d4edd;
+    margin-right: auto;
+    margin-left: 0;
+}
+
+.voice-message.system {
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 3px solid var(--gold);
+    font-size: 11px;
+    padding: 5px 8px;
+    text-align: center;
+    max-width: 100%;
+}
+
+.voice-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 8px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+}
+
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ff006e;
+}
+
+.status-indicator.active {
+    background: #38b000;
+    animation: pulse 1s infinite;
+}
+
+.status-text {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.voice-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.voice-control-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.3s;
+}
+
+.voice-control-btn.primary {
+    background: linear-gradient(135deg, #9d4edd, #7b2cbf);
+}
+
+.voice-control-btn.primary:hover {
+    background: linear-gradient(135deg, #8a3cc8, #6a21b3);
+}
+
+.voice-control-btn.secondary {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.voice-control-btn.secondary:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.voice-control-btn.danger {
+    background: linear-gradient(135deg, #ff006e, #cc0058);
+}
+
+.voice-control-btn.danger:hover {
+    background: linear-gradient(135deg, #e60063, #b3004d);
+}
+
+.voice-quick-commands {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.voice-quick-btn {
+    padding: 6px 8px;
+    background: rgba(157, 78, 221, 0.1);
+    border: 1px solid rgba(157, 78, 221, 0.3);
+    border-radius: 6px;
+    color: #bfb7a6;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.voice-quick-btn:hover {
+    background: rgba(157, 78, 221, 0.2);
+    transform: translateY(-1px);
+}
+
+.voice-settings {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.setting-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.setting-label {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+/* أنيميشن */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
 /* تحسينات للاستجابة */
 @media (max-width: 768px) {
@@ -145,20 +341,26 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
     .left, .right {width: 100%;}
     .top {flex-direction: column; align-items: flex-start;}
     .controls {width: 100%; justify-content: space-between;}
-    .accuracy-stats > div {min-width: 100px;}
     .prediction-cards {flex-direction: column;}
     .pred-card {width: 100%;}
     .color-legend {justify-content: flex-start;}
-    .row {flex-wrap: wrap;}
-    .btn {flex: 1; min-width: 60px;}
+    .voice-assistant-panel {
+        width: 350px;
+        left: -150px;
+    }
 }
 
 @media (max-width: 480px) {
     body {padding: 10px;}
     .card {padding: 8px;}
     .btn {padding: 10px 12px; font-size: 14px;}
-    .accuracy-stats {flex-direction: column;}
-    .accuracy-stats > div {min-width: 100%;}
+    .voice-assistant-panel {
+        width: 320px;
+        left: -130px;
+    }
+    .voice-quick-commands {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
 </head>
@@ -166,8 +368,8 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 <div class="app">
 <header class="top card">
   <div class="brand">
-    <div class="logo">AYOUB BACCARAT PRO <span class="model-badge badge-ml">نسخة كاملة</span></div>
-    <div class="subtitle">نظام تنبؤ ذكي مع خوارزميات تعلم آلة وحفظ تلقائي 🧠💾🚀</div>
+    <div class="logo">AYOUB BACCARAT PRO <span style="background: linear-gradient(135deg, #9d4edd, #7b2cbf); color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; margin-left: 5px;">🎤 المساعد الصوتي</span></div>
+    <div class="subtitle">نظام تنبؤ ذكي مع مساعد صوتي مباشر للحصول على النصائح أثناء اللعب 🧠🎤🚀</div>
   </div>
   <div class="controls">
     <button id="themeToggle" class="theme-toggle" title="تبديل الوضع">🌚</button>
@@ -363,8 +565,8 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 
 <footer class="foot card">
   <div style="flex: 1;">
-    <div>تصميم: Ayoub • النسخة الكاملة مع الحفظ التلقائي</div>
-    <div class="credits small">نظام متعدد النماذج • تعلم آلة • تحليل الأنماط • حفظ تلقائي • مؤشرات متقدمة</div>
+    <div>تصميم: Ayoub • النسخة الكاملة مع المساعد الصوتي الذكي</div>
+    <div class="credits small">نظام متعدد النماذج • تعلم آلة • تحليل الأنماط • مساعد صوتي • مؤشرات متقدمة</div>
   </div>
   <div class="data-controls">
     <button id="btnExport" class="btn" style="background: rgba(59, 130, 246, 0.2); border: 1px solid #3a86ff;">📥 تصدير</button>
@@ -378,9 +580,76 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 </footer>
 </div>
 
+<!-- المساعد الصوتي -->
+<div class="voice-assistant-container">
+  <button id="voiceAssistantBtn" class="voice-assistant-btn" title="فتح المساعد الصوتي">
+    🎤
+  </button>
+  
+  <div id="voiceAssistantPanel" class="voice-assistant-panel">
+    <div class="voice-header">
+      <div class="voice-title">🎤 المساعد الصوتي الذكي</div>
+      <button id="voiceCloseBtn" class="voice-close">×</button>
+    </div>
+    
+    <div class="voice-messages" id="voiceMessages">
+      <div class="voice-message system">
+        أهلاً! أنا مساعدك الصوتي للعبة Baccarat Pro. يمكنك التحدث معي مباشرة للحصول على النصائح والتحليلات.
+      </div>
+      <div class="voice-message system">
+        قل: "ما هو التنبؤ القادم؟" أو "ما هي نصيحتك؟" أو "حلل لي النتائج السابقة"
+      </div>
+    </div>
+    
+    <div class="voice-status">
+      <div class="status-indicator" id="statusIndicator"></div>
+      <div class="status-text" id="statusText">جاهز للاستماع...</div>
+    </div>
+    
+    <div class="voice-controls">
+      <button id="startListeningBtn" class="voice-control-btn primary">
+        <span id="micIcon">🎤</span> 
+        <span id="listeningText">ابدأ التحدث</span>
+      </button>
+      <button id="stopListeningBtn" class="voice-control-btn secondary">
+        ⏹️ إيقاف
+      </button>
+      <button id="clearChatBtn" class="voice-control-btn danger">
+        🗑️ مسح
+      </button>
+    </div>
+    
+    <div class="voice-quick-commands">
+      <button class="voice-quick-btn" data-command="ما هو التنبؤ القادم؟">ما هو التنبؤ القادم؟</button>
+      <button class="voice-quick-btn" data-command="ما هي نصيحتك للجولة القادمة؟">نصيحة للجولة القادمة</button>
+      <button class="voice-quick-btn" data-command="حلل لي النتائج السابقة">تحليل النتائج</button>
+      <button class="voice-quick-btn" data-command="ما هي الإحصاءات الحالية؟">الإحصاءات الحالية</button>
+      <button class="voice-quick-btn" data-command="ما هو أفضل خيار للرهان الآن؟">أفضل خيار للرهان</button>
+      <button class="voice-quick-btn" data-command="ما هو نمط اللعب الحالي؟">نمط اللعب الحالي</button>
+    </div>
+    
+    <div class="voice-settings">
+      <div class="setting-group">
+        <span class="setting-label">تفعيل الرد الصوتي:</span>
+        <label class="switch">
+          <input type="checkbox" id="voiceResponseToggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-group">
+        <span class="setting-label">سرعة الرد:</span>
+        <select id="voiceSpeedSelect" style="width: 100px; padding: 3px 5px; border-radius: 4px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
+          <option value="0.8">بطيئة</option>
+          <option value="1" selected>عادية</option>
+          <option value="1.2">سريعة</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ========== خوارزميات تعلم الآلة ==========
-
 class SimpleKNN {
   constructor(k = 3) {
     this.k = k;
@@ -400,7 +669,6 @@ class SimpleKNN {
       }
     });
     
-    // الحفاظ على حجم معقول
     if (this.trainingData.length > 100) {
       this.trainingData = this.trainingData.slice(-100);
     }
@@ -790,11 +1058,10 @@ class BaccaratMachineLearning {
   }
 }
 
-// ========== نظام حفظ البيانات ==========
-
+// ========== نظام الحفظ ==========
 class DataManager {
   constructor() {
-    this.storageKey = 'baccaratPro_v3';
+    this.storageKey = 'baccaratPro_v4_voice';
     this.autoSaveInterval = null;
     this.lastSaveTime = null;
     this.isSaving = false;
@@ -811,31 +1078,17 @@ class DataManager {
           count: state.count,
           win: state.win,
           loss: state.loss,
-          windowSize: state.windowSize,
-          analysisMode: state.analysisMode,
-          confidenceThreshold: state.confidenceThreshold,
-          timeWeighting: state.timeWeighting,
-          useML: state.useML,
-          mlModel: state.mlModel,
-          modelPerformance: state.modelPerformance,
-          previousPredictions: state.previousPredictions,
-          lastPrediction: state.lastPrediction
+          windowSize: state.windowSize
         },
-        history: {
-          accuracyHistory: state.accuracyHistory,
-          predictionsHistory: state.predictionsHistory
-        },
-        mlData: {
-          featureHistory: state.ml.featureHistory,
-          mlPredictions: state.ml.mlPredictions,
-          activeModel: state.ml.activeModel,
-          isEnabled: state.ml.isEnabled
+        voiceSettings: {
+          voiceEnabled: voiceAssistant.voiceEnabled,
+          voiceSpeed: voiceAssistant.voiceSpeed,
+          chatHistory: voiceAssistant.getChatHistory()
         },
         meta: {
-          version: '3.0',
+          version: '4.0_voice',
           lastSave: new Date().toISOString(),
-          totalRounds: state.rounds.length,
-          sessionStart: this.getSessionStartTime()
+          totalRounds: state.rounds.length
         }
       };
 
@@ -862,48 +1115,20 @@ class DataManager {
 
       const data = JSON.parse(saved);
       
-      // تحميل بيانات الحالة
       if (data.state) {
         state.rounds = Array.isArray(data.state.rounds) ? data.state.rounds : [];
         state.count = data.state.count || { P: 0, B: 0, T: 0 };
         state.win = data.state.win || { P: 0, B: 0, T: 0 };
         state.loss = data.state.loss || { P: 0, B: 0, T: 0 };
         state.windowSize = data.state.windowSize || 8;
-        state.analysisMode = data.state.analysisMode || 'advanced';
-        state.confidenceThreshold = data.state.confidenceThreshold || 45;
-        state.timeWeighting = data.state.timeWeighting || 'linear';
-        state.useML = data.state.useML !== false;
-        state.mlModel = data.state.mlModel || 'ensemble';
-        state.modelPerformance = data.state.modelPerformance || { basic: 0, advanced: 0, pattern: 0, ml: 0 };
-        state.previousPredictions = data.state.previousPredictions || { P: 0, B: 0, T: 0 };
-        state.lastPrediction = data.state.lastPrediction || null;
       }
 
-      // تحميل التاريخ
-      if (data.history) {
-        state.accuracyHistory = Array.isArray(data.history.accuracyHistory) ? data.history.accuracyHistory : [];
-        state.predictionsHistory = Array.isArray(data.history.predictionsHistory) ? data.history.predictionsHistory : [];
-      }
-
-      // تحميل ML
-      if (data.mlData) {
-        state.ml.featureHistory = Array.isArray(data.mlData.featureHistory) ? data.mlData.featureHistory : [];
-        state.ml.mlPredictions = Array.isArray(data.mlData.mlPredictions) ? data.mlData.mlPredictions : [];
-        state.ml.activeModel = data.mlData.activeModel || 'ensemble';
-        state.ml.isEnabled = data.mlData.isEnabled !== false;
-        
-        // إعادة تدريب النماذج
-        setTimeout(() => {
-          if (state.ml.featureHistory.length > 0) {
-            state.ml.featureHistory.forEach((item, index) => {
-              if (index > 0 && item.features && item.label) {
-                state.ml.models.knn.train([item.features], [item.label]);
-                state.ml.models.logistic.trainOne(item.features, item.label);
-                state.ml.models.ensemble.train(item.features, item.label);
-              }
-            });
-          }
-        }, 500);
+      if (data.voiceSettings) {
+        voiceAssistant.voiceEnabled = data.voiceSettings.voiceEnabled !== false;
+        voiceAssistant.voiceSpeed = data.voiceSettings.voiceSpeed || 1;
+        if (data.voiceSettings.chatHistory) {
+          voiceAssistant.loadChatHistory(data.voiceSettings.chatHistory);
+        }
       }
 
       this.lastSaveTime = new Date();
@@ -926,13 +1151,9 @@ class DataManager {
           loss: state.loss,
           windowSize: state.windowSize
         },
-        ml: {
-          featureHistory: state.ml.featureHistory,
-          trainingCount: state.ml.getTrainingDataCount()
-        },
         meta: {
           exportDate: new Date().toISOString(),
-          version: 'AYOUB_BACCARAT_PRO_v3.0',
+          version: 'AYOUB_BACCARAT_PRO_v4.0_VOICE',
           totalRounds: state.rounds.length
         }
       };
@@ -952,7 +1173,7 @@ class DataManager {
         URL.revokeObjectURL(url);
       }, 100);
       
-      alert(`✅ تم تصدير ${state.rounds.length} جولة و ${state.ml.featureHistory.length} عينة تدريب`);
+      alert(`✅ تم تصدير ${state.rounds.length} جولة`);
     } catch (e) {
       alert('❌ خطأ في تصدير البيانات: ' + e.message);
     }
@@ -969,10 +1190,8 @@ class DataManager {
           return;
         }
 
-        // مسح البيانات الحالية
         resetAll();
         
-        // تحميل البيانات المستوردة
         if (importedData.state) {
           state.rounds = Array.isArray(importedData.state.rounds) ? importedData.state.rounds : [];
           state.count = importedData.state.count || { P: 0, B: 0, T: 0 };
@@ -980,32 +1199,12 @@ class DataManager {
           state.loss = importedData.state.loss || { P: 0, B: 0, T: 0 };
           state.windowSize = importedData.state.windowSize || 8;
           
-          // حساب الإحصاءات من الجولات
           state.rounds.forEach(round => {
             state.count[round]++;
           });
         }
 
-        if (importedData.ml && Array.isArray(importedData.ml.featureHistory)) {
-          state.ml.featureHistory = importedData.ml.featureHistory;
-          
-          // إعادة تدريب ML
-          setTimeout(() => {
-            if (state.ml.featureHistory.length > 0) {
-              state.ml.featureHistory.forEach((item, index) => {
-                if (index > 0 && item.features && item.label) {
-                  state.ml.models.knn.train([item.features], [item.label]);
-                  state.ml.models.logistic.trainOne(item.features, item.label);
-                  state.ml.models.ensemble.train(item.features, item.label);
-                }
-              });
-            }
-          }, 500);
-        }
-
-        // تحديث الواجهة
         updateAll();
-        updateMLStatus();
         this.saveAllData();
         
         alert(`✅ تم استيراد ${state.rounds.length} جولة بنجاح!`);
@@ -1040,7 +1239,6 @@ class DataManager {
       }
     }, intervalSeconds * 1000);
     
-    // حفظ عند إغلاق الصفحة
     window.addEventListener('beforeunload', () => {
       if (!this.isSaving) {
         this.saveAllData();
@@ -1064,20 +1262,501 @@ class DataManager {
     }
   }
 
-  getSessionStartTime() {
-    const saved = localStorage.getItem('session_start');
-    if (!saved) {
-      const startTime = new Date().toISOString();
-      localStorage.setItem('session_start', startTime);
-      return startTime;
-    }
-    return saved;
-  }
-
   updateDataStats() {
     const statsEl = document.getElementById('dataStats');
     if (statsEl) {
       statsEl.textContent = `${state.rounds.length} جولة • ${state.ml.featureHistory.length} عينة تدريب`;
+    }
+  }
+}
+
+// ========== المساعد الصوتي الذكي ==========
+class VoiceAssistant {
+  constructor() {
+    this.recognition = null;
+    this.isListening = false;
+    this.voiceEnabled = true;
+    this.voiceSpeed = 1;
+    this.chatHistory = [];
+    this.synth = window.speechSynthesis;
+    this.isSpeaking = false;
+    this.setupSpeechRecognition();
+    this.loadSettings();
+  }
+
+  setupSpeechRecognition() {
+    if ('webkitSpeechRecognition' in window) {
+      this.recognition = new webkitSpeechRecognition();
+    } else if ('SpeechRecognition' in window) {
+      this.recognition = new SpeechRecognition();
+    } else {
+      console.error('API التعرف على الصوت غير مدعوم في هذا المتصفح');
+      return;
+    }
+
+    this.recognition.continuous = false;
+    this.recognition.interimResults = false;
+    this.recognition.lang = 'ar-SA'; // العربية السعودية
+
+    this.recognition.onstart = () => {
+      this.isListening = true;
+      this.updateUIStatus('يستمع الآن...', 'listening');
+    };
+
+    this.recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      this.processVoiceCommand(transcript);
+    };
+
+    this.recognition.onerror = (event) => {
+      console.error('خطأ في التعرف على الصوت:', event.error);
+      this.isListening = false;
+      this.updateUIStatus('خطأ في الاستماع', 'error');
+    };
+
+    this.recognition.onend = () => {
+      this.isListening = false;
+      this.updateUIStatus('جاهز للاستماع...', 'ready');
+    };
+  }
+
+  startListening() {
+    if (!this.recognition) {
+      this.showMessage('المساعد الصوتي غير مدعوم في متصفحك. استخدم المتصفحات الحديثة.', 'system');
+      return;
+    }
+
+    try {
+      this.recognition.start();
+    } catch (error) {
+      console.error('خطأ في بدء الاستماع:', error);
+    }
+  }
+
+  stopListening() {
+    if (this.recognition && this.isListening) {
+      this.recognition.stop();
+    }
+  }
+
+  processVoiceCommand(transcript) {
+    this.showMessage(transcript, 'user');
+    
+    const command = transcript.toLowerCase();
+    let response = '';
+
+    if (command.includes('ما هو التنبؤ') || command.includes('التنبؤ القادم') || command.includes('توقع')) {
+      response = this.getPredictionAnalysis();
+    } 
+    else if (command.includes('نصيحة') || command.includes('نصيحتك') || command.includes('ماذا أفعل')) {
+      response = this.getAdvice();
+    }
+    else if (command.includes('تحليل') || command.includes('النتائج السابقة')) {
+      response = this.getResultsAnalysis();
+    }
+    else if (command.includes('إحصاءات') || command.includes('أرقام') || command.includes('إحصائيات')) {
+      response = this.getStatistics();
+    }
+    else if (command.includes('أفضل خيار') || command.includes('الرهان') || command.includes('أين أراهن')) {
+      response = this.getBettingAdvice();
+    }
+    else if (command.includes('نمط') || command.includes('اتجاه') || command.includes('تسلسل')) {
+      response = this.getPatternAnalysis();
+    }
+    else if (command.includes('مساعدة') || command.includes('ماذا يمكنني أن أقول')) {
+      response = this.getHelp();
+    }
+    else if (command.includes('شكر') || command.includes('ممتاز') || command.includes('جيد')) {
+      response = 'شكراً لك! أنا هنا لمساعدتك دائماً. هل لديك أي استفسار آخر؟';
+    }
+    else {
+      response = 'لم أفهم سؤالك بشكل كامل. يمكنك سؤالي عن: التنبؤ القادم، نصيحة للجولة، تحليل النتائج، أو الإحصاءات الحالية.';
+    }
+
+    this.showMessage(response, 'assistant');
+    
+    if (this.voiceEnabled) {
+      this.speak(response);
+    }
+  }
+
+  getPredictionAnalysis() {
+    const pred = enhancedPredict();
+    let response = '';
+    
+    if (pred.final === '—') {
+      response = 'التنبؤ الحالي غير مؤكد بما فيه الكفاية. الثقة حالياً ' + pred.confidence.toFixed(1) + '% فقط، وهي أقل من الحد المطلوب.';
+    } else {
+      const finalText = pred.final === 'P' ? 'لاعب' : pred.final === 'B' ? 'مصرفي' : 'تعادل';
+      response = `التنبؤ القادم يشير إلى ${finalText} بثقة ${pred.confidence.toFixed(1)}%. النسب الحالية: 🔵لاعب ${pred.P}% 🔴مصرفي ${pred.B}% 🟢تعادل ${pred.T}%`;
+      
+      if (pred.confidence >= 70) {
+        response += ' هذه ثقة عالية جداً، يمكنك الاعتماد على هذا التنبؤ.';
+      } else if (pred.confidence >= 50) {
+        response += ' الثقة متوسطة، قد تحتاج إلى الحذر.';
+      } else {
+        response += ' الثقة منخفضة، أنصح بالانتظار لجولة أخرى.';
+      }
+    }
+    
+    return response;
+  }
+
+  getAdvice() {
+    const pred = enhancedPredict();
+    const recent = state.rounds.slice(-Math.min(5, state.rounds.length));
+    
+    if (state.rounds.length < 3) {
+      return 'أنتظر المزيد من الجولات لأعطيك نصيحة دقيقة. أدخل 3 جولات على الأقل.';
+    }
+
+    const pCount = recent.filter(r => r === 'P').length;
+    const bCount = recent.filter(r => r === 'B').length;
+    const tCount = recent.filter(r => r === 'T').length;
+
+    let advice = 'بناءً على آخر ' + recent.length + ' جولة:\n';
+    
+    if (pred.final !== '—') {
+      const finalText = pred.final === 'P' ? 'لاعب' : pred.final === 'B' ? 'مصرفي' : 'تعادل';
+      advice += `- التنبؤ يشير إلى ${finalText} (${pred.confidence.toFixed(1)}% ثقة)\n`;
+    }
+    
+    if (pCount > bCount && pCount > tCount) {
+      advice += '- هناك توجّه نحو اللاعب في الجولات الأخيرة\n';
+    } else if (bCount > pCount && bCount > tCount) {
+      advice += '- هناك توجّه نحو المصرفي في الجولات الأخيرة\n';
+    }
+    
+    if (tCount > 0) {
+      advice += '- ظهر التعادل ' + tCount + ' مرة مؤخراً، كن حذراً\n';
+    }
+    
+    if (pred.confidence < 40) {
+      advice += '\nنصيحتي: انتظر جولة أخرى لزيادة الثقة قبل الرهان الكبير.';
+    } else if (pred.confidence >= 60) {
+      advice += '\nنصيحتي: يمكنك الرهان بحذر متوسط على التنبؤ الحالي.';
+    } else {
+      advice += '\nنصيحتي: رهان صغير أو مراقبة فقط للجولة القادمة.';
+    }
+    
+    return advice;
+  }
+
+  getResultsAnalysis() {
+    if (state.rounds.length === 0) {
+      return 'لا توجد نتائج سابقة للتحليل. ابدأ بإدخال بعض الجولات.';
+    }
+
+    const total = state.rounds.length;
+    const pPercent = ((state.count.P / total) * 100).toFixed(1);
+    const bPercent = ((state.count.B / total) * 100).toFixed(1);
+    const tPercent = ((state.count.T / total) * 100).toFixed(1);
+
+    let analysis = `تحليل ${total} جولة سابقة:\n`;
+    analysis += `🔵 لاعب: ${state.count.P} جولة (${pPercent}%)\n`;
+    analysis += `🔴 مصرفي: ${state.count.B} جولة (${bPercent}%)\n`;
+    analysis += `🟢 تعادل: ${state.count.T} جولة (${tPercent}%)\n\n`;
+
+    const lastTen = state.rounds.slice(-Math.min(10, total));
+    if (lastTen.length >= 3) {
+      const pStreak = this.calculateStreak(lastTen, 'P');
+      const bStreak = this.calculateStreak(lastTen, 'B');
+      
+      if (pStreak >= 3) {
+        analysis += `⚠️ هناك تسلسل لـ ${pStreak} جولات للاعب!`;
+      } else if (bStreak >= 3) {
+        analysis += `⚠️ هناك تسلسل لـ ${bStreak} جولات للمصرفي!`;
+      } else {
+        analysis += 'لا توجد تسلسلات طويلة مؤخراً، اللعب متوازن.';
+      }
+    }
+
+    return analysis;
+  }
+
+  getStatistics() {
+    const pred = enhancedPredict();
+    
+    let stats = `إحصاءات اللعبة:\n`;
+    stats += `- إجمالي الجولات: ${state.rounds.length}\n`;
+    stats += `- اللاعب: ${state.count.P} فوز (${((state.count.P / state.rounds.length) * 100).toFixed(1)}%)\n`;
+    stats += `- المصرفي: ${state.count.B} فوز (${((state.count.B / state.rounds.length) * 100).toFixed(1)}%)\n`;
+    stats += `- التعادل: ${state.count.T} فوز (${((state.count.T / state.rounds.length) * 100).toFixed(1)}%)\n`;
+    
+    if (state.win.P + state.win.B + state.win.T > 0) {
+      const totalPredictions = state.win.P + state.win.B + state.win.T + state.loss.P + state.loss.B + state.loss.T;
+      const accuracy = totalPredictions > 0 ? 
+        ((state.win.P + state.win.B + state.win.T) / totalPredictions * 100).toFixed(1) : '0';
+      stats += `- دقة التنبؤات: ${accuracy}%\n`;
+    }
+    
+    stats += `- الثقة الحالية: ${pred.confidence.toFixed(1)}%\n`;
+    stats += `- النموذج المستخدم: ${getModeName(state.analysisMode)}`;
+    
+    return stats;
+  }
+
+  getBettingAdvice() {
+    const pred = enhancedPredict();
+    const recent = state.rounds.slice(-Math.min(8, state.rounds.length));
+    
+    if (recent.length < 3) {
+      return 'أنتظر المزيد من الجولات لأعطيك نصيحة رهان دقيقة.';
+    }
+
+    const pCount = recent.filter(r => r === 'P').length;
+    const bCount = recent.filter(r => r === 'B').length;
+    
+    let advice = 'نصيحة الرهان:\n';
+    
+    if (pred.final === '—') {
+      advice += 'التنبؤ غير مؤكد حالياً. أفضل خيار هو:\n';
+      advice += '- لا تراهن في هذه الجولة\n';
+      advice += '- أو رهان رمزي صغير جداً\n';
+      advice += '- راقب اتجاه الجولة القادمة';
+    } else {
+      const finalText = pred.final === 'P' ? 'لاعب' : pred.final === 'B' ? 'مصرفي' : 'تعادل';
+      
+      if (pred.confidence >= 70) {
+        advice += `✅ ${finalText} هو الخيار الأفضل الآن بثقة عالية (${pred.confidence.toFixed(1)}%)\n`;
+        advice += 'يمكنك رهان متوسط إلى كبير\n';
+        advice += 'نسبة المخاطرة: منخفضة';
+      } else if (pred.confidence >= 50) {
+        advice += `⚠️ ${finalText} هو المرشح لكن الثقة متوسطة (${pred.confidence.toFixed(1)}%)\n`;
+        advice += 'رهان صغير إلى متوسط فقط\n';
+        advice += 'نسبة المخاطرة: متوسطة';
+      } else {
+        advice += `❌ ${finalText} مرشح لكن الثقة منخفضة (${pred.confidence.toFixed(1)}%)\n`;
+        advice += 'لا أنصح بالرهان أو رهان رمزي جداً\n';
+        advice += 'نسبة المخاطرة: عالية';
+      }
+      
+      if (finalText === 'T') {
+        advice += '\n⚠️ تحذير: رهان التعادل عالي المخاطرة عادة!';
+      }
+    }
+    
+    return advice;
+  }
+
+  getPatternAnalysis() {
+    if (state.rounds.length < 5) {
+      return 'نحتاج 5 جولات على الأقل لتحليل الأنماط.';
+    }
+
+    const recent = state.rounds.slice(-Math.min(10, state.rounds.length));
+    let pattern = '';
+    
+    const changes = [];
+    for (let i = 1; i < recent.length; i++) {
+      changes.push(recent[i] === recent[i-1] ? 'مستمر' : 'متغير');
+    }
+    
+    const consistentChanges = changes.filter(c => c === 'مستمر').length;
+    const changeRate = consistentChanges / changes.length;
+    
+    if (changeRate > 0.7) {
+      pattern = 'النمط: تسلسلات طويلة (مستقر) - غالباً ما تستمر نفس النتيجة';
+    } else if (changeRate > 0.4) {
+      pattern = 'النمط: مختلط - يتغير بين الحين والآخر';
+    } else {
+      pattern = 'النمط: متقلب - يتغير بشكل مستمر';
+    }
+    
+    const lastThree = recent.slice(-3);
+    if (lastThree[0] === lastThree[1] && lastThree[1] === lastThree[2]) {
+      pattern += '\n⚠️ تحذير: تسلسل من 3 جولات متتالية بنفس النتيجة!';
+    }
+    
+    return pattern;
+  }
+
+  getHelp() {
+    return `يمكنك سؤالي عن:
+1. "ما هو التنبؤ القادم؟" - للحصول على توقع الجولة التالية
+2. "ما هي نصيحتك؟" - للحصول على نصيحة اللعب
+3. "حلل لي النتائج" - لتحليل الجولات السابقة
+4. "ما هي الإحصاءات؟" - لعرض الأرقام والإحصائيات
+5. "ما هو أفضل خيار للرهان؟" - لنصيحة الرهان
+6. "ما هو نمط اللعب؟" - لتحليل الأنماط والتسلسلات
+
+يمكنك أيضاً التحدث بشكل طبيعي وسأحاول فهمك!`;
+  }
+
+  calculateStreak(rounds, type) {
+    let streak = 0;
+    for (let i = rounds.length - 1; i >= 0; i--) {
+      if (rounds[i] === type) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+    return streak;
+  }
+
+  speak(text) {
+    if (!this.voiceEnabled || this.isSpeaking) return;
+    
+    this.isSpeaking = true;
+    
+    // إلغاء أي كلام سابق
+    this.synth.cancel();
+    
+    // تأخير بسيط للسماح بالتحضير
+    setTimeout(() => {
+      try {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ar-SA';
+        utterance.rate = this.voiceSpeed;
+        utterance.pitch = 1;
+        utterance.volume = 1;
+        
+        utterance.onend = () => {
+          this.isSpeaking = false;
+        };
+        
+        utterance.onerror = (error) => {
+          console.error('خطأ في التحدث:', error);
+          this.isSpeaking = false;
+        };
+        
+        this.synth.speak(utterance);
+      } catch (error) {
+        console.error('خطأ في تهيئة الكلام:', error);
+        this.isSpeaking = false;
+      }
+    }, 300);
+  }
+
+  showMessage(text, type = 'assistant') {
+    const messagesEl = document.getElementById('voiceMessages');
+    if (!messagesEl) return;
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `voice-message ${type}`;
+    messageDiv.textContent = text;
+    
+    messagesEl.appendChild(messageDiv);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    
+    // حفظ في السجل
+    this.chatHistory.push({
+      text,
+      type,
+      timestamp: new Date().toISOString()
+    });
+    
+    // حفظ الإعدادات
+    this.saveSettings();
+  }
+
+  updateUIStatus(text, status = 'ready') {
+    const statusText = document.getElementById('statusText');
+    const statusIndicator = document.getElementById('statusIndicator');
+    const voiceBtn = document.getElementById('voiceAssistantBtn');
+    const micIcon = document.getElementById('micIcon');
+    const listeningText = document.getElementById('listeningText');
+    
+    if (statusText) statusText.textContent = text;
+    if (statusIndicator) {
+      statusIndicator.className = 'status-indicator';
+      if (status === 'listening') {
+        statusIndicator.classList.add('active');
+        if (voiceBtn) voiceBtn.classList.add('listening');
+        if (micIcon) micIcon.textContent = '🔴';
+        if (listeningText) listeningText.textContent = 'يستمع...';
+      } else if (status === 'speaking') {
+        if (voiceBtn) voiceBtn.classList.add('responding');
+        if (micIcon) micIcon.textContent = '🗣️';
+        if (listeningText) listeningText.textContent = 'يتحدث...';
+      } else {
+        if (voiceBtn) {
+          voiceBtn.classList.remove('listening', 'responding');
+        }
+        if (micIcon) micIcon.textContent = '🎤';
+        if (listeningText) listeningText.textContent = 'ابدأ التحدث';
+      }
+    }
+  }
+
+  clearChat() {
+    const messagesEl = document.getElementById('voiceMessages');
+    if (messagesEl) {
+      messagesEl.innerHTML = `
+        <div class="voice-message system">
+          أهلاً! أنا مساعدك الصوتي للعبة Baccarat Pro. يمكنك التحدث معي مباشرة للحصول على النصائح والتحليلات.
+        </div>
+        <div class="voice-message system">
+          قل: "ما هو التنبؤ القادم؟" أو "ما هي نصيحتك؟" أو "حلل لي النتائج السابقة"
+        </div>
+      `;
+    }
+    this.chatHistory = [];
+    this.saveSettings();
+  }
+
+  loadSettings() {
+    try {
+      const saved = localStorage.getItem('voiceAssistantSettings');
+      if (saved) {
+        const settings = JSON.parse(saved);
+        this.voiceEnabled = settings.voiceEnabled !== false;
+        this.voiceSpeed = settings.voiceSpeed || 1;
+        this.chatHistory = settings.chatHistory || [];
+        
+        // تحديث عناصر التحكم
+        const voiceToggle = document.getElementById('voiceResponseToggle');
+        const speedSelect = document.getElementById('voiceSpeedSelect');
+        
+        if (voiceToggle) voiceToggle.checked = this.voiceEnabled;
+        if (speedSelect) speedSelect.value = this.voiceSpeed.toString();
+        
+        // إعادة تحميل سجل المحادثة
+        this.restoreChatHistory();
+      }
+    } catch (error) {
+      console.error('خطأ في تحميل إعدادات المساعد الصوتي:', error);
+    }
+  }
+
+  saveSettings() {
+    try {
+      const settings = {
+        voiceEnabled: this.voiceEnabled,
+        voiceSpeed: this.voiceSpeed,
+        chatHistory: this.chatHistory.slice(-50) // حفظ آخر 50 رسالة فقط
+      };
+      localStorage.setItem('voiceAssistantSettings', JSON.stringify(settings));
+    } catch (error) {
+      console.error('خطأ في حفظ إعدادات المساعد الصوتي:', error);
+    }
+  }
+
+  restoreChatHistory() {
+    const messagesEl = document.getElementById('voiceMessages');
+    if (!messagesEl || this.chatHistory.length === 0) return;
+    
+    messagesEl.innerHTML = '';
+    
+    this.chatHistory.forEach(msg => {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `voice-message ${msg.type}`;
+      messageDiv.textContent = msg.text;
+      messagesEl.appendChild(messageDiv);
+    });
+    
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  getChatHistory() {
+    return this.chatHistory.slice(-50); // إرجاع آخر 50 رسالة فقط
+  }
+
+  loadChatHistory(history) {
+    if (Array.isArray(history)) {
+      this.chatHistory = history;
+      this.restoreChatHistory();
     }
   }
 }
@@ -1105,18 +1784,18 @@ const state = {
 // إنشاء مدير البيانات
 const dataManager = new DataManager();
 
+// إنشاء المساعد الصوتي
+const voiceAssistant = new VoiceAssistant();
+
 // ========== الوظائف المساعدة ==========
 const el = id => document.getElementById(id);
 
 // ========== الوظائف الرئيسية ==========
-
 function init() {
-  console.log('Initializing Baccarat Pro...');
+  console.log('Initializing Baccarat Pro with Voice Assistant...');
   
-  // تحميل البيانات المحفوظة
   dataManager.loadAllData();
   
-  // إعداد عناصر الواجهة
   el('windowSize').value = state.windowSize;
   
   el('applyWindow').onclick = () => {
@@ -1151,7 +1830,6 @@ function init() {
     showToast(`تم تغيير المرجحة الزمنية إلى ${getWeightingName(state.timeWeighting)}`);
   };
 
-  // إعدادات تعلم الآلة
   el('mlToggle').checked = state.useML;
   el('mlToggle').onchange = (e) => {
     state.useML = e.target.checked;
@@ -1170,14 +1848,12 @@ function init() {
     showToast(`تم تغيير نموذج ML إلى ${getMLModelName(state.mlModel)}`);
   };
 
-  // أزرار الإدخال
   el('btnP').onclick = () => pushRound('P');
   el('btnB').onclick = () => pushRound('B');
   el('btnT').onclick = () => pushRound('T');
   el('btnUndo').onclick = undoRound;
   el('btnReset').onclick = resetAll;
   
-  // أزرار البيانات
   el('btnExport').onclick = () => dataManager.exportData();
   el('btnImport').onclick = () => {
     const input = document.createElement('input');
@@ -1192,23 +1868,85 @@ function init() {
   };
   el('btnClearData').onclick = () => dataManager.clearAllData();
   
-  // تبديل الوضع
   el('themeToggle').onclick = toggleTheme;
   
-  // تعيين الوضع الافتراضي
   if (!document.documentElement.hasAttribute('data-theme')) {
     document.documentElement.setAttribute('data-theme', 'dark');
   }
   
-  // بدء الحفظ التلقائي
   dataManager.startAutoSave(30);
   
-  // تحديث الواجهة
+  // إعداد المساعد الصوتي
+  setupVoiceAssistant();
+  
   updateAll();
   updateMLStatus();
   dataManager.updateDataStats();
   
-  console.log('Initialization complete');
+  console.log('Initialization complete with Voice Assistant');
+}
+
+function setupVoiceAssistant() {
+  // زر فتح/إغلاق لوحة المساعد
+  const voiceBtn = el('voiceAssistantBtn');
+  const voicePanel = el('voiceAssistantPanel');
+  const voiceCloseBtn = el('voiceCloseBtn');
+  
+  voiceBtn.addEventListener('click', () => {
+    voicePanel.classList.toggle('active');
+    if (voicePanel.classList.contains('active')) {
+      voiceBtn.style.transform = 'scale(1.1)';
+    } else {
+      voiceBtn.style.transform = 'scale(1)';
+    }
+  });
+  
+  voiceCloseBtn.addEventListener('click', () => {
+    voicePanel.classList.remove('active');
+    voiceBtn.style.transform = 'scale(1)';
+  });
+  
+  // أزرار التحكم في المساعد
+  el('startListeningBtn').addEventListener('click', () => {
+    voiceAssistant.startListening();
+  });
+  
+  el('stopListeningBtn').addEventListener('click', () => {
+    voiceAssistant.stopListening();
+  });
+  
+  el('clearChatBtn').addEventListener('click', () => {
+    voiceAssistant.clearChat();
+  });
+  
+  // أزرار الأوامر السريعة
+  document.querySelectorAll('.voice-quick-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const command = e.target.getAttribute('data-command');
+      voiceAssistant.processVoiceCommand(command);
+    });
+  });
+  
+  // إعدادات الصوت
+  el('voiceResponseToggle').addEventListener('change', (e) => {
+    voiceAssistant.voiceEnabled = e.target.checked;
+    voiceAssistant.saveSettings();
+    showToast(`الرد الصوتي ${voiceAssistant.voiceEnabled ? 'مفعل' : 'معطل'}`);
+  });
+  
+  el('voiceSpeedSelect').addEventListener('change', (e) => {
+    voiceAssistant.voiceSpeed = parseFloat(e.target.value);
+    voiceAssistant.saveSettings();
+    showToast(`تم تغيير سرعة الصوت إلى ${e.target.options[e.target.selectedIndex].text}`);
+  });
+  
+  // إغلاق اللوحة بالنقر خارجها
+  document.addEventListener('click', (e) => {
+    if (!voicePanel.contains(e.target) && !voiceBtn.contains(e.target) && voicePanel.classList.contains('active')) {
+      voicePanel.classList.remove('active');
+      voiceBtn.style.transform = 'scale(1)';
+    }
+  });
 }
 
 function toggleTheme() {
@@ -1216,7 +1954,6 @@ function toggleTheme() {
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', newTheme);
   el('themeToggle').textContent = newTheme === 'dark' ? '🌚' : '🌕';
-  updateAccuracyChart();
   showToast(`تم التبديل إلى الوضع ${newTheme === 'dark' ? 'الليلي' : 'النهاري'}`);
 }
 
@@ -1249,7 +1986,6 @@ function getMLModelName(model) {
 }
 
 function showToast(message, type = 'success') {
-  // إنشاء عنصر التوست
   const toast = document.createElement('div');
   toast.textContent = message;
   toast.style.cssText = `
@@ -1267,7 +2003,6 @@ function showToast(message, type = 'success') {
   
   document.body.appendChild(toast);
   
-  // إزالة التوست بعد 3 ثواني
   setTimeout(() => {
     toast.style.animation = 'slideOut 0.3s ease-in';
     setTimeout(() => {
@@ -1278,7 +2013,6 @@ function showToast(message, type = 'success') {
   }, 3000);
 }
 
-// إضافة أنيميشن للتوست
 const style = document.createElement('style');
 style.textContent = `
 @keyframes slideIn {
@@ -1293,7 +2027,6 @@ style.textContent = `
 document.head.appendChild(style);
 
 // ========== خوارزميات التحليل ==========
-
 function frequencyAnalysis(rounds) {
   if (!rounds || rounds.length === 0) {
     return { P: 33.3, B: 33.3, T: 33.3 };
@@ -1495,8 +2228,20 @@ function pushRound(r) {
   dataManager.saveAllData();
   dataManager.updateDataStats();
   
-  // إشعار صوتي بسيط
   playSound('click');
+  
+  // تحديث المساعد الصوتي بعد كل جولة
+  if (voiceAssistant && state.rounds.length > 2) {
+    const recentChange = state.rounds.slice(-3);
+    if (recentChange[0] === recentChange[1] && recentChange[1] === recentChange[2]) {
+      voiceAssistant.showMessage(`⚠️ تسلسل من 3 جولات متتالية لـ ${recentChange[0] === 'P' ? 'لاعب' : recentChange[0] === 'B' ? 'مصرفي' : 'تعادل'}!`, 'system');
+      if (voiceAssistant.voiceEnabled) {
+        setTimeout(() => {
+          voiceAssistant.speak(`تحذير! هناك تسلسل من 3 جولات متتالية`);
+        }, 1000);
+      }
+    }
+  }
 }
 
 function undoRound() {
@@ -1522,7 +2267,6 @@ function undoRound() {
   
   state.lastPrediction = null;
   
-  // إعادة تدريب ML مع البيانات المحدثة
   state.ml.reset();
   for (let i = 0; i < state.rounds.length; i++) {
     if (i >= state.windowSize) {
@@ -1746,9 +2490,6 @@ function updateAll() {
   renderStats();
   renderBigRoad();
   updatePredictionCounts();
-  updateAccuracyStats();
-  updateAccuracyChart();
-  updatePatternInfo();
   updateMLStats();
   updateDataStatsDisplay();
 }
@@ -1761,11 +2502,9 @@ function updateMLStats() {
   const mlAccuracy = state.ml.getModelAccuracy(state.mlModel);
   el('mlOverallAccuracy').textContent = mlAccuracy.toFixed(1) + '%';
   
-  // تحديث دقة ML لكل نوع (مبسطة)
-  const mlOverall = mlAccuracy;
-  el('pMLAccuracy').textContent = (mlOverall * 0.9).toFixed(1) + '%';
-  el('bMLAccuracy').textContent = (mlOverall * 0.95).toFixed(1) + '%';
-  el('tMLAccuracy').textContent = (mlOverall * 0.7).toFixed(1) + '%';
+  el('pMLAccuracy').textContent = (mlAccuracy * 0.9).toFixed(1) + '%';
+  el('bMLAccuracy').textContent = (mlAccuracy * 0.95).toFixed(1) + '%';
+  el('tMLAccuracy').textContent = (mlAccuracy * 0.7).toFixed(1) + '%';
 }
 
 function renderStats() {
@@ -1890,98 +2629,6 @@ function updateAccuracyData(actualResult) {
     
     state.accuracyHistory.push(accuracy);
   }
-}
-
-function updateAccuracyStats() {
-  if (state.accuracyHistory.length === 0) {
-    el('currentAccuracy').textContent = '0%';
-    el('bestAccuracy').textContent = '0%';
-    el('averageAccuracy').textContent = '0%';
-    return;
-  }
-  
-  const currentAccuracy = state.accuracyHistory[state.accuracyHistory.length - 1];
-  const bestAccuracy = Math.max(...state.accuracyHistory);
-  const averageAccuracy = state.accuracyHistory.reduce((a, b) => a + b, 0) / state.accuracyHistory.length;
-  
-  el('currentAccuracy').textContent = currentAccuracy.toFixed(1) + '%';
-  el('bestAccuracy').textContent = bestAccuracy.toFixed(1) + '%';
-  el('averageAccuracy').textContent = averageAccuracy.toFixed(1) + '%';
-}
-
-function updateAccuracyChart() {
-  const svg = el('accuracyChart');
-  const tooltip = el('accuracyTooltip');
-  if (!svg || !tooltip) return;
-  
-  svg.innerHTML = '';
-  
-  if (state.accuracyHistory.length < 2) return;
-  
-  const width = svg.clientWidth || 600;
-  const height = svg.clientHeight || 80;
-  const padding = 20;
-  
-  // رسم الشبكة
-  for (let i = 0; i <= 100; i += 20) {
-    const y = height - padding - (i / 100) * (height - 2 * padding);
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('class', 'accuracy-grid');
-    line.setAttribute('x1', padding);
-    line.setAttribute('y1', y);
-    line.setAttribute('x2', width - padding);
-    line.setAttribute('y2', y);
-    svg.appendChild(line);
-    
-    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    text.setAttribute('x', padding - 5);
-    text.setAttribute('y', y + 4);
-    text.setAttribute('text-anchor', 'end');
-    text.setAttribute('fill', 'var(--muted)');
-    text.setAttribute('font-size', '10px');
-    text.textContent = i + '%';
-    svg.appendChild(text);
-  }
-  
-  // رسم الخط
-  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  let pathData = '';
-  
-  state.accuracyHistory.forEach((accuracy, index) => {
-    const x = padding + (index / (state.accuracyHistory.length - 1)) * (width - 2 * padding);
-    const y = height - padding - (accuracy / 100) * (height - 2 * padding);
-    
-    if (index === 0) {
-      pathData = `M ${x} ${y}`;
-    } else {
-      pathData += ` L ${x} ${y}`;
-    }
-    
-    // نقاط تفاعلية
-    const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    point.setAttribute('class', 'accuracy-point');
-    point.setAttribute('cx', x);
-    point.setAttribute('cy', y);
-    point.setAttribute('r', 3);
-    
-    point.addEventListener('mouseover', (e) => {
-      const rect = svg.getBoundingClientRect();
-      tooltip.style.left = (e.clientX - rect.left + 10) + 'px';
-      tooltip.style.top = (e.clientY - rect.top - 30) + 'px';
-      tooltip.textContent = `الجولة ${index + 1}: ${accuracy.toFixed(1)}%`;
-      tooltip.style.opacity = '1';
-    });
-    
-    point.addEventListener('mouseout', () => {
-      tooltip.style.opacity = '0';
-    });
-    
-    svg.appendChild(point);
-  });
-  
-  path.setAttribute('d', pathData);
-  path.setAttribute('class', 'accuracy-line');
-  svg.appendChild(path);
 }
 
 // تهيئة التطبيق عند تحميل الصفحة
