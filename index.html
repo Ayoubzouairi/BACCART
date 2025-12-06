@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AYOUB BACCARAT PRO - النسخة الكاملة مع المساعدة الصوتية</title>
+<title>AYOUB BACCARAT PRO - النسخة الكاملة مع الحفظ التلقائي</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
 :root{--gold:#d4af37;--gold-2:#b8871d;--bg-dark:#070606;--card:#0f0e10;--muted:#bfb7a6;--player:#2d7ef7;--banker:#e03b3b;--tie:#28a745;}
@@ -113,7 +113,7 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 .badge-pattern {background: #38b000; color: white;}
 .badge-ml {background: #9d4edd; color: white;}
 .pattern-info {font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.4;}
-.confidence-meter {height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 4px; overflow:hidden;}
+.confidence-meter {height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 4px; overflow: hidden;}
 .confidence-fill {height: 100%; background: linear-gradient(90deg, #38b000, #ff006e); border-radius: 3px; transition: width 0.3s;}
 .high-confidence {background: linear-gradient(90deg, #38b000, #d4af37);}
 .medium-confidence {background: linear-gradient(90deg, #d4af37, #ff006e);}
@@ -139,21 +139,6 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 .data-controls {display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;}
 .data-controls .btn {padding: 6px 10px; font-size: 12px; flex: 1; min-width: 100px;}
 
-/* أنماط المساعدة الصوتية */
-.voice-assistant-active {border: 2px solid #9d4edd !important; box-shadow: 0 0 20px rgba(157, 78, 221, 0.7) !important;}
-.voice-pulse {animation: voicePulse 2s infinite;}
-@keyframes voicePulse {0% {box-shadow: 0 0 0 0 rgba(157, 78, 221, 0.7);} 70% {box-shadow: 0 0 0 10px rgba(157, 78, 221, 0);} 100% {box-shadow: 0 0 0 0 rgba(157, 78, 221, 0);}}
-.voice-controls {display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;}
-.voice-message {background: rgba(157, 78, 221, 0.1); border-left: 3px solid #9d4edd; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 13px; line-height: 1.5; min-height: 60px;}
-.voice-status {display: flex; align-items: center; gap: 8px; margin-top: 8px;}
-.voice-dot {width: 10px; height: 10px; border-radius: 50%; background: #38b000;}
-.voice-dot.speaking {background: #ff006e; animation: blink 1s infinite;}
-@keyframes blink {0%, 100% {opacity: 1;} 50% {opacity: 0.3;}}
-.assistant-avatar {width: 50px; height: 50px; background: linear-gradient(135deg, #9d4edd, #7b2cbf); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; margin: 0 auto 10px;}
-.conversation-log {max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px; margin-top: 10px; font-size: 12px;}
-.conversation-item {margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1);}
-.conversation-item:last-child {border-bottom: none;}
-
 /* تحسينات للاستجابة */
 @media (max-width: 768px) {
     .layout {flex-direction: column;}
@@ -166,7 +151,6 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
     .color-legend {justify-content: flex-start;}
     .row {flex-wrap: wrap;}
     .btn {flex: 1; min-width: 60px;}
-    .voice-controls {flex-direction: column;}
 }
 
 @media (max-width: 480px) {
@@ -183,13 +167,10 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 <header class="top card">
   <div class="brand">
     <div class="logo">AYOUB BACCARAT PRO <span class="model-badge badge-ml">نسخة كاملة</span></div>
-    <div class="subtitle">نظام تنبؤ ذكي مع مساعدة صوتية تفاعلية 🧠🗣️💬</div>
+    <div class="subtitle">نظام تنبؤ ذكي مع خوارزميات تعلم آلة وحفظ تلقائي 🧠💾🚀</div>
   </div>
   <div class="controls">
     <button id="themeToggle" class="theme-toggle" title="تبديل الوضع">🌚</button>
-    <button id="voiceAssistantToggle" class="btn" style="background: linear-gradient(135deg, #9d4edd, #7b2cbf);">
-      <span id="voiceIcon">🎤</span> المساعدة الصوتية
-    </button>
     <button id="btnReset" class="btn gold">إعادة تعيين</button>
   </div>
 </header>
@@ -350,57 +331,40 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
     </div>
   </div>
 
-  <!-- المساعدة الصوتية التفاعلية -->
-  <div class="panel card" style="background: linear-gradient(135deg, rgba(157, 78, 221, 0.1), rgba(212, 175, 55, 0.05));">
-    <div class="section-title">🤖 المساعدة الصوتية - نادين</div>
-    
-    <div class="assistant-avatar">👩</div>
-    
-    <div class="voice-message" id="voiceMessage">
-      <div id="currentMessage">مرحباً! أنا نادين، مساعدتك الصوتية. اضغط على الأزرار للتفاعل معي.</div>
-      <div class="voice-status">
-        <div class="voice-dot" id="voiceDot"></div>
-        <span id="voiceStatusText">جاهزة للتحدث</span>
+  <!-- منحنى التوقعات -->
+  <div class="panel card accuracy-panel">
+    <div class="section-title">منحنى دقة التوقعات المتقدم</div>
+    <div class="accuracy-stats">
+      <div>
+        <div class="accuracy-label">الدقة الحالية</div>
+        <div class="accuracy-value" id="currentAccuracy">0%</div>
+      </div>
+      <div>
+        <div class="accuracy-label">أفضل دقة</div>
+        <div class="accuracy-value" id="bestAccuracy">0%</div>
+      </div>
+      <div>
+        <div class="accuracy-label">متوسط الدقة</div>
+        <div class="accuracy-value" id="averageAccuracy">0%</div>
+      </div>
+      <div>
+        <div class="accuracy-label">دقة ML</div>
+        <div class="accuracy-value" id="mlOverallAccuracy">0%</div>
       </div>
     </div>
-    
-    <div class="voice-controls">
-      <button id="btnSpeakPrediction" class="btn" style="background: #3a86ff; flex: 1;">
-        🔊 تحدث عن التنبؤ
-      </button>
-      <button id="btnAskAdvice" class="btn" style="background: #38b000; flex: 1;">
-        💡 اسأل عن نصيحة
-      </button>
-      <button id="btnAskEntry" class="btn" style="background: #d4af37; flex: 1;">
-        🚦 اسأل عن الدخول
-      </button>
+    <div class="accuracy-chart-container">
+      <svg id="accuracyChart" width="100%" height="100%"></svg>
+      <div id="accuracyTooltip" class="accuracy-tooltip"></div>
     </div>
-    
-    <div class="voice-controls">
-      <button id="btnAskExit" class="btn" style="background: #ff006e; flex: 1;">
-        🏁 اسأل عن الخروج
-      </button>
-      <button id="btnAskAnalysis" class="btn" style="background: #9d4edd; flex: 2;">
-        📊 اطلب تحليل مفصل
-      </button>
-    </div>
-    
-    <div class="pattern-info">
-      <span id="assistantMood">الحالة: متحمسة لمساعدتك</span> • 
-      <span id="conversationCount">محادثات: 0</span>
-    </div>
-    
-    <div class="conversation-log" id="conversationLog">
-      <!-- سجل المحادثات سيظهر هنا -->
-    </div>
+    <div class="muted small">تتبع دقة توقعاتك مع تحليل أداء النماذج المختلفة</div>
   </div>
 </section>
 </main>
 
 <footer class="foot card">
   <div style="flex: 1;">
-    <div>تصميم: Ayoub • النسخة الكاملة مع المساعدة الصوتية</div>
-    <div class="credits small">نظام متعدد النماذج • مساعدة صوتية تفاعلية • تعلم آلة • تحليل الأنماط • حفظ تلقائي</div>
+    <div>تصميم: Ayoub • النسخة الكاملة مع الحفظ التلقائي</div>
+    <div class="credits small">نظام متعدد النماذج • تعلم آلة • تحليل الأنماط • حفظ تلقائي • مؤشرات متقدمة</div>
   </div>
   <div class="data-controls">
     <button id="btnExport" class="btn" style="background: rgba(59, 130, 246, 0.2); border: 1px solid #3a86ff;">📥 تصدير</button>
@@ -415,603 +379,6 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 </div>
 
 <script>
-// ========== نظام المساعدة الصوتية التفاعلية ==========
-
-class VoiceAssistant {
-  constructor() {
-    this.name = "نادين";
-    this.isActive = false;
-    this.isSpeaking = false;
-    this.conversationCount = 0;
-    this.mood = "متحمسة";
-    this.lastSpokenTime = null;
-    this.synth = window.speechSynthesis;
-    this.voices = [];
-    this.currentVoice = null;
-    this.conversationHistory = [];
-    
-    this.initVoices();
-    
-    // شخصية المساعدة
-    this.personality = {
-      name: "نادين",
-      gender: "أنثى",
-      age: "شابة",
-      tone: "ودودة ومتحمسة",
-      style: "تتحدث كصديقة تقدم النصائح",
-      traits: ["ذكية", "مرحة", "داعمة", "صريحة", "متفائلة"]
-    };
-    
-    // قاعدة المعرفة
-    this.knowledge = {
-      greetings: [
-        "مرحباً! أنا نادين، مساعدتك الصوتية الذكية. سعيده بأن أكون معك في رحلة الباكارات!",
-        "أهلاً وسهلاً! أنا نادين، جاهزة لتقديم النصائح والتوقعات بصوتي الجميل!",
-        "مرحباً بك! أنا نادين، صديقتك الذكية في عالم الباكارات. كيف يمكنني مساعدتك؟"
-      ],
-      
-      predictions: {
-        strong: [
-          "التنبؤ الحالي يشير بقوة إلى {{result}}! الثقة مرتفعة عند {{confidence}}%. هذه فرصة ممتازة!",
-          "أرى إشارة واضحة لـ {{result}} بثقة {{confidence}}%. هذا تنبؤ واعد جداً!",
-          "بناءً على التحليل الدقيق، {{result}} هو الخيار الأقوى مع ثقة {{confidence}}%. أنا متحمسة لهذه الإشارة!"
-        ],
-        moderate: [
-          "هناك تلميح لـ {{result}} ولكن الثقة متوسطة عند {{confidence}}%. كن حذراً واستخدم استراتيجيتك.",
-          "التنبؤ يشير إلى {{result}} بثقة {{confidence}}%. ليست قوية جداً ولكنها جيدة.",
-          "أرى احتمالاً لـ {{result}} مع ثقة {{confidence}}%. اعتمد على حدسك مع البيانات."
-        ],
-        weak: [
-          "التنبؤ غير واضح حالياً. الثقة منخفضة عند {{confidence}}%. أنصح بالانتظار.",
-          "لا أرى إشارة قوية. الثقة {{confidence}}% فقط. ربما نحتاج لمزيد من البيانات.",
-          "السوق متقلب قليلاً. التنبؤ غير مؤكد بثقة {{confidence}}%. الصبر فضيلة!"
-        ]
-      },
-      
-      advice: [
-        "اسمع نصيحتي: توقف عند ثلاثة مكاسب متتالية واحتفظ بأرباحك!",
-        "كصديقة ناصحة، أقول لك: خاطر فقط بما تستطيع خسارته.",
-        "نصيحة ذهبية: راقب النمط العام، لا تركز على جولة واحدة فقط.",
-        "كمساعدة ذكية، أنصحك: خذ استراحة بعد خمس جولات للحفاظ على تركيزك.",
-        "اسمع كلامي: إدارة المال أهم من التنبؤ الدقيق. لا تهمل هذه القاعدة!",
-        "نصيحتي لك: استخدم وقف الخسارة دائماً. ثق بي، ستنقذك كثيراً!"
-      ],
-      
-      encouragement: [
-        "أنت تسير على الطريق الصحيح! استمر في التعلم والتحليل.",
-        "أرى تطوراً في تحليلك. هذا رائع!",
-        "كل جولة جديدة هي فرصة للتعلم. أنت تتحسن!",
-        "الثبات والاستمرارية هما سر النجاح. أنت على الطريق الصحيح!",
-        "أنا فخورة بتركيزك! استمر على هذا المنوال.",
-        "التعلم المستمر هو مفتاح النجاح. وأنت تفعل ذلك بشكل ممتاز!"
-      ],
-      
-      winReactions: [
-        "🎉 مبروك! فوز رائع! استمر في نفس الاستراتيجية الذكية!",
-        "🏆 أحسنت! تنبؤ صحيح! هذا دليل على تحليلك الدقيق.",
-        "✨ فوز ممتاز! أنا سعيدة لك! حافظ على هذا الزخم.",
-        "✅ نجاح باهر! أنت تتعلم بسرعة. استمر هكذا!"
-      ],
-      
-      lossReactions: [
-        "💪 لا تقلق صديقي! الخسارة جزء من اللعبة. تعلم منها واستمر.",
-        "🔄 كلنا نخسر أحياناً. المهم هو التعلم والمضي قدماً.",
-        "🌟 لا تيأس! حتى المحترفين يخسرون. ركز على الصورة الكبيرة.",
-        "📈 الخسائر مؤقتة، لكن التعلم دائم. أنا معك في هذه الرحلة!"
-      ],
-      
-      entrySignals: [
-        "🚦 انتبه! إشارة دخول قوية الآن! النمط واضح والفرصة مواتية.",
-        "✅ الوقت مناسب للدخول! التحليل يظهر إشارة إيجابية.",
-        "🎯 هذه فرصة جيدة للدخول! الثقة في التنبؤ معقولة.",
-        "🌟 الظروف مناسبة للبداية! أدخل بحكمة وثقة."
-      ],
-      
-      exitSignals: [
-        "⚠️ صديقي، وقت الخروج! حافظ على أرباحك قبل التقلبات.",
-        "🛑 إشارة خروج مهمة! خذ أرباحك الآن بكل ثقة.",
-        "💎 هذا هو الوقت المثالي للخروج! احتفظ بمكاسبك.",
-        "📉 أنصح بالخروج فوراً! مؤشرات الخطر في ازدياد."
-      ],
-      
-      analysis: [
-        "دعني أحلل لك الوضع الحالي... أرى أن النمط يميل نحو {{trend}}.",
-        "بعد دراسة البيانات، ألاحظ أن {{observation}}.",
-        "تحليلي الشخصي يقول: {{insight}}",
-        "كخبيرة في الأنماط، أرى أن {{pattern}} يتكرر حالياً."
-      ],
-      
-      jokes: [
-        "هل تعلم أن الباكارات مثل الحياة؟ أحياناً تربح وأحياناً تتعلم! 😄",
-        "إذا كان الباكارات سهلاً، لكان الجميع أثرياء! 🎲",
-        "المساعد الذكي يقول: توقع، تحليل، ربح، كرر! 🤖",
-        "ثقتك في تنبؤاتي مثل ثقتي بأن اليوم التالي سيأتي! ☀️"
-      ]
-    };
-  }
-
-  initVoices() {
-    // تحميل الأصوات المتاحة
-    const loadVoices = () => {
-      this.voices = this.synth.getVoices();
-      
-      // البحث عن صوت أنثوي
-      for (let voice of this.voices) {
-        // أفضل صوت عربي أنثوي
-        if (voice.lang.includes('ar') && (voice.name.includes('Female') || voice.name.includes('Woman') || voice.name.includes('أنثى'))) {
-          this.currentVoice = voice;
-          break;
-        }
-      }
-      
-      // إذا لم نجد صوت أنثوي عربي، نبحث عن أي صوت عربي
-      if (!this.currentVoice) {
-        for (let voice of this.voices) {
-          if (voice.lang.includes('ar')) {
-            this.currentVoice = voice;
-            break;
-          }
-        }
-      }
-      
-      // إذا لم نجد أي صوت عربي، نأخذ أول صوت متاح
-      if (!this.currentVoice && this.voices.length > 0) {
-        this.currentVoice = this.voices[0];
-      }
-    };
-    
-    this.synth.onvoiceschanged = loadVoices;
-    loadVoices();
-  }
-
-  speak(text, onEnd = null) {
-    if (!this.isActive || !this.synth) return;
-    
-    // إيقاف أي كلام سابق
-    this.stopSpeaking();
-    
-    this.isSpeaking = true;
-    this.updateVoiceStatus();
-    
-    const utterance = new SpeechSynthesisUtterance(text);
-    
-    // إعدادات الصوت
-    if (this.currentVoice) {
-      utterance.voice = this.currentVoice;
-    }
-    
-    utterance.lang = 'ar-SA';
-    utterance.rate = 0.9; // سرعة متوسطة
-    utterance.pitch = 1.2; // نبرة أنثوية أعلى قليلاً
-    utterance.volume = 1;
-    
-    // أحداث الصوت
-    utterance.onstart = () => {
-      this.isSpeaking = true;
-      this.updateVoiceStatus();
-      this.showMessage(text);
-    };
-    
-    utterance.onend = () => {
-      this.isSpeaking = false;
-      this.updateVoiceStatus();
-      this.lastSpokenTime = Date.now();
-      this.conversationCount++;
-      this.updateConversationCount();
-      
-      if (onEnd) onEnd();
-    };
-    
-    utterance.onerror = (event) => {
-      console.error('خطأ في الصوت:', event);
-      this.isSpeaking = false;
-      this.updateVoiceStatus();
-      this.showMessage("عذراً، حدث خطأ في الصوت. لكن النصيحة هي: " + text);
-    };
-    
-    this.synth.speak(utterance);
-    return utterance;
-  }
-
-  stopSpeaking() {
-    if (this.synth && this.synth.speaking) {
-      this.synth.cancel();
-      this.isSpeaking = false;
-      this.updateVoiceStatus();
-    }
-  }
-
-  speakPrediction() {
-    if (!this.isActive) {
-      this.showMessage("يجب تفعيل المساعدة الصوتية أولاً!");
-      return;
-    }
-    
-    const prediction = enhancedPredict();
-    if (!prediction || prediction.final === '—') {
-      this.speak("التنبؤ الحالي غير واضح. الثقة منخفضة جداً. أنصحك بالانتظار حتى تظهر إشارة أقوى.");
-      return;
-    }
-    
-    const resultText = prediction.final === 'P' ? 'اللاعب' : 
-                      prediction.final === 'B' ? 'المصرفي' : 'التعادل';
-    
-    const confidence = prediction.confidence || 0;
-    
-    let speech;
-    if (confidence >= 70) {
-      speech = this.getRandomResponse('predictions.strong');
-    } else if (confidence >= 40) {
-      speech = this.getRandomResponse('predictions.moderate');
-    } else {
-      speech = this.getRandomResponse('predictions.weak');
-    }
-    
-    speech = speech.replace('{{result}}', resultText)
-                   .replace('{{confidence}}', confidence.toFixed(0));
-    
-    // إضافة نصيحة حسب مستوى الثقة
-    let advice = "";
-    if (confidence >= 70) {
-      advice = "هذه إشارة قوية! يمكنك الدخول بثقة معتدلة. ولكن تذكر، استخدم وقف الخسارة دائماً!";
-    } else if (confidence >= 40) {
-      advice = "هذه إشارة متوسطة. أدخل بحذر ولا تخاطر كثيراً. المراقبة أولاً ثم التحرك!";
-    } else {
-      advice = "الصبر فضيلة! انتظر حتى تتحسن الإشارة. المراقبة الآن أفضل من التسرع.";
-    }
-    
-    const fullSpeech = speech + " " + advice;
-    this.speak(fullSpeech);
-  }
-
-  giveAdvice() {
-    if (!this.isActive) {
-      this.showMessage("يجب تفعيل المساعدة الصوتية أولاً!");
-      return;
-    }
-    
-    const advice = this.getRandomResponse('advice');
-    const encouragement = this.getRandomResponse('encouragement');
-    
-    // إضافة نكتة بين الحين والآخر
-    let joke = "";
-    if (Math.random() > 0.7) {
-      joke = " " + this.getRandomResponse('jokes');
-    }
-    
-    const fullSpeech = advice + " " + encouragement + joke;
-    this.speak(fullSpeech);
-  }
-
-  giveEntrySignal() {
-    if (!this.isActive) return;
-    
-    if (state.rounds.length < 5) {
-      this.speak("أحتاج إلى خمس جولات على الأقل لأعطيك تحليلاً دقيقاً للدخول. الرجاء إدخال المزيد من الجولات أولاً.");
-      return;
-    }
-    
-    const analysis = this.analyzeEntryConditions();
-    
-    let speech;
-    if (analysis.shouldEnter) {
-      speech = this.getRandomResponse('entrySignals');
-    } else {
-      speech = `الوضع الحالي غير مناسب للدخول. ${analysis.reason} أنصحك بالانتظار قليلاً.`;
-    }
-    
-    this.speak(speech);
-  }
-
-  analyzeEntryConditions() {
-    const rounds = state.rounds;
-    const recent = rounds.slice(-8);
-    
-    if (recent.length < 5) {
-      return { shouldEnter: false, reason: "لا توجد بيانات كافية" };
-    }
-    
-    // تحليل الاستقرار
-    let changes = 0;
-    for (let i = 1; i < recent.length; i++) {
-      if (recent[i] !== recent[i-1]) changes++;
-    }
-    const stability = 1 - (changes / (recent.length - 1));
-    
-    // تحليل النمط
-    const lastThree = recent.slice(-3);
-    const isStreak = lastThree[0] === lastThree[1] && lastThree[1] === lastThree[2];
-    
-    const shouldEnter = stability > 0.7 || isStreak;
-    
-    let reason = stability > 0.7 ? "الاستقرار مرتفع" : "هناك تكرار في النمط";
-    
-    return { shouldEnter, reason };
-  }
-
-  giveExitSignal() {
-    if (!this.isActive) return;
-    
-    if (state.rounds.length === 0) {
-      this.speak("لا توجد جولات كافية لتحليل إشارات الخروج. ابدأ باللعب أولاً!");
-      return;
-    }
-    
-    const analysis = this.analyzeExitConditions();
-    
-    let speech;
-    if (analysis.shouldExit) {
-      speech = this.getRandomResponse('exitSignals');
-    } else {
-      speech = `لا توجد إشارة خروج قوية حالياً. ${analysis.reason} تابع اللعب بحكمة!`;
-    }
-    
-    this.speak(speech);
-  }
-
-  analyzeExitConditions() {
-    const rounds = state.rounds;
-    const recent = rounds.slice(-6);
-    
-    if (recent.length < 3) {
-      return { shouldExit: false, reason: "بيانات غير كافية" };
-    }
-    
-    // تحليل التقلب
-    let changes = 0;
-    for (let i = 1; i < recent.length; i++) {
-      if (recent[i] !== recent[i-1]) changes++;
-    }
-    const volatility = changes / (recent.length - 1);
-    
-    // تحليل النمط
-    const patterns = [];
-    for (let i = 2; i < recent.length; i++) {
-      if (recent[i] !== recent[i-1] && recent[i-1] !== recent[i-2]) {
-        patterns.push('alternating');
-      }
-    }
-    
-    const hasAlternation = patterns.length > 0;
-    const shouldExit = volatility > 0.7 || hasAlternation;
-    
-    let reason = volatility > 0.7 ? "هناك تقلب كبير" : "النمط يتناوب بشكل كبير";
-    
-    return { shouldExit, reason };
-  }
-
-  giveDetailedAnalysis() {
-    if (!this.isActive) return;
-    
-    if (state.rounds.length < 3) {
-      this.speak("أحتاج إلى ثلاث جولات على الأقل لأعطيك تحليلاً مفصلاً. الرجاء إدخال المزيد من الجولات.");
-      return;
-    }
-    
-    const recent = state.rounds.slice(-10);
-    const pCount = recent.filter(r => r === 'P').length;
-    const bCount = recent.filter(r => r === 'B').length;
-    const tCount = recent.filter(r => r === 'T').length;
-    
-    const total = recent.length;
-    const pPercent = total > 0 ? Math.round((pCount / total) * 100) : 0;
-    const bPercent = total > 0 ? Math.round((bCount / total) * 100) : 0;
-    const tPercent = total > 0 ? Math.round((tCount / total) * 100) : 0;
-    
-    let trend = "";
-    if (pCount > bCount && pCount > tCount) {
-      trend = "الاتجاه العام يميل نحو اللاعب";
-    } else if (bCount > pCount && bCount > tCount) {
-      trend = "الاتجاه العام يميل نحو المصرفي";
-    } else {
-      trend = "الاتجاه متوازن بين اللاعب والمصرفي";
-    }
-    
-    const analysis = this.getRandomResponse('analysis')
-      .replace('{{trend}}', trend)
-      .replace('{{observation}}', `اللاعب ظهر ${pCount} مرات والمصرفي ${bCount} مرات`)
-      .replace('{{pattern}}', pCount > bCount ? "تفوق اللاعب" : "تفوق المصرفي")
-      .replace('{{insight}}', `الدقة العامة ${state.accuracyHistory.length > 0 ? state.accuracyHistory[state.accuracyHistory.length-1].toFixed(1) : 0}%`);
-    
-    const details = `في آخر ${total} جولات: اللاعب ${pPercent}%، المصرفي ${bPercent}%، التعادل ${tPercent}%.`;
-    
-    const fullSpeech = analysis + " " + details + " " + this.getRandomResponse('advice');
-    this.speak(fullSpeech);
-  }
-
-  reactToRound(result, predicted, isWin) {
-    if (!this.isActive) return;
-    
-    // انتظار قليلاً قبل الرد
-    setTimeout(() => {
-      let reaction;
-      
-      if (isWin) {
-        reaction = this.getRandomResponse('winReactions');
-        
-        // إذا كان هناك 3 أرباح متتالية، نعطي تحذير
-        const winStreak = this.calculateWinStreak();
-        if (winStreak >= 3) {
-          reaction += ` لديك ${winStreak} أرباح متتالية! أنصحك بأخذ قسط من الراحة أو تخفيض الرهان.`;
-        }
-      } else {
-        reaction = this.getRandomResponse('lossReactions');
-        
-        // إذا كان هناك 3 خسائر متتالية، نعطي تشجيع
-        const lossStreak = this.calculateLossStreak();
-        if (lossStreak >= 3) {
-          reaction += ` لديك ${lossStreak} خسائر متتالية. ربما حان الوقت لأخذ استراحة قصيرة.`;
-        }
-      }
-      
-      this.speak(reaction);
-    }, 1000);
-  }
-
-  calculateWinStreak() {
-    if (!state.predictionsHistory || state.predictionsHistory.length === 0) return 0;
-    
-    let streak = 0;
-    for (let i = state.predictionsHistory.length - 1; i >= 0; i--) {
-      if (state.predictionsHistory[i].correct) {
-        streak++;
-      } else {
-        break;
-      }
-    }
-    
-    return streak;
-  }
-
-  calculateLossStreak() {
-    if (!state.predictionsHistory || state.predictionsHistory.length === 0) return 0;
-    
-    let streak = 0;
-    for (let i = state.predictionsHistory.length - 1; i >= 0; i--) {
-      if (!state.predictionsHistory[i].correct) {
-        streak++;
-      } else {
-        break;
-      }
-    }
-    
-    return streak;
-  }
-
-  getRandomResponse(category) {
-    const keys = category.split('.');
-    let responses = this.knowledge;
-    
-    for (const key of keys) {
-      responses = responses[key];
-    }
-    
-    if (Array.isArray(responses)) {
-      return responses[Math.floor(Math.random() * responses.length)];
-    }
-    
-    return "أنا هنا لمساعدتك!";
-  }
-
-  showMessage(text) {
-    const messageEl = el('currentMessage');
-    if (messageEl) {
-      messageEl.textContent = text;
-      
-      // إضافة إلى سجل المحادثة
-      this.addToConversationLog(text);
-    }
-  }
-
-  addToConversationLog(text) {
-    const logEl = el('conversationLog');
-    if (!logEl) return;
-    
-    const time = new Date().toLocaleTimeString('ar-EG', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
-    
-    const item = document.createElement('div');
-    item.className = 'conversation-item';
-    item.innerHTML = `<strong>${this.name}:</strong> ${text} <span style="color: #bfb7a6; font-size: 10px;">${time}</span>`;
-    
-    logEl.appendChild(item);
-    logEl.scrollTop = logEl.scrollHeight;
-    
-    // حفظ في التاريخ
-    this.conversationHistory.push({
-      speaker: this.name,
-      text,
-      time: new Date().toISOString()
-    });
-    
-    // الحفاظ على حجم معقول للسجل
-    if (this.conversationHistory.length > 50) {
-      this.conversationHistory = this.conversationHistory.slice(-50);
-      if (logEl.children.length > 10) {
-        logEl.removeChild(logEl.firstChild);
-      }
-    }
-  }
-
-  updateVoiceStatus() {
-    const dotEl = el('voiceDot');
-    const statusEl = el('voiceStatusText');
-    
-    if (dotEl && statusEl) {
-      if (this.isSpeaking) {
-        dotEl.className = 'voice-dot speaking';
-        statusEl.textContent = 'جاري التحدث...';
-      } else {
-        dotEl.className = 'voice-dot';
-        statusEl.textContent = 'جاهزة للتحدث';
-      }
-    }
-  }
-
-  updateConversationCount() {
-    const countEl = el('conversationCount');
-    if (countEl) {
-      countEl.textContent = `محادثات: ${this.conversationCount}`;
-    }
-  }
-
-  updateMood() {
-    const moodEl = el('assistantMood');
-    if (!moodEl) return;
-    
-    const moods = ["متحمسة", "سعيدة", "مرحة", "جادة", "منتبهة", "ودودة"];
-    const randomMood = moods[Math.floor(Math.random() * moods.length)];
-    
-    this.mood = randomMood;
-    moodEl.textContent = `الحالة: ${this.mood}`;
-  }
-
-  toggle() {
-    this.isActive = !this.isActive;
-    
-    const button = el('voiceAssistantToggle');
-    if (button) {
-      if (this.isActive) {
-        button.classList.add('voice-assistant-active');
-        button.innerHTML = '<span id="voiceIcon">🎤</span> المساعدة الصوتية <span class="voice-pulse"></span>';
-        
-        // تحديث المزاج
-        this.updateMood();
-        
-        // ترحيب
-        setTimeout(() => {
-          const greeting = this.getRandomResponse('greetings');
-          this.speak(greeting);
-        }, 500);
-        
-        showToast("المساعدة الصوتية مفعلة! نادين جاهزة للتحدث معك.");
-      } else {
-        button.classList.remove('voice-assistant-active');
-        button.innerHTML = '<span id="voiceIcon">🎤</span> المساعدة الصوتية';
-        
-        this.stopSpeaking();
-        this.showMessage("المساعدة الصوتية متوقفة.");
-        showToast("المساعدة الصوتية معطلة.");
-      }
-    }
-    
-    return this.isActive;
-  }
-
-  clearConversation() {
-    const logEl = el('conversationLog');
-    if (logEl) {
-      logEl.innerHTML = '';
-    }
-    
-    this.conversationHistory = [];
-    this.conversationCount = 0;
-    this.updateConversationCount();
-  }
-}
-
 // ========== خوارزميات تعلم الآلة ==========
 
 class SimpleKNN {
@@ -1427,7 +794,7 @@ class BaccaratMachineLearning {
 
 class DataManager {
   constructor() {
-    this.storageKey = 'baccaratPro_v6';
+    this.storageKey = 'baccaratPro_v3';
     this.autoSaveInterval = null;
     this.lastSaveTime = null;
     this.isSaving = false;
@@ -1452,9 +819,7 @@ class DataManager {
           mlModel: state.mlModel,
           modelPerformance: state.modelPerformance,
           previousPredictions: state.previousPredictions,
-          lastPrediction: state.lastPrediction,
-          assistantActive: state.voiceAssistant.isActive,
-          conversationCount: state.voiceAssistant.conversationCount
+          lastPrediction: state.lastPrediction
         },
         history: {
           accuracyHistory: state.accuracyHistory,
@@ -1466,12 +831,8 @@ class DataManager {
           activeModel: state.ml.activeModel,
           isEnabled: state.ml.isEnabled
         },
-        assistantData: {
-          conversationHistory: state.voiceAssistant.conversationHistory,
-          mood: state.voiceAssistant.mood
-        },
         meta: {
-          version: '6.0',
+          version: '3.0',
           lastSave: new Date().toISOString(),
           totalRounds: state.rounds.length,
           sessionStart: this.getSessionStartTime()
@@ -1516,14 +877,6 @@ class DataManager {
         state.modelPerformance = data.state.modelPerformance || { basic: 0, advanced: 0, pattern: 0, ml: 0 };
         state.previousPredictions = data.state.previousPredictions || { P: 0, B: 0, T: 0 };
         state.lastPrediction = data.state.lastPrediction || null;
-        
-        // تحميل إعدادات المساعدة
-        if (data.state.assistantActive !== undefined) {
-          state.voiceAssistant.isActive = data.state.assistantActive;
-        }
-        if (data.state.conversationCount !== undefined) {
-          state.voiceAssistant.conversationCount = data.state.conversationCount;
-        }
       }
 
       // تحميل التاريخ
@@ -1553,16 +906,6 @@ class DataManager {
         }, 500);
       }
 
-      // تحميل بيانات المساعدة
-      if (data.assistantData) {
-        if (Array.isArray(data.assistantData.conversationHistory)) {
-          state.voiceAssistant.conversationHistory = data.assistantData.conversationHistory;
-        }
-        if (data.assistantData.mood) {
-          state.voiceAssistant.mood = data.assistantData.mood;
-        }
-      }
-
       this.lastSaveTime = new Date();
       this.updateSaveStatus(true, 'تم تحميل البيانات');
       return true;
@@ -1587,13 +930,9 @@ class DataManager {
           featureHistory: state.ml.featureHistory,
           trainingCount: state.ml.getTrainingDataCount()
         },
-        assistant: {
-          conversationHistory: state.voiceAssistant.conversationHistory,
-          conversationCount: state.voiceAssistant.conversationCount
-        },
         meta: {
           exportDate: new Date().toISOString(),
-          version: 'AYOUB_BACCARAT_PRO_v6.0',
+          version: 'AYOUB_BACCARAT_PRO_v3.0',
           totalRounds: state.rounds.length
         }
       };
@@ -1664,29 +1003,10 @@ class DataManager {
           }, 500);
         }
 
-        if (importedData.assistant) {
-          if (Array.isArray(importedData.assistant.conversationHistory)) {
-            state.voiceAssistant.conversationHistory = importedData.assistant.conversationHistory;
-          }
-          if (importedData.assistant.conversationCount) {
-            state.voiceAssistant.conversationCount = importedData.assistant.conversationCount;
-          }
-        }
-
         // تحديث الواجهة
         updateAll();
         updateMLStatus();
-        state.voiceAssistant.updateConversationCount();
-        state.voiceAssistant.updateMood();
         this.saveAllData();
-        
-        // تحديث سجل المحادثة
-        state.voiceAssistant.clearConversation();
-        if (state.voiceAssistant.conversationHistory.length > 0) {
-          state.voiceAssistant.conversationHistory.forEach(item => {
-            state.voiceAssistant.addToConversationLog(item.text);
-          });
-        }
         
         alert(`✅ تم استيراد ${state.rounds.length} جولة بنجاح!`);
       } catch (error) {
@@ -1705,7 +1025,6 @@ class DataManager {
     if (confirm('⚠️ هل أنت متأكد من مسح جميع البيانات؟\nلا يمكن التراجع عن هذا الإجراء.')) {
       localStorage.removeItem(this.storageKey);
       resetAll();
-      state.voiceAssistant.clearConversation();
       alert('✅ تم مسح جميع البيانات.');
     }
   }
@@ -1730,7 +1049,7 @@ class DataManager {
   }
 
   updateSaveStatus(success, message = '') {
-    const statusEl = el('autoSaveStatus');
+    const statusEl = document.getElementById('autoSaveStatus');
     if (statusEl) {
       if (success) {
         const timeStr = this.lastSaveTime ? 
@@ -1780,8 +1099,7 @@ const state = {
   previousPredictions: { P: 0, B: 0, T: 0 },
   ml: new BaccaratMachineLearning(),
   useML: true,
-  mlModel: 'ensemble',
-  voiceAssistant: new VoiceAssistant()
+  mlModel: 'ensemble'
 };
 
 // إنشاء مدير البيانات
@@ -1793,7 +1111,7 @@ const el = id => document.getElementById(id);
 // ========== الوظائف الرئيسية ==========
 
 function init() {
-  console.log('Initializing Baccarat Pro with Voice Assistant...');
+  console.log('Initializing Baccarat Pro...');
   
   // تحميل البيانات المحفوظة
   dataManager.loadAllData();
@@ -1852,32 +1170,6 @@ function init() {
     showToast(`تم تغيير نموذج ML إلى ${getMLModelName(state.mlModel)}`);
   };
 
-  // أزرار المساعدة الصوتية
-  el('voiceAssistantToggle').onclick = () => {
-    const isActive = state.voiceAssistant.toggle();
-    showToast(`المساعدة الصوتية ${isActive ? 'مفعلة' : 'معطلة'}`);
-  };
-
-  el('btnSpeakPrediction').onclick = () => {
-    state.voiceAssistant.speakPrediction();
-  };
-
-  el('btnAskAdvice').onclick = () => {
-    state.voiceAssistant.giveAdvice();
-  };
-
-  el('btnAskEntry').onclick = () => {
-    state.voiceAssistant.giveEntrySignal();
-  };
-
-  el('btnAskExit').onclick = () => {
-    state.voiceAssistant.giveExitSignal();
-  };
-
-  el('btnAskAnalysis').onclick = () => {
-    state.voiceAssistant.giveDetailedAnalysis();
-  };
-
   // أزرار الإدخال
   el('btnP').onclick = () => pushRound('P');
   el('btnB').onclick = () => pushRound('B');
@@ -1907,15 +1199,6 @@ function init() {
   if (!document.documentElement.hasAttribute('data-theme')) {
     document.documentElement.setAttribute('data-theme', 'dark');
   }
-  
-  // تحديث حالة المساعدة الصوتية
-  if (state.voiceAssistant.isActive) {
-    el('voiceAssistantToggle').classList.add('voice-assistant-active');
-    el('voiceAssistantToggle').innerHTML = '<span id="voiceIcon">🎤</span> المساعدة الصوتية <span class="voice-pulse"></span>';
-  }
-  
-  state.voiceAssistant.updateMood();
-  state.voiceAssistant.updateConversationCount();
   
   // بدء الحفظ التلقائي
   dataManager.startAutoSave(30);
@@ -1966,13 +1249,14 @@ function getMLModelName(model) {
 }
 
 function showToast(message, type = 'success') {
+  // إنشاء عنصر التوست
   const toast = document.createElement('div');
   toast.textContent = message;
   toast.style.cssText = `
     position: fixed;
     top: 20px;
     right: 20px;
-    background: ${type === 'error' ? '#ef4444' : type === 'warning' ? '#d4af37' : '#10b981'};
+    background: ${type === 'error' ? '#ef4444' : '#10b981'};
     color: white;
     padding: 12px 20px;
     border-radius: 8px;
@@ -1983,6 +1267,7 @@ function showToast(message, type = 'success') {
   
   document.body.appendChild(toast);
   
+  // إزالة التوست بعد 3 ثواني
   setTimeout(() => {
     toast.style.animation = 'slideOut 0.3s ease-in';
     setTimeout(() => {
@@ -2210,12 +1495,7 @@ function pushRound(r) {
   dataManager.saveAllData();
   dataManager.updateDataStats();
   
-  // تفاعل المساعدة الصوتية مع الجولة
-  state.voiceAssistant.reactToRound(r, state.lastPrediction, state.lastPrediction === r);
-  
-  // تحديث مزاج المساعدة
-  state.voiceAssistant.updateMood();
-  
+  // إشعار صوتي بسيط
   playSound('click');
 }
 
@@ -2251,11 +1531,6 @@ function undoRound() {
     }
   }
   
-  // تعليق من المساعدة الصوتية
-  if (state.voiceAssistant.isActive) {
-    state.voiceAssistant.addToConversationLog("↩️ تم التراجع عن الجولة الأخيرة.");
-  }
-  
   updateAll();
   dataManager.saveAllData();
   dataManager.updateDataStats();
@@ -2278,15 +1553,6 @@ function resetAll() {
   state.previousPredictions = { P: 0, B: 0, T: 0 };
   
   state.ml.reset();
-  state.voiceAssistant.clearConversation();
-  state.voiceAssistant.conversationCount = 0;
-  state.voiceAssistant.updateConversationCount();
-  state.voiceAssistant.updateMood();
-  
-  if (state.voiceAssistant.isActive) {
-    state.voiceAssistant.showMessage("تم إعادة تعيين جميع البيانات. ابدأ من جديد!");
-    state.voiceAssistant.speak("تم إعادة تعيين جميع البيانات. جاهزة للبدء من جديد!");
-  }
   
   updateAll();
   dataManager.saveAllData();
@@ -2485,8 +1751,6 @@ function updateAll() {
   updatePatternInfo();
   updateMLStats();
   updateDataStatsDisplay();
-  state.voiceAssistant.updateMood();
-  state.voiceAssistant.updateConversationCount();
 }
 
 function updateDataStatsDisplay() {
