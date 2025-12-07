@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AYOUB BACCARAT PRO - مع مساعد صوتي يتحدث</title>
+<title>AYOUB BACCARAT PRO - النسخة الكاملة مع الحفظ التلقائي</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
 :root{--gold:#d4af37;--gold-2:#b8871d;--bg-dark:#070606;--card:#0f0e10;--muted:#bfb7a6;--player:#2d7ef7;--banker:#e03b3b;--tie:#28a745;}
@@ -78,7 +78,7 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 :root[data-theme="light"] .theme-toggle:hover{background:rgba(0,0,0,0.05);}
 
 /* تحسينات إضافية للحقول */
-.input-group {display: flex; gap: 8px; align-items:center;}
+.input-group {display: flex; gap: 8px; align-items: center;}
 .input-group input {flex: 1;}
 .input-label {font-weight: 600; margin-bottom: 6px; display: block;}
 
@@ -113,7 +113,7 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 .badge-pattern {background: #38b000; color: white;}
 .badge-ml {background: #9d4edd; color: white;}
 .pattern-info {font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.4;}
-.confidence-meter {height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 4px; overflow: hidden;}
+.confidence-meter {height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 4px; overflow:hidden;}
 .confidence-fill {height: 100%; background: linear-gradient(90deg, #38b000, #ff006e); border-radius: 3px; transition: width 0.3s;}
 .high-confidence {background: linear-gradient(90deg, #38b000, #d4af37);}
 .medium-confidence {background: linear-gradient(90deg, #d4af37, #ff006e);}
@@ -139,35 +139,377 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 .data-controls {display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;}
 .data-controls .btn {padding: 6px 10px; font-size: 12px; flex: 1; min-width: 100px;}
 
-/* === أنماط جديدة للمساعد الصوتي === */
-.voice-assistant {background: linear-gradient(180deg, rgba(59, 130, 246, 0.1), rgba(0, 0, 0, 0.1)); border: 1px solid rgba(59, 130, 246, 0.2);}
-.assistant-controls {display: flex; flex-direction: column; gap: 10px;}
-.conversation-container {max-height: 200px; overflow-y: auto; margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px;}
-.conversation-bubble {margin: 8px 0; padding: 10px; border-radius: 12px; max-width: 90%;}
-.user-bubble {background: linear-gradient(135deg, #3a86ff, #2667cc); color: white; margin-left: auto; text-align: left;}
-.assistant-bubble {background: linear-gradient(135deg, #38b000, #2c8a00); color: white; margin-right: auto;}
-.mic-animation {display: inline-block; animation: micPulse 1.5s infinite; font-size: 20px;}
-@keyframes micPulse {0% {transform: scale(1);} 50% {transform: scale(1.2);} 100% {transform: scale(1);}}
-.voice-wave {display: flex; gap: 2px; height: 20px; align-items: center; justify-content: center; margin-top: 5px;}
-.wave-bar {width: 3px; background: #3a86ff; border-radius: 2px; animation: wave 1s ease-in-out infinite;}
-.wave-bar:nth-child(2) {animation-delay: 0.1s;}
-.wave-bar:nth-child(3) {animation-delay: 0.2s;}
-.wave-bar:nth-child(4) {animation-delay: 0.3s;}
-.wave-bar:nth-child(5) {animation-delay: 0.4s;}
-@keyframes wave {0%, 100% {height: 5px;} 50% {height: 20px;}}
-.typing-indicator {display: flex; gap: 4px; padding: 10px; background: rgba(59, 130, 246, 0.2); border-radius: 8px; margin-top: 5px;}
-.typing-dot {width: 6px; height: 6px; background: #3a86ff; border-radius: 50%; animation: typing 1.4s infinite;}
-.typing-dot:nth-child(2) {animation-delay: 0.2s;}
-.typing-dot:nth-child(3) {animation-delay: 0.4s;}
-@keyframes typing {0%, 100% {transform: translateY(0);} 50% {transform: translateY(-5px);}}
-.quick-responses {display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px;}
-.quick-response {padding: 6px 10px; background: rgba(255,255,255,0.1); border-radius: 20px; font-size: 12px; cursor: pointer; transition: all 0.3s;}
-.quick-response:hover {background: rgba(59, 130, 246, 0.3); transform: scale(1.05);}
-.voice-settings {background: rgba(0,0,0,0.2);}
-.emotion-indicator {display: inline-block; font-size: 18px; margin-right: 5px;}
-.speaking-indicator {display: inline-flex; align-items: center; gap: 5px; margin-left: 10px;}
-.speaking-dot {width: 8px; height: 8px; background: #ff006e; border-radius: 50%; animation: speaking 1s infinite;}
-@keyframes speaking {0%, 100% {opacity: 0.3;} 50% {opacity: 1;}}
+/* ========== أنماط مساعد الذكي ========== */
+.coach-btn {
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+    margin-left: 8px;
+}
+
+.coach-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
+}
+
+.coach-status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.coach-status-active {
+    background: #38b000;
+    animation: pulse 1.5s infinite;
+}
+
+.coach-status-inactive {
+    background: #ff006e;
+}
+
+.coach-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+}
+
+.coach-modal.active {
+    display: flex;
+}
+
+.coach-modal-content {
+    background: linear-gradient(180deg, #0f0e10, #070606);
+    border: 2px solid var(--gold);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 0 50px rgba(212,175,55,0.3);
+    animation: modalAppear 0.3s ease-out;
+}
+
+@keyframes modalAppear {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.coach-header {
+    background: linear-gradient(90deg, rgba(106,17,203,0.2), rgba(37,117,252,0.2));
+    padding: 20px;
+    border-bottom: 1px solid rgba(212,175,55,0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.coach-header h2 {
+    margin: 0;
+    background: linear-gradient(90deg, #6a11cb, #2575fc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 1.3rem;
+}
+
+.close-coach {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 28px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+.close-coach:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--gold);
+}
+
+.coach-body {
+    padding: 20px;
+    overflow-y: auto;
+    max-height: 60vh;
+}
+
+.coach-message {
+    background: linear-gradient(135deg, rgba(106,17,203,0.1), rgba(37,117,252,0.1));
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-left: 4px solid #6a11cb;
+    animation: messageSlide 0.3s ease-out;
+}
+
+@keyframes messageSlide {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.coach-message h3 {
+    color: var(--gold);
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.coach-message p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.coach-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.stat-box {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid rgba(212,175,55,0.1);
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.coach-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.control-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.control-btn.primary {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: white;
+}
+
+.control-btn.secondary {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* مؤشرات الدخول والخروج */
+.entry-signal {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 12px;
+    margin-left: 10px;
+}
+
+.signal-entry {
+    background: linear-gradient(135deg, #38b000, #2c8a00);
+    color: white;
+}
+
+.signal-exit {
+    background: linear-gradient(135deg, #ff006e, #cc0058);
+    color: white;
+}
+
+.signal-wait {
+    background: linear-gradient(135deg, #d4af37, #b8871d);
+    color: white;
+}
+
+/* شريط التقدم */
+.progress-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s;
+}
+
+/* إشعارات الدكي */
+.dicky-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(106,17,203,0.4);
+    z-index: 9998;
+    animation: slideInRight 0.3s ease-out;
+    max-width: 300px;
+    border-left: 4px solid var(--gold);
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.dicky-notification.hide {
+    animation: slideOutRight 0.3s ease-in;
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+@keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+.dicky-notification h4 {
+    margin: 0 0 5px 0;
+    color: var(--gold);
+}
+
+.dicky-notification p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* لوحة تحكم النفس */
+.mental-control-panel {
+    background: linear-gradient(135deg, rgba(37,117,252,0.1), rgba(106,17,203,0.1));
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.mental-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.mental-stat {
+    text-align: center;
+    padding: 10px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+}
+
+.mental-stat .value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold);
+}
+
+.mental-stat .label {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 5px;
+}
+
+.advice-list {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0 0 0;
+}
+
+.advice-list li {
+    padding: 8px;
+    margin-bottom: 8px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    border-right: 3px solid #6a11cb;
+    font-size: 13px;
+}
+
+/* زر المساعد السريع */
+.coach-quick-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 999;
+    box-shadow: 0 4px 15px rgba(106,17,203,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all 0.3s;
+}
+
+.coach-quick-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(106,17,203,0.6);
+}
+
+.coach-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ff006e;
+    color: white;
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 10px;
+    min-width: 15px;
+    text-align: center;
+}
 
 /* تحسينات للاستجابة */
 @media (max-width: 768px) {
@@ -181,7 +523,31 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
     .color-legend {justify-content: flex-start;}
     .row {flex-wrap: wrap;}
     .btn {flex: 1; min-width: 60px;}
-    .conversation-container {max-height: 150px;}
+    
+    .coach-modal-content {
+        width: 95%;
+        margin: 10px;
+    }
+    
+    .coach-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .mental-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .dicky-notification {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .coach-quick-btn {
+        bottom: 10px;
+        left: 10px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -190,7 +556,18 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
     .btn {padding: 10px 12px; font-size: 14px;}
     .accuracy-stats {flex-direction: column;}
     .accuracy-stats > div {min-width: 100%;}
-    .quick-responses {flex-direction: column;}
+    
+    .coach-header h2 {
+        font-size: 1.1rem;
+    }
+    
+    .coach-controls {
+        flex-direction: column;
+    }
+    
+    .control-btn {
+        min-width: 100%;
+    }
 }
 </style>
 </head>
@@ -203,6 +580,10 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
   </div>
   <div class="controls">
     <button id="themeToggle" class="theme-toggle" title="تبديل الوضع">🌚</button>
+    <button id="coachBtn" class="coach-btn">
+      <span class="coach-status-indicator coach-status-active"></span>
+      مساعد الذكي
+    </button>
     <button id="btnReset" class="btn gold">إعادة تعيين</button>
   </div>
 </header>
@@ -276,90 +657,6 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
       <span id="mlTrainingCount">0</span> عينة تدريب • 
       <span id="mlAccuracy">0%</span> دقة • 
       <span id="mlWeight">30%</span> تأثير
-    </div>
-  </div>
-
-  <!-- المساعد الصوتي الذكي -->
-  <div class="panel card voice-assistant">
-    <div class="section-title">🎤 المساعد الصوتي الذكي (Grimi)</div>
-    
-    <div class="assistant-controls">
-      <div class="row">
-        <button id="voiceToggle" class="btn gold" style="flex: 1;">
-          <span id="voiceIcon">🎤</span> <span id="voiceStatus">تشغيل المساعد</span>
-        </button>
-        <button id="voiceMood" class="btn" style="background: rgba(157, 78, 221, 0.2);">
-          <span id="moodIcon">😊</span>
-        </button>
-      </div>
-      
-      <div class="row" style="margin-top: 5px;">
-        <button id="listenBtn" class="btn" style="flex: 1; background: rgba(255, 107, 107, 0.2); border: 1px solid #ff6b6b;">
-          <span id="listenIcon">👂</span> <span id="listenText">استمع إليّ</span>
-        </button>
-        <button id="stopSpeakingBtn" class="btn" style="background: rgba(255, 193, 7, 0.2); border: 1px solid #ffc107;">
-          <span>⏸️</span> إيقاف
-        </button>
-      </div>
-      
-      <div class="voice-wave" id="voiceWave" style="display: none;">
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-      </div>
-      
-      <div class="voice-settings advanced-controls" style="margin-top: 10px;">
-        <div class="control-group">
-          <label for="voiceStyle">أسلوب المحادثة:</label>
-          <select id="voiceStyle">
-            <option value="friendly">ودود (مثل صديق)</option>
-            <option value="professional">احترافي (مستشار)</option>
-            <option value="motivational" selected>تحفيزي (مدرب)</option>
-            <option value="funny">ممتع (مرح)</option>
-          </select>
-        </div>
-        <div class="control-group">
-          <label for="assistantTopics">المواضيع المفضلة:</label>
-          <select id="assistantTopics">
-            <option value="all">جميع المواضيع</option>
-            <option value="gaming" selected>نصائح اللعب</option>
-            <option value="psychology">علم النفس</option>
-            <option value="motivation">تحفيز</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    
-    <div class="conversation-container" id="conversationContainer">
-      <!-- المحادثات ستظهر هنا -->
-      <div class="conversation-bubble assistant-bubble">
-        <span class="emotion-indicator">👋</span> 
-        مرحبًا! أنا Grimi، مساعدك الصوتي الذكي. اضغط على "استمع إليّ" وابدأ بالتحدث معي!
-        <div class="speaking-indicator" style="display: none;" id="speakingIndicator">
-          <span class="speaking-dot"></span>
-          <span class="speaking-dot"></span>
-          <span class="speaking-dot"></span>
-        </div>
-      </div>
-    </div>
-    
-    <div class="typing-indicator" id="typingIndicator" style="display: none;">
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-    </div>
-    
-    <div class="quick-responses" id="quickResponses">
-      <div class="quick-response" data-question="كيف أتحكم في أعصابي؟">🎯 التحكم في الأعصاب</div>
-      <div class="quick-response" data-question="نصيحة مهمة للعب">💡 نصائح ذهبية</div>
-      <div class="quick-response" data-question="كيف كان يومك؟">🌞 كيف حالك؟</div>
-      <div class="quick-response" data-question="أخبرني نكتة">😂 اضحكني</div>
-    </div>
-    
-    <div class="muted small" style="margin-top: 10px; text-align: center;">
-      🔊 المساعد يتحدث معك صوتياً! جرّب تقول: "مرحباً" أو "كيف حالك؟"
     </div>
   </div>
 
@@ -479,8 +776,8 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 
 <footer class="foot card">
   <div style="flex: 1;">
-    <div>تصميم: Ayoub • النسخة الكاملة مع الحفظ التلقائي والمساعد الصوتي</div>
-    <div class="credits small">نظام متعدد النماذج • تعلم آلة • تحليل الأنماط • حفظ تلقائي • مساعد صوتي يتحدث</div>
+    <div>تصميم: Ayoub • النسخة الكاملة مع الحفظ التلقائي</div>
+    <div class="credits small">نظام متعدد النماذج • تعلم آلة • تحليل الأنماط • حفظ تلقائي • مؤشرات متقدمة</div>
   </div>
   <div class="data-controls">
     <button id="btnExport" class="btn" style="background: rgba(59, 130, 246, 0.2); border: 1px solid #3a86ff;">📥 تصدير</button>
@@ -494,441 +791,469 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 </footer>
 </div>
 
-<script>
-// ========== نظام المساعد الصوتي الذكي الذي يتحدث فعلياً ==========
+<!-- ========== نافذة المساعد الذكي ========== -->
+<div id="coachModal" class="coach-modal">
+  <div class="coach-modal-content">
+    <div class="coach-header">
+      <h2>👨‍🏫 مساعد الباكارات الذكي - AYOUB COACH</h2>
+      <button class="close-coach">&times;</button>
+    </div>
+    <div class="coach-body">
+      <div class="coach-message" id="coachMessage">
+        <h3>مرحبًا بك في نظام التدريب الذكي!</h3>
+        <p>أنا مساعدك الذكي لتحليل لعبة الباكارات. سأتابع لعبتك وأعطيك إشارات دخول وخروج ذكية بناءً على تحليل الأنماط والإحصائيات.</p>
+      </div>
+      
+      <div class="coach-stats">
+        <div class="stat-box">
+          <div class="stat-value" id="coachWinRate">0%</div>
+          <div class="stat-label">معدل الفوز</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="coachStreak">0</div>
+          <div class="stat-label">تتابع النتائج</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="coachRiskLevel">منخفض</div>
+          <div class="stat-label">مستوى المخاطرة</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="coachSessionTime">0:00</div>
+          <div class="stat-label">مدة الجلسة</div>
+        </div>
+      </div>
+      
+      <div class="mental-control-panel">
+        <h3 style="color: var(--gold); margin-bottom: 15px;">🎯 تحكم في النفس والانضباط</h3>
+        
+        <div class="mental-stats">
+          <div class="mental-stat">
+            <div class="value" id="mentalFocus">85%</div>
+            <div class="label">التركيز</div>
+          </div>
+          <div class="mental-stat">
+            <div class="value" id="mentalPressure">35%</div>
+            <div class="label">الضغط</div>
+          </div>
+          <div class="mental-stat">
+            <div class="value" id="mentalDecisions">12</div>
+            <div class="label">قرارات صحيحة</div>
+          </div>
+        </div>
+        
+        <div class="progress-bar">
+          <div class="progress-fill" id="mentalProgress" style="width: 60%; background: linear-gradient(90deg, #38b000, #d4af37);"></div>
+        </div>
+        <div style="text-align: center; font-size: 12px; color: var(--muted); margin-top: 5px;" id="mentalStatus">حالة عقلية: جيدة</div>
+      </div>
+      
+      <div style="margin-top: 20px;">
+        <h3 style="color: var(--gold); margin-bottom: 10px;">📊 إشارات الدخول/الخروج</h3>
+        <div id="entrySignals" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
+          <div id="currentSignal" class="entry-signal signal-wait">انتظار</div>
+          <span id="signalReason" style="font-size: 13px; color: var(--muted);">بانتظار بيانات كافية للتحليل...</span>
+        </div>
+      </div>
+      
+      <div style="margin-top: 20px;">
+        <h3 style="color: var(--gold); margin-bottom: 10px;">💡 نصائح ذكية</h3>
+        <ul class="advice-list" id="coachAdvice">
+          <li>ابدأ بالمراقبة أولاً قبل الدخول</li>
+          <li>توقف بعد 3 خسائر متتالية</li>
+          <li>احتفظ بـ 50% من رأس المال احتياطيًا</li>
+        </ul>
+      </div>
+      
+      <div class="coach-controls">
+        <button class="control-btn primary" id="coachAnalyzeBtn">🔍 تحليل فوري</button>
+        <button class="control-btn secondary" id="coachResetBtn">🔄 إعادة ضبط المساعد</button>
+        <button class="control-btn secondary" id="coachSettingsBtn">⚙️ إعدادات المساعد</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-class TalkingAssistant {
-  constructor() {
-    this.isSpeaking = false;
-    this.isListening = false;
-    this.currentMood = 'happy';
-    this.voiceStyle = 'motivational';
-    this.topics = 'gaming';
-    this.conversation = [];
-    
-    // استخدام Web Speech API للتحدث
-    this.speechSynthesis = window.speechSynthesis;
-    this.voices = [];
-    
-    // أصوات محاكاة للتحدث (باللغة الإنجليزية للتوافق)
-    this.voiceResponses = {
-      greetings: [
-        "مرحباً! كيف حالك اليوم؟",
-        "أهلاً وسهلاً! سعيد برؤيتك.",
-        "مرحباً صديقي! كيف يمكنني مساعدتك؟",
-        "أهلًا بك! اليوم يوم جميل للعب."
-      ],
-      howAreYou: [
-        "أنا بخير، شكراً لسؤالك! مستعد لمساعدتك في اللعب.",
-        "أشعر برائع! خاصة عندما أتحدث مع لاعب ذكي مثلك.",
-        "بحالة جيدة! أنتظر مساعدتك في تحسين أدائك.",
-        "ممتاز! اليوم يوم مثالي للفوز."
-      ],
-      gamingTips: [
-        "نصيحتي الأولى: تحلَّ بالصبر. الباكارات لعبة صبر أكثر مما تظن.",
-        "راقب الأنماط جيداً. التكرار هو مفتاح النجاح.",
-        "لا تضع كل بيضك في سلة واحدة. وزع رهاناتك بحكمة.",
-        "التوقيت أهم من الكمية. انتظر اللحظة المناسبة.",
-        "تعلم من خساراتك. كل خطأ هو درس جديد."
-      ],
-      psychology: [
-        "الهدوء هو سر النجاح. خذ نفساً عميقاً قبل كل قرار.",
-        "الثقة مهمة، ولكن الثقة الزائدة قد تكون خطيرة.",
-        "العقل الواعي يتخذ قرارات أفضل. ابقَ مركزاً.",
-        "لا تدع العواطف تتحكم في قراراتك المالية."
-      ],
-      motivation: [
-        "أنت قادر على تحقيق النجاح! ثق بنفسك.",
-        "كل محترف بدأ كمبتدئ. استمر في التعلم.",
-        "التحديات تصنع الأبطال. واصل التقدم!",
-        "النجاح رحلة وليس وجهة. استمتع بالطريق."
-      ],
-      jokes: [
-        "ماذا قال الرقم صفر للرقم ثمانية؟ حزامك جميل!",
-        "لماذا الذهب أفضل صديق؟ لأنه دائماً لامع!",
-        "ما هو الشيء الذي كلما أخذت منه يكبر؟ الحفرة!",
-        "لماذا القلم أجمل من السيف؟ لأنه يكتب دون أن يؤذي!"
-      ],
-      thanks: [
-        "العفو! دائماً سعيد بمساعدتك.",
-        "لا شكر على واجب! أنت تستحق الأفضل.",
-        "شكراً لك! حديثك معي يبهجني."
-      ],
-      farewell: [
-        "مع السلامة! أتمنى لك حظاً موفقاً.",
-        "إلى اللقاء! لا تنسَ الممارسة المستمرة.",
-        "وداعاً صديقي! أراك في المرة القادمة."
-      ]
-    };
-    
-    this.moodIcons = {
-      happy: '😊',
-      excited: '🤩',
-      calm: '😌',
-      serious: '🧠',
-      funny: '😄'
-    };
-    
-    this.init();
-  }
-  
-  init() {
-    this.loadVoices();
-    this.setupEventListeners();
-    
-    // الترحيب الأولي
-    setTimeout(() => {
-      this.speak("مرحباً! أنا جريمي، مساعدك الصوتي الشخصي. أنا هنا لأتحدث معك وأقدم لك النصائح أثناء اللعب.");
-    }, 1000);
-  }
-  
-  loadVoices() {
-    // تحميل الأصوات المتاحة
-    setTimeout(() => {
-      this.voices = this.speechSynthesis.getVoices();
-      
-      // البحث عن صوت عربي أو صوت مناسب
-      this.selectedVoice = this.voices.find(voice => 
-        voice.lang.includes('ar') || 
-        voice.lang.includes('en') ||
-        voice.name.includes('Google') ||
-        voice.name.includes('Arabic')
-      ) || this.voices[0];
-    }, 500);
-  }
-  
-  setupEventListeners() {
-    const listenBtn = document.getElementById('listenBtn');
-    const stopSpeakingBtn = document.getElementById('stopSpeakingBtn');
-    const voiceMood = document.getElementById('voiceMood');
-    const quickResponses = document.querySelectorAll('.quick-response');
-    
-    if (listenBtn) {
-      listenBtn.addEventListener('click', () => this.startConversation());
+<!-- زر المساعد السريع -->
+<button id="quickCoachBtn" class="coach-quick-btn">
+  🤖
+  <span class="coach-badge" id="coachAlertBadge" style="display: none;">!</span>
+</button>
+
+<!-- إشعارات الدكي -->
+<div id="dickyNotification" class="dicky-notification" style="display: none;">
+  <h4>📢 نصيحة من الدكي</h4>
+  <p id="dickyMessage">توقف مؤقتًا وخذ نفسًا عميقًا</p>
+</div>
+
+<script>
+// ========== نظام المساعد الذكي (الدكي) ==========
+
+class AICoach {
+    constructor() {
+        this.isActive = true;
+        this.sessionStart = new Date();
+        this.entrySignals = [];
+        this.mentalState = {
+            focus: 85,
+            pressure: 35,
+            correctDecisions: 0,
+            totalDecisions: 0,
+            emotionalStability: 75
+        };
+        this.coachStats = {
+            totalRounds: 0,
+            wins: 0,
+            losses: 0,
+            currentStreak: 0,
+            bestStreak: 0,
+            winRate: 0,
+            riskLevel: 'منخفض'
+        };
+        this.notificationQueue = [];
+        this.isShowingNotification = false;
+        this.alertCount = 0;
     }
-    
-    if (stopSpeakingBtn) {
-      stopSpeakingBtn.addEventListener('click', () => this.stopSpeaking());
+
+    // تحليل الوضع الحالي وإعطاء إشارة
+    analyzeSituation(rounds, predictions, stats) {
+        if (rounds.length < 3) {
+            return {
+                signal: 'wait',
+                reason: 'بحاجة لمزيد من البيانات للتحليل',
+                confidence: 0,
+                advice: 'تابع المراقبة دون دخول'
+            };
+        }
+
+        const recent = rounds.slice(-5);
+        const playerWins = recent.filter(r => r === 'P').length;
+        const bankerWins = recent.filter(r => r === 'B').length;
+        const ties = recent.filter(r => r === 'T').length;
+
+        // تحليل الأنماط
+        let patternAnalysis = this.analyzePatterns(rounds);
+        
+        // تحليل المخاطر
+        let riskLevel = this.calculateRiskLevel(stats, patternAnalysis);
+        
+        // تحليل العقلية
+        let mentalReadiness = this.assessMentalReadiness();
+        
+        // اتخاذ القرار
+        let signal = 'wait';
+        let reason = '';
+        let confidence = 0;
+
+        // شروط الدخول للاعب
+        if (patternAnalysis.playerPattern.strength > 0.7 && 
+            mentalReadiness > 0.6 && 
+            riskLevel === 'منخفض' &&
+            predictions.P > 45) {
+            signal = 'entry';
+            reason = `نمط لاعب قوي (${(patternAnalysis.playerPattern.strength * 100).toFixed(0)}%) + تركيز عالي`;
+            confidence = predictions.P;
+        }
+        // شروط الدخول للمصرفي
+        else if (patternAnalysis.bankerPattern.strength > 0.7 && 
+                 mentalReadiness > 0.6 && 
+                 riskLevel === 'منخفض' &&
+                 predictions.B > 45) {
+            signal = 'entry';
+            reason = `نمط مصرفي قوي (${(patternAnalysis.bankerPattern.strength * 100).toFixed(0)}%) + تركيز عالي`;
+            confidence = predictions.B;
+        }
+        // شروط الخروج
+        else if (stats.lossStreak >= 3 || mentalReadiness < 0.4 || riskLevel === 'مرتفع') {
+            signal = 'exit';
+            reason = stats.lossStreak >= 3 ? '3 خسائر متتالية' : 
+                     mentalReadiness < 0.4 ? 'انخفاض التركيز' : 'مخاطر مرتفعة';
+            confidence = 85;
+        }
+        // شروط الانتظار
+        else {
+            signal = 'wait';
+            reason = 'الوضع غير واضح - أفضل الانتظار';
+            confidence = 50;
+        }
+
+        // تحديث الإحصائيات
+        this.updateCoachStats(rounds, signal);
+
+        return {
+            signal,
+            reason,
+            confidence,
+            advice: this.generateAdvice(signal, patternAnalysis, mentalReadiness, riskLevel),
+            riskLevel,
+            mentalReadiness: Math.round(mentalReadiness * 100)
+        };
     }
-    
-    if (voiceMood) {
-      voiceMood.addEventListener('click', () => this.changeMood());
+
+    analyzePatterns(rounds) {
+        if (rounds.length < 4) {
+            return {
+                playerPattern: { type: 'none', strength: 0 },
+                bankerPattern: { type: 'none', strength: 0 },
+                volatility: 0
+            };
+        }
+
+        const recent = rounds.slice(-8);
+        let playerStreak = 0;
+        let bankerStreak = 0;
+        let playerSequences = [];
+        let bankerSequences = [];
+        
+        // تحليل التتابعات
+        for (let i = 0; i < recent.length; i++) {
+            if (recent[i] === 'P') {
+                playerStreak++;
+                bankerStreak = 0;
+            } else if (recent[i] === 'B') {
+                bankerStreak++;
+                playerStreak = 0;
+            }
+            
+            if (playerStreak >= 2) playerSequences.push(playerStreak);
+            if (bankerStreak >= 2) bankerSequences.push(bankerStreak);
+        }
+
+        // حساب التقلب
+        let changes = 0;
+        for (let i = 1; i < recent.length; i++) {
+            if (recent[i] !== recent[i-1]) changes++;
+        }
+        const volatility = changes / (recent.length - 1);
+
+        return {
+            playerPattern: {
+                type: playerSequences.length > 0 ? 'streak' : 'none',
+                strength: playerSequences.length > 0 ? Math.min(1, Math.max(...playerSequences) / 5) : 0
+            },
+            bankerPattern: {
+                type: bankerSequences.length > 0 ? 'streak' : 'none',
+                strength: bankerSequences.length > 0 ? Math.min(1, Math.max(...bankerSequences) / 5) : 0
+            },
+            volatility
+        };
     }
-    
-    // إضافة مستمعين للردود السريعة
-    quickResponses.forEach(response => {
-      response.addEventListener('click', (e) => {
-        const question = e.target.getAttribute('data-question');
-        this.handleQuestion(question);
-      });
-    });
-    
-    // محاكاة الاستماع من المستخدم (في الواقع، سيتحدث المستخدم)
-    this.setupVoiceInput();
-  }
-  
-  setupVoiceInput() {
-    // في التطبيق الحقيقي، هنا سنستخدم Web Speech Recognition
-    // لكن لأغراض العرض، سنستخدم محاكاة
-    
-    // إضافة زر للسماح للمستخدم "بتسجيل" رسالة
-    document.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter' && document.activeElement.id !== 'conversationContainer') {
-        this.simulateUserMessage();
-      }
-    });
-  }
-  
-  simulateUserMessage() {
-    const messages = [
-      "مرحبا جريمي",
-      "كيف حالك اليوم؟",
-      "أعطني نصيحة للعب",
-      "كيف أتحكم في أعصابي؟",
-      "أخبرني نكتة",
-      "شكراً لك",
-      "وداعاً"
-    ];
-    
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    this.addMessage('user', randomMessage);
-    this.processMessage(randomMessage);
-  }
-  
-  startConversation() {
-    const listenBtn = document.getElementById('listenBtn');
-    const listenIcon = document.getElementById('listenIcon');
-    const listenText = document.getElementById('listenText');
-    
-    this.isListening = !this.isListening;
-    
-    if (this.isListening) {
-      listenIcon.textContent = '🎤';
-      listenText.textContent = 'أتحدث الآن...';
-      listenBtn.style.background = 'linear-gradient(135deg, #ff006e, #cc0058)';
-      
-      // محاكاة أن المستخدم يتحدث
-      this.addMessage('user', '...');
-      this.showVoiceWave(true);
-      
-      // بعد 2 ثانية، "يسمع" المساعد رسالة
-      setTimeout(() => {
-        this.showVoiceWave(false);
-        this.speak("أسمعك جيداً! تفضل، ماذا تريد أن تتحدث عنه؟");
-      }, 2000);
-    } else {
-      listenIcon.textContent = '👂';
-      listenText.textContent = 'استمع إليّ';
-      listenBtn.style.background = 'rgba(255, 107, 107, 0.2)';
-      this.showVoiceWave(false);
+
+    calculateRiskLevel(stats, patternAnalysis) {
+        let riskScore = 0;
+        
+        // زيادة المخاطر مع الخسائر المتتالية
+        if (stats.lossStreak >= 3) riskScore += 40;
+        else if (stats.lossStreak >= 2) riskScore += 20;
+        
+        // زيادة المخاطر مع التقلب العالي
+        if (patternAnalysis.volatility > 0.7) riskScore += 30;
+        else if (patternAnalysis.volatility > 0.5) riskScore += 15;
+        
+        // زيادة المخاطر مع انخفاض التركيز
+        if (this.mentalState.focus < 50) riskScore += 20;
+        
+        // تحديد مستوى المخاطر
+        if (riskScore >= 60) return 'مرتفع';
+        else if (riskScore >= 30) return 'متوسط';
+        else return 'منخفض';
     }
-  }
-  
-  handleQuestion(question) {
-    this.addMessage('user', question);
-    this.processMessage(question);
-  }
-  
-  processMessage(message) {
-    const lowerMessage = message.toLowerCase();
-    
-    this.showTypingIndicator(true);
-    
-    setTimeout(() => {
-      this.showTypingIndicator(false);
-      
-      let response = '';
-      let mood = this.currentMood;
-      
-      if (lowerMessage.includes('مرحبا') || lowerMessage.includes('اهلا') || lowerMessage.includes('سلام')) {
-        response = this.getRandomResponse('greetings');
-        mood = 'happy';
-      }
-      else if (lowerMessage.includes('كيف حالك') || lowerMessage.includes('اخبارك')) {
-        response = this.getRandomResponse('howAreYou');
-        mood = 'happy';
-      }
-      else if (lowerMessage.includes('نصيحة') || lowerMessage.includes('نصائح') || lowerMessage.includes('نصيحه')) {
-        response = this.getRandomResponse('gamingTips');
-        mood = 'serious';
-      }
-      else if (lowerMessage.includes('عصب') || lowerMessage.includes('أعصاب') || lowerMessage.includes('توتر')) {
-        response = "التحكم في الأعصاب مهارة تكتسبها بالممارسة! إليك بعض النصائح:\n" +
-                  "1️⃣ خذ نفساً عميقاً قبل كل قرار\n" +
-                  "2️⃣ حدد ميزانية ولا تتجاوزها\n" +
-                  "3️⃣ توقف فوراً إذا شعرت بالتوتر\n" +
-                  "4️⃣ ركز على المتعة وليس فقط الربح\n" +
-                  "5️⃣ تذكر أنها لعبة وليست مصيراً";
-        mood = 'calm';
-      }
-      else if (lowerMessage.includes('نكت') || lowerMessage.includes('ضحك') || lowerMessage.includes('مرح')) {
-        response = this.getRandomResponse('jokes');
-        mood = 'funny';
-      }
-      else if (lowerMessage.includes('شكر') || lowerMessage.includes('ممتاز') || lowerMessage.includes('رائع')) {
-        response = this.getRandomResponse('thanks');
-        mood = 'happy';
-      }
-      else if (lowerMessage.includes('وداع') || lowerMessage.includes('مع السلام') || lowerMessage.includes('باي')) {
-        response = this.getRandomResponse('farewell');
-        mood = 'calm';
-      }
-      else {
-        // رد عام
-        const topic = this.topics === 'all' ? this.getRandomTopic() : this.topics;
-        if (topic === 'gaming') response = this.getRandomResponse('gamingTips');
-        else if (topic === 'psychology') response = this.getRandomResponse('psychology');
-        else if (topic === 'motivation') response = this.getRandomResponse('motivation');
-        else response = "أسمعك! هل تريد الحديث عن نصائح اللعب، علم النفس، أم التحفيز؟";
-      }
-      
-      this.addMessage('assistant', response, mood);
-      this.speak(response);
-    }, 1000 + Math.random() * 1500);
-  }
-  
-  getRandomResponse(category) {
-    const responses = this.voiceResponses[category];
-    return responses[Math.floor(Math.random() * responses.length)];
-  }
-  
-  getRandomTopic() {
-    const topics = ['gaming', 'psychology', 'motivation'];
-    return topics[Math.floor(Math.random() * topics.length)];
-  }
-  
-  speak(text) {
-    if (!this.speechSynthesis || this.isSpeaking) return;
-    
-    // إيقاف أي كلام سابق
-    this.speechSynthesis.cancel();
-    
-    this.isSpeaking = true;
-    this.showSpeakingIndicator(true);
-    
-    const utterance = new SpeechSynthesisUtterance(text);
-    
-    // ضبط إعدادات الصوت
-    if (this.selectedVoice) {
-      utterance.voice = this.selectedVoice;
+
+    assessMentalReadiness() {
+        // حساب الجاهزية العقلية بناءً على عدة عوامل
+        let score = 0;
+        score += (this.mentalState.focus / 100) * 0.4;
+        score += ((100 - this.mentalState.pressure) / 100) * 0.3;
+        score += (this.mentalState.emotionalStability / 100) * 0.2;
+        
+        // تأثير القرارات الصحيحة
+        if (this.mentalState.totalDecisions > 0) {
+            const decisionAccuracy = this.mentalState.correctDecisions / this.mentalState.totalDecisions;
+            score += decisionAccuracy * 0.1;
+        }
+        
+        return Math.max(0, Math.min(1, score));
     }
-    
-    utterance.lang = 'ar-SA'; // اللغة العربية
-    utterance.rate = 0.9; // سرعة أبطأ للوضوح
-    utterance.pitch = 1.0;
-    utterance.volume = 1.0;
-    
-    utterance.onstart = () => {
-      console.log('Started speaking:', text);
-    };
-    
-    utterance.onend = () => {
-      console.log('Finished speaking');
-      this.isSpeaking = false;
-      this.showSpeakingIndicator(false);
-    };
-    
-    utterance.onerror = (event) => {
-      console.error('Speech synthesis error:', event);
-      this.isSpeaking = false;
-      this.showSpeakingIndicator(false);
-    };
-    
-    try {
-      this.speechSynthesis.speak(utterance);
-    } catch (error) {
-      console.error('Error speaking:', error);
-      this.isSpeaking = false;
-      this.showSpeakingIndicator(false);
+
+    generateAdvice(signal, patternAnalysis, mentalReadiness, riskLevel) {
+        const adviceList = [];
+        
+        if (signal === 'entry') {
+            adviceList.push('✅ أدخل برهان صغير في البداية');
+            adviceList.push('📊 تابع النمط عن كثب');
+            adviceList.push('⏱️ حدد هدف ربح وخسارة مسبقًا');
+        } else if (signal === 'exit') {
+            adviceList.push('⛔ توقف فوراً عن المراهنة');
+            adviceList.push('🧘 خذ قسطاً من الراحة');
+            adviceList.push('📝 راجع أسباب الخسارة بموضوعية');
+        } else {
+            adviceList.push('👀 استمر في المراقبة دون دخول');
+            adviceList.push('📈 ابحث عن أنماط واضحة');
+            adviceList.push('💭 ركز على جودة القرار وليس الكمية');
+        }
+        
+        // نصائح إضافية بناءً على العوامل
+        if (mentalReadiness < 0.5) {
+            adviceList.push('🧠 خذ نفسًا عميقًا لاستعادة التركيز');
+        }
+        
+        if (riskLevel === 'مرتفع') {
+            adviceList.push('⚠️ قلل حجم الرهان إلى النصف');
+        }
+        
+        if (patternAnalysis.volatility > 0.6) {
+            adviceList.push('🌀 السوق متقلب - كن حذرًا');
+        }
+        
+        return adviceList;
     }
-  }
-  
-  stopSpeaking() {
-    if (this.speechSynthesis) {
-      this.speechSynthesis.cancel();
-      this.isSpeaking = false;
-      this.showSpeakingIndicator(false);
+
+    updateCoachStats(rounds, lastSignal) {
+        this.coachStats.totalRounds = rounds.length;
+        
+        // تحديث معدل الفوز (مبسط)
+        if (rounds.length > 0) {
+            const last10 = rounds.slice(-10);
+            const wins = last10.filter((r, i) => {
+                if (this.entrySignals[i] === 'entry') {
+                    return true; // هذا تبسيط - في الواقع يجب مقارنة مع النتيجة الفعلية
+                }
+                return false;
+            }).length;
+            this.coachStats.winRate = last10.length > 0 ? (wins / last10.length) * 100 : 0;
+        }
+        
+        // تحديث التتابع
+        if (lastSignal === 'entry') {
+            this.coachStats.currentStreak++;
+            this.coachStats.bestStreak = Math.max(this.coachStats.bestStreak, this.coachStats.currentStreak);
+        } else if (lastSignal === 'exit') {
+            this.coachStats.currentStreak = 0;
+        }
+        
+        // حفظ الإشارة
+        this.entrySignals.push(lastSignal);
+        if (this.entrySignals.length > 20) {
+            this.entrySignals = this.entrySignals.slice(-20);
+        }
     }
-  }
-  
-  addMessage(sender, text, mood = null) {
-    const container = document.getElementById('conversationContainer');
-    if (!container) return;
-    
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `conversation-bubble ${sender}-bubble`;
-    
-    if (sender === 'assistant' && mood) {
-      const moodIcon = this.moodIcons[mood] || '😊';
-      messageDiv.innerHTML = `<span class="emotion-indicator">${moodIcon}</span> ${text}`;
-    } else {
-      messageDiv.textContent = text;
+
+    updateMentalState(result, wasCorrect) {
+        // تحديث حالة العقلية بناءً على النتيجة
+        if (wasCorrect) {
+            this.mentalState.correctDecisions++;
+            this.mentalState.focus = Math.min(100, this.mentalState.focus + 5);
+            this.mentalState.pressure = Math.max(0, this.mentalState.pressure - 8);
+            this.mentalState.emotionalStability = Math.min(100, this.mentalState.emotionalStability + 10);
+        } else {
+            this.mentalState.focus = Math.max(30, this.mentalState.focus - 15);
+            this.mentalState.pressure = Math.min(100, this.mentalState.pressure + 20);
+            this.mentalState.emotionalStability = Math.max(20, this.mentalState.emotionalStability - 15);
+        }
+        
+        this.mentalState.totalDecisions++;
+        
+        // إضافة إشعار إذا كانت الحالة سيئة
+        if (this.mentalState.focus < 40 || this.mentalState.pressure > 70) {
+            this.addNotification('انتباه! حالتك العقلية تحتاج تحسين. خذ استراحة قصيرة.');
+        }
     }
-    
-    container.appendChild(messageDiv);
-    
-    // حفظ في الذاكرة
-    this.conversation.push({
-      sender,
-      text,
-      mood,
-      timestamp: new Date().toISOString()
-    });
-    
-    // التمرير للأسفل
-    container.scrollTop = container.scrollHeight;
-    
-    // حفظ المحادثة
-    this.saveConversation();
-  }
-  
-  showTypingIndicator(show) {
-    const indicator = document.getElementById('typingIndicator');
-    if (indicator) {
-      indicator.style.display = show ? 'flex' : 'none';
+
+    addNotification(message, type = 'advice') {
+        this.notificationQueue.push({
+            message,
+            type,
+            timestamp: new Date(),
+            read: false
+        });
+        
+        this.alertCount++;
+        this.updateAlertBadge();
+        
+        // إظهار الإشعار فورًا إذا لم يكن هناك إشعار معروض
+        if (!this.isShowingNotification) {
+            this.showNextNotification();
+        }
     }
-  }
-  
-  showSpeakingIndicator(show) {
-    const indicator = document.getElementById('speakingIndicator');
-    if (indicator) {
-      indicator.style.display = show ? 'inline-flex' : 'none';
+
+    showNextNotification() {
+        if (this.notificationQueue.length === 0) {
+            this.isShowingNotification = false;
+            return;
+        }
+        
+        this.isShowingNotification = true;
+        const notification = this.notificationQueue.shift();
+        
+        // إظهار الإشعار في الواجهة
+        showDickyNotification(notification.message);
+        
+        // جدولة الإشعار التالي بعد 5 ثوانٍ
+        setTimeout(() => {
+            this.isShowingNotification = false;
+            this.showNextNotification();
+        }, 5000);
     }
-  }
-  
-  showVoiceWave(show) {
-    const wave = document.getElementById('voiceWave');
-    if (wave) {
-      wave.style.display = show ? 'flex' : 'none';
+
+    updateAlertBadge() {
+        const badge = document.getElementById('coachAlertBadge');
+        if (badge) {
+            if (this.alertCount > 0) {
+                badge.textContent = this.alertCount > 9 ? '9+' : this.alertCount;
+                badge.style.display = 'block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
     }
-  }
-  
-  changeMood() {
-    const moods = ['happy', 'excited', 'calm', 'serious', 'funny'];
-    const currentIndex = moods.indexOf(this.currentMood);
-    const nextIndex = (currentIndex + 1) % moods.length;
-    this.currentMood = moods[nextIndex];
-    
-    const moodIcon = document.getElementById('moodIcon');
-    if (moodIcon) {
-      moodIcon.textContent = this.moodIcons[this.currentMood] || '😊';
+
+    clearAlerts() {
+        this.alertCount = 0;
+        this.notificationQueue = [];
+        this.updateAlertBadge();
     }
-    
-    this.speak(`تغيرت حالتي المزاجية إلى ${this.getMoodName(this.currentMood)}!`);
-  }
-  
-  getMoodName(mood) {
-    const names = {
-      happy: 'سعيد',
-      excited: 'متحمس',
-      calm: 'هادئ',
-      serious: 'جدي',
-      funny: 'ممتع'
-    };
-    return names[mood] || mood;
-  }
-  
-  saveConversation() {
-    try {
-      const toSave = this.conversation.slice(-50);
-      localStorage.setItem('talkingAssistant_conversation', JSON.stringify(toSave));
-    } catch (error) {
-      console.error('Error saving conversation:', error);
+
+    getSessionTime() {
+        const now = new Date();
+        const diff = now - this.sessionStart;
+        const hours = Math.floor(diff / 3600000);
+        const minutes = Math.floor((diff % 3600000) / 60000);
+        return `${hours}:${minutes.toString().padStart(2, '0')}`;
     }
-  }
-  
-  loadConversation() {
-    try {
-      const saved = localStorage.getItem('talkingAssistant_conversation');
-      if (saved) {
-        this.conversation = JSON.parse(saved);
-      }
-    } catch (error) {
-      console.error('Error loading conversation:', error);
+
+    reset() {
+        this.sessionStart = new Date();
+        this.entrySignals = [];
+        this.mentalState = {
+            focus: 85,
+            pressure: 35,
+            correctDecisions: 0,
+            totalDecisions: 0,
+            emotionalStability: 75
+        };
+        this.coachStats = {
+            totalRounds: 0,
+            wins: 0,
+            losses: 0,
+            currentStreak: 0,
+            bestStreak: 0,
+            winRate: 0,
+            riskLevel: 'منخفض'
+        };
+        this.clearAlerts();
     }
-  }
-  
-  // نصائح تلقائية بناءً على أداء اللعبة
-  provideGameAdvice(gameStats) {
-    if (!gameStats || gameStats.totalRounds < 5) return;
-    
-    const winRate = gameStats.winRate || 0;
-    
-    if (winRate < 30) {
-      const advice = "أرى أن حظك ليس في أفضل حالاته اليوم. ربما تحتاج لأخذ قسط من الراحة والعودة لاحقاً بأفكار جديدة!";
-      this.addMessage('assistant', advice, 'calm');
-      this.speak(advice);
-    } else if (winRate > 70) {
-      const congrats = "ممتاز! أداؤك رائع اليوم. استمر في هذا المستوى ولكن تذكر أن تحافظ على توازنك!";
-      this.addMessage('assistant', congrats, 'excited');
-      this.speak(congrats);
+
+    getStats() {
+        return {
+            mentalState: this.mentalState,
+            coachStats: this.coachStats,
+            sessionTime: this.getSessionTime(),
+            alertCount: this.alertCount,
+            isActive: this.isActive
+        };
     }
-  }
 }
 
 // ========== خوارزميات تعلم الآلة ==========
-// (نفس الكود السابق للـ KNN, Logistic Regression, Ensemble, و BaccaratML)
-// ... (أبقِ كل كود ML السابق كما هو) ...
 
 class SimpleKNN {
   constructor(k = 3) {
@@ -949,6 +1274,7 @@ class SimpleKNN {
       }
     });
     
+    // الحفاظ على حجم معقول
     if (this.trainingData.length > 100) {
       this.trainingData = this.trainingData.slice(-100);
     }
@@ -1130,8 +1456,8 @@ class EnsembleModel {
     this.predictions.total++;
     if (prediction === actual) this.predictions.correct++;
     
-    this.models.knn.updateAccuracy(prediction, actual);
-    this.models.logistic.updateAccuracy(prediction, actual);
+      this.models.knn.updateAccuracy(prediction, actual);
+      this.models.logistic.updateAccuracy(prediction, actual);
   }
 
   getAccuracy() {
@@ -1339,10 +1665,10 @@ class BaccaratMachineLearning {
 }
 
 // ========== نظام حفظ البيانات ==========
-// (نفس الكود السابق لـ DataManager مع تحديث بسيط)
+
 class DataManager {
   constructor() {
-    this.storageKey = 'baccaratPro_v5';
+    this.storageKey = 'baccaratPro_v4';
     this.autoSaveInterval = null;
     this.lastSaveTime = null;
     this.isSaving = false;
@@ -1379,8 +1705,14 @@ class DataManager {
           activeModel: state.ml.activeModel,
           isEnabled: state.ml.isEnabled
         },
+        coachData: {
+          mentalState: state.aiCoach.mentalState,
+          coachStats: state.aiCoach.coachStats,
+          sessionStart: state.aiCoach.sessionStart,
+          entrySignals: state.aiCoach.entrySignals
+        },
         meta: {
-          version: '5.0',
+          version: '4.0',
           lastSave: new Date().toISOString(),
           totalRounds: state.rounds.length,
           sessionStart: this.getSessionStartTime()
@@ -1410,6 +1742,7 @@ class DataManager {
 
       const data = JSON.parse(saved);
       
+      // تحميل بيانات الحالة
       if (data.state) {
         state.rounds = Array.isArray(data.state.rounds) ? data.state.rounds : [];
         state.count = data.state.count || { P: 0, B: 0, T: 0 };
@@ -1426,17 +1759,20 @@ class DataManager {
         state.lastPrediction = data.state.lastPrediction || null;
       }
 
+      // تحميل التاريخ
       if (data.history) {
         state.accuracyHistory = Array.isArray(data.history.accuracyHistory) ? data.history.accuracyHistory : [];
         state.predictionsHistory = Array.isArray(data.history.predictionsHistory) ? data.history.predictionsHistory : [];
       }
 
+      // تحميل ML
       if (data.mlData) {
         state.ml.featureHistory = Array.isArray(data.mlData.featureHistory) ? data.mlData.featureHistory : [];
         state.ml.mlPredictions = Array.isArray(data.mlData.mlPredictions) ? data.mlData.mlPredictions : [];
         state.ml.activeModel = data.mlData.activeModel || 'ensemble';
         state.ml.isEnabled = data.mlData.isEnabled !== false;
         
+        // إعادة تدريب النماذج
         setTimeout(() => {
           if (state.ml.featureHistory.length > 0) {
             state.ml.featureHistory.forEach((item, index) => {
@@ -1448,6 +1784,17 @@ class DataManager {
             });
           }
         }, 500);
+      }
+
+      // تحميل بيانات المساعد
+      if (data.coachData) {
+        state.aiCoach.mentalState = data.coachData.mentalState || state.aiCoach.mentalState;
+        state.aiCoach.coachStats = data.coachData.coachStats || state.aiCoach.coachStats;
+        state.aiCoach.entrySignals = Array.isArray(data.coachData.entrySignals) ? data.coachData.entrySignals : [];
+        
+        if (data.coachData.sessionStart) {
+          state.aiCoach.sessionStart = new Date(data.coachData.sessionStart);
+        }
       }
 
       this.lastSaveTime = new Date();
@@ -1474,9 +1821,10 @@ class DataManager {
           featureHistory: state.ml.featureHistory,
           trainingCount: state.ml.getTrainingDataCount()
         },
+        coach: state.aiCoach.getStats(),
         meta: {
           exportDate: new Date().toISOString(),
-          version: 'AYOUB_BACCARAT_PRO_v5.0',
+          version: 'AYOUB_BACCARAT_PRO_v4.0',
           totalRounds: state.rounds.length
         }
       };
@@ -1513,8 +1861,10 @@ class DataManager {
           return;
         }
 
+        // مسح البيانات الحالية
         resetAll();
         
+        // تحميل البيانات المستوردة
         if (importedData.state) {
           state.rounds = Array.isArray(importedData.state.rounds) ? importedData.state.rounds : [];
           state.count = importedData.state.count || { P: 0, B: 0, T: 0 };
@@ -1522,6 +1872,7 @@ class DataManager {
           state.loss = importedData.state.loss || { P: 0, B: 0, T: 0 };
           state.windowSize = importedData.state.windowSize || 8;
           
+          // حساب الإحصاءات من الجولات
           state.rounds.forEach(round => {
             state.count[round]++;
           });
@@ -1530,6 +1881,7 @@ class DataManager {
         if (importedData.ml && Array.isArray(importedData.ml.featureHistory)) {
           state.ml.featureHistory = importedData.ml.featureHistory;
           
+          // إعادة تدريب ML
           setTimeout(() => {
             if (state.ml.featureHistory.length > 0) {
               state.ml.featureHistory.forEach((item, index) => {
@@ -1543,8 +1895,10 @@ class DataManager {
           }, 500);
         }
 
+        // تحديث الواجهة
         updateAll();
         updateMLStatus();
+        updateCoachDisplay();
         this.saveAllData();
         
         alert(`✅ تم استيراد ${state.rounds.length} جولة بنجاح!`);
@@ -1579,6 +1933,7 @@ class DataManager {
       }
     }, intervalSeconds * 1000);
     
+    // حفظ عند إغلاق الصفحة
     window.addEventListener('beforeunload', () => {
       if (!this.isSaving) {
         this.saveAllData();
@@ -1638,7 +1993,7 @@ const state = {
   ml: new BaccaratMachineLearning(),
   useML: true,
   mlModel: 'ensemble',
-  talkingAssistant: null
+  aiCoach: new AICoach()
 };
 
 // إنشاء مدير البيانات
@@ -1647,13 +2002,150 @@ const dataManager = new DataManager();
 // ========== الوظائف المساعدة ==========
 const el = id => document.getElementById(id);
 
+// ========== وظائف المساعد الذكي ==========
+
+function showCoachModal() {
+  el('coachModal').classList.add('active');
+  updateCoachDisplay();
+}
+
+function hideCoachModal() {
+  el('coachModal').classList.remove('active');
+}
+
+function updateCoachDisplay() {
+  const coachStats = state.aiCoach.getStats();
+  
+  // تحديث الإحصائيات
+  el('coachWinRate').textContent = coachStats.coachStats.winRate.toFixed(1) + '%';
+  el('coachStreak').textContent = coachStats.coachStats.currentStreak;
+  el('coachRiskLevel').textContent = coachStats.coachStats.riskLevel;
+  el('coachSessionTime').textContent = coachStats.sessionTime;
+  
+  // تحديث حالة العقلية
+  el('mentalFocus').textContent = coachStats.mentalState.focus + '%';
+  el('mentalPressure').textContent = coachStats.mentalState.pressure + '%';
+  el('mentalDecisions').textContent = coachStats.mentalState.correctDecisions;
+  el('mentalProgress').style.width = coachStats.mentalState.focus + '%';
+  
+  // تحديث حالة العقلية النصية
+  let mentalStatus = 'جيدة';
+  if (coachStats.mentalState.focus < 40) mentalStatus = 'ضعيفة';
+  else if (coachStats.mentalState.pressure > 70) mentalStatus = 'متوترة';
+  el('mentalStatus').textContent = `حالة عقلية: ${mentalStatus}`;
+  
+  // تحديث لون شريط التقدم
+  const progressBar = el('mentalProgress');
+  if (coachStats.mentalState.focus >= 70) {
+    progressBar.style.background = 'linear-gradient(90deg, #38b000, #d4af37)';
+  } else if (coachStats.mentalState.focus >= 40) {
+    progressBar.style.background = 'linear-gradient(90deg, #d4af37, #ff006e)';
+  } else {
+    progressBar.style.background = 'linear-gradient(90deg, #ff006e, #cc0058)';
+  }
+  
+  // تحليل الوضع الحالي وعرض الإشارة
+  const predictions = {
+    P: parseFloat(el('predPctP').textContent) || 0,
+    B: parseFloat(el('predPctB').textContent) || 0,
+    T: parseFloat(el('predPctT').textContent) || 0
+  };
+  
+  const stats = {
+    lossStreak: calculateLossStreak(),
+    winStreak: calculateWinStreak(),
+    totalRounds: state.rounds.length
+  };
+  
+  const analysis = state.aiCoach.analyzeSituation(state.rounds, predictions, stats);
+  
+  // تحديث إشارة الدخول/الخروج
+  const signalElement = el('currentSignal');
+  const reasonElement = el('signalReason');
+  
+  signalElement.className = 'entry-signal ';
+  if (analysis.signal === 'entry') {
+    signalElement.classList.add('signal-entry');
+    signalElement.textContent = 'دخول 🎯';
+  } else if (analysis.signal === 'exit') {
+    signalElement.classList.add('signal-exit');
+    signalElement.textContent = 'خروج ⛔';
+  } else {
+    signalElement.classList.add('signal-wait');
+    signalElement.textContent = 'انتظار 👀';
+  }
+  
+  reasonElement.textContent = analysis.reason;
+  
+  // تحديث النصائح
+  const adviceList = el('coachAdvice');
+  adviceList.innerHTML = '';
+  analysis.advice.forEach(advice => {
+    const li = document.createElement('li');
+    li.textContent = advice;
+    adviceList.appendChild(li);
+  });
+  
+  // تحديث حالة المساعد في الزر
+  const coachIndicator = document.querySelector('.coach-status-indicator');
+  if (state.aiCoach.isActive) {
+    coachIndicator.classList.add('coach-status-active');
+    coachIndicator.classList.remove('coach-status-inactive');
+  } else {
+    coachIndicator.classList.add('coach-status-inactive');
+    coachIndicator.classList.remove('coach-status-active');
+  }
+}
+
+function showDickyNotification(message) {
+  const notification = el('dickyNotification');
+  const messageElement = el('dickyMessage');
+  
+  messageElement.textContent = message;
+  notification.style.display = 'block';
+  
+  // إخفاء الإشعار بعد 5 ثوانٍ
+  setTimeout(() => {
+    notification.classList.add('hide');
+    setTimeout(() => {
+      notification.style.display = 'none';
+      notification.classList.remove('hide');
+    }, 300);
+  }, 5000);
+}
+
+function calculateLossStreak() {
+  if (state.rounds.length < 2) return 0;
+  
+  let streak = 0;
+  for (let i = state.rounds.length - 1; i >= 0; i--) {
+    if (state.lastPrediction && state.rounds[i] !== state.lastPrediction) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
+function calculateWinStreak() {
+  if (state.rounds.length < 2) return 0;
+  
+  let streak = 0;
+  for (let i = state.rounds.length - 1; i >= 0; i--) {
+    if (state.lastPrediction && state.rounds[i] === state.lastPrediction) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
 // ========== الوظائف الرئيسية ==========
 
 function init() {
-  console.log('Initializing Baccarat Pro with Talking Assistant...');
-  
-  // إنشاء المساعد الصوتي الذي يتحدث
-  state.talkingAssistant = new TalkingAssistant();
+  console.log('Initializing Baccarat Pro with AI Coach...');
   
   // تحميل البيانات المحفوظة
   dataManager.loadAllData();
@@ -1719,6 +2211,30 @@ function init() {
   el('btnUndo').onclick = undoRound;
   el('btnReset').onclick = resetAll;
   
+  // أزرار المساعد الذكي
+  el('coachBtn').onclick = showCoachModal;
+  el('quickCoachBtn').onclick = showCoachModal;
+  el('closeCoach').onclick = hideCoachModal;
+  el('coachAnalyzeBtn').onclick = () => {
+    updateCoachDisplay();
+    showToast('تم إجراء تحليل فوري من المساعد الذكي');
+  };
+  el('coachResetBtn').onclick = () => {
+    state.aiCoach.reset();
+    updateCoachDisplay();
+    showToast('تم إعادة ضبط المساعد الذكي');
+  };
+  el('coachSettingsBtn').onclick = () => {
+    showToast('قريبًا: إعدادات متقدمة للمساعد الذكي');
+  };
+  
+  // إغلاق النافذة عند النقر خارجها
+  el('coachModal').onclick = (e) => {
+    if (e.target === el('coachModal')) {
+      hideCoachModal();
+    }
+  };
+  
   // أزرار البيانات
   el('btnExport').onclick = () => dataManager.exportData();
   el('btnImport').onclick = () => {
@@ -1748,6 +2264,7 @@ function init() {
   // تحديث الواجهة
   updateAll();
   updateMLStatus();
+  updateCoachDisplay();
   dataManager.updateDataStats();
   
   console.log('Initialization complete');
@@ -1791,6 +2308,7 @@ function getMLModelName(model) {
 }
 
 function showToast(message, type = 'success') {
+  // إنشاء عنصر التوست
   const toast = document.createElement('div');
   toast.textContent = message;
   toast.style.cssText = `
@@ -1808,6 +2326,7 @@ function showToast(message, type = 'success') {
   
   document.body.appendChild(toast);
   
+  // إزالة التوست بعد 3 ثواني
   setTimeout(() => {
     toast.style.animation = 'slideOut 0.3s ease-in';
     setTimeout(() => {
@@ -1833,7 +2352,7 @@ style.textContent = `
 document.head.appendChild(style);
 
 // ========== خوارزميات التحليل ==========
-// (نفس الكود السابق للتحليل)
+
 function frequencyAnalysis(rounds) {
   if (!rounds || rounds.length === 0) {
     return { P: 33.3, B: 33.3, T: 33.3 };
@@ -2015,10 +2534,11 @@ function pushRound(r) {
   state.rounds.push(r);
   state.count[r]++;
   
+  let wasCorrect = false;
   if (state.lastPrediction !== '—' && state.lastPrediction !== null) {
-    const didWin = (r === state.lastPrediction);
+    wasCorrect = (r === state.lastPrediction);
     
-    if (didWin) {
+    if (wasCorrect) {
       state.win[state.lastPrediction]++;
       state.modelPerformance[state.analysisMode] = (state.modelPerformance[state.analysisMode] || 0) + 1;
     } else {
@@ -2028,23 +2548,23 @@ function pushRound(r) {
   
   updateAccuracyData(r);
   
+  // تحديث المساعد الذكي
+  state.aiCoach.updateMentalState(r, wasCorrect);
+  
   const newPred = enhancedPredict();
   updatePredictionDisplay(newPred);
-  showResult(r, newPred, state.lastPrediction === r);
+  showResult(r, newPred, wasCorrect);
   updateAll();
+  updateCoachDisplay();
   dataManager.saveAllData();
   dataManager.updateDataStats();
   
-  // نصائح تلقائية من المساعد الصوتي
-  if (state.talkingAssistant && state.rounds.length % 10 === 0) {
-    const gameStats = {
-      totalRounds: state.rounds.length,
-      winRate: calculateWinRate(),
-      recentLosses: calculateRecentLosses()
-    };
-    state.talkingAssistant.provideGameAdvice(gameStats);
+  // إشعار من المساعد إذا لزم الأمر
+  if (!wasCorrect && calculateLossStreak() >= 3) {
+    state.aiCoach.addNotification('⚠️ 3 خسائر متتالية! وقت التوقف والمراجعة.', 'warning');
   }
   
+  // إشعار صوتي بسيط
   playSound('click');
 }
 
@@ -2071,6 +2591,7 @@ function undoRound() {
   
   state.lastPrediction = null;
   
+  // إعادة تدريب ML مع البيانات المحدثة
   state.ml.reset();
   for (let i = 0; i < state.rounds.length; i++) {
     if (i >= state.windowSize) {
@@ -2080,6 +2601,7 @@ function undoRound() {
   }
   
   updateAll();
+  updateCoachDisplay();
   dataManager.saveAllData();
   dataManager.updateDataStats();
   playSound('undo');
@@ -2101,28 +2623,13 @@ function resetAll() {
   state.previousPredictions = { P: 0, B: 0, T: 0 };
   
   state.ml.reset();
+  state.aiCoach.reset();
   
   updateAll();
+  updateCoachDisplay();
   dataManager.saveAllData();
   dataManager.updateDataStats();
-  
-  if (state.talkingAssistant) {
-    state.talkingAssistant.speak("تم إعادة تعيين جميع البيانات. هيا نبدأ من جديد!");
-  }
-  
   playSound('reset');
-}
-
-function calculateWinRate() {
-  const totalWins = state.win.P + state.win.B + state.win.T;
-  const totalPredictions = state.predictionsHistory.length;
-  return totalPredictions > 0 ? (totalWins / totalPredictions) * 100 : 0;
-}
-
-function calculateRecentLosses() {
-  if (state.predictionsHistory.length < 5) return 0;
-  const recent = state.predictionsHistory.slice(-5);
-  return recent.filter(p => !p.correct).length;
 }
 
 function playSound(type) {
@@ -2326,6 +2833,7 @@ function updateMLStats() {
   const mlAccuracy = state.ml.getModelAccuracy(state.mlModel);
   el('mlOverallAccuracy').textContent = mlAccuracy.toFixed(1) + '%';
   
+  // تحديث دقة ML لكل نوع (مبسطة)
   const mlOverall = mlAccuracy;
   el('pMLAccuracy').textContent = (mlOverall * 0.9).toFixed(1) + '%';
   el('bMLAccuracy').textContent = (mlOverall * 0.95).toFixed(1) + '%';
@@ -2486,6 +2994,7 @@ function updateAccuracyChart() {
   const height = svg.clientHeight || 80;
   const padding = 20;
   
+  // رسم الشبكة
   for (let i = 0; i <= 100; i += 20) {
     const y = height - padding - (i / 100) * (height - 2 * padding);
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -2506,6 +3015,7 @@ function updateAccuracyChart() {
     svg.appendChild(text);
   }
   
+  // رسم الخط
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   let pathData = '';
   
@@ -2519,6 +3029,7 @@ function updateAccuracyChart() {
       pathData += ` L ${x} ${y}`;
     }
     
+    // نقاط تفاعلية
     const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     point.setAttribute('class', 'accuracy-point');
     point.setAttribute('cx', x);
