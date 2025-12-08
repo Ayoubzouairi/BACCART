@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AYOUB BACCARAT PRO - النسخة الكاملة مع المساعد الصوتي الذكي</title>
+<title>AYOUB BACCARAT PRO - النسخة الكاملة مع الحفظ التلقائي</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
 :root{--gold:#d4af37;--gold-2:#b8871d;--bg-dark:#070606;--card:#0f0e10;--muted:#bfb7a6;--player:#2d7ef7;--banker:#e03b3b;--tie:#28a745;}
@@ -78,7 +78,7 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 :root[data-theme="light"] .theme-toggle:hover{background:rgba(0,0,0,0.05);}
 
 /* تحسينات إضافية للحقول */
-.input-group {display: flex; gap: 8px; align-items:center;}
+.input-group {display: flex; gap: 8px; align-items: center;}
 .input-group input {flex: 1;}
 .input-label {font-weight: 600; margin-bottom: 6px; display: block;}
 
@@ -113,7 +113,7 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 .badge-pattern {background: #38b000; color: white;}
 .badge-ml {background: #9d4edd; color: white;}
 .pattern-info {font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.4;}
-.confidence-meter {height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 4px; overflow: hidden;}
+.confidence-meter {height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 4px; overflow:hidden;}
 .confidence-fill {height: 100%; background: linear-gradient(90deg, #38b000, #ff006e); border-radius: 3px; transition: width 0.3s;}
 .high-confidence {background: linear-gradient(90deg, #38b000, #d4af37);}
 .medium-confidence {background: linear-gradient(90deg, #d4af37, #ff006e);}
@@ -139,186 +139,41 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 .data-controls {display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;}
 .data-controls .btn {padding: 6px 10px; font-size: 12px; flex: 1; min-width: 100px;}
 
-/* ========== أنماط المساعد الصوتي الجديد ========== */
-.voice-assistant-container {
-  background: rgba(212, 175, 55, 0.08);
-  border-radius: 12px;
-  padding: 12px;
-  margin-top: 10px;
-  border-left: 4px solid var(--gold);
-}
-
-.voice-controls {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-bottom: 10px;
-  flex-wrap: wrap;
-}
-
-.voice-btn {
-  flex: 1;
-  min-width: 80px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: none;
-  background: linear-gradient(135deg, #3a86ff, #2667cc);
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.voice-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-}
-
-.voice-btn.active {
-  background: linear-gradient(135deg, #38b000, #2c8a00);
-  animation: pulse-btn 1.5s infinite;
-}
-
-.voice-btn.recording {
-  background: linear-gradient(135deg, #ff006e, #cc0058);
-  animation: recording-pulse 1s infinite;
-}
-
-@keyframes pulse-btn {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-@keyframes recording-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
-.voice-feedback {
-  margin-top: 10px;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  min-height: 60px;
-}
-
-.voice-status {
-  font-size: 13px;
-  color: var(--muted);
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.voice-message {
-  font-size: 14px;
-  line-height: 1.4;
-  color: #fff;
-}
-
-.voice-message.warning {
-  color: #ffcc00;
-}
-
-.voice-message.success {
-  color: #38b000;
-}
-
-.voice-message.danger {
-  color: #ff006e;
-}
-
-.volume-control {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.volume-slider {
-  flex: 1;
-}
-
-.voice-options {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-  flex-wrap: wrap;
-}
-
-.voice-option-btn {
-  padding: 6px 10px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.voice-option-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.voice-history {
-  margin-top: 10px;
-  max-height: 100px;
-  overflow-y: auto;
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.voice-history-item {
-  padding: 4px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.mic-status {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #ff006e;
-}
-
-.mic-status.active {
-  background: #38b000;
-  animation: blink 1s infinite;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
+/* الأنماط الخاصة بالطرق البياني */
+.roads-container {background: #0f0e10; border-radius: 10px; padding: 15px; margin-bottom: 15px; overflow: auto;}
+:root[data-theme="light"] .roads-container {background: #f0f0f0;}
+.roads-grid {display: grid; grid-template-columns: 1fr; gap: 20px;}
+.road-section {margin-bottom: 20px;}
+.road-title {font-size: 16px; font-weight: 700; margin-bottom: 10px; color: var(--gold); text-align: center;}
+.road-canvas {background: #1a1a1a; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);}
+:root[data-theme="light"] .road-canvas {background: #ffffff; border: 1px solid rgba(0,0,0,0.1);}
+.road-explanation {font-size: 12px; color: var(--muted); margin-top: 8px; text-align: center;}
+.roads-header {display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;}
+.road-legend {display: flex; gap: 10px; font-size: 12px;}
+.legend-item {display: flex; align-items: center; gap: 4px;}
 
 /* تحسينات للاستجابة */
 @media (max-width: 768px) {
-  .layout {flex-direction: column;}
-  .left, .right {width: 100%;}
-  .top {flex-direction: column; align-items: flex-start;}
-  .controls {width: 100%; justify-content: space-between;}
-  .accuracy-stats > div {min-width: 100px;}
-  .prediction-cards {flex-direction: column;}
-  .pred-card {width: 100%;}
-  .color-legend {justify-content: flex-start;}
-  .row {flex-wrap: wrap;}
-  .btn {flex: 1; min-width: 60px;}
-  .voice-controls {flex-direction: column;}
-  .voice-btn {width: 100%;}
+    .layout {flex-direction: column;}
+    .left, .right {width: 100%;}
+    .top {flex-direction: column; align-items: flex-start;}
+    .controls {width: 100%; justify-content: space-between;}
+    .accuracy-stats > div {min-width: 100px;}
+    .prediction-cards {flex-direction: column;}
+    .pred-card {width: 100%;}
+    .color-legend {justify-content: flex-start;}
+    .row {flex-wrap: wrap;}
+    .btn {flex: 1; min-width: 60px;}
+    .roads-grid {grid-template-columns: 1fr;}
 }
 
 @media (max-width: 480px) {
-  body {padding: 10px;}
-  .card {padding: 8px;}
-  .btn {padding: 10px 12px; font-size: 14px;}
-  .accuracy-stats {flex-direction: column;}
-  .accuracy-stats > div {min-width: 100%;}
-  .voice-assistant-container {padding: 8px;}
+    body {padding: 10px;}
+    .card {padding: 8px;}
+    .btn {padding: 10px 12px; font-size: 14px;}
+    .accuracy-stats {flex-direction: column;}
+    .accuracy-stats > div {min-width: 100%;}
+    .road-legend {flex-direction: column;}
 }
 </style>
 </head>
@@ -326,8 +181,8 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 <div class="app">
 <header class="top card">
   <div class="brand">
-    <div class="logo">AYOUB BACCARAT PRO <span class="model-badge badge-ml">مع مساعد صوتي ذكي</span></div>
-    <div class="subtitle">نظام تنبؤ ذكي مع مساعد صوتي يتكلم وينصحك أثناء اللعب 🎤🧠💾</div>
+    <div class="logo">AYOUB BACCARAT PRO <span class="model-badge badge-ml">نسخة كاملة</span></div>
+    <div class="subtitle">نظام تنبؤ ذكي مع خوارزميات تعلم آلة وحفظ تلقائي 🧠💾🚀</div>
   </div>
   <div class="controls">
     <button id="themeToggle" class="theme-toggle" title="تبديل الوضع">🌚</button>
@@ -337,52 +192,6 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 
 <main class="layout">
 <aside class="left">
-  <!-- قسم المساعد الصوتي الجديد -->
-  <div class="panel card voice-assistant-container">
-    <div class="section-title">🎤 المساعد الصوتي الذكي</div>
-    
-    <div class="voice-controls">
-      <button id="voiceListenBtn" class="voice-btn">
-        <span>🎤</span> تحدث الآن
-      </button>
-      <button id="voiceAdviceBtn" class="voice-btn">
-        <span>💡</span> نصائح صوتية
-      </button>
-      <button id="voiceStopBtn" class="voice-btn" style="background:linear-gradient(135deg, #666, #444)">
-        <span>⏹️</span> إيقاف
-      </button>
-    </div>
-    
-    <div class="voice-status">
-      <div class="mic-status" id="micStatus"></div>
-      <span id="voiceStatusText">جاهز للاستماع...</span>
-    </div>
-    
-    <div class="voice-feedback">
-      <div class="voice-message" id="voiceMessage">
-        قل: "نصيحة" أو "توقع" أو "تحليل" وسأرد عليك صوتياً
-      </div>
-    </div>
-    
-    <div class="volume-control">
-      <span>🔊</span>
-      <input type="range" id="voiceVolume" class="volume-slider" min="0.1" max="1" step="0.1" value="0.7">
-      <span id="volumeValue">70%</span>
-    </div>
-    
-    <div class="voice-options">
-      <button class="voice-option-btn" data-command="advice">نصيحة</button>
-      <button class="voice-option-btn" data-command="analysis">تحليل</button>
-      <button class="voice-option-btn" data-command="prediction">توقع</button>
-      <button class="voice-option-btn" data-command="stats">إحصاءات</button>
-      <button class="voice-option-btn" data-command="pattern">أنماط</button>
-    </div>
-    
-    <div class="voice-history" id="voiceHistory">
-      <!-- سيتم عرض تاريخ المحادثة هنا -->
-    </div>
-  </div>
-
   <div class="panel card">
     <label class="input-label">نافذة التحليل (5 - 15)</label>
     <div class="input-group">
@@ -509,7 +318,46 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
       <span style="background:linear-gradient(135deg, #38b000, #2c8a00);">🟢 تعادل</span>
     </div>
     
-    <canvas id="bigRoad" width="800" height="450"></canvas>
+    <!-- استبدال canvas واحد بثلاثة طرق -->
+    <div class="roads-container">
+      <div class="roads-header">
+        <div class="road-title">طرق الباكارات المتقدمة</div>
+        <div class="road-legend">
+          <div class="legend-item">
+            <div style="width:12px;height:12px;background:#3a86ff;border-radius:2px;"></div>
+            <span>لاعب</span>
+          </div>
+          <div class="legend-item">
+            <div style="width:12px;height:12px;background:#ff006e;border-radius:2px;"></div>
+            <span>مصرفي</span>
+          </div>
+          <div class="legend-item">
+            <div style="width:12px;height:12px;background:#38b000;border-radius:2px;"></div>
+            <span>تعادل</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="roads-grid">
+        <div class="road-section">
+          <div class="road-title">الطريق الكبير (Big Road)</div>
+          <canvas id="bigRoadCanvas" class="road-canvas" width="800" height="180"></canvas>
+          <div class="road-explanation">تعقب النتائج الأساسية - كل دائرة تمثل جولة</div>
+        </div>
+        
+        <div class="road-section">
+          <div class="road-title">الطريق الصغير (Small Road)</div>
+          <canvas id="smallRoadCanvas" class="road-canvas" width="800" height="120"></canvas>
+          <div class="road-explanation">يتعقب التغييرات في نتائج اللاعب والمصرفي</div>
+        </div>
+        
+        <div class="road-section">
+          <div class="road-title">طريق الصرصور (Cockroach Road)</div>
+          <canvas id="cockroachRoadCanvas" class="road-canvas" width="800" height="120"></canvas>
+          <div class="road-explanation">يتعقب الأنماط المعقدة والاتجاهات</div>
+        </div>
+      </div>
+    </div>
 
     <div class="prediction-cards">
       <div class="pred-card player" id="predP">
@@ -569,8 +417,8 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 
 <footer class="foot card">
   <div style="flex: 1;">
-    <div>تصميم: Ayoub • النسخة الكاملة مع المساعد الصوتي الذكي</div>
-    <div class="credits small">نظام متعدد النماذج • تعلم آلة • مساعد صوتي • تحليل الأنماط • حفظ تلقائي</div>
+    <div>تصميم: Ayoub • النسخة الكاملة مع الحفظ التلقائي</div>
+    <div class="credits small">نظام متعدد النماذج • تعلم آلة • تحليل الأنماط • حفظ تلقائي • مؤشرات متقدمة</div>
   </div>
   <div class="data-controls">
     <button id="btnExport" class="btn" style="background: rgba(59, 130, 246, 0.2); border: 1px solid #3a86ff;">📥 تصدير</button>
@@ -585,401 +433,6 @@ canvas{border-radius:10px;background:#0f0e10;width:100% !important;height:auto !
 </div>
 
 <script>
-// ========== نظام المساعد الصوتي الجديد ==========
-
-class VoiceAssistant {
-  constructor() {
-    this.isListening = false;
-    this.speechQueue = [];
-    this.isSpeaking = false;
-    this.recognition = null;
-    this.synth = window.speechSynthesis;
-    this.volume = 0.7;
-    this.voiceHistory = [];
-    this.adviceMode = false;
-    this.autoAdvice = false;
-    
-    this.initSpeechRecognition();
-    this.setupEventListeners();
-  }
-  
-  initSpeechRecognition() {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      this.recognition = new SpeechRecognition();
-      this.recognition.lang = 'ar-SA';
-      this.recognition.continuous = false;
-      this.recognition.interimResults = false;
-      
-      this.recognition.onstart = () => {
-        this.updateStatus('🎤 أستمع إليك الآن...', 'active');
-        this.updateMicStatus(true);
-      };
-      
-      this.recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        this.addToHistory(`أنت: ${transcript}`);
-        this.processVoiceCommand(transcript);
-      };
-      
-      this.recognition.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
-        this.updateStatus(`خطأ: ${event.error}`, 'danger');
-        this.updateMicStatus(false);
-      };
-      
-      this.recognition.onend = () => {
-        this.updateMicStatus(false);
-        if (this.isListening) {
-          setTimeout(() => this.startListening(), 500);
-        }
-      };
-    } else {
-      this.updateStatus('المتصفح لا يدعم التعرف على الصوت', 'danger');
-    }
-  }
-  
-  setupEventListeners() {
-    // أزرار التحكم
-    document.getElementById('voiceListenBtn').addEventListener('click', () => this.toggleListening());
-    document.getElementById('voiceAdviceBtn').addEventListener('click', () => this.giveAdvice());
-    document.getElementById('voiceStopBtn').addEventListener('click', () => this.stopEverything());
-    
-    // أزرار الخيارات
-    document.querySelectorAll('.voice-option-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const command = e.target.dataset.command;
-        this.processVoiceCommand(command);
-      });
-    });
-    
-    // التحكم في الصوت
-    document.getElementById('voiceVolume').addEventListener('input', (e) => {
-      this.volume = parseFloat(e.target.value);
-      document.getElementById('volumeValue').textContent = Math.round(this.volume * 100) + '%';
-    });
-  }
-  
-  toggleListening() {
-    if (this.isListening) {
-      this.stopListening();
-    } else {
-      this.startListening();
-    }
-  }
-  
-  startListening() {
-    if (this.recognition) {
-      this.isListening = true;
-      this.recognition.start();
-      document.getElementById('voiceListenBtn').classList.add('recording');
-      this.updateStatus('🎤 أستمع... تكلم الآن', 'active');
-    } else {
-      this.speak('المتصفح لا يدعم التعرف على الصوت');
-    }
-  }
-  
-  stopListening() {
-    this.isListening = false;
-    if (this.recognition) {
-      this.recognition.stop();
-    }
-    document.getElementById('voiceListenBtn').classList.remove('recording');
-    this.updateStatus('جاهز للاستماع', '');
-  }
-  
-  processVoiceCommand(transcript) {
-    const text = transcript.toLowerCase();
-    this.addToHistory(`المساعد: معالجة "${text}"`);
-    
-    if (text.includes('نصيحة') || text.includes('ماذا أفعل') || text.includes('نصحني')) {
-      this.giveAdvice();
-    } else if (text.includes('توقع') || text.includes('تنبأ') || text.includes('رأيك')) {
-      this.givePrediction();
-    } else if (text.includes('تحليل') || text.includes('حلل') || text.includes('شوف')) {
-      this.giveAnalysis();
-    } else if (text.includes('إحصاءات') || text.includes('أرقام') || text.includes('إحصائيات')) {
-      this.giveStats();
-    } else if (text.includes('أنماط') || text.includes('نمط') || text.includes('تسلسل')) {
-      this.givePatternAnalysis();
-    } else if (text.includes('توقف') || text.includes('كفى') || text.includes('اسكت')) {
-      this.stopEverything();
-    } else if (text.includes('شكر') || text.includes('مشكور') || text.includes('بارك')) {
-      this.speak('عفواً، أي خدمة أخرى؟ أنا هنا لمساعدتك.');
-    } else if (text.includes('مرحبا') || text.includes('السلام') || text.includes('اهلا')) {
-      this.speak('مرحباً بك! أنا مساعدك الصوتي في لعبة الباكارات. كيف يمكنني مساعدتك؟');
-    } else {
-      this.speak('لم أفهم طلبك. يمكنك أن تقول: نصيحة، توقع، تحليل، أو إحصاءات.');
-    }
-  }
-  
-  giveAdvice() {
-    if (state.rounds.length === 0) {
-      this.speak('لا توجد بيانات كافية. ابدأ بإدخال بعض الجولات أولاً.');
-      return;
-    }
-    
-    const recent = state.rounds.slice(-state.windowSize);
-    const pCount = recent.filter(r => r === 'P').length;
-    const bCount = recent.filter(r => r === 'B').length;
-    const tCount = recent.filter(r === 'T').length;
-    
-    const pred = enhancedPredict();
-    const confidence = pred.confidence;
-    
-    let advice = '';
-    
-    if (confidence < 30) {
-      advice = 'التوقعات غير واضحة. أنصحك بالتريث ومراقبة المزيد من الجولات قبل الرهان.';
-    } else if (confidence < 50) {
-      advice = 'الثقة متوسطة. يمكنك الرهان ولكن بحذر، واستخدم مبالغ صغيرة.';
-    } else {
-      if (pred.final === 'P') {
-        advice = `التوقع يشير بقوة للاعب. نسبة اللاعب في آخر ${state.windowSize} جولة هي ${Math.round(pCount/state.windowSize*100)}%. أنصحك بالمراهنة على اللاعب.`;
-      } else if (pred.final === 'B') {
-        advice = `التوقع يشير بقوة للمصرفي. نسبة المصرفي في آخر ${state.windowSize} جولة هي ${Math.round(bCount/state.windowSize*100)}%. أنصحك بالمراهنة على المصرفي.`;
-      } else if (pred.final === 'T') {
-        advice = `هناك مؤشرات للتعادل. أنصحك بالمراهنة على التعادل لكن بمبلغ صغير لأن المخاطرة عالية.`;
-      }
-    }
-    
-    if (recent.length >= 3 && recent[recent.length-1] === recent[recent.length-2] && recent[recent.length-2] === recent[recent.length-3]) {
-      advice += ' هناك تسلسل مستمر. غالباً ما ينكسر التسلسل بعد 3-4 مرات متتالية.';
-    }
-    
-    this.speak(advice);
-    this.addToHistory(`النصيحة: ${advice}`);
-  }
-  
-  givePrediction() {
-    if (state.rounds.length < 3) {
-      this.speak('أحتاج إلى 3 جولات على الأقل لأعطيك توقعاً دقيقاً.');
-      return;
-    }
-    
-    const pred = enhancedPredict();
-    
-    let predictionText = '';
-    if (pred.final === '—') {
-      predictionText = 'التوقعات غير حاسمة حالياً. الثقة غير كافية للتنبؤ.';
-    } else {
-      const finalName = pred.final === 'P' ? 'لاعب' : pred.final === 'B' ? 'مصرفي' : 'تعادل';
-      predictionText = `توقعي للجولة القادمة هو ${finalName}. نسبة الثقة ${Math.round(pred.confidence)}%. `;
-      predictionText += `النسب: لاعب ${pred.P}%، مصرفي ${pred.B}%، تعادل ${pred.T}%.`;
-    }
-    
-    this.speak(predictionText);
-    this.addToHistory(`التوقع: ${predictionText}`);
-  }
-  
-  giveAnalysis() {
-    if (state.rounds.length === 0) {
-      this.speak('لا توجد بيانات للتحليل.');
-      return;
-    }
-    
-    const total = state.rounds.length;
-    const pPercent = Math.round((state.count.P / total) * 100);
-    const bPercent = Math.round((state.count.B / total) * 100);
-    const tPercent = Math.round((state.count.T / total) * 100);
-    
-    const recent = state.rounds.slice(-5);
-    const recentP = recent.filter(r => r === 'P').length;
-    const recentB = recent.filter(r => r === 'B').length;
-    const recentT = recent.filter(r => r === 'T').length;
-    
-    let analysis = `إجمالي الجولات: ${total}. النسب الكلية: لاعب ${pPercent}%، مصرفي ${bPercent}%، تعادل ${tPercent}%. `;
-    analysis += `آخر 5 جولات: لاعب ${recentP}، مصرفي ${recentB}، تعادل ${recentT}. `;
-    
-    if (total >= 10) {
-      const trend = calculateTrend(state.rounds);
-      analysis += `الاتجاه العام: ${trend.direction === 'volatile' ? 'متقلب' : trend.direction === 'mixed' ? 'مختلط' : 'مستقر'}.`;
-    }
-    
-    this.speak(analysis);
-    this.addToHistory(`التحليل: ${analysis}`);
-  }
-  
-  giveStats() {
-    const accuracy = state.accuracyHistory.length > 0 ? 
-      Math.round(state.accuracyHistory[state.accuracyHistory.length - 1]) : 0;
-    
-    let stats = `دقة التوقعات الحالية: ${accuracy}%. `;
-    stats += `إجمالي الفوز: ${state.win.P + state.win.B + state.win.T}. `;
-    stats += `إجمالي الخسارة: ${state.loss.P + state.loss.B + state.loss.T}. `;
-    stats += `نسبة الفوز: ${Math.round(((state.win.P + state.win.B + state.win.T) / (state.win.P + state.win.B + state.win.T + state.loss.P + state.loss.B + state.loss.T || 1)) * 100)}%.`;
-    
-    this.speak(stats);
-    this.addToHistory(`الإحصاءات: ${stats}`);
-  }
-  
-  givePatternAnalysis() {
-    if (state.rounds.length < 5) {
-      this.speak('أحتاج إلى 5 جولات على الأقل لتحليل الأنماط.');
-      return;
-    }
-    
-    const recent = state.rounds.slice(-8);
-    let patterns = '';
-    
-    // تحليل التسلسلات
-    for (let i = 0; i < recent.length - 2; i++) {
-      if (recent[i] === recent[i+1] && recent[i+1] === recent[i+2]) {
-        const type = recent[i] === 'P' ? 'لاعب' : recent[i] === 'B' ? 'مصرفي' : 'تعادل';
-        patterns += `هناك تسلسل لـ${type} من الجولة ${i+1} إلى ${i+3}. `;
-      }
-    }
-    
-    if (!patterns) {
-      patterns = 'لا توجد أنماط تسلسلية واضحة في الجولات الأخيرة.';
-    } else {
-      patterns += 'عادةً، التسلسل الطويل ينكسر بعد 3-4 مرات.';
-    }
-    
-    this.speak(patterns);
-    this.addToHistory(`تحليل الأنماط: ${patterns}`);
-  }
-  
-  speak(text, immediate = false) {
-    if (!this.synth) return;
-    
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ar-SA';
-    utterance.rate = 0.9;
-    utterance.pitch = 1;
-    utterance.volume = this.volume;
-    
-    if (immediate) {
-      this.synth.cancel();
-      this.synth.speak(utterance);
-    } else {
-      this.speechQueue.push(utterance);
-      if (!this.isSpeaking) {
-        this.processSpeechQueue();
-      }
-    }
-    
-    // تحديث واجهة الرسالة
-    this.updateMessage(text);
-    this.addToHistory(`المساعد: ${text}`);
-  }
-  
-  processSpeechQueue() {
-    if (this.speechQueue.length === 0) {
-      this.isSpeaking = false;
-      return;
-    }
-    
-    this.isSpeaking = true;
-    const utterance = this.speechQueue.shift();
-    
-    utterance.onend = () => {
-      setTimeout(() => this.processSpeechQueue(), 300);
-    };
-    
-    utterance.onerror = () => {
-      setTimeout(() => this.processSpeechQueue(), 300);
-    };
-    
-    this.synth.speak(utterance);
-  }
-  
-  stopEverything() {
-    this.stopListening();
-    if (this.synth) {
-      this.synth.cancel();
-    }
-    this.speechQueue = [];
-    this.isSpeaking = false;
-    this.updateStatus('توقف', '');
-    document.getElementById('voiceListenBtn').classList.remove('recording', 'active');
-  }
-  
-  updateStatus(text, type = '') {
-    const statusEl = document.getElementById('voiceStatusText');
-    const messageEl = document.getElementById('voiceMessage');
-    
-    if (statusEl) {
-      statusEl.textContent = text;
-      statusEl.className = type ? `voice-status ${type}` : 'voice-status';
-    }
-    
-    if (messageEl && type) {
-      messageEl.className = `voice-message ${type}`;
-    }
-  }
-  
-  updateMessage(text) {
-    const messageEl = document.getElementById('voiceMessage');
-    if (messageEl) {
-      messageEl.textContent = text;
-      
-      // تحديد نوع الرسالة حسب المحتوى
-      if (text.includes('نصيحة') || text.includes('أنصح')) {
-        messageEl.className = 'voice-message success';
-      } else if (text.includes('خطأ') || text.includes('مشكلة') || text.includes('لا يدعم')) {
-        messageEl.className = 'voice-message danger';
-      } else if (text.includes('حذر') || text.includes('احترس') || text.includes('خطر')) {
-        messageEl.className = 'voice-message warning';
-      } else {
-        messageEl.className = 'voice-message';
-      }
-    }
-  }
-  
-  updateMicStatus(isActive) {
-    const micStatus = document.getElementById('micStatus');
-    const listenBtn = document.getElementById('voiceListenBtn');
-    
-    if (micStatus) {
-      micStatus.className = `mic-status ${isActive ? 'active' : ''}`;
-    }
-    
-    if (listenBtn) {
-      if (isActive) {
-        listenBtn.classList.add('active');
-      } else {
-        listenBtn.classList.remove('active');
-      }
-    }
-  }
-  
-  addToHistory(message) {
-    this.voiceHistory.push({
-      message,
-      timestamp: new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})
-    });
-    
-    // الحفاظ على آخر 10 رسائل
-    if (this.voiceHistory.length > 10) {
-      this.voiceHistory = this.voiceHistory.slice(-10);
-    }
-    
-    this.updateHistoryDisplay();
-  }
-  
-  updateHistoryDisplay() {
-    const historyEl = document.getElementById('voiceHistory');
-    if (!historyEl) return;
-    
-    historyEl.innerHTML = this.voiceHistory.map(item => 
-      `<div class="voice-history-item"><strong>${item.timestamp}:</strong> ${item.message}</div>`
-    ).join('');
-    
-    // التمرير للأسفل
-    historyEl.scrollTop = historyEl.scrollHeight;
-  }
-  
-  // نصيحة تلقائية عند تغيير النتائج
-  autoAdviceOnRound(result) {
-    if (!this.autoAdvice || !this.adviceMode) return;
-    
-    if (state.rounds.length % 3 === 0) { // كل 3 جولات
-      setTimeout(() => this.giveAdvice(), 1000);
-    }
-  }
-}
-
 // ========== خوارزميات تعلم الآلة ==========
 
 class SimpleKNN {
@@ -1395,7 +848,7 @@ class BaccaratMachineLearning {
 
 class DataManager {
   constructor() {
-    this.storageKey = 'baccaratPro_v4';
+    this.storageKey = 'baccaratPro_v3';
     this.autoSaveInterval = null;
     this.lastSaveTime = null;
     this.isSaving = false;
@@ -1433,7 +886,7 @@ class DataManager {
           isEnabled: state.ml.isEnabled
         },
         meta: {
-          version: '4.0',
+          version: '3.0',
           lastSave: new Date().toISOString(),
           totalRounds: state.rounds.length,
           sessionStart: this.getSessionStartTime()
@@ -1533,7 +986,7 @@ class DataManager {
         },
         meta: {
           exportDate: new Date().toISOString(),
-          version: 'AYOUB_BACCARAT_PRO_v4.0',
+          version: 'AYOUB_BACCARAT_PRO_v3.0',
           totalRounds: state.rounds.length
         }
       };
@@ -1705,22 +1158,275 @@ const state = {
 
 // إنشاء مدير البيانات
 const dataManager = new DataManager();
-// إنشاء المساعد الصوتي
-let voiceAssistant;
 
 // ========== الوظائف المساعدة ==========
 const el = id => document.getElementById(id);
 
+// ========== نظام رسم الطرق الجديد ==========
+
+class BaccaratRoadDrawer {
+  constructor() {
+    this.cellSize = 25;
+    this.padding = 15;
+  }
+
+  // رسم الطريق الكبير (Big Road)
+  drawBigRoad(canvasId, rounds) {
+    const canvas = el(canvasId);
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    // تنظيف Canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    if (rounds.length === 0) return;
+    
+    // رسم الخلفية
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0, 0, width, height);
+    
+    // رسم الشبكة
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+    
+    const maxCols = Math.floor((width - this.padding * 2) / this.cellSize);
+    const maxRows = Math.floor((height - this.padding * 2) / this.cellSize);
+    
+    // رسم الخطوط العمودية
+    for (let col = 0; col <= maxCols; col++) {
+      const x = this.padding + col * this.cellSize;
+      ctx.beginPath();
+      ctx.moveTo(x, this.padding);
+      ctx.lineTo(x, height - this.padding);
+      ctx.stroke();
+    }
+    
+    // رسم الخطوط الأفقية
+    for (let row = 0; row <= maxRows; row++) {
+      const y = this.padding + row * this.cellSize;
+      ctx.beginPath();
+      ctx.moveTo(this.padding, y);
+      ctx.lineTo(width - this.padding, y);
+      ctx.stroke();
+    }
+    
+    // رسم النقاط
+    let col = 0, row = 0;
+    for (let i = 0; i < rounds.length; i++) {
+      const round = rounds[i];
+      
+      const x = this.padding + col * this.cellSize + this.cellSize / 2;
+      const y = this.padding + row * this.cellSize + this.cellSize / 2;
+      
+      // تحديد اللون
+      let color;
+      if (round === 'P') {
+        color = '#3a86ff'; // أزرق للاعب
+      } else if (round === 'B') {
+        color = '#ff006e'; // أحمر للمصرفي
+      } else {
+        color = '#38b000'; // أخضر للتعادل
+      }
+      
+      // رسم دائرة
+      ctx.beginPath();
+      ctx.arc(x, y, this.cellSize * 0.35, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      
+      // رسم رقم الجولة
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 10px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText((i + 1).toString(), x, y);
+      
+      // الانتقال للخلية التالية
+      if (round === 'T') {
+        // التعادل يبقى في نفس العمود
+        row++;
+        if (row >= maxRows) {
+          row = 0;
+          col++;
+        }
+      } else {
+        // اللاعب والمصرفي يتحركان أفقيًا
+        row++;
+        if (row >= maxRows) {
+          row = 0;
+          col++;
+        }
+      }
+      
+      // إذا تجاوزنا العرض المتاح، نتوقف
+      if (col >= maxCols) break;
+    }
+  }
+
+  // رسم الطريق الصغير (Small Road)
+  drawSmallRoad(canvasId, rounds) {
+    const canvas = el(canvasId);
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    // تنظيف Canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    if (rounds.length < 2) return;
+    
+    // رسم الخلفية
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0, 0, width, height);
+    
+    const cellSize = 20;
+    const padding = 10;
+    const maxCols = Math.floor((width - padding * 2) / cellSize);
+    const maxRows = Math.floor((height - padding * 2) / cellSize);
+    
+    // رسم النقاط الصغيرة
+    let col = 0, row = 0;
+    
+    for (let i = 1; i < rounds.length; i++) {
+      const prev = rounds[i - 1];
+      const current = rounds[i];
+      
+      // نرسم فقط عندما يكون هناك تغيير من لاعب لمصرفي أو العكس
+      if ((prev === 'P' && current === 'B') || (prev === 'B' && current === 'P')) {
+        const x = padding + col * cellSize + cellSize / 2;
+        const y = padding + row * cellSize + cellSize / 2;
+        
+        // تحديد اللون بناءً على النتيجة
+        let color;
+        if (prev === 'P' && current === 'B') {
+          color = '#ff006e'; // أحمر (لاعب ← مصرفي)
+        } else {
+          color = '#3a86ff'; // أزرق (مصرفي ← لاعب)
+        }
+        
+        // رسم مربع صغير
+        ctx.fillStyle = color;
+        ctx.fillRect(x - cellSize * 0.3, y - cellSize * 0.3, cellSize * 0.6, cellSize * 0.6);
+        
+        // إطار أبيض
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x - cellSize * 0.3, y - cellSize * 0.3, cellSize * 0.6, cellSize * 0.6);
+        
+        // الانتقال للخلية التالية
+        col++;
+        if (col >= maxCols) {
+          col = 0;
+          row++;
+        }
+        
+        if (row >= maxRows) break;
+      }
+    }
+  }
+
+  // رسم طريق الصرصور (Cockroach Road)
+  drawCockroachRoad(canvasId, rounds) {
+    const canvas = el(canvasId);
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    // تنظيف Canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    if (rounds.length < 3) return;
+    
+    // رسم الخلفية
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0, 0, width, height);
+    
+    const cellSize = 18;
+    const padding = 10;
+    const maxCols = Math.floor((width - padding * 2) / cellSize);
+    const maxRows = Math.floor((height - padding * 2) / cellSize);
+    
+    // رسم النمط المعقد
+    let col = 0, row = 0;
+    let patternBuffer = [];
+    
+    for (let i = 2; i < rounds.length; i++) {
+      const pattern = [rounds[i - 2], rounds[i - 1], rounds[i]];
+      
+      // نبحث عن الأنماط الخاصة
+      let drawPattern = false;
+      let patternColor = '#d4af37'; // ذهبي كافتراضي
+      
+      // نمط 3 متتالية من نفس النوع
+      if (pattern[0] === pattern[1] && pattern[1] === pattern[2]) {
+        drawPattern = true;
+        patternColor = pattern[0] === 'P' ? '#3a86ff' : 
+                      pattern[0] === 'B' ? '#ff006e' : '#38b000';
+      }
+      // نمط تناوب
+      else if (pattern[0] !== pattern[1] && pattern[1] !== pattern[2]) {
+        drawPattern = true;
+        patternColor = '#9d4edd'; // بنفسجي
+      }
+      
+      if (drawPattern) {
+        const x = padding + col * cellSize + cellSize / 2;
+        const y = padding + row * cellSize + cellSize / 2;
+        
+        // رسم مثلث صغير
+        ctx.beginPath();
+        ctx.moveTo(x, y - cellSize * 0.4);
+        ctx.lineTo(x + cellSize * 0.4, y + cellSize * 0.4);
+        ctx.lineTo(x - cellSize * 0.4, y + cellSize * 0.4);
+        ctx.closePath();
+        ctx.fillStyle = patternColor;
+        ctx.fill();
+        
+        // إطار أبيض
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        // الانتقال للخلية التالية
+        col++;
+        if (col >= maxCols) {
+          col = 0;
+          row++;
+        }
+        
+        if (row >= maxRows) break;
+      }
+    }
+  }
+
+  // رسم جميع الطرق
+  drawAllRoads(rounds) {
+    this.drawBigRoad('bigRoadCanvas', rounds);
+    this.drawSmallRoad('smallRoadCanvas', rounds);
+    this.drawCockroachRoad('cockroachRoadCanvas', rounds);
+  }
+}
+
+// إنشاء رسام الطرق
+const roadDrawer = new BaccaratRoadDrawer();
+
 // ========== الوظائف الرئيسية ==========
 
 function init() {
-  console.log('Initializing Baccarat Pro with Voice Assistant...');
+  console.log('Initializing Baccarat Pro...');
   
   // تحميل البيانات المحفوظة
   dataManager.loadAllData();
-  
-  // إعداد المساعد الصوتي
-  voiceAssistant = new VoiceAssistant();
   
   // إعداد عناصر الواجهة
   el('windowSize').value = state.windowSize;
@@ -1730,7 +1436,7 @@ function init() {
     if (v >= 5 && v <= 15) {
       state.windowSize = v;
       updateAll();
-      voiceAssistant.speak(`تم تغيير نافذة التحليل إلى ${v} جولات`);
+      showToast(`تم تغيير نافذة التحليل إلى ${v} جولات`);
     } else {
       showToast('النافذة يجب أن تكون بين 5 و 15', 'error');
     }
@@ -1740,7 +1446,7 @@ function init() {
   el('analysisMode').onchange = (e) => {
     state.analysisMode = e.target.value;
     updateAll();
-    voiceAssistant.speak(`تم تغيير نمط التحليل إلى ${getModeName(state.analysisMode)}`);
+    showToast(`تم تغيير نمط التحليل إلى ${getModeName(state.analysisMode)}`);
   };
 
   el('confidenceSensitivity').value = state.confidenceThreshold;
@@ -1754,7 +1460,7 @@ function init() {
   el('timeWeighting').onchange = (e) => {
     state.timeWeighting = e.target.value;
     updateAll();
-    voiceAssistant.speak(`تم تغيير المرجحة الزمنية إلى ${getWeightingName(state.timeWeighting)}`);
+    showToast(`تم تغيير المرجحة الزمنية إلى ${getWeightingName(state.timeWeighting)}`);
   };
 
   // إعدادات تعلم الآلة
@@ -1764,7 +1470,7 @@ function init() {
     state.ml.isEnabled = state.useML;
     updateMLStatus();
     updateAll();
-    voiceAssistant.speak(`تعلم الآلة ${state.useML ? 'مفعل' : 'معطل'}`);
+    showToast(`تعلم الآلة ${state.useML ? 'مفعل' : 'معطل'}`);
   };
 
   el('mlModelSelect').value = state.mlModel;
@@ -1773,7 +1479,7 @@ function init() {
     state.ml.setActiveModel(state.mlModel);
     updateMLStatus();
     updateAll();
-    voiceAssistant.speak(`تم تغيير نموذج تعلم الآلة إلى ${getMLModelName(state.mlModel)}`);
+    showToast(`تم تغيير نموذج ML إلى ${getMLModelName(state.mlModel)}`);
   };
 
   // أزرار الإدخال
@@ -1814,13 +1520,6 @@ function init() {
   updateMLStatus();
   dataManager.updateDataStats();
   
-  // ترحيب صوتي
-  setTimeout(() => {
-    if (state.rounds.length === 0) {
-      voiceAssistant.speak('مرحباً بك في نظام الباكارات الذكي. ابدأ بإدخال نتائج الجولات أو اسألني عن النصائح.');
-    }
-  }, 1000);
-  
   console.log('Initialization complete');
 }
 
@@ -1830,7 +1529,7 @@ function toggleTheme() {
   document.documentElement.setAttribute('data-theme', newTheme);
   el('themeToggle').textContent = newTheme === 'dark' ? '🌚' : '🌕';
   updateAccuracyChart();
-  voiceAssistant.speak(`تم التبديل إلى الوضع ${newTheme === 'dark' ? 'الليلي' : 'النهاري'}`);
+  showToast(`تم التبديل إلى الوضع ${newTheme === 'dark' ? 'الليلي' : 'النهاري'}`);
 }
 
 function getModeName(mode) {
@@ -2108,11 +1807,6 @@ function pushRound(r) {
   dataManager.saveAllData();
   dataManager.updateDataStats();
   
-  // نصيحة صوتية تلقائية كل 5 جولات
-  if (voiceAssistant && state.rounds.length > 0 && state.rounds.length % 5 === 0) {
-    setTimeout(() => voiceAssistant.giveAdvice(), 1500);
-  }
-  
   // إشعار صوتي بسيط
   playSound('click');
 }
@@ -2153,11 +1847,6 @@ function undoRound() {
   dataManager.saveAllData();
   dataManager.updateDataStats();
   playSound('undo');
-  
-  // إشعار صوتي
-  if (voiceAssistant) {
-    voiceAssistant.speak('تم التراجع عن الجولة الأخيرة');
-  }
 }
 
 function resetAll() {
@@ -2181,11 +1870,6 @@ function resetAll() {
   dataManager.saveAllData();
   dataManager.updateDataStats();
   playSound('reset');
-  
-  // إشعار صوتي
-  if (voiceAssistant) {
-    voiceAssistant.speak('تم إعادة تعيين جميع البيانات. يمكنك البدء من جديد.');
-  }
 }
 
 function playSound(type) {
@@ -2342,15 +2026,6 @@ function showResult(r, pred, didWin) {
   setTimeout(() => {
     finalCard.classList.add(didWin ? 'win-effect' : 'loss-effect');
   }, 10);
-  
-  // إشعار صوتي بالفوز/الخسارة
-  if (voiceAssistant) {
-    if (didWin) {
-      voiceAssistant.speak('ممتاز! لقد فزت في هذه الجولة.', true);
-    } else if (state.lastPrediction !== '—') {
-      voiceAssistant.speak('للأسف، هذه الجولة خاسرة. لا تقلق، الجولة القادمة أفضل.', true);
-    }
-  }
 }
 
 function updateMLStatus() {
@@ -2381,7 +2056,7 @@ function updateMLStatus() {
 
 function updateAll() {
   renderStats();
-  renderBigRoad();
+  renderRoads();
   updatePredictionCounts();
   updateAccuracyStats();
   updateAccuracyChart();
@@ -2438,36 +2113,9 @@ function calculateAccuracy(type) {
   return totalPredictions > 0 ? ((correctPredictions / totalPredictions) * 100).toFixed(1) + '%' : '0%';
 }
 
-function renderBigRoad() {
-  const canvas = el('bigRoad');
-  if (!canvas) return;
-  
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
-  const size = 35;
-  let x = 0, y = 0;
-  const maxCols = Math.floor(canvas.width / size);
-  
-  for (let i = 0; i < state.rounds.length; i++) {
-    const r = state.rounds[i];
-    
-    ctx.fillStyle = r === 'P' ? '#3a86ff' : r === 'B' ? '#ff006e' : '#38b000';
-    ctx.fillRect(x * size, y * size, size - 2, size - 2);
-    
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 14px Inter';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText((i+1).toString(), x * size + size/2, y * size + size/2);
-    
-    y++;
-    if (y * size >= canvas.height) {
-      y = 0;
-      x++;
-      if (x >= maxCols) break;
-    }
-  }
+// استبدال renderBigRoad بـ renderRoads
+function renderRoads() {
+  roadDrawer.drawAllRoads(state.rounds);
 }
 
 function updatePredictionCounts() {
