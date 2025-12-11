@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚽ نظام تنبؤ أهداف كرة القدم</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-bottom: 5px solid #4a5568;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .input-section, .result-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .input-section h2, .result-section h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .team-input {
+            margin-bottom: 25px;
+        }
+        
+        .team-input h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .team-name {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        .team-name:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        
+        .matches-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        
+        .matches-table th, .matches-table td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .matches-table th {
+            background-color: #f7fafc;
+            font-weight: 600;
+        }
+        
+        .matches-table input {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stat-card h4 {
+            color: #4a5568;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .probabilities {
+            margin: 25px 0;
+        }
+        
+        .prob-bar {
+            height: 25px;
+            background: #e2e8f0;
+            border-radius: 12px;
+            margin: 10px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .prob-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            transition: width 1s ease;
+        }
+        
+        .prob-label {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .recommendations {
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .recommendations h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+        
+        .recommendation-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+        
+        .expected-goals {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .xg-card {
+            padding: 20px;
+            border-radius: 10px;
+            background: #f7fafc;
+        }
+        
+        .xg-card.total {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loader-spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .match-header {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+        
+        .error-message {
+            background: #fed7d7;
+            color: #9b2c2c;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .success-message {
+            background: #c6f6d5;
+            color: #276749;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .match-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .match-btn {
+            padding: 8px 15px;
+            background: #e2e8f0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .match-btn:hover {
+            background: #cbd5e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚽ نظام تنبؤ أهداف كرة القدم</h1>
+            <p>تحليل إحصائي متقدم للتنبؤ بعدد أهداف المباريات بناءً على آخر 10 مباريات</p>
+        </header>
+        
+        <div class="main-content">
+            <!-- قسم إدخال البيانات -->
+            <div class="input-section">
+                <h2>📝 إدخال بيانات الفريقين</h2>
+                
+                <div class="team-input">
+                    <h3>🏠 الفريق المضيف</h3>
+                    <input type="text" id="homeTeam" class="team-name" placeholder="اسم الفريق المضيف (مثال: الهلال)" value="الهلال">
+                    
+                    <div class="match-controls">
+                        <button class="match-btn" onclick="fillSampleData('home')">ملء بيانات نموذجية</button>
+                        <button class="match-btn" onclick="clearTeamData('home')">مسح البيانات</button>
+                    </div>
+                    
+                    <table class="matches-table" id="homeMatches">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>الأهداف المسجلة</th>
+                                <th>الأهداف المتلقاة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- سيتم ملؤها بواسطة JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="team-input">
+                    <h3>✈️ الفريق الضيف</h3>
+                    <input type="text" id="awayTeam" class="team-name" placeholder="اسم الفريق الضيف (مثال: النصر)" value="النصر">
+                    
+                    <div class="match-controls">
+                        <button class="match-btn" onclick="fillSampleData('away')">ملء بيانات نموذجية</button>
+                        <button class="match-btn" onclick="clearTeamData('away')">مسح البيانات</button>
+                    </div>
+                    
+                    <table class="matches-table" id="awayMatches">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>الأهداف المسجلة</th>
+                                <th>الأهداف المتلقاة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- سيتم ملؤها بواسطة JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="settings">
+                    <h3>⚙️ إعدادات النظام</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+                        <div>
+                            <label>متوسط أهداف الدوري:</label>
+                            <input type="number" id="leagueAvg" step="0.1" value="1.4" style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 5px;">
+                        </div>
+                        <div>
+                            <label>تأثير الأرضية (%):</label>
+                            <input type="number" id="homeAdvantage" step="5" value="20" style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 5px;">
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="analyzeMatch()">
+                    🔍 تحليل المباراة والتنبؤ
+                </button>
+                
+                <div class="loader" id="loader">
+                    <div class="loader-spinner"></div>
+                    <p>جاري تحليل البيانات والتنبؤ...</p>
+                </div>
+                
+                <div class="error-message" id="errorMessage"></div>
+                <div class="success-message" id="successMessage"></div>
+            </div>
+            
+            <!-- قسم النتائج -->
+            <div class="result-section">
+                <h2>📊 نتائج التحليل والتنبؤ</h2>
+                
+                <div class="match-header" id="matchTitle">
+                    <span id="homeTeamName">الهلال</span> 🆚 <span id="awayTeamName">النصر</span>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>مباريات محللة</h4>
+                        <div class="stat-value" id="matchesAnalyzed">10</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>مجموع الأهداف المتوقعة</h4>
+                        <div class="stat-value" id="totalExpected">3.4</div>
+                    </div>
+                </div>
+                
+                <h3>🎯 الأهداف المتوقعة (xG)</h3>
+                <div class="expected-goals">
+                    <div class="xg-card">
+                        <h4>المضيف</h4>
+                        <div class="stat-value" id="homeXG">2.1</div>
+                    </div>
+                    <div class="xg-card">
+                        <h4>الضيف</h4>
+                        <div class="stat-value" id="awayXG">1.3</div>
+                    </div>
+                    <div class="xg-card total">
+                        <h4>المجموع</h4>
+                        <div class="stat-value" id="totalXG">3.4</div>
+                    </div>
+                </div>
+                
+                <h3>📈 احتمالات النتائج</h3>
+                <div class="probabilities">
+                    <div>
+                        <p>فوز <span id="homeTeamName2">الهلال</span></p>
+                        <div class="prob-bar">
+                            <div class="prob-fill" id="homeWinProb" style="width: 52%"></div>
+                            <span class="prob-label" id="homeWinPercent">52%</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p>تعادل</p>
+                        <div class="prob-bar">
+                            <div class="prob-fill" id="drawProb" style="width: 24%"></div>
+                            <span class="prob-label" id="drawPercent">24%</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p>فوز <span id="awayTeamName2">النصر</span></p>
+                        <div class="prob-bar">
+                            <div class="prob-fill" id="awayWinProb" style="width: 24%"></div>
+                            <span class="prob-label" id="awayWinPercent">24%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>🎲 احتمالات Totals</h3>
+                <div class="probabilities">
+                    <div>
+                        <p>أكثر من 2.5 هدف</p>
+                        <div class="prob-bar">
+                            <div class="prob-fill" id="over25Prob" style="width: 68%"></div>
+                            <span class="prob-label" id="over25Percent">68%</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p>أكثر من 3.5 هدف</p>
+                        <div class="prob-bar">
+                            <div class="prob-fill" id="over35Prob" style="width: 42%"></div>
+                            <span class="prob-label" id="over35Percent">42%</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p>أكثر من 4.5 هدف</p>
+                        <div class="prob-bar">
+                            <div class="prob-fill" id="over45Prob" style="width: 25%"></div>
+                            <span class="prob-label" id="over45Percent">25%</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p>أكثر من 5.5 هدف</p>
+                        <div class="prob-bar">
+                            <div class="prob-fill" id="over55Prob" style="width: 12%"></div>
+                            <span class="prob-label" id="over55Percent">12%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>💡 التوصيات</h3>
+                <div class="recommendations" id="recommendations">
+                    <div class="recommendation-item">
+                        ✅ قوي: أكثر من 2.5 أهداف (68%)
+                    </div>
+                    <div class="recommendation-item">
+                        🎯 قوي: كلا الفريقين يسجلان (65%)
+                    </div>
+                    <div class="recommendation-item">
+                        ⚠️ متوسط: أكثر من 3.5 أهداف (42%)
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="saveResults()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    💾 حفظ النتائج
+                </button>
+                
+                <div id="savedResults" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // تهيئة الجداول عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTables();
+            fillSampleData('home');
+            fillSampleData('away');
+            updateMatchTitle();
+        });
+        
+        // تهيئة جداول المباريات
+        function initializeTables() {
+            const homeTable = document.getElementById('homeMatches').getElementsByTagName('tbody')[0];
+            const awayTable = document.getElementById('awayMatches').getElementsByTagName('tbody')[0];
+            
+            homeTable.innerHTML = '';
+            awayTable.innerHTML = '';
+            
+            // إنشاء 10 صفوف لكل جدول
+            for (let i = 1; i <= 10; i++) {
+                const homeRow = homeTable.insertRow();
+                homeRow.innerHTML = `
+                    <td>${i}</td>
+                    <td><input type="number" min="0" value="0" class="home-scored"></td>
+                    <td><input type="number" min="0" value="0" class="home-conceded"></td>
+                `;
+                
+                const awayRow = awayTable.insertRow();
+                awayRow.innerHTML = `
+                    <td>${i}</td>
+                    <td><input type="number" min="0" value="0" class="away-scored"></td>
+                    <td><input type="number" min="0" value="0" class="away-conceded"></td>
+                `;
+            }
+        }
+        
+        // ملء بيانات نموذجية
+        function fillSampleData(team) {
+            let scoredValues, concededValues;
+            
+            if (team === 'home') {
+                // بيانات فريق قوي (الهلال)
+                scoredValues = [3, 2, 4, 1, 3, 2, 3, 2, 4, 1];
+                concededValues = [1, 0, 2, 1, 1, 0, 2, 1, 1, 0];
+                
+                document.getElementById('homeTeam').value = 'الهلال';
+                const inputs = document.querySelectorAll('.home-scored, .home-conceded');
+                
+                inputs.forEach((input, index) => {
+                    if (input.classList.contains('home-scored')) {
+                        const matchIndex = Math.floor(index / 2);
+                        input.value = scoredValues[matchIndex];
+                    } else {
+                        const matchIndex = Math.floor((index - 1) / 2);
+                        input.value = concededValues[matchIndex];
+                    }
+                });
+            } else {
+                // بيانات فريق متوسط (النصر)
+                scoredValues = [1, 2, 0, 1, 2, 1, 2, 0, 1, 2];
+                concededValues = [2, 2, 1, 3, 1, 1, 2, 2, 1, 3];
+                
+                document.getElementById('awayTeam').value = 'النصر';
+                const inputs = document.querySelectorAll('.away-scored, .away-conceded');
+                
+                inputs.forEach((input, index) => {
+                    if (input.classList.contains('away-scored')) {
+                        const matchIndex = Math.floor(index / 2);
+                        input.value = scoredValues[matchIndex];
+                    } else {
+                        const matchIndex = Math.floor((index - 1) / 2);
+                        input.value = concededValues[matchIndex];
+                    }
+                });
+            }
+            
+            showSuccess('تم تحميل البيانات النموذجية بنجاح');
+        }
+        
+        // مسح بيانات الفريق
+        function clearTeamData(team) {
+            const inputs = team === 'home' 
+                ? document.querySelectorAll('.home-scored, .home-conceded')
+                : document.querySelectorAll('.away-scored, .away-conceded');
+            
+            inputs.forEach(input => {
+                input.value = 0;
+            });
+            
+            showSuccess(`تم مسح بيانات الفريق ${team === 'home' ? 'المضيف' : 'الضيف'}`);
+        }
+        
+        // تحديث عنوان المباراة
+        function updateMatchTitle() {
+            const homeTeam = document.getElementById('homeTeam').value || 'المضيف';
+            const awayTeam = document.getElementById('awayTeam').value || 'الضيف';
+            
+            document.getElementById('matchTitle').innerHTML = `
+                <span id="homeTeamName">${homeTeam}</span> 🆚 <span id="awayTeamName">${awayTeam}</span>
+            `;
+            
+            document.getElementById('homeTeamName2').textContent = homeTeam;
+            document.getElementById('awayTeamName2').textContent = awayTeam;
+        }
+        
+        // حساب مضروب عدد (Factorial)
+        function factorial(n) {
+            let result = 1;
+            for (let i = 2; i <= n; i++) {
+                result *= i;
+            }
+            return result;
+        }
+        
+        // حساب توزيع بواسون
+        function poissonProbability(k, lambda) {
+            return (Math.exp(-lambda) * Math.pow(lambda, k)) / factorial(k);
+        }
+        
+        // تحليل المباراة
+        function analyzeMatch() {
+            // إظهار المحمل
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            // تحديث عنوان المباراة
+            updateMatchTitle();
+            
+            // محاكاة التحميل
+            setTimeout(() => {
+                try {
+                    // جمع بيانات الفريق المضيف
+                    const homeScoredInputs = document.querySelectorAll('.home-scored');
+                    const homeConcededInputs = document.querySelectorAll('.home-conceded');
+                    
+                    let homeScored = [];
+                    let homeConceded = [];
+                    
+                    homeScoredInputs.forEach(input => {
+                        const value = parseInt(input.value) || 0;
+                        if (value > 0) homeScored.push(value);
+                    });
+                    
+                    homeConcededInputs.forEach(input => {
+                        const value = parseInt(input.value) || 0;
+                        if (value > 0) homeConceded.push(value);
+                    });
+                    
+                    // جمع بيانات الفريق الضيف
+                    const awayScoredInputs = document.querySelectorAll('.away-scored');
+                    const awayConcededInputs = document.querySelectorAll('.away-conceded');
+                    
+                    let awayScored = [];
+                    let awayConceded = [];
+                    
+                    awayScoredInputs.forEach(input => {
+                        const value = parseInt(input.value) || 0;
+                        if (value > 0) awayScored.push(value);
+                    });
+                    
+                    awayConcededInputs.forEach(input => {
+                        const value = parseInt(input.value) || 0;
+                        if (value > 0) awayConceded.push(value);
+                    });
+                    
+                    // التحقق من وجود بيانات كافية
+                    const minMatches = Math.min(
+                        homeScored.length,
+                        homeConceded.length,
+                        awayScored.length,
+                        awayConceded.length
+                    );
+                    
+                    if (minMatches < 3) {
+                        throw new Error('يرجى إدخال بيانات لـ 3 مباريات على الأقل لكل فريق');
+                    }
+                    
+                    // إعدادات النظام
+                    const leagueAvg = parseFloat(document.getElementById('leagueAvg').value) || 1.4;
+                    const homeAdvantage = (parseFloat(document.getElementById('homeAdvantage').value) || 20) / 100;
+                    
+                    // حساب الإحصائيات الأساسية
+                    const homeAvgScored = homeScored.reduce((a, b) => a + b, 0) / homeScored.length;
+                    const homeAvgConceded = homeConceded.reduce((a, b) => a + b, 0) / homeConceded.length;
+                    const awayAvgScored = awayScored.reduce((a, b) => a + b, 0) / awayScored.length;
+                    const awayAvgConceded = awayConceded.reduce((a, b) => a + b, 0) / awayConceded.length;
+                    
+                    // حساب عوامل القوة
+                    const homeAttackFactor = homeAvgScored / leagueAvg;
+                    const homeDefenseFactor = homeAvgConceded / leagueAvg;
+                    const awayAttackFactor = awayAvgScored / leagueAvg;
+                    const awayDefenseFactor = awayAvgConceded / leagueAvg;
+                    
+                    // حساب الأهداف المتوقعة مع تأثير الأرضية
+                    let homeXG = homeAttackFactor * awayDefenseFactor * leagueAvg;
+                    let awayXG = awayAttackFactor * homeDefenseFactor * leagueAvg;
+                    
+                    homeXG *= (1 + homeAdvantage);
+                    awayXG /= (1 + homeAdvantage);
+                    
+                    // تقريب النتائج
+                    homeXG = Math.round(homeXG * 100) / 100;
+                    awayXG = Math.round(awayXG * 100) / 100;
+                    const totalXG = Math.round((homeXG + awayXG) * 100) / 100;
+                    
+                    // حساب الاحتمالات باستخدام توزيع بواسون
+                    const maxGoals = 7;
+                    let homeWinProb = 0;
+                    let drawProb = 0;
+                    let awayWinProb = 0;
+                    let over25Prob = 0;
+                    let over35Prob = 0;
+                    let over45Prob = 0;
+                    let over55Prob = 0;
+                    
+                    for (let h = 0; h <= maxGoals; h++) {
+                        for (let a = 0; a <= maxGoals; a++) {
+                            const prob = poissonProbability(h, homeXG) * poissonProbability(a, awayXG);
+                            const totalGoals = h + a;
+                            
+                            // نتائج المباراة
+                            if (h > a) homeWinProb += prob;
+                            else if (h === a) drawProb += prob;
+                            else awayWinProb += prob;
+                            
+                            // Totals
+                            if (totalGoals > 2.5) over25Prob += prob;
+                            if (totalGoals > 3.5) over35Prob += prob;
+                            if (totalGoals > 4.5) over45Prob += prob;
+                            if (totalGoals > 5.5) over55Prob += prob;
+                        }
+                    }
+                    
+                    // تحويل الاحتمالات إلى نسب مئوية
+                    homeWinProb = Math.round(homeWinProb * 100);
+                    drawProb = Math.round(drawProb * 100);
+                    awayWinProb = Math.round(awayWinProb * 100);
+                    over25Prob = Math.round(over25Prob * 100);
+                    over35Prob = Math.round(over35Prob * 100);
+                    over45Prob = Math.round(over45Prob * 100);
+                    over55Prob = Math.round(over55Prob * 100);
+                    
+                    // عرض النتائج
+                    displayResults({
+                        homeXG,
+                        awayXG,
+                        totalXG,
+                        homeWinProb,
+                        drawProb,
+                        awayWinProb,
+                        over25Prob,
+                        over35Prob,
+                        over45Prob,
+                        over55Prob,
+                        matchesAnalyzed: minMatches
+                    });
+                    
+                    // توليد التوصيات
+                    generateRecommendations({
+                        homeWinProb,
+                        over25Prob,
+                        over35Prob,
+                        over45Prob,
+                        over55Prob,
+                        totalXG
+                    });
+                    
+                    // إخفاء المحمل وإظهار رسالة النجاح
+                    document.getElementById('loader').style.display = 'none';
+                    showSuccess('تم تحليل المباراة بنجاح!');
+                    
+                } catch (error) {
+                    document.getElementById('loader').style.display = 'none';
+                    showError(error.message);
+                }
+            }, 1500);
+        }
+        
+        // عرض النتائج
+        function displayResults(results) {
+            // تحديث الأهداف المتوقعة
+            document.getElementById('homeXG').textContent = results.homeXG;
+            document.getElementById('awayXG').textContent = results.awayXG;
+            document.getElementById('totalXG').textContent = results.totalXG;
+            document.getElementById('totalExpected').textContent = results.totalXG;
+            document.getElementById('matchesAnalyzed').textContent = results.matchesAnalyzed;
+            
+            // تحديث احتمالات النتائج
+            document.getElementById('homeWinProb').style.width = `${results.homeWinProb}%`;
+            document.getElementById('homeWinPercent').textContent = `${results.homeWinProb}%`;
+            
+            document.getElementById('drawProb').style.width = `${results.drawProb}%`;
+            document.getElementById('drawPercent').textContent = `${results.drawProb}%`;
+            
+            document.getElementById('awayWinProb').style.width = `${results.awayWinProb}%`;
+            document.getElementById('awayWinPercent').textContent = `${results.awayWinProb}%`;
+            
+            // تحديث احتمالات Totals
+            document.getElementById('over25Prob').style.width = `${results.over25Prob}%`;
+            document.getElementById('over25Percent').textContent = `${results.over25Prob}%`;
+            
+            document.getElementById('over35Prob').style.width = `${results.over35Prob}%`;
+            document.getElementById('over35Percent').textContent = `${results.over35Prob}%`;
+            
+            document.getElementById('over45Prob').style.width = `${results.over45Prob}%`;
+            document.getElementById('over45Percent').textContent = `${results.over45Prob}%`;
+            
+            document.getElementById('over55Prob').style.width = `${results.over55Prob}%`;
+            document.getElementById('over55Percent').textContent = `${results.over55Prob}%`;
+        }
+        
+        // توليد التوصيات
+        function generateRecommendations(probs) {
+            const recommendations = [];
+            
+            // تحليل Totals
+            if (probs.over25Prob >= 70) {
+                recommendations.push(`✅ قوي جداً: أكثر من 2.5 أهداف (${probs.over25Prob}%)`);
+            } else if (probs.over25Prob >= 60) {
+                recommendations.push(`👍 قوي: أكثر من 2.5 أهداف (${probs.over25Prob}%)`);
+            } else if (probs.over25Prob >= 55) {
+                recommendations.push(`🔸 متوسط: أكثر من 2.5 أهداف (${probs.over25Prob}%)`);
+            } else if (probs.over25Prob <= 45) {
+                recommendations.push(`🛡️ محتمل: أقل من 2.5 أهداف (${100 - probs.over25Prob}%)`);
+            }
+            
+            if (probs.over35Prob >= 65) {
+                recommendations.push(`✅ قوي: أكثر من 3.5 أهداف (${probs.over35Prob}%)`);
+            } else if (probs.over35Prob >= 55) {
+                recommendations.push(`🔸 متوسط: أكثر من 3.5 أهداف (${probs.over35Prob}%)`);
+            }
+            
+            if (probs.over45Prob >= 60) {
+                recommendations.push(`🎯 استثنائي: أكثر من 4.5 أهداف (${probs.over45Prob}%)`);
+            } else if (probs.over45Prob >= 50) {
+                recommendations.push(`🔸 محاولة: أكثر من 4.5 أهداف (${probs.over45Prob}%)`);
+            }
+            
+            if (probs.over55Prob >= 50) {
+                recommendations.push(`⚡ نادر: أكثر من 5.5 أهداف (${probs.over55Prob}%)`);
+            }
+            
+            // تحليل النتيجة
+            if (probs.homeWinProb >= 65) {
+                recommendations.push(`🏠 قوي: فوز الفريق المضيف (${probs.homeWinProb}%)`);
+            }
+            
+            // تحليل المجموع المتوقع
+            if (probs.totalXG >= 4.0) {
+                recommendations.push(`🔥 مباراة عالية الأهداف (المتوقع: ${probs.totalXG})`);
+            } else if (probs.totalXG <= 2.0) {
+                recommendations.push(`⚠️ مباراة منخفضة الأهداف (المتوقع: ${probs.totalXG})`);
+            }
+            
+            // تحديث قسم التوصيات
+            const recommendationsDiv = document.getElementById('recommendations');
+            recommendationsDiv.innerHTML = '';
+            
+            recommendations.forEach(rec => {
+                const div = document.createElement('div');
+                div.className = 'recommendation-item';
+                div.textContent = rec;
+                recommendationsDiv.appendChild(div);
+            });
+        }
+        
+        // حفظ النتائج
+        function saveResults() {
+            const homeTeam = document.getElementById('homeTeam').value || 'المضيف';
+            const awayTeam = document.getElementById('awayTeam').value || 'الضيف';
+            const totalXG = document.getElementById('totalXG').textContent;
+            const over25Prob = document.getElementById('over25Percent').textContent;
+            const over35Prob = document.getElementById('over35Percent').textContent;
+            
+            const result = {
+                match: `${homeTeam} vs ${awayTeam}`,
+                date: new Date().toLocaleString('ar-SA'),
+                expectedGoals: totalXG,
+                over25Probability: over25Prob,
+                over35Probability: over35Prob,
+                recommendations: Array.from(document.querySelectorAll('.recommendation-item')).map(item => item.textContent)
+            };
+            
+            // حفظ في LocalStorage
+            let savedMatches = JSON.parse(localStorage.getItem('footballPredictions') || '[]');
+            savedMatches.unshift(result);
+            localStorage.setItem('footballPredictions', JSON.stringify(savedMatches));
+            
+            // عرض النتائج المحفوظة
+            displaySavedResults();
+            
+            showSuccess('تم حفظ النتائج بنجاح في المتصفح!');
+        }
+        
+        // عرض النتائج المحفوظة
+        function displaySavedResults() {
+            const savedMatches = JSON.parse(localStorage.getItem('footballPredictions') || '[]');
+            const container = document.getElementById('savedResults');
+            
+            if (savedMatches.length === 0) {
+                container.innerHTML = '<p>لا توجد نتائج محفوظة</p>';
+                return;
+            }
+            
+            let html = '<h3>📋 النتائج المحفوظة</h3>';
+            
+            savedMatches.slice(0, 5).forEach((match, index) => {
+                html += `
+                    <div style="background: #f7fafc; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                        <strong>${match.match}</strong>
+                        <div style="font-size: 0.9rem; color: #666; margin: 5px 0;">${match.date}</div>
+                        <div>🎯 الأهداف المتوقعة: ${match.expectedGoals}</div>
+                        <div>📈 أكثر من 2.5: ${match.over25Probability}</div>
+                        <div>📈 أكثر من 3.5: ${match.over35Probability}</div>
+                    </div>
+                `;
+            });
+            
+            if (savedMatches.length > 5) {
+                html += `<p>و ${savedMatches.length - 5} نتيجة أخرى...</p>`;
+            }
+            
+            html += `<button onclick="clearSavedResults()" style="margin-top: 10px; padding: 8px 15px; background: #fed7d7; border: none; border-radius: 5px; cursor: pointer;">مسح جميع النتائج</button>`;
+            
+            container.innerHTML = html;
+        }
+        
+        // مسح النتائج المحفوظة
+        function clearSavedResults() {
+            if (confirm('هل تريد مسح جميع النتائج المحفوظة؟')) {
+                localStorage.removeItem('footballPredictions');
+                document.getElementById('savedResults').innerHTML = '<p>تم مسح جميع النتائج المحفوظة</p>';
+            }
+        }
+        
+        // عرض رسالة خطأ
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            
+            // إخفاء الرسالة بعد 5 ثواني
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        // عرض رسالة نجاح
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            
+            // إخفاء الرسالة بعد 3 ثواني
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 3000);
+        }
+        
+        // عرض النتائج المحفوظة عند تحميل الصفحة
+        displaySavedResults();
+    </script>
+</body>
+</html>
